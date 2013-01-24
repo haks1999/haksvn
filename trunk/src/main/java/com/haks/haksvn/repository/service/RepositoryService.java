@@ -4,11 +4,13 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.haks.haksvn.repository.dao.RepositoryDao;
 import com.haks.haksvn.repository.model.Repository;
 
 @Service
+@Transactional
 public class RepositoryService {
 
 	
@@ -16,7 +18,8 @@ public class RepositoryService {
 	private RepositoryDao repositoryDao;
 	
 	
-	public List<Repository> retrieveMenuList(){
+	
+	public List<Repository> retrieveRepositoryList(){
 		
 		List<Repository> repositoryList = repositoryDao.retrieveRepositoryList();
 		
