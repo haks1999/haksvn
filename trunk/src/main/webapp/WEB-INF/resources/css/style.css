@@ -577,6 +577,7 @@ a.button {background-position:left top;}
 a.button span {background-position:right top;}
 a.button.green {background-position:left -56px;}
 a.button.green span {background-position:right -56px;}
+a.button.green.right span {background-position:right -56px;align:right;}
 a.button.red {background-position:left -168px;}
 a.button.red span {background-position:right -168px;}
 a.button.yellow {background-position:left -112px;}
