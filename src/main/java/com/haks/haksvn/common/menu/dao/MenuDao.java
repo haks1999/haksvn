@@ -27,7 +27,6 @@ public class MenuDao {
 	}
 	*/
 	
-	@Transactional
 	public List<Menu> retrieveMenuList() {
 		/*
 		 * Query selectClause1 = session.createQuery("select emp.name from Employee emp where emp.id = 2");

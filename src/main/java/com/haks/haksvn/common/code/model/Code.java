@@ -80,6 +80,4 @@ public class Code {
 		this.codeOrder = codeOrder;
 	}
 
-	
-	
 }
