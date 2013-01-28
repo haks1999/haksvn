@@ -26,12 +26,10 @@
 	<c:forEach items="${menuList}" var="menuLevel1" >
 		<div class="modules_left_hidden <c:out value="${menuLevel1.menuName}" /> submenuList">
 			<div class="module buttons">
-				<c:forEach items="${menuLevel1.subMenus}" var="menuLevel2" >
-					<c:if test="${menuLevel2.menuLevel == 2}">  
-						<a href="<c:url value="/main/${menuLevel2.menuUrl}"/>" class="dropdown_button">
-							<small class="icon clipboard"></small><span><c:out value="${menuLevel2.menuName}" /></span>
-						</a>
-					</c:if>
+				<c:forEach items="${menuLevel1.subMenuList}" var="menuLevel2" >
+					<a href="<c:url value="/main/${menuLevel2.menuUrl}"/>" class="dropdown_button">
+						<small class="icon clipboard"></small><span><c:out value="${menuLevel2.menuName}" /></span>
+					</a>
 				</c:forEach>
 			</div>
 		</div>

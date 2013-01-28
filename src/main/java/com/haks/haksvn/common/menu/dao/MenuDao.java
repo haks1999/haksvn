@@ -12,6 +12,7 @@ import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.haks.haksvn.common.menu.model.Menu;
+import com.haks.haksvn.common.menu.model.MenuNode;
 
 @Repository
 public class MenuDao {
@@ -43,11 +44,37 @@ cr.setProjection(Projections.avg("salary"));
 		
 		@SuppressWarnings("unchecked") List<Menu> result = session.createCriteria(Menu.class)
 				//.add(Restrictions.eq("menuLevel", 1))
-				.add(Restrictions.eqProperty("menuSeq", "parentMenuSeq"))
+				//.add(Restrictions.eqProperty("menuSeq", "parentMenuSeq"))
+				.addOrder(Order.asc("menuLevel"))
+				.addOrder(Order.asc("parentMenuSeq"))
 				.addOrder(Order.asc("menuOrder"))
 				.list();
 		//session.update(result);
 		//session.i
+		return result;
+	}
+	
+	
+	public List<Menu> retrieveSubMenuList(Menu menu){
+		Session session = sessionFactory.getCurrentSession();
+		
+		@SuppressWarnings("unchecked") List<Menu> result = session.createCriteria(Menu.class)
+				.add(Restrictions.eq("parentMenuSeq", menu.getMenuSeq()))
+				.add(Restrictions.neProperty("parentMenuSeq", "menuSeq"))
+				.addOrder(Order.asc("menuOrder"))
+				.list();
+		
+		return result;
+	}
+	
+	public List<Menu> retrieveTopMenuList(){
+		Session session = sessionFactory.getCurrentSession();
+		
+		@SuppressWarnings("unchecked") List<Menu> result = session.createCriteria(Menu.class)
+				.add(Restrictions.eq("menuLevel", 1))
+				.addOrder(Order.asc("menuOrder"))
+				.list();
+		
 		return result;
 	}
 }
