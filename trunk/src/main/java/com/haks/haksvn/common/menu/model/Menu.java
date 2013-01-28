@@ -3,7 +3,6 @@ package com.haks.haksvn.common.menu.model;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -11,47 +10,76 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
+import javax.persistence.JoinTable;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
-import javax.persistence.UniqueConstraint;
-
-import org.hibernate.annotations.LazyCollection;
 
 @Entity
-@Table(name="menu",	uniqueConstraints=
-	@UniqueConstraint(columnNames = {"menu_seq", "menu_name"}))
+@Table(name="menu")
 public class Menu {
 
 	@Id
     @GeneratedValue(strategy=GenerationType.AUTO)
 	@Column(name = "menu_seq",unique = true, nullable = false)
-    private int menuSeq;
+    protected int menuSeq;
 	
 	@Column(name = "menu_name",nullable = false)
-	private String menuName;
+	protected String menuName;
 	
 	@Column(name = "menu_url",nullable = false)
-	private String menuUrl;
+	protected String menuUrl;
 	
-	@Column(name = "menu_jsp_path",nullable = false)
-	private String menuJspPath;
+	@Column(name = "menu_jsp_path",nullable = true)
+	protected String menuJspPath;
 	
 	@Column(name = "menu_order",nullable = false)
-	private String menuOrder;
+	protected String menuOrder;
 	
 	@Column(name = "menu_level",nullable = false)
-	private int menuLevel;
+	protected int menuLevel;
 	
+	//@ManyToOne(cascade = { CascadeType.ALL })
+	//@JoinColumn(name = "parent_menu_seq", nullable=true, insertable = false, updatable = false)
+	
+	/*
 	@ManyToOne(cascade = { CascadeType.ALL })
-	@JoinColumn(name = "parent_menu_seq", nullable=false, insertable = false, updatable = false)
+	@JoinTable(name = "menu",
+		    joinColumns = {
+		      @JoinColumn(name="menu_seq")           
+		    },
+		    inverseJoinColumns = {
+		      @JoinColumn(name="parent_menu_seq")
+		    }
+		  )
 	private Menu menu;
+	*/
 	
-	@Column(name = "parent_menu_seq",nullable = false)
-	private int parentMenuSeq;
+	@Column(name = "parent_menu_seq",nullable = true, unique = false)
+	protected int parentMenuSeq;
 	
-	@OneToMany(mappedBy = "menu", fetch=FetchType.EAGER)
-	private List<Menu> subMenus = new ArrayList<Menu>();
+	//@OneToMany(mappedBy = "menu", fetch=FetchType.EAGER)
+	/*
+	@OneToMany(fetch=FetchType.EAGER)
+	  @JoinTable(name = "menu",
+	    joinColumns = {
+	      @JoinColumn(name="menu_seq")           
+	    },
+	    inverseJoinColumns = {
+	      @JoinColumn(name="parent_menu_seq")
+	    }
+	  )
+	  */
+	/*
+	@OneToMany(fetch=FetchType.EAGER)
+	@JoinTable(
+		    joinColumns = {
+		      @JoinColumn(name="menu_seq")           
+		    },
+		    inverseJoinColumns = {
+		      @JoinColumn(name="parent_menu_seq")
+		    })
+		    */
+	//private List<Menu> subMenus = new ArrayList<Menu>();
 	
 	public Menu(){
 		
@@ -104,8 +132,8 @@ public class Menu {
 	public void setMenuLevel(int menuLevel){
 		this.menuLevel = menuLevel;
 	}
-
 	
+	/*
 	public Menu getMenu(){
 		return menu;
 	}
@@ -121,6 +149,7 @@ public class Menu {
 	public void setSubMenus(List<Menu> subMenus){
 		this.subMenus = subMenus;
 	}
+	*/
 	
 	public int getParentMenuSeq(){
 		return parentMenuSeq;

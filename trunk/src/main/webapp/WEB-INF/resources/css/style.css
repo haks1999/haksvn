@@ -271,7 +271,7 @@ font-size:12px;
 padding:8px 0 0 0;
 }
 
-.module .dropdown {
+.module .dropdown { 
 position:absolute;
 top:34px;
 left:0px;
@@ -307,6 +307,45 @@ color:#dbdbdb;
 }
 
 .module .dropdown hr {
+display:block;
+border:0;
+background:url(../images/dropdown_hr.png) no-repeat center top;
+height:2px;
+font-size:0px;
+margin:0 0 10px 0;
+}
+
+#leftmenu { 
+top:34px;
+left:0px;
+color:#fff;
+width:180px;
+left:auto;
+right:0px;
+}
+
+#leftmenu .arrow {
+background:url(../images/dropdown_arrow.png) no-repeat 33px 0px;
+height:10px;
+font-size:0px;
+}
+
+#leftmenu .arrow {
+background:url(../images/dropdown_arrow.png) no-repeat top right;
+margin:0 33px 0 0;
+}
+
+#leftmenu .content {
+background:#666;
+border-radius:5px;
+padding:10px;
+}
+
+#leftmenu .content p {
+color:#dbdbdb;
+}
+
+#leftmenu hr {
 display:block;
 border:0;
 background:url(../images/dropdown_hr.png) no-repeat center top;
@@ -492,6 +531,10 @@ clear:both;
 }
 
 .dropdown form label {
+color:#dbdbdb;
+}
+
+#leftmenu form label {
 color:#dbdbdb;
 }
 
@@ -698,6 +741,9 @@ margin:0px;
 .dropdown li {
 color:#dbdbdb;
 }
+#leftmenu li {
+color:#dbdbdb;
+}
 /*------------------------LIST----------------------------*/
 
 /*-------------------------ANCHOR-------------------------*/
@@ -706,6 +752,8 @@ a:hover {color:#444;}
 a.logo {display:block;float:left;padding:4px 0 0 0;}
 .dropdown a {color:#fff;}
 .dropdown a.button {color:#666;}
+#leftmenu a {color:#fff;}
+#leftmenu a.button {color:#666;}
 /*-------------------------ANCHOR-------------------------*/
 
 /*-------------------------OTHERS-------------------------*/

@@ -46,6 +46,25 @@ padding:0 0 20px;
 margin:0 0 40px;
 border-bottom:1px solid #f0f0f0;
 }
+
+#leftmenu .menu_list {
+}
+#leftmenu .menu_list .col a {
+text-decoration:none;
+font-weight:bold;
+font-size:14px;
+line-height:18px;
+display:block;
+margin:0 10px 10px 0;
+}
+#leftmenu .menu_list .col a span {
+font-weight:normal;
+font-size:12px;
+color:#dbdbdb;
+display:block;
+margin:0 10px 10px 0;
+}
+
 .module .dropdown.help_index {
 width:600px;
 }
