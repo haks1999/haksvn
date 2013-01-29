@@ -1,5 +1,7 @@
 package com.haks.haksvn.repository.model;
 
+import java.io.Serializable;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -7,9 +9,10 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
+@SuppressWarnings("serial")
 @Entity
 @Table(name="repositories")
-public class Repository {
+public class Repository implements Serializable{
 
 	@Id
     @GeneratedValue(strategy=GenerationType.AUTO)
@@ -27,6 +30,12 @@ public class Repository {
 	
 	public Repository(){
 		
+	}
+	
+	@Override
+	public String toString(){
+		return "[ Repository ]\n - repositorySeq : " + repositorySeq + "\n - repositoryLocation : " + repositoryLocation +
+					"\n - repositoryName : " + repositoryName + "\n - repositoryStatus : " + repositoryStatus;
 	}
 
 	public int getRepositorySeq() {

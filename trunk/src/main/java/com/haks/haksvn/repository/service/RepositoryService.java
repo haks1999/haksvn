@@ -26,4 +26,8 @@ public class RepositoryService {
 		return repositoryList;
 		
 	}
+	
+	public Repository saveRepository(Repository repository){
+		return repositoryDao.saveRepository(repository);
+	}
 }

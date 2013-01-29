@@ -13,7 +13,6 @@ public class MenuNode extends Menu{
 		this.menuSeq = menu.getMenuSeq();
 		this.menuName = menu.getMenuName();
 		this.menuUrl = menu.getMenuUrl();
-		this.menuJspPath = menu.getMenuJspPath();
 		this.menuOrder = menu.getMenuOrder();
 		this.menuLevel = menu.getMenuLevel();
 		this.parentMenuSeq = menu.getParentMenuSeq();

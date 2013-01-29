@@ -23,6 +23,6 @@ public class LoginController {
     @RequestMapping(value="/login", method=RequestMethod.POST)
     public RedirectView doLogin(Model model, HttpServletRequest request, HttpServletResponse response) {
          
-		return new RedirectView("/main/Transfer/Request",true);
+		return new RedirectView("/configuration/repositories/list",true);
     }
 }

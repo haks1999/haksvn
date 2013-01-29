@@ -9,10 +9,13 @@
 				<tiles:insertAttribute name="menu" />
 				<div id="desc">
 					<div class="body">
-						<div style="float:left;margin-right:-200px;">
+						<!-- 
+						<div style="float:left;margin-right:-200px;z-index:1;">
+						-->
+						<div style="position:absolute;display:block;float:left;margin-right:-200px;z-index:1;">
 							<tiles:insertAttribute name="leftmenu" />
 						</div>
-						<div style="float:left; width:100%;">
+						<div style="float:left; width:100%;z-index:100;z-index:-1;s">
 							<div style="margin-left:200px">
 								<tiles:insertAttribute name="content" />
 							</div>

@@ -29,7 +29,7 @@
 								<input type="password" class="text" name="password"/>
 								<br />
 							</p>
-							<a class="button green" id="doLogin" onclick="document.loginForm.submit()"><span>Login</span></a>
+							<a class="button green  form_submit" id="doLogin"><span>Login</span></a>
 						</form>
 					</div>
 					<div class="clear"></div>
