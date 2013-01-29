@@ -20,10 +20,16 @@ public class RepositoryService {
 	
 	
 	public List<Repository> retrieveRepositoryList(){
-		
 		List<Repository> repositoryList = repositoryDao.retrieveRepositoryList();
-		
 		return repositoryList;
+		
+	}
+	
+	public Repository retrieveRepositoryByRepositorySeq(int repositorySeq){
+		Repository repository = new Repository();
+		repository.setRepositorySeq(repositorySeq);
+		Repository result = repositoryDao.retrieveRepositoryByRepositorySeq(repository);
+		return result;
 		
 	}
 	

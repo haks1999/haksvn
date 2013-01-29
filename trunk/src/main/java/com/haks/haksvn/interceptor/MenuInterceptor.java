@@ -23,38 +23,49 @@ import com.haks.haksvn.common.menu.service.MenuService;
 
 public class MenuInterceptor extends HandlerInterceptorAdapter {
 
-    @Autowired
-    private MenuService menuService;
-    
+	@Autowired
+	private MenuService menuService;
+
 	@Override
 	public void afterCompletion(HttpServletRequest request,
 			HttpServletResponse response, Object obj, Exception ex)
 			throws Exception {
-		
+
 	}
 
 	@Override
-	public void postHandle(HttpServletRequest request, HttpServletResponse response,
-			Object obj, ModelAndView mv) throws Exception {
-		
-        List<MenuNode> menuList = menuService.retrieveMenuList();
-        
-        String path = request.getRequestURI();
-        
-        String level[] = path.substring(path.lastIndexOf("main")).split("/");
-                
+	public boolean preHandle(HttpServletRequest request,
+			HttpServletResponse response, Object handler) throws Exception {
+
+		String path = request.getRequestURI();
+		return (path.indexOf("/resources/") < 0 && (path.indexOf(".json") < 0)); 
+	}
+
+	@Override
+	public void postHandle(HttpServletRequest request,
+			HttpServletResponse response, Object obj, ModelAndView mv)
+			throws Exception {
+
+		List<MenuNode> menuList = menuService.retrieveMenuList();
+
+		String path = request.getRequestURI().substring(request.getContextPath().length());
+		String level[] = path.split("/");
+
 		mv.addObject("menuList", menuList);
-		mv.addObject("selectedMenuNameLevel1", level[1] );
-		mv.addObject("selectedMenuNameLevel2", level[2] );
-		
+		mv.addObject("selectedMenuNameLevel1", level[1]);
+		mv.addObject("selectedMenuNameLevel2", level[2]);
+
 		String targetJsp = "/WEB-INF/views/" + mv.getViewName() + ".jsp";
-		
-		ApplicationContext ac = ServletUtil.getApplicationContext(request.getSession().getServletContext());
+
+		ApplicationContext ac = ServletUtil.getApplicationContext(request
+				.getSession().getServletContext());
 		TilesContainer tilesContainer = TilesAccess.getContainer(ac);
-		Request tilesRequest = new ServletRequest(tilesContainer.getApplicationContext(), request, response);
-		AttributeContext attrContext = tilesContainer.getAttributeContext(tilesRequest);
-		attrContext.putAttribute( "content",new Attribute(targetJsp), true);
-		
+		Request tilesRequest = new ServletRequest(
+				tilesContainer.getApplicationContext(), request, response);
+		AttributeContext attrContext = tilesContainer
+				.getAttributeContext(tilesRequest);
+		attrContext.putAttribute("content", new Attribute(targetJsp), true);
+
 		mv.setViewName("main");
 	}
 
