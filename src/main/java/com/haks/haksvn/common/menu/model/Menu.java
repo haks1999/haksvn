@@ -1,22 +1,15 @@
 package com.haks.haksvn.common.menu.model;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
-import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 @Entity
 @Table(name="menu")
-public class Menu {
+public class Menu{
 
 	@Id
     @GeneratedValue(strategy=GenerationType.AUTO)
@@ -28,9 +21,6 @@ public class Menu {
 	
 	@Column(name = "menu_url",nullable = false)
 	protected String menuUrl;
-	
-	@Column(name = "menu_jsp_path",nullable = true)
-	protected String menuJspPath;
 	
 	@Column(name = "menu_order",nullable = false)
 	protected String menuOrder;
@@ -101,14 +91,6 @@ public class Menu {
 		this.menuName = menuName;
 	}
 
-	public String getMenuJspPath() {
-		return menuJspPath;
-	}
-
-	public void setMenuJspPath(String menuJspPath) {
-		this.menuJspPath = menuJspPath;
-	}
-	
 	public String getMenuUrl() {
 		return menuUrl;
 	}

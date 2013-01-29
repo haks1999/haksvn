@@ -4,7 +4,7 @@
 		<div class="content">
 			<div class="col w10">
 				<c:forEach items="${leftMenuList}" var="leftMenu" varStatus="loop">
-					<a href="<c:url value="/main/${leftMenu.menuUrl}"/>"> <c:out value="${leftMenu.menuName}" /> </a>
+					<a href="<c:url value="${leftMenu.menuUrl}"/>"> <c:out value="${leftMenu.menuName}" /> </a>
 					<hr />
 					<!-- 
 					<c:if test="${!loop.last}"><hr /></c:if>

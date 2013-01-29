@@ -24,4 +24,10 @@ public class RepositoryDao {
 		
 		return result;
 	}
+	
+	public com.haks.haksvn.repository.model.Repository saveRepository(com.haks.haksvn.repository.model.Repository repository) {
+		Session session = sessionFactory.getCurrentSession();
+		session.save(repository);
+		return repository;
+	}
 }

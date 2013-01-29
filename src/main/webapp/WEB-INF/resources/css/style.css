@@ -518,8 +518,13 @@ form input.text.login {width:260px;}
 form p {margin:0 0 10px;}
 p br {clear:both;}
 
+form.w100 p label{width:100px;}
+form.w150 p label{width:150px;}
+form.w200 p label{width:200px;}
+form.w250 p label{width:250px;}
+
 form label {
-font-weight:700;
+
 color:#666;
 cursor:pointer;
 display:block;
@@ -574,7 +579,6 @@ background:#fff;
 }
 
 form select {
-display:block;
 border:1px solid #dbdbdb;
 color:#666;
 background:#f0f0f0;

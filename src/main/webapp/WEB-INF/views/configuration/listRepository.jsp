@@ -16,7 +16,7 @@
 	<h1>Repositories</h1>
 	<div class="col w10 last">
 		<div class="content">
-			<table id="tbl_repositories" style="width:300px;">
+			<table id="tbl_repositories">
 				<tr>
 					<th>Name</th>
 					<th>Location</th>
