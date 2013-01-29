@@ -17,7 +17,6 @@ import org.apache.tiles.request.servlet.ServletUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
-import org.springframework.web.servlet.view.RedirectView;
 
 import com.haks.haksvn.common.menu.model.MenuNode;
 import com.haks.haksvn.common.menu.service.MenuService;
@@ -48,8 +47,8 @@ public class MenuInterceptor extends HandlerInterceptorAdapter {
 			throws Exception {
 
 		if(mv.getViewName() == null || "".equals(mv.getViewName())) return;
+		
 		List<MenuNode> menuList = menuService.retrieveMenuList();
-
         List<MenuNode> leftMenuList = new ArrayList<MenuNode>();
         
 		String path = request.getRequestURI().substring(request.getContextPath().length());
