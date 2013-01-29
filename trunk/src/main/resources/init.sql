@@ -1,5 +1,5 @@
 insert into menu (menu_seq, menu_name, menu_url, parent_menu_seq, menu_order, menu_level) values (1, 'Transfer', '/transfer', 1, 100, 1);
-insert into menu (menu_seq, menu_name, menu_url, parent_menu_seq, menu_order, menu_level) values (2, 'Request', '/transfer/request',1, 100, 2);
+insert into menu (menu_seq, menu_name, menu_url, parent_menu_seq, menu_order, menu_level) values (2, 'Request', '/main/Transfer/Request/retrieveRequestList',1, 100, 2);
 insert into menu (menu_seq, menu_name, menu_url, parent_menu_seq, menu_order, menu_level) values (3, 'Approval', '/transfer/approval',1, 200, 2);
 insert into menu (menu_seq, menu_name, menu_url, parent_menu_seq, menu_order, menu_level) values (4, 'Configuration', '/configuration', 4, 200, 1);
 insert into menu (menu_seq, menu_name, menu_url, parent_menu_seq, menu_order, menu_level) values (5, 'Users', '/configuration/users', 4, 100, 2);
