@@ -5,6 +5,7 @@ import java.util.Set;
 
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
+import org.hibernate.criterion.MatchMode;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -63,6 +64,16 @@ cr.setProjection(Projections.avg("salary"));
 				.add(Restrictions.neProperty("parentMenuSeq", "menuSeq"))
 				.addOrder(Order.asc("menuOrder"))
 				.list();
+		
+		return result;
+	}
+	
+	public List<Menu> retrieveViewType(String menuUrl){
+		Session session = sessionFactory.getCurrentSession();
+		
+		@SuppressWarnings("unchecked")
+		List<Menu> result =
+				(List<Menu>)session.createCriteria(Menu.class).add(Restrictions.ilike("menuUrl", menuUrl, MatchMode.START)).list();
 		
 		return result;
 	}

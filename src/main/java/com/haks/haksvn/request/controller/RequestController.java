@@ -25,9 +25,9 @@ public class RequestController {
 		
 		model.addAttribute("requestList", service.retrieveRequestList());
 		
-		MenuUtil.setContentJspPath(request, response, "request/requestMain");
-        return MenuUtil.getFowardUrl("/transfer/request");
+//		MenuUtil.setContentJspPath(request, response, "request/requestMain");
+//        return MenuUtil.getFowardUrl("/transfer/request");
         
-		//return "request/requestMain";
+		return "request/requestMain";
 	}
 }

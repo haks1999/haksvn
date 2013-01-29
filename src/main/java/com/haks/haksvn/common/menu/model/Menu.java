@@ -47,6 +47,9 @@ public class Menu{
 	@Column(name = "parent_menu_seq",nullable = true, unique = false)
 	protected int parentMenuSeq;
 	
+	@Column(name = "view_type",nullable = false, unique = false)
+	protected String viewType;
+	
 	//@OneToMany(mappedBy = "menu", fetch=FetchType.EAGER)
 	/*
 	@OneToMany(fetch=FetchType.EAGER)
@@ -73,6 +76,14 @@ public class Menu{
 	
 	public Menu(){
 		
+	}
+
+	public String getViewType() {
+		return viewType;
+	}
+
+	public void setViewType(String viewType) {
+		this.viewType = viewType;
 	}
 
 	public int getMenuSeq() {

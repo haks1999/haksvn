@@ -1,5 +1,6 @@
 package com.haks.haksvn.interceptor;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
@@ -48,13 +49,12 @@ public class MenuInterceptor extends HandlerInterceptorAdapter {
 
 		List<MenuNode> menuList = menuService.retrieveMenuList();
 
+        List<MenuNode> leftMenuList = new ArrayList<MenuNode>();
+        
 		String path = request.getRequestURI().substring(request.getContextPath().length());
 		String level[] = path.split("/");
-
-		mv.addObject("menuList", menuList);
-		mv.addObject("selectedMenuNameLevel1", level[1]);
-		mv.addObject("selectedMenuNameLevel2", level[2]);
-
+		
+		String viewPath = "/"+level[1]+"/"+level[2] + "/" + level[3];
 		String targetJsp = "/WEB-INF/views/" + mv.getViewName() + ".jsp";
 
 		ApplicationContext ac = ServletUtil.getApplicationContext(request
@@ -66,7 +66,56 @@ public class MenuInterceptor extends HandlerInterceptorAdapter {
 				.getAttributeContext(tilesRequest);
 		attrContext.putAttribute("content", new Attribute(targetJsp), true);
 
-		mv.setViewName("main");
+
+        String selectedMenuNameLevel1 = "";
+        String selectedMenuNameLevel2 = "";
+        String selectedMenuNameLevel3 = "";
+				
+		if("00".equals(menuService.retireveViewType(viewPath))){
+			// ecache 로 변경할 것 menuList 포함
+			//String requestJspPath = "";
+			for( MenuNode menuLevel1 : menuList ){
+				for( MenuNode menuLevel2 : menuLevel1.getSubMenuList() ){
+					String[] splitedMenuNames = menuLevel2.getMenuUrl().split("/");
+					String exactMenuLevel2Name = splitedMenuNames[1] + "/" + splitedMenuNames[2];
+					if( (level[1]+"/"+level[2]).equals(exactMenuLevel2Name) ){
+						selectedMenuNameLevel1 = menuLevel1.getMenuName();
+						selectedMenuNameLevel2 = menuLevel2.getMenuName();
+						//requestJspPath = menuLevel2.getMenuJspPath();
+						break;
+					}
+				}
+			}
+			
+			mv.setViewName("main");
+		}
+		else{
+			// ecache 로 변경할 것 menuList 포함
+			//String requestJspPath = "";
+			for( MenuNode menuLevel1 : menuList ){
+				for( MenuNode menuLevel2 : menuLevel1.getSubMenuList() ){
+					for( MenuNode menuLevel3 : menuLevel2.getSubMenuList() ){
+						if( ("/"+level[1]+"/"+level[2] + "/" + level[3]).equals(menuLevel3.getMenuUrl()) ){
+							//requestJspPath = menuLevel3.getMenuJspPath();
+							leftMenuList = menuLevel2.getSubMenuList();
+							selectedMenuNameLevel1 = menuLevel1.getMenuName();
+							selectedMenuNameLevel2 = menuLevel2.getMenuName();
+							selectedMenuNameLevel3 = menuLevel3.getMenuName();
+							break;
+						}
+					}
+				}
+			}
+			
+			mv.setViewName("mainleftmenu");
+		}
+		
+
+		mv.addObject("menuList", menuList);
+		mv.addObject("leftMenuList", leftMenuList);
+		mv.addObject("selectedMenuNameLevel1", selectedMenuNameLevel1);
+		mv.addObject("selectedMenuNameLevel2", selectedMenuNameLevel2);
+		mv.addObject("selectedMenuNameLevel3", selectedMenuNameLevel3);
 	}
 
 }

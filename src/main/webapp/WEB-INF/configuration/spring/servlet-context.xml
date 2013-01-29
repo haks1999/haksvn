@@ -25,7 +25,8 @@
 
 	<mvc:interceptors>
 		<mvc:interceptor>
-			<mvc:mapping path="/test/s**"/>
+			<mvc:mapping path="/transfer/**"/>
+			<mvc:mapping path="/configuration/**"/>
 			<beans:bean class="com.haks.haksvn.interceptor.MenuInterceptor" />
 		</mvc:interceptor>
 	</mvc:interceptors>
