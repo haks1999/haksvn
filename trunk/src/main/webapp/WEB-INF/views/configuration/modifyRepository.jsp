@@ -26,7 +26,7 @@
 						<option value="10">active</option>
 						<option value="20">inactive</option>
 					</select>
-					<haksvn:combo message="test"></haksvn:combo>
+					
 
 				</p>
 				<p>

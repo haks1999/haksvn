@@ -16,7 +16,7 @@ public class MenuNode extends Menu{
 		this.menuOrder = menu.getMenuOrder();
 		this.menuLevel = menu.getMenuLevel();
 		this.parentMenuSeq = menu.getParentMenuSeq();
-		
+		this.viewType = menu.getViewType();
 	}
 
 	public List<MenuNode> getSubMenuList() {

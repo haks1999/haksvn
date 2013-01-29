@@ -45,6 +45,15 @@ public class MenuService {
 		
 	}
 	
+	public String retireveViewType(String menuUrl){
+		
+		List<Menu> list = menuDao.retrieveViewType(menuUrl);
+		
+		Menu menu = list.get(0);
+		
+		return menu.getViewType();
+	}
+	
 	public List<MenuNode> retrieveSubMenuList(Menu menu){
 		
 		

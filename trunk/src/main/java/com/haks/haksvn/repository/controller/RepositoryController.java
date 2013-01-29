@@ -29,16 +29,17 @@ public class RepositoryController {
     public String forwardRepositoryListPage(Model model, HttpServletRequest request, HttpServletResponse response) {
         List<Repository> repositoryList = repositoryService.retrieveRepositoryList();
     	model.addAttribute("repositoryList", repositoryList );
-        MenuUtil.setContentJspPath(request, response, "configuration/listRepository");
-        return MenuUtil.getFowardUrl("/configuration/repositories/list");
+//        MenuUtil.setContentJspPath(request, response, "configuration/listRepository");
+//        return MenuUtil.getFowardUrl("/configuration/repositories/list");
+        return "/configuration/listRepository";
     }
     
     @RequestMapping(value="/list/{repositorySeq}", method=RequestMethod.GET)
     public String forwardRepositoryModifyPage(@PathVariable String repositorySeq, Model model, HttpServletRequest request, HttpServletResponse response) {
     	Repository repository = repositoryService.retrieveRepositoryByRepositorySeq(Integer.valueOf(repositorySeq));
     	model.addAttribute("repository", repository );
-        MenuUtil.setContentJspPath(request, response, "configuration/modifyRepository");
-        return MenuUtil.getFowardUrl("/configuration/repositories/list");
+//        MenuUtil.setContentJspPath(request, response, "configuration/modifyRepository");
+        return "/configuration/modifyRepository";
     }
      
     /*
@@ -51,8 +52,9 @@ public class RepositoryController {
     
     @RequestMapping(value="/add", method=RequestMethod.GET)
     public String forwardRepositoryAddPage(HttpServletRequest request, HttpServletResponse response) {
-        MenuUtil.setContentJspPath(request, response, "configuration/modifyRepository");
-        return MenuUtil.getFowardUrl("/configuration/repositories/add");
+//        MenuUtil.setContentJspPath(request, response, "configuration/modifyRepository");
+//        return MenuUtil.getFowardUrl("/configuration/repositories/add");
+    	return "/configuration/modifyRepository";
     }
     
     @RequestMapping(value="/add", method=RequestMethod.POST)

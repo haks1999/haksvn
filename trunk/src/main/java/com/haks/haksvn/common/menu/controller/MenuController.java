@@ -47,7 +47,7 @@ public class MenuController {
 		return "index";
     }
     */
-    
+    /*
     @RequestMapping(value="/main/{menuNameLevel1}/{menuNameLevel2}")
     public String retrieveMenuList(@PathVariable String menuNameLevel1, @PathVariable String menuNameLevel2, Model model, HttpServletRequest request, HttpServletResponse response) {
         List<MenuNode> menuList = menuService.retrieveMenuList();
@@ -117,4 +117,5 @@ public class MenuController {
 		
 		return "mainleftmenu";
     }
+    */
 }
