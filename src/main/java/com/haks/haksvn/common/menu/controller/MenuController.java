@@ -58,7 +58,9 @@ public class MenuController {
 		//String requestJspPath = "";
 		for( MenuNode menuLevel1 : menuList ){
 			for( MenuNode menuLevel2 : menuLevel1.getSubMenuList() ){
-				if( ("/"+menuNameLevel1+"/"+menuNameLevel2).equals(menuLevel2.getMenuUrl()) ){
+				String[] splitedMenuNames = menuLevel2.getMenuUrl().split("/");
+				String exactMenuLevel2Name = splitedMenuNames[1] + "/" + splitedMenuNames[2];
+				if( (menuNameLevel1+"/"+menuNameLevel2).equals(exactMenuLevel2Name) ){
 					selectedMenuNameLevel1 = menuLevel1.getMenuName();
 					selectedMenuNameLevel2 = menuLevel2.getMenuName();
 					//requestJspPath = menuLevel2.getMenuJspPath();

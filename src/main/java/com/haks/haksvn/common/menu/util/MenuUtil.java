@@ -22,11 +22,18 @@ public class MenuUtil {
 		AttributeContext attrContext = tilesContainer.getAttributeContext(tilesRequest);
 		Attribute currentContent = attrContext.getAttribute("content");
 		if( currentContent == null ){
-			attrContext.putAttribute( "content",new Attribute(jspPath), true);
+			attrContext.putAttribute( "content",new Attribute("/WEB-INF/views/" + jspPath + ".jsp"), true);
 		}
 	}
 	
+	/*
 	public static String getFowardUrl( HttpServletRequest request ){
 		return "forward:/main" + request.getRequestURI().substring(request.getContextPath().length());
+	}
+	*/
+	
+	// 현재 선택한 메뉴로 넘어가도록 controller 코딩 없앨 수 있도록
+	public static String getFowardUrl(String path ){
+		return "forward:/main" + path;
 	}
 }

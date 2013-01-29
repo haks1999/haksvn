@@ -1,0 +1,18 @@
+<taglib>
+  <tlib-version>1.0</tlib-version>
+  <jsp-version>2.0</jsp-version>
+  <short-name>haksvn custom tag</short-name>
+  <tag>
+    <name>select</name>
+    <tag-class>com.haks.haksvn.common.code.tag.SelectTag</tag-class>
+    <body-content>scriptless</body-content>
+    <attribute>
+       <name>name</name>
+       <required>true</required>
+    </attribute>
+    <attribute>
+       <name>codeGroup</name>
+       <required>true</required>
+    </attribute>
+  </tag>
+</taglib>
