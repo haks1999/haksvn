@@ -9,5 +9,7 @@ insert into menu (menu_seq, menu_name, menu_url, parent_menu_seq, menu_order, me
 
 insert into code (code_seq, code_group, code_name, code_value, code_order) values (1,'repository.status', 'active', '10', 10 );
 insert into code (code_seq, code_group, code_name, code_value, code_order) values (2,'repository.status', 'inactive', '20', 20 );
+insert into code (code_seq, code_group, code_name, code_value, code_order) values (3,'menu.view.type', 'default', '00', 10 );
+insert into code (code_seq, code_group, code_name, code_value, code_order) values (4,'menu.view.type', 'leftmenu', '01', 20 );
 
 insert into repositories (repository_seq, repository_location, repository_status, repository_name) values (1,'svn://127.0.0.1/svn', '20', 'test svn' );

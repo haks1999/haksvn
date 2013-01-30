@@ -1,4 +1,5 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
+<%@ taglib uri="/WEB-INF/tlds/haksvn.tld" prefix="haksvn" %>
 <script type="text/javascript">
 	/*
 	$(function() {
@@ -30,7 +31,9 @@
 							<a href="<c:url value="/configuration/repositories/list/${repository.repositorySeq}"/>"><c:out value="${repository.repositoryName}" /></a>
 						</td>
 						<td><c:out value="${repository.repositoryLocation}" /></td>
-						<td><c:out value="${repository.repositoryStatus}" /></td>
+						<td>
+							<haksvn:select name="repositoryStatus" codeGroup="repository.status" selectedValue="${repository.repositoryStatus}" disabled="true"></haksvn:select>
+						</td>
 					</tr>
 				</c:forEach>
 			</table>
