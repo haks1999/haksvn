@@ -8,6 +8,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -25,14 +26,14 @@ public class RepositoryController {
     private RepositoryService repositoryService;
     
     @RequestMapping(value="/list", method=RequestMethod.GET)
-    public String forwardRepositoryListPage(Model model, HttpServletRequest request, HttpServletResponse response) {
+    public String forwardRepositoryListPage( ModelMap model ) {
         List<Repository> repositoryList = repositoryService.retrieveRepositoryList();
     	model.addAttribute("repositoryList", repositoryList );
         return "/configuration/listRepository";
     }
     
     @RequestMapping(value="/list/{repositorySeq}", method=RequestMethod.GET)
-    public String forwardRepositoryModifyPage(@PathVariable String repositorySeq, Model model, HttpServletRequest request, HttpServletResponse response) {
+    public String forwardRepositoryModifyPage(@PathVariable String repositorySeq, ModelMap model) {
     	Repository repository = repositoryService.retrieveRepositoryByRepositorySeq(Integer.valueOf(repositorySeq));
     	model.addAttribute("repository", repository );
         return "/configuration/modifyRepository";
@@ -47,15 +48,22 @@ public class RepositoryController {
     */
     
     @RequestMapping(value="/add", method=RequestMethod.GET)
-    public String forwardRepositoryAddPage(HttpServletRequest request, HttpServletResponse response) {
+    public String forwardRepositoryAddPage(ModelMap model) {
+    	model.addAttribute("repository", new Repository() );
     	return "/configuration/modifyRepository";
     }
     
     @RequestMapping(value="/save", method=RequestMethod.POST)
-    public RedirectView addRepository(@ModelAttribute("repository") Repository repository, HttpServletRequest request, HttpServletResponse response) {
+    public RedirectView addRepository(@ModelAttribute("repository") Repository repository) {
     	repositoryService.saveRepository(repository);
     	return new RedirectView("/configuration/repositories/list",true);
     }
     
-    
+    /*
+    @RequestMapping(value="/testConnection.json", method=RequestMethod.GET, produces="application/json")
+    public @ResponseBody List<Repository> testConnection() {
+        List<Repository> repositoryList = repositoryService.retrieveRepositoryList();
+		return repositoryList;
+    }
+    */
 }

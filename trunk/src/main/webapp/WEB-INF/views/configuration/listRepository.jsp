@@ -32,7 +32,7 @@
 						</td>
 						<td><c:out value="${repository.repositoryLocation}" /></td>
 						<td>
-							<haksvn:select name="repositoryStatus" codeGroup="repository.status" selectedValue="${repository.repositoryStatus}" disabled="true"></haksvn:select>
+							<haksvn:select name="repositoryStatus" codeGroup="repository_status_code" selectedValue="${repository.repositoryStatus}" disabled="true"></haksvn:select>
 						</td>
 					</tr>
 				</c:forEach>

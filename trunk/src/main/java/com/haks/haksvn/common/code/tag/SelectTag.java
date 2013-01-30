@@ -10,7 +10,6 @@ import javax.servlet.jsp.JspWriter;
 import javax.servlet.jsp.PageContext;
 import javax.servlet.jsp.tagext.SimpleTagSupport;
 
-import org.springframework.stereotype.Component;
 import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.context.support.WebApplicationContextUtils;
 
@@ -23,17 +22,22 @@ public class SelectTag extends SimpleTagSupport {
 	private String codeGroup;
 	private String selectedValue;
 	private boolean disabled;
+	private static CodeService codeService;
 	
-	@Override
-	public void doTag() throws JspException ,IOException {
-		
+	private synchronized void injectCodeService(){
 		// jsp 내 삽입되는 코드인가? spring bean 으로 정상 인식이 되었으나 spring에서 인식을 하지 못 하는건지
 		// bean 으로도 등록이 되지 않는 건지 @component 선언 후 @autowired로 service 바인딩이 안 됨
 		PageContext pageContext = (PageContext) getJspContext();  
 		HttpServletRequest request = (HttpServletRequest) pageContext.getRequest();
 		ServletContext servletContext =request.getSession().getServletContext();
 		WebApplicationContext wac = WebApplicationContextUtils.getRequiredWebApplicationContext(servletContext);
-		CodeService codeService = (CodeService)wac.getBean("codeService");
+		codeService = (CodeService)wac.getBean("codeService");
+	}
+	
+	@Override
+	public void doTag() throws JspException ,IOException {
+		
+		if( codeService == null ) injectCodeService();
 		
 		List<Code> codeList = codeService.retrieveCodeListByCodeGroup(codeGroup);
 		

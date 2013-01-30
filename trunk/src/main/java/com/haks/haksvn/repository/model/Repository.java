@@ -1,7 +1,5 @@
 package com.haks.haksvn.repository.model;
 
-import java.io.Serializable;
-
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -9,10 +7,9 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
-@SuppressWarnings("serial")
 @Entity
 @Table(name="repositories")
-public class Repository implements Serializable{
+public class Repository{
 
 	@Id
     @GeneratedValue(strategy=GenerationType.AUTO)
@@ -27,6 +24,18 @@ public class Repository implements Serializable{
 	
 	@Column(name = "repository_status",nullable = true)
 	private String repositoryStatus;
+	
+	@Column(name = "trunk_path",nullable = false)
+	private String trunkPath;
+	
+	@Column(name = "tags_path",nullable = false)
+	private String tagsPath;
+	
+	@Column(name = "auth_user_id",nullable = false)
+	private String authUserId;
+	
+	@Column(name = "auth_user_passwd",nullable = false)
+	private String authUserPasswd;
 	
 	public Repository(){
 		
@@ -70,5 +79,38 @@ public class Repository implements Serializable{
 		this.repositoryStatus = repositoryStatus;
 	}
 
+	public String getTrunkPath() {
+		return trunkPath;
+	}
+
+	public void setTrunkPath(String trunkPath) {
+		this.trunkPath = trunkPath;
+	}
+
+	public String getTagsPath() {
+		return tagsPath;
+	}
+
+	public void setTagsPath(String tagsPath) {
+		this.tagsPath = tagsPath;
+	}
+
+	public String getAuthUserId() {
+		return authUserId;
+	}
+
+	public void setAuthUserId(String authUserId) {
+		this.authUserId = authUserId;
+	}
+
+	public String getAuthUserPasswd() {
+		return authUserPasswd;
+	}
+
+	public void setAuthUserPasswd(String authUserPasswd) {
+		this.authUserPasswd = authUserPasswd;
+	}
+
+	
 	
 }

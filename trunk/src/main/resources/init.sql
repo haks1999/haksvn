@@ -7,9 +7,9 @@ insert into menu (menu_seq, menu_name, menu_url, parent_menu_seq, menu_order, me
 insert into menu (menu_seq, menu_name, menu_url, parent_menu_seq, menu_order, menu_level, view_type) values (7, 'List', '/configuration/repositories/list', 6, 100,3 , '01');
 insert into menu (menu_seq, menu_name, menu_url, parent_menu_seq, menu_order, menu_level, view_type) values (8, 'Add', '/configuration/repositories/add', 6, 200,3 , '01');
 
-insert into code (code_seq, code_group, code_name, code_value, code_order) values (1,'repository.status', 'active', '10', 10 );
-insert into code (code_seq, code_group, code_name, code_value, code_order) values (2,'repository.status', 'inactive', '20', 20 );
-insert into code (code_seq, code_group, code_name, code_value, code_order) values (3,'menu.view.type', 'default', '00', 10 );
-insert into code (code_seq, code_group, code_name, code_value, code_order) values (4,'menu.view.type', 'leftmenu', '01', 20 );
+insert into code (code_seq, code_group, code_name, code_value, code_order) values (1,'repository_status_code', 'active', '10', 10 );
+insert into code (code_seq, code_group, code_name, code_value, code_order) values (2,'repository_status_code', 'inactive', '20', 20 );
+insert into code (code_seq, code_group, code_name, code_value, code_order) values (3,'menu_view_type_code', 'default', '00', 10 );
+insert into code (code_seq, code_group, code_name, code_value, code_order) values (4,'menu_view_type_code', 'leftmenu', '01', 20 );
 
-insert into repositories (repository_seq, repository_location, repository_status, repository_name) values (1,'svn://127.0.0.1/svn', '20', 'test svn' );
+insert into repositories (repository_seq, repository_location, repository_status, repository_name, trunk_path, tags_path, auth_user_id, auth_user_passwd) values (1,'svn://127.0.0.1/svn', '20', 'test svn', '/trunk', '/tags', 'haks1999', 'aW9fj8bm9Rt5' );
