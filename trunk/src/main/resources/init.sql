@@ -12,4 +12,4 @@ insert into code (code_seq, code_group, code_name, code_value, code_order) value
 insert into code (code_seq, code_group, code_name, code_value, code_order) values (3,'menu_view_type_code', 'default', '00', 10 );
 insert into code (code_seq, code_group, code_name, code_value, code_order) values (4,'menu_view_type_code', 'leftmenu', '01', 20 );
 
-insert into repositories (repository_seq, repository_location, repository_status, repository_name, trunk_path, tags_path, auth_user_id, auth_user_passwd) values (1,'svn://127.0.0.1/svn', '20', 'test svn', '/trunk', '/tags', 'haks1999', 'aW9fj8bm9Rt5' );
+insert into repositories (repository_seq, repository_location, repository_status, repository_name, trunk_path, tags_path, auth_user_id, auth_user_passwd) values (1,'https://haksvn.googlecode.com/svn', '20', 'test svn', '/trunk', '/tags', 'haks1999', 'aW9fj8bm9Rt5' );

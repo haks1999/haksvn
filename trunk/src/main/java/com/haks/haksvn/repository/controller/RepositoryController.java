@@ -2,21 +2,20 @@ package com.haks.haksvn.repository.controller;
 
 import java.util.List;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.view.RedirectView;
 
+import com.haks.haksvn.common.message.model.DefaultMessage;
 import com.haks.haksvn.repository.model.Repository;
 import com.haks.haksvn.repository.service.RepositoryService;
+import com.haks.haksvn.repository.service.SVNRepositoryService;
 
 @Controller
 @RequestMapping(value="/configuration/repositories")
@@ -24,6 +23,8 @@ public class RepositoryController {
      
     @Autowired
     private RepositoryService repositoryService;
+    @Autowired
+    private SVNRepositoryService svnRepositoryService;
     
     @RequestMapping(value="/list", method=RequestMethod.GET)
     public String forwardRepositoryListPage( ModelMap model ) {
@@ -59,11 +60,9 @@ public class RepositoryController {
     	return new RedirectView("/configuration/repositories/list",true);
     }
     
-    /*
-    @RequestMapping(value="/testConnection.json", method=RequestMethod.GET, produces="application/json")
-    public @ResponseBody List<Repository> testConnection() {
-        List<Repository> repositoryList = repositoryService.retrieveRepositoryList();
-		return repositoryList;
+    @RequestMapping(value="/testConnection", method=RequestMethod.POST, produces="application/json")
+    public @ResponseBody DefaultMessage testConnection(@ModelAttribute("repository") Repository repository) {
+		DefaultMessage defaultMessage = svnRepositoryService.testConnection(repository);
+		return defaultMessage;
     }
-    */
 }

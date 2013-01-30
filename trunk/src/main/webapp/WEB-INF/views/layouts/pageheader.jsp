@@ -11,6 +11,7 @@
 	
 	<link rel="stylesheet" href="<c:url value="/css/style.css"/>" type="text/css"	media="screen" />
 	<script src="<c:url value="/js/jquery.js"/>" type="text/javascript" charset="utf-8"></script>
+	<script src="<c:url value="/js/jquery.blockUI.js"/>" type="text/javascript" charset="utf-8"></script>
 	<script src="<c:url value="/js/global.js"/>" type="text/javascript" charset="utf-8"></script>
 	<script src="<c:url value="/js/modal.js"/>" type="text/javascript" charset="utf-8"></script>
 	<script type="text/javascript">

@@ -37,7 +37,7 @@ public class CodeInterceptor extends HandlerInterceptorAdapter {
 			HttpServletResponse response, Object handler, ModelAndView mv)
 			throws Exception {
 
-		if(mv.getViewName() == null || "".equals(mv.getViewName())) return;
+		if(mv == null || mv.getViewName() == null || "".equals(mv.getViewName())) return;
 		
 		List<CodeGroup> codeGroupList = codeService.retrieveCodeGroupList();
 		for( CodeGroup codeGroup : codeGroupList ){

@@ -25,6 +25,8 @@ public class SelectTag extends SimpleTagSupport {
 	private static CodeService codeService;
 	
 	private synchronized void injectCodeService(){
+		// selecttag 자체를 spring form:select로 대체할 수 있을까
+		
 		// jsp 내 삽입되는 코드인가? spring bean 으로 정상 인식이 되었으나 spring에서 인식을 하지 못 하는건지
 		// bean 으로도 등록이 되지 않는 건지 @component 선언 후 @autowired로 service 바인딩이 안 됨
 		PageContext pageContext = (PageContext) getJspContext();  

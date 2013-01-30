@@ -46,7 +46,7 @@ public class MenuInterceptor extends HandlerInterceptorAdapter {
 			HttpServletResponse response, Object handler, ModelAndView mv)
 			throws Exception {
 
-		if(mv.getViewName() == null || "".equals(mv.getViewName())) return;
+		if(mv == null || mv.getViewName() == null || "".equals(mv.getViewName())) return;
 		
 		List<MenuNode> menuList = menuService.retrieveMenuList();
         List<MenuNode> leftMenuList = new ArrayList<MenuNode>();
