@@ -14,7 +14,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.view.RedirectView;
 
-import com.haks.haksvn.common.menu.util.MenuUtil;
 import com.haks.haksvn.repository.model.Repository;
 import com.haks.haksvn.repository.service.RepositoryService;
 
@@ -29,8 +28,6 @@ public class RepositoryController {
     public String forwardRepositoryListPage(Model model, HttpServletRequest request, HttpServletResponse response) {
         List<Repository> repositoryList = repositoryService.retrieveRepositoryList();
     	model.addAttribute("repositoryList", repositoryList );
-//        MenuUtil.setContentJspPath(request, response, "configuration/listRepository");
-//        return MenuUtil.getFowardUrl("/configuration/repositories/list");
         return "/configuration/listRepository";
     }
     
@@ -38,7 +35,6 @@ public class RepositoryController {
     public String forwardRepositoryModifyPage(@PathVariable String repositorySeq, Model model, HttpServletRequest request, HttpServletResponse response) {
     	Repository repository = repositoryService.retrieveRepositoryByRepositorySeq(Integer.valueOf(repositorySeq));
     	model.addAttribute("repository", repository );
-//        MenuUtil.setContentJspPath(request, response, "configuration/modifyRepository");
         return "/configuration/modifyRepository";
     }
      
@@ -52,17 +48,13 @@ public class RepositoryController {
     
     @RequestMapping(value="/add", method=RequestMethod.GET)
     public String forwardRepositoryAddPage(HttpServletRequest request, HttpServletResponse response) {
-//        MenuUtil.setContentJspPath(request, response, "configuration/modifyRepository");
-//        return MenuUtil.getFowardUrl("/configuration/repositories/add");
     	return "/configuration/modifyRepository";
     }
     
-    @RequestMapping(value="/add", method=RequestMethod.POST)
+    @RequestMapping(value="/save", method=RequestMethod.POST)
     public RedirectView addRepository(@ModelAttribute("repository") Repository repository, HttpServletRequest request, HttpServletResponse response) {
     	repositoryService.saveRepository(repository);
     	return new RedirectView("/configuration/repositories/list",true);
-    	//return "forward:/main/configuration/repositories/list";
-		
     }
     
     
