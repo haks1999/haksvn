@@ -49,12 +49,4 @@
 	
 	<tx:annotation-driven/>
 	
-	<!-- 
-	<context:component-scan base-package="com.haks.haksvn.common.menu" />
-	-->
-	<context:component-scan base-package="com.haks.haksvn">
-      <context:include-filter type="annotation" expression="org.springframework.stereotype.Service"/>
-      <context:include-filter type="annotation" expression="org.springframework.stereotype.Repository"/>
-   </context:component-scan>
-
 </beans>
