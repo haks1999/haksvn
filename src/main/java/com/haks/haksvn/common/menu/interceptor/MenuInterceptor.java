@@ -5,6 +5,7 @@ import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 import org.apache.tiles.Attribute;
 import org.apache.tiles.AttributeContext;
@@ -45,11 +46,13 @@ public class MenuInterceptor extends HandlerInterceptorAdapter {
 	public void postHandle(HttpServletRequest request,
 			HttpServletResponse response, Object handler, ModelAndView mv)
 			throws Exception {
-
+		
 		if(mv == null || mv.getViewName() == null || "".equals(mv.getViewName())) return;
 		
 		List<MenuNode> menuList = menuService.retrieveMenuList();
         List<MenuNode> leftMenuList = new ArrayList<MenuNode>();
+		HttpSession session = request.getSession();
+		
         
 		String path = request.getRequestURI().substring(request.getContextPath().length());
 		String level[] = path.split("/");
@@ -88,8 +91,13 @@ public class MenuInterceptor extends HandlerInterceptorAdapter {
 			}
 			
 			mv.setViewName("main");
+			
+			session.setAttribute("viewType", "main");
+			session.setAttribute("selectedMenuNameLevel1", selectedMenuNameLevel1);
+			session.setAttribute("selectedMenuNameLevel2", selectedMenuNameLevel2);
+			session.setAttribute("selectedMenuNameLevel3", selectedMenuNameLevel3);
 		}
-		else{
+		else if("01".equals(menuService.retireveViewType(viewPath))){
 			// ecache 로 변경할 것 menuList 포함
 			//String requestJspPath = "";
 			for( MenuNode menuLevel1 : menuList ){
@@ -108,14 +116,20 @@ public class MenuInterceptor extends HandlerInterceptorAdapter {
 			}
 			
 			mv.setViewName("mainleftmenu");
+			session.setAttribute("viewType", "mainleftmenu");
+			session.setAttribute("selectedMenuNameLevel1", selectedMenuNameLevel1);
+			session.setAttribute("selectedMenuNameLevel2", selectedMenuNameLevel2);
+			session.setAttribute("selectedMenuNameLevel3", selectedMenuNameLevel3);
+		}else{
+			mv.setViewName(session.getAttribute("viewType").toString());
 		}
 		
 
 		mv.addObject("menuList", menuList);
 		mv.addObject("leftMenuList", leftMenuList);
-		mv.addObject("selectedMenuNameLevel1", selectedMenuNameLevel1);
-		mv.addObject("selectedMenuNameLevel2", selectedMenuNameLevel2);
-		mv.addObject("selectedMenuNameLevel3", selectedMenuNameLevel3);
+		mv.addObject("selectedMenuNameLevel1", session.getAttribute("selectedMenuNameLevel1").toString());
+		mv.addObject("selectedMenuNameLevel2", session.getAttribute("selectedMenuNameLevel2").toString());
+		mv.addObject("selectedMenuNameLevel3", session.getAttribute("selectedMenuNameLevel3").toString());
 	}
 
 }

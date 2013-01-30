@@ -23,12 +23,21 @@ public class Request {
 	private String requestType;
 	@Column(name = "request_result",unique = true, nullable = false)
 	private String requestResult;
+	@Column(name = "description", nullable = false)
+	private String description;
 	@Column(name = "user_id")
 	private String userId;
 	@Column(name = "request_date")
 	private Date requestDate;
 	@Column(name = "transfer_date")
 	private Date transferDate;
+	
+	public String getDescription() {
+		return description;
+	}
+	public void setDescription(String description) {
+		this.description = description;
+	}
 	public int getTransferSeq() {
 		return transferSeq;
 	}
