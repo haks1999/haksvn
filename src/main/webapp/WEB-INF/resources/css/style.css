@@ -408,10 +408,10 @@ font-size:20px;
 /*--------------------------MODULES--------------------------*/
 
 /*-------------------------BOXES--------------------------*/
-.success,.error,.notice,.box {margin:0 0 10px;width:100%;position:relative}
+.success,.error,.info,.box {margin:0 0 10px;width:100%;position:relative}
 .box .desc {padding:5px 10px;}
-.success .desc,.error .desc,.notice .desc {padding:10px 10px;}
-.success .desc p,.error .desc p,.notice .desc p {margin:0px;}
+.success .desc,.error .desc,.info .desc {padding:10px 10px;}
+.success .desc p,.error .desc p,.info .desc p {margin:0px;}
 
 .tl,
 .tr,
@@ -443,12 +443,12 @@ background-repeat:no-repeat;
 .error .br {background-position:-5px -15px;}
 .error .desc{color:#D8000C;}
 
-.notice{background:#fde78f;}
-.notice .tl {background-position:0px -20px;}
-.notice .tr {background-position:-5px -20px;}
-.notice .bl {background-position:0px -25px;}
-.notice .br {background-position:-5px -25px;}
-.notice .desc{color:#a89751;}
+.info{background:#fde78f;}
+.info .tl {background-position:0px -20px;}
+.info .tr {background-position:-5px -20px;}
+.info .bl {background-position:0px -25px;}
+.info .br {background-position:-5px -25px;}
+.info .desc{color:#a89751;}
 
 .box .head,.box .bottom,.box .head div,.box .bottom div{height:5px;font-size:0;width:100%;}
 .box{background:#f0f0f0;position:relative;}
