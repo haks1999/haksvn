@@ -1,7 +1,4 @@
-<%@taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
-<%@taglib uri="/WEB-INF/tlds/haksvn.tld" prefix="haksvn" %>
-<%@taglib uri="http://www.springframework.org/tags" prefix="spring" %>
-<%@taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
+<%@ include file="/WEB-INF/views/common/include/taglib.jspf"%>
 <script type="text/javascript">
 	$(function() {
 		document.repositoryForm.action = '<c:url value="/configuration/repositories/save"/>';
