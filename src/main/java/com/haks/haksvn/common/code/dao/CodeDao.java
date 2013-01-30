@@ -28,4 +28,15 @@ public class CodeDao {
 		return result;
 	}
 	
+	public List<Code> retrieveCodeList() {
+		Session session = sessionFactory.getCurrentSession();
+		@SuppressWarnings("unchecked") List<Code> result = 
+					session.createCriteria(Code.class)
+				.addOrder(Order.asc("codeGroup"))
+				.addOrder(Order.asc("codeOrder"))
+				.list();
+		
+		return result;
+	}
+	
 }
