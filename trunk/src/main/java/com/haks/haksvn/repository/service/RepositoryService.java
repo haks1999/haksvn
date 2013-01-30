@@ -34,6 +34,11 @@ public class RepositoryService {
 	}
 	
 	public Repository saveRepository(Repository repository){
-		return repositoryDao.saveRepository(repository);
+		if( repository.getRepositorySeq() < 1 ){
+			return repositoryDao.saveRepository(repository);
+		}else{
+			return repositoryDao.updateRepository(repository);
+		}
+		
 	}
 }

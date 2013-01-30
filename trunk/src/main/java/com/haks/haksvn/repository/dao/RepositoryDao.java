@@ -40,4 +40,10 @@ public class RepositoryDao {
 		session.save(repository);
 		return repository;
 	}
+	
+	public com.haks.haksvn.repository.model.Repository updateRepository(com.haks.haksvn.repository.model.Repository repository) {
+		Session session = sessionFactory.getCurrentSession();
+		session.update(repository);
+		return repository;
+	}
 }

@@ -8,7 +8,6 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 
-import com.haks.haksvn.common.menu.util.MenuUtil;
 import com.haks.haksvn.request.service.RequestService;
 
 @Controller
@@ -25,9 +24,6 @@ public class RequestController {
 		
 		model.addAttribute("requestList", service.retrieveRequestList());
 		
-//		MenuUtil.setContentJspPath(request, response, "request/requestMain");
-//        return MenuUtil.getFowardUrl("/transfer/request");
-        
 		return "request/requestMain";
 	}
 }
