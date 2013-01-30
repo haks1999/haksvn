@@ -49,9 +49,13 @@ public class MenuService {
 		
 		List<Menu> list = menuDao.retrieveViewType(menuUrl);
 		
-		Menu menu = list.get(0);
+		if (list.size() > 0) {
+			Menu menu = list.get(0);
 		
-		return menu.getViewType();
+			return menu.getViewType();
+		}else{
+			return null;
+		}
 	}
 	
 	public List<MenuNode> retrieveSubMenuList(Menu menu){

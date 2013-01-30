@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 
 import com.haks.haksvn.request.service.RequestService;
 
@@ -25,5 +26,12 @@ public class RequestController {
 		model.addAttribute("requestList", service.retrieveRequestList());
 		
 		return "request/requestMain";
+	}
+	
+	@RequestMapping(value="/createRequest", method=RequestMethod.GET)
+	public String registRequest(Model model, HttpServletRequest request, HttpServletResponse response){
+		
+		
+		return "request/requestDetail";
 	}
 }
