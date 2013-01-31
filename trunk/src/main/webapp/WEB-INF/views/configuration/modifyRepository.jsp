@@ -1,7 +1,8 @@
 <%@ include file="/WEB-INF/views/common/include/taglib.jspf"%>
 <script type="text/javascript">
 	$(function() {
-		
+		//$('#repositoryForm').validate();
+		$('#repositoryForm').attr('action', document.location + '/save');
    	});
 	
 	function testConnection(){
@@ -32,8 +33,7 @@
 	<div class="col w10 last">
 		<div class="content">
 			<div id="div_repositoryMessage"></div>
-			<c:url var="repositoryFormUrl" value="/configuration/repositories/save"/>
-			<form:form commandName="repository" class="w200" id="repositoryForm" method="post" action="${repositoryFormUrl}">
+			<form:form commandName="repository" class="w200" id="repositoryForm" method="post">
 					<form:hidden path="repositorySeq" name="repositorySeq"/>
 				<p>
 					<form:label path="repositoryName" class="left">Repository Name</form:label>
@@ -43,7 +43,7 @@
 				<p>
 					<form:label path="repositoryLocation" class="left">Repository Location</form:label>
 					<form:input class="text w_30" path="repositoryLocation" />
-					<form:errors path="repositoryLocation" />
+					<form:errors path="repositoryLocation" cssClass="field_error"/>
 				</p>
 				<p>
 					<form:label path="authUserId" class="left">Repository User ID</form:label>
