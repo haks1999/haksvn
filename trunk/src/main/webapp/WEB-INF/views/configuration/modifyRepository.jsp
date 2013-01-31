@@ -38,28 +38,34 @@
 				<p>
 					<form:label path="repositoryName" class="left">Repository Name</form:label>
 					<form:input class="text w_20" path="repositoryName"/>
+					<form:errors path="repositoryName" />
 				</p>
 				<p>
 					<form:label path="repositoryLocation" class="left">Repository Location</form:label>
 					<form:input class="text w_30" path="repositoryLocation" />
+					<form:errors path="repositoryLocation" />
 				</p>
 				<p>
 					<form:label path="authUserId" class="left">Repository User ID</form:label>
 					<form:input class="text w_10" path="authUserId"/>
+					<form:errors path="authUserId" />
 				</p>
 				<p>
 					<form:label path="authUserPasswd" class="left">Repository User Password</form:label>
 					<form:input class="text w_10" path="authUserPasswd"/>
+					<form:errors path="authUserPasswd" />
 				</p>
 				<p>
 					<form:label path="trunkPath" class="left">Trunk Path</form:label>
 					<form:input class="text w_20" path="trunkPath"/>
 					(default: /trunk)
+					<form:errors path="trunkPath" />
 				</p>
 				<p>
 					<form:label path="tagsPath" class="left">Tags Path</form:label>
 					<form:input class="text w_20" path="tagsPath"/>
 					(default: /tags)
+					<form:errors path="tagsPath" />
 				</p>
 				<p>
 					<form:label path="repositoryStatus" class="left">Repository Status</form:label>

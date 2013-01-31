@@ -7,6 +7,8 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
+import org.hibernate.validator.constraints.NotEmpty;
+
 @Entity
 @Table(name="repositories")
 public class Repository{
@@ -17,6 +19,7 @@ public class Repository{
     private int repositorySeq;
 	
 	@Column(name = "repository_location",nullable = false)
+	@NotEmpty(message="Repositoy Location : Mandantory Field")
 	private String repositoryLocation;
 	
 	@Column(name = "repository_name",nullable = false)
