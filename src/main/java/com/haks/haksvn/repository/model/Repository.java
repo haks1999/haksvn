@@ -19,25 +19,30 @@ public class Repository{
     private int repositorySeq;
 	
 	@Column(name = "repository_location",nullable = false)
-	@NotEmpty(message="Repositoy Location : Mandantory Field")
+	@NotEmpty(message="repositoy location : Mandantory Field")
 	private String repositoryLocation;
 	
 	@Column(name = "repository_name",nullable = false)
+	@NotEmpty(message="repositoy name : Mandantory Field")
 	private String repositoryName;
 	
 	@Column(name = "repository_status",nullable = true)
 	private String repositoryStatus;
 	
 	@Column(name = "trunk_path",nullable = false)
+	@NotEmpty(message="trunk path : Mandantory Field")
 	private String trunkPath;
 	
 	@Column(name = "tags_path",nullable = false)
+	@NotEmpty(message="tags path : Mandantory Field")
 	private String tagsPath;
 	
 	@Column(name = "auth_user_id",nullable = false)
+	@NotEmpty(message="user id : Mandantory Field")
 	private String authUserId;
 	
 	@Column(name = "auth_user_passwd",nullable = false)
+	@NotEmpty(message="user password : Mandantory Field")
 	private String authUserPasswd;
 	
 	public Repository(){
