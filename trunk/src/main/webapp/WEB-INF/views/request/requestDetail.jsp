@@ -12,7 +12,7 @@
 	<div class="col w3">
 		<p>
 			<label for="input" class="left">RequestType</label>
-			<haksvn:select name="requestType" codeGroup="request.type" selectedValue="${request.requestType}" ></haksvn:select>
+			<haksvn:select name="requestType" codeGroup="request_type_code" selectedValue="${request.requestType}" ></haksvn:select>
 		</p>
 	</div>
 	<p>
