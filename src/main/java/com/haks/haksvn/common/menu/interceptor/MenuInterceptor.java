@@ -39,6 +39,7 @@ public class MenuInterceptor extends HandlerInterceptorAdapter {
 			HttpServletResponse response, Object handler) throws Exception {
 
 		String path = request.getRequestURI();
+
 		return (path.indexOf("/resources/") < 0 && (path.indexOf(".json") < 0)); 
 	}
 
@@ -47,7 +48,10 @@ public class MenuInterceptor extends HandlerInterceptorAdapter {
 			HttpServletResponse response, Object handler, ModelAndView mv)
 			throws Exception {
 		
+		
 		if(mv == null || mv.getViewName() == null || "".equals(mv.getViewName())) return;
+		
+		if(mv.getViewName().indexOf("forward:") > -1 || mv.getViewName().indexOf("redirect:") > -1) return;
 		
 		List<MenuNode> menuList = menuService.retrieveMenuList();
         List<MenuNode> leftMenuList = new ArrayList<MenuNode>();
