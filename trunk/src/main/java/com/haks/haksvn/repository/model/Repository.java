@@ -1,13 +1,23 @@
 package com.haks.haksvn.repository.model;
 
+import java.util.HashSet;
+import java.util.Set;
+
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
 import javax.persistence.Table;
 
 import org.hibernate.validator.constraints.NotEmpty;
+
+import com.haks.haksvn.user.model.User;
 
 @Entity
 @Table(name="repositories")
@@ -44,6 +54,13 @@ public class Repository{
 	@Column(name = "auth_user_passwd",nullable = false)
 	@NotEmpty(message="user password : Mandantory Field")
 	private String authUserPasswd;
+	
+	@ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+	@JoinTable(name = "repositories_users", joinColumns = { 
+			@JoinColumn(name = "repository_seq", nullable = false, updatable = false) }, 
+			inverseJoinColumns = { @JoinColumn(name = "user_seq", 
+					nullable = false, updatable = false) })
+	private Set<User> users = new HashSet<User>();
 	
 	public Repository(){
 		
@@ -117,6 +134,14 @@ public class Repository{
 
 	public void setAuthUserPasswd(String authUserPasswd) {
 		this.authUserPasswd = authUserPasswd;
+	}
+
+	public Set<User> getUsers() {
+		return users;
+	}
+
+	public void setUsers(Set<User> users) {
+		this.users = users;
 	}
 
 	
