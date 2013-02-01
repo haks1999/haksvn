@@ -2,7 +2,9 @@
 <script type="text/javascript">
 	$(function() {
 		//$('#repositoryForm').validate();
-		$('#frm_repository').attr('action', document.location + '/save');
+		var pathname = window.location.pathname;
+		actionUrl = pathname.replace('/save','') + '/save';
+		$('#frm_repository').attr('action', actionUrl);
    	});
 	
 	function testConnection(){

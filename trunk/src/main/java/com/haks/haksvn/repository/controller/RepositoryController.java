@@ -72,7 +72,7 @@ public class RepositoryController {
     		//return new ModelAndView("forward:/configuration/repositories/add");
     	}else{
     		repositoryService.saveRepository(repository);
-    		return new ModelAndView(new RedirectView("/repository/repositories/list", true));
+    		return new ModelAndView(new RedirectView("/configuration/repositories/list", true));
     		
     	}
     	
