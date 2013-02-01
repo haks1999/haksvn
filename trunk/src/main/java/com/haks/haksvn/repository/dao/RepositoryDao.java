@@ -35,7 +35,7 @@ public class RepositoryDao {
 		return result;
 	}
 	
-	public com.haks.haksvn.repository.model.Repository saveRepository(com.haks.haksvn.repository.model.Repository repository) {
+	public com.haks.haksvn.repository.model.Repository addRepository(com.haks.haksvn.repository.model.Repository repository) {
 		Session session = sessionFactory.getCurrentSession();
 		session.save(repository);
 		return repository;
