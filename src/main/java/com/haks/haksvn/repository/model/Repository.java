@@ -55,12 +55,14 @@ public class Repository{
 	@NotEmpty(message="user password : Mandantory Field")
 	private String authUserPasswd;
 	
+	/*
 	@ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
 	@JoinTable(name = "repositories_users", joinColumns = { 
 			@JoinColumn(name = "repository_seq", nullable = false, updatable = false) }, 
 			inverseJoinColumns = { @JoinColumn(name = "user_seq", 
 					nullable = false, updatable = false) })
 	private Set<User> users = new HashSet<User>();
+	*/
 	
 	public Repository(){
 		
@@ -136,6 +138,7 @@ public class Repository{
 		this.authUserPasswd = authUserPasswd;
 	}
 
+	/*
 	public Set<User> getUsers() {
 		return users;
 	}
@@ -143,7 +146,7 @@ public class Repository{
 	public void setUsers(Set<User> users) {
 		this.users = users;
 	}
-
+*/
 	
 	
 }

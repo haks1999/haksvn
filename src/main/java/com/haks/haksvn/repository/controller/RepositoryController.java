@@ -36,7 +36,7 @@ public class RepositoryController {
     public String forwardRepositoryListPage( ModelMap model ) {
         List<Repository> repositoryList = repositoryService.retrieveRepositoryList();
     	model.addAttribute("repositoryList", repositoryList );
-        return "/configuration/listRepository";
+        return "/repository/listRepository";
     }
     
     @RequestMapping(value="/list/{repositorySeq}", method=RequestMethod.GET)
@@ -46,7 +46,7 @@ public class RepositoryController {
 
 		//ModelAndView mv = new ModelAndView("forward:/configuration/repositories/add",model);
 		//return mv;
-    	return "/configuration/modifyRepository";
+    	return "/repository/modifyRepository";
     	//return new ModelAndView("forward:/configuration/repositories/add");
     }
      
@@ -61,18 +61,18 @@ public class RepositoryController {
     @RequestMapping(value="/add")
     public String forwardRepositoryAddPage(ModelMap model, @ModelAttribute("repository") Repository repository, HttpServletRequest request) {
     	model.addAttribute("repository", repository );
-    	return "/configuration/modifyRepository";
+    	return "/repository/modifyRepository";
     }
     
     @RequestMapping(value={"/add/save","/list/*/save"}, method=RequestMethod.POST)
     public ModelAndView addRepository(ModelMap model, @ModelAttribute("repository") @Valid Repository repository, BindingResult result) {
     	
     	if( result.hasErrors() ){
-    		return new ModelAndView("/configuration/modifyRepository");
+    		return new ModelAndView("/repository/modifyRepository");
     		//return new ModelAndView("forward:/configuration/repositories/add");
     	}else{
     		repositoryService.saveRepository(repository);
-    		return new ModelAndView(new RedirectView("/configuration/repositories/list", true));
+    		return new ModelAndView(new RedirectView("/repository/repositories/list", true));
     		
     	}
     	

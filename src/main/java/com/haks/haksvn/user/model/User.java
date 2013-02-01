@@ -25,7 +25,7 @@ public class User{
 	@Column(name = "user_seq",unique = true, nullable = false)
     private int userSeq;
 	
-	@Column(name = "user_id",nullable = false)
+	@Column(name = "user_id",unique = true, nullable = false, updatable=false)
 	@NotEmpty(message="user id : Mandantory Field")
 	private String userId;
 	
@@ -42,9 +42,10 @@ public class User{
 	@Column(name = "user_passwd",nullable = false)
 	private String userPasswd;
 	
+	/*
 	@ManyToMany(fetch = FetchType.EAGER, mappedBy = "users")
 	private Set<Repository> repositories = new HashSet<Repository>();
-	
+	*/
 	
 	public User(){
 		
@@ -104,6 +105,7 @@ public class User{
 		this.userPasswd = userPasswd;
 	}
 
+	/*
 	public Set<Repository> getRepositories() {
 		return repositories;
 	}
@@ -111,7 +113,7 @@ public class User{
 	public void setRepositories(Set<Repository> repositories) {
 		this.repositories = repositories;
 	}
-	
+	*/
 	
 	
 }
