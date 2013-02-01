@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.validation.BindingResult;
+import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -15,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.view.RedirectView;
 
+import com.haks.haksvn.common.message.model.ResultMessage;
 import com.haks.haksvn.user.model.User;
 import com.haks.haksvn.user.service.UserService;
 
@@ -47,15 +49,21 @@ public class UserController {
     }
     
     @RequestMapping(value={"/add/save","/list/*/save"}, method=RequestMethod.POST)
-    public ModelAndView addRepository(ModelMap model, @ModelAttribute("user") @Valid User user, BindingResult result) {
+    public ModelAndView addUser(ModelMap model, @ModelAttribute("user") @Valid User user, BindingResult result) {
+    	if( user.getUserSeq() < 1 ){
+    		ResultMessage message = userService.duplicateUser(user);
+    		if( !message.isSuccess() ){
+    			result.addError(new FieldError("user", "userId",message.getText()));
+    		}
+    	}
     	
     	if( result.hasErrors() ){
     		return new ModelAndView("/user/modifyUser");
-    	}else{
-    		userService.saveUser(user);
-    		return new ModelAndView(new RedirectView("/configuration/users/list", true));
-    		
     	}
+    	
+   		userService.saveUser(user);
+   		return new ModelAndView(new RedirectView("/configuration/users/list", true));
+    		
     }
     
 }

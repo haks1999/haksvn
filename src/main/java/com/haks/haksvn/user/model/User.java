@@ -25,7 +25,7 @@ public class User{
 	@Column(name = "user_seq",unique = true, nullable = false)
     private int userSeq;
 	
-	@Column(name = "user_id",unique = true, nullable = false, updatable=false)
+	@Column(name = "user_id",unique = true, nullable = false)
 	@NotEmpty(message="user id : Mandantory Field")
 	private String userId;
 	

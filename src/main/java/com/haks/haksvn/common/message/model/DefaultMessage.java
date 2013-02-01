@@ -9,8 +9,8 @@ public class DefaultMessage {
 	}
 	
 	
-	private String type;
-	private String text;
+	private String type = TYPE.INFO;
+	private String text = "";
 	
 	public String getType() {
 		return type;
@@ -27,7 +27,7 @@ public class DefaultMessage {
 	
 	@Override
 	public String toString(){
-		return "[ DefaultMessage ]\n - type : " + type + "\n - text : " + text;
+		return "[ DefaultMessage ]\n - type : " + getType() + "\n - text : " + getText();
 	}
 	
 }
