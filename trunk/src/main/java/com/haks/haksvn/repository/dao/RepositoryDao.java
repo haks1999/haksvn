@@ -26,6 +26,18 @@ public class RepositoryDao {
 		return result;
 	}
 	
+	public List<com.haks.haksvn.repository.model.Repository> retrieveActiveRepositoryList() {
+		Session session = sessionFactory.getCurrentSession();
+		
+		@SuppressWarnings("unchecked") List<com.haks.haksvn.repository.model.Repository> result = 
+					session.createCriteria(com.haks.haksvn.repository.model.Repository.class)
+				.add(Restrictions.eq("repositoyStatus", ""))
+				.addOrder(Order.asc("repositoryName"))
+				.list();
+		
+		return result;
+	}
+	
 	public com.haks.haksvn.repository.model.Repository retrieveRepositoryByRepositorySeq(com.haks.haksvn.repository.model.Repository repository) {
 		Session session = sessionFactory.getCurrentSession();
 		

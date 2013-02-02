@@ -42,6 +42,9 @@ public class User{
 	@Column(name = "user_passwd",nullable = false)
 	private String userPasswd;
 	
+	@Column(name = "auth_type",nullable = false)
+	private String authType;
+	
 	/*
 	@ManyToMany(fetch = FetchType.EAGER, mappedBy = "users")
 	private Set<Repository> repositories = new HashSet<Repository>();
@@ -104,6 +107,16 @@ public class User{
 	public void setUserPasswd(String userPasswd) {
 		this.userPasswd = userPasswd;
 	}
+
+	public String getAuthType() {
+		return authType;
+	}
+
+	public void setAuthType(String authType) {
+		this.authType = authType;
+	}
+	
+	
 
 	/*
 	public Set<Repository> getRepositories() {
