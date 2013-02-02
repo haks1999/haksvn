@@ -22,7 +22,7 @@
 				<tr>
 					<th>Name</th>
 					<th>Location</th>
-					<th>Status</th>
+					<th>Active</th>
 				</tr>
 				<c:forEach items="${repositoryList}" var="repository">
 					<tr>
@@ -31,7 +31,7 @@
 						</td>
 						<td><c:out value="${repository.repositoryLocation}" /></td>
 						<td>
-							<haksvn:select name="repositoryStatus" codeGroup="repository_status_code" selectedValue="${repository.repositoryStatus}" disabled="true"></haksvn:select>
+							<haksvn:select name="active" codeGroup="common_boolean_yn_code" selectedValue="${repository.active}" disabled="true"></haksvn:select>
 						</td>
 					</tr>
 				</c:forEach>

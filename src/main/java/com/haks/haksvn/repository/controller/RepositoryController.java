@@ -85,4 +85,11 @@ public class RepositoryController {
 		DefaultMessage defaultMessage = svnRepositoryService.testConnection(repository);
 		return defaultMessage;
     }
+    
+    @RequestMapping(value="/listUser", method=RequestMethod.GET)
+    public String forwardRepositoryUserPage( ModelMap model ) {
+        List<Repository> repositoryList = repositoryService.retrieveRepositoryList();
+    	model.addAttribute("repositoryList", repositoryList );
+        return "/repository/listRepositoryUser";
+    }
 }

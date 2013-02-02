@@ -36,8 +36,8 @@ public class Repository{
 	@NotEmpty(message="repositoy name : Mandantory Field")
 	private String repositoryName;
 	
-	@Column(name = "repository_status",nullable = true)
-	private String repositoryStatus;
+	@Column(name = "active",nullable = true)
+	private boolean active;
 	
 	@Column(name = "trunk_path",nullable = false)
 	@NotEmpty(message="trunk path : Mandantory Field")
@@ -71,7 +71,7 @@ public class Repository{
 	@Override
 	public String toString(){
 		return "[ Repository ]\n - repositorySeq : " + repositorySeq + "\n - repositoryLocation : " + repositoryLocation +
-					"\n - repositoryName : " + repositoryName + "\n - repositoryStatus : " + repositoryStatus;
+					"\n - repositoryName : " + repositoryName + "\n - active : " + active;
 	}
 
 	public int getRepositorySeq() {
@@ -98,12 +98,12 @@ public class Repository{
 		this.repositoryName = repositoryName;
 	}
 
-	public String getRepositoryStatus() {
-		return repositoryStatus;
+	public boolean isActive() {
+		return active;
 	}
 
-	public void setRepositoryStatus(String repositoryStatus) {
-		this.repositoryStatus = repositoryStatus;
+	public void setActive(boolean active) {
+		this.active = active;
 	}
 
 	public String getTrunkPath() {

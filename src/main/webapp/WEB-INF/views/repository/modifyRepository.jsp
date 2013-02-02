@@ -70,8 +70,8 @@
 					<form:errors path="tagsPath" />
 				</p>
 				<p>
-					<form:label path="repositoryStatus" class="left">Repository Status</form:label>
-					<form:select path="repositoryStatus" items="${repository_status_code}" itemValue="codeValue" itemLabel="codeName"/>
+					<form:label path="active" class="left">Active</form:label>
+					<form:select path="active" items="${common_boolean_yn_code}" itemValue="codeValue" itemLabel="codeName"/>
 				</p>
 				<p>
 					<label class="left"></label>

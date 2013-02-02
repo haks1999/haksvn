@@ -2,6 +2,7 @@
 <script type="text/javascript">
 	$(function() {
     	$('#menu .<c:out value="${selectedMenuNameLevel1}" />').addClass('selected');
+    	$('#submenu .module .<c:out value="${selectedMenuNameLevel2}" />').addClass('selected');
     	$('#submenu .<c:out value="${selectedMenuNameLevel1}" />').removeClass('modules_left_hidden').addClass('modules_left');
     	$('#menu a').click(function(){
     		if( $(this).hasClass('selected') ) return;
@@ -27,7 +28,7 @@
 		<div class="modules_left_hidden <c:out value="${menuLevel1.menuName}" /> submenuList">
 			<div class="module buttons">
 				<c:forEach items="${menuLevel1.subMenuList}" var="menuLevel2" >
-					<a href="<c:url value="${menuLevel2.menuUrl}"/>" class="dropdown_button">
+					<a href="<c:url value="${menuLevel2.menuUrl}"/>" class="dropdown_button <c:out value="${menuLevel2.menuName}" />">
 						<small class="icon clipboard"></small><span><c:out value="${menuLevel2.menuName}" /></span>
 					</a>
 				</c:forEach>

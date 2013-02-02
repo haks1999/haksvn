@@ -238,7 +238,7 @@ margin:3px 0 0 -4px;
 opacity:0.65;
 }
 
-.module.buttons a.module_button:hover span,.module.buttons a.module_button:hover small,.module.buttons a.dropdown_button:hover span,.module.buttons a.dropdown_button:hover small {
+.module.buttons a.module_button:hover span,.module.buttons a.module_button:hover small,.module.buttons a.dropdown_button:hover span,.module.buttons a.dropdown_button:hover small,.module.buttons a.dropdown_button.selected span,.module.buttons a.dropdown_button.selected small {
 color:#fff;
 opacity:1.0;
 }

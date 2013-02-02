@@ -21,7 +21,7 @@
 							<form:input class="text w_10" path="userId"/>
 						</c:when>
 						<c:otherwise>
-							<form:input class="text w_10" path="userId" readonly="true" disabled="true"/>
+							<form:input class="text w_10" path="userId" readonly="true" />
 						</c:otherwise>
 					</c:choose>
 					<form:errors path="userId" />
@@ -40,6 +40,10 @@
 					<form:label path="userPasswd" class="left">Password</form:label>
 					<form:input class="text w_10" path="userPasswd"/>
 					<form:errors path="userPasswd" />
+				</p>
+				<p>
+					<form:label path="authType" class="left">User Authority</form:label>
+					<form:select path="authType" items="${user_auth_type_code}" itemValue="codeValue" itemLabel="codeName"/>
 				</p>
 				<p>
 					<form:label path="active" class="left">Active</form:label>
