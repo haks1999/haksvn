@@ -2,6 +2,7 @@ package com.haks.haksvn.repository.dao;
 
 import java.util.List;
 
+import org.hibernate.FetchMode;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.criterion.Order;
@@ -31,7 +32,7 @@ public class RepositoryDao {
 		
 		@SuppressWarnings("unchecked") List<com.haks.haksvn.repository.model.Repository> result = 
 					session.createCriteria(com.haks.haksvn.repository.model.Repository.class)
-				.add(Restrictions.eq("repositoyStatus", ""))
+				.add(Restrictions.eq("active", true))
 				.addOrder(Order.asc("repositoryName"))
 				.list();
 		

@@ -3,12 +3,15 @@ package com.haks.haksvn.user.model;
 import java.util.HashSet;
 import java.util.Set;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.Table;
 
@@ -45,11 +48,15 @@ public class User{
 	@Column(name = "auth_type",nullable = false)
 	private String authType;
 	
+	//@ManyToMany(fetch = FetchType.EAGER, mappedBy = "users")
 	/*
-	@ManyToMany(fetch = FetchType.EAGER, mappedBy = "users")
+	@ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+	@JoinTable(name = "repositories_users", joinColumns = { 
+			@JoinColumn(name = "user_seq", nullable = false, updatable = false) }, 
+			inverseJoinColumns = { @JoinColumn(name = "repository_seq", 
+					nullable = false, updatable = false) })
 	private Set<Repository> repositories = new HashSet<Repository>();
 	*/
-	
 	public User(){
 		
 	}
@@ -116,8 +123,6 @@ public class User{
 		this.authType = authType;
 	}
 	
-	
-
 	/*
 	public Set<Repository> getRepositories() {
 		return repositories;
@@ -127,6 +132,5 @@ public class User{
 		this.repositories = repositories;
 	}
 	*/
-	
 	
 }

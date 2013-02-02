@@ -553,17 +553,17 @@ form input.text.login {width:260px;}
 form p {margin:0 0 10px;}
 p br {clear:both;}
 
-form.w100 p label{width:100px;}
-form.w150 p label{width:150px;}
-form.w200 p label{width:200px;}
-form.w250 p label{width:250px;}
+form.w100 p label,p.w100 label{width:100px;}
+form.w150 p label,p.w150 label{width:150px;}
+form.w200 p label,p.w200 label{width:200px;}
+form.w250 p label,p.w250 label{width:250px;}
+form.w300 p label,p.w300 label{width:300px;}
 
 form label {
 
 color:#666;
 cursor:pointer;
-display:block;
-float:none;
+display:inline;
 font-size:13px;
 margin:0 0 5px;
 padding:0;
@@ -578,7 +578,7 @@ color:#dbdbdb;
 color:#dbdbdb;
 }
 
-form label.left {
+form label.left,p label.left {
 float:left;
 text-align:right;
 width:100px;
@@ -592,7 +592,6 @@ border:1px solid #d6d6d6;
 border-radius:20px;
 background:#fff url(../images/input_bg.png) repeat-x bottom left;
 padding:6px;
-clear:both;
 color:#666;
 margin:0px;
 font-size:12px;
@@ -618,7 +617,22 @@ border:1px solid #dbdbdb;
 color:#666;
 background:#f0f0f0;
 padding:5px;
-clear:both;
+}
+
+select.readonly{
+  border:none;
+  margin:0px;
+  padding:0px;
+}
+
+select.readonly_list{
+	-webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+  border:none;
+  margin:0px;
+  padding:0px;
+  background:#f0f0f0;
 }
 
 a.button {

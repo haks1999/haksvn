@@ -22,6 +22,7 @@ public class SelectTag extends SimpleTagSupport {
 	private String codeGroup;
 	private String selectedValue;
 	private boolean disabled;
+	private String cssClass;
 	private static CodeService codeService;
 	
 	private synchronized void injectCodeService(){
@@ -49,11 +50,16 @@ public class SelectTag extends SimpleTagSupport {
 			.append(" name=\"")
 			.append(name)
 			.append("\"");
-		
+		if(cssClass != null ){
+			sb.append(" class=\"")
+				.append(cssClass)
+				.append("\"");
+		}
 		if(disabled){
 			sb.append(" disabled");
 		}
-			sb.append( ">");
+		
+		sb.append( ">");
 		for( Code code : codeList ){
 			sb.append("<option value=\"")
 				.append(code.getCodeValue())
@@ -99,6 +105,14 @@ public class SelectTag extends SimpleTagSupport {
 
 	public void setDisabled(boolean disabled) {
 		this.disabled = disabled;
+	}
+
+	public String getCssClass() {
+		return cssClass;
+	}
+
+	public void setCssClass(String cssClass) {
+		this.cssClass = cssClass;
 	}
 	
 	

@@ -28,5 +28,10 @@
        <required>false</required>
        <type>boolean</type>
     </attribute>
+     <attribute>
+       <name>cssClass</name>
+       <required>false</required>
+       <type>boolean</type>
+    </attribute>
   </tag>
 </taglib>

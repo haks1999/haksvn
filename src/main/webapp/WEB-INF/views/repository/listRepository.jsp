@@ -31,7 +31,7 @@
 						</td>
 						<td><c:out value="${repository.repositoryLocation}" /></td>
 						<td>
-							<haksvn:select name="active" codeGroup="common_boolean_yn_code" selectedValue="${repository.active}" disabled="true"></haksvn:select>
+							<haksvn:select name="active" codeGroup="common_boolean_yn_code" selectedValue="${repository.active}" disabled="true" cssClass="readonly_list"></haksvn:select>
 						</td>
 					</tr>
 				</c:forEach>

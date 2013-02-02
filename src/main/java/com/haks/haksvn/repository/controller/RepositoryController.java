@@ -22,6 +22,7 @@ import com.haks.haksvn.common.message.model.DefaultMessage;
 import com.haks.haksvn.repository.model.Repository;
 import com.haks.haksvn.repository.service.RepositoryService;
 import com.haks.haksvn.repository.service.SVNRepositoryService;
+import com.haks.haksvn.user.model.User;
 
 @Controller
 @RequestMapping(value="/configuration/repositories")
@@ -88,8 +89,15 @@ public class RepositoryController {
     
     @RequestMapping(value="/listUser", method=RequestMethod.GET)
     public String forwardRepositoryUserPage( ModelMap model ) {
-        List<Repository> repositoryList = repositoryService.retrieveRepositoryList();
+        List<Repository> repositoryList = repositoryService.retrieveActiveRepositoryList();
+        
     	model.addAttribute("repositoryList", repositoryList );
         return "/repository/listRepositoryUser";
+    }
+    
+    @RequestMapping(value="/listUser/{repositorySeq}", method=RequestMethod.GET)
+    public @ResponseBody List<User> listRepositoryUser(@PathVariable int repositorySeq) {
+    	
+    	return repositoryService.retrieveRepositoryByRepositorySeq(repositorySeq).getUsers();
     }
 }

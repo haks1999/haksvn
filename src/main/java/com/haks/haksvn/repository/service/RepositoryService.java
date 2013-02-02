@@ -25,6 +25,12 @@ public class RepositoryService {
 		
 	}
 	
+	public List<Repository> retrieveActiveRepositoryList(){
+		List<Repository> repositoryList = repositoryDao.retrieveActiveRepositoryList();
+		return repositoryList;
+		
+	}
+	
 	public Repository retrieveRepositoryByRepositorySeq(int repositorySeq){
 		Repository repository = new Repository();
 		repository.setRepositorySeq(repositorySeq);
