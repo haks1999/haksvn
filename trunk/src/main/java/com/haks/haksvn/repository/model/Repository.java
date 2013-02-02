@@ -1,20 +1,27 @@
 package com.haks.haksvn.repository.model;
 
-import java.util.HashSet;
-import java.util.Set;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
+import javax.persistence.DiscriminatorColumn;
+import javax.persistence.DiscriminatorType;
+import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.Inheritance;
+import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
-import javax.persistence.ManyToMany;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
 import org.hibernate.validator.constraints.NotEmpty;
 
 import com.haks.haksvn.user.model.User;
@@ -55,14 +62,13 @@ public class Repository{
 	@NotEmpty(message="user password : Mandantory Field")
 	private String authUserPasswd;
 	
-	/*
-	@ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+	@OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+	@Fetch(FetchMode.SUBSELECT)
 	@JoinTable(name = "repositories_users", joinColumns = { 
 			@JoinColumn(name = "repository_seq", nullable = false, updatable = false) }, 
 			inverseJoinColumns = { @JoinColumn(name = "user_seq", 
 					nullable = false, updatable = false) })
-	private Set<User> users = new HashSet<User>();
-	*/
+	private List<User> users = new ArrayList<User>();
 	
 	public Repository(){
 		
@@ -138,15 +144,12 @@ public class Repository{
 		this.authUserPasswd = authUserPasswd;
 	}
 
-	/*
-	public Set<User> getUsers() {
+	public List<User> getUsers() {
 		return users;
 	}
 
-	public void setUsers(Set<User> users) {
+	public void setUsers(List<User> users) {
 		this.users = users;
 	}
-*/
-	
 	
 }

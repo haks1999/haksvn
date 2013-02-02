@@ -1,18 +1,22 @@
 <%@ include file="/WEB-INF/views/common/include/taglib.jspf"%>
 <script type="text/javascript">
-	/*
 	$(function() {
-		$.getJSON( "<c:url value="/configuration/repositories/list"/>", function(data) {
+		retrieveRepositoryUserList();
+		$("#sel_repository").change(retrieveRepositoryUserList);
+   	});
+	
+	function retrieveRepositoryUserList(  ){
+		var repositorySeq = $("#sel_repository > option:selected").val();
+		$.getJSON( "<c:url value="/configuration/repositories/listUser"/>" + "/" + repositorySeq, function(data) {
 			for( var inx = 0 ; inx < data.length ; inx++ ){
-				var row = '<tr><td>' + data[inx].repositoryName + '</td>' +
-							'<td>' + data[inx].repositoryLocation + '</td>' +
-							'<td>' + data[inx].repositoryStatus + '</td></tr>';
-				$('#tbl_repositories').append(row);
+				var row = '<tr><td>' + data[inx].userId + '</td>' +
+							'<td>' + data[inx].userName + '</td>' +
+							'<td>' + data[inx].authType + '</td>' +
+							'<td>' + data[inx].email + '</td></tr>';
+				$('#tbl_users').append(row);
 			}
 		});
-		
-   	});
-	*/
+	}
 </script>
 <div id="table" class="help">
 	<h1></h1>
@@ -24,8 +28,8 @@
 				<h2><!-- box header --></h2>
 				<div class="desc">
 					<p>
-						<label class="left">Repository Name</label> <select
-							id="sel_repository">
+						<label>Repository Name</label> 
+						<select id="sel_repository">
 							<c:forEach items="${repositoryList}" var="repository">
 								<option value="<c:out value="${repository.repositorySeq}"/>">
 									<c:out value="${repository.repositoryName}" />
@@ -54,11 +58,17 @@
 						<td><c:out value="${user.userName}" /></td>
 						<td><c:out value="${user.email}" /></td>
 						<td>
-							<c:out value="${user.active}" />
+							<haksvn:select name="active" codeGroup="user_auth_type_code" selectedValue="${user.authType}" disabled="true" cssClass="readonly_list"></haksvn:select>
 						</td>
 					</tr>
 				</c:forEach>
 			</table>
+			
+			<p class="w300">
+				<label class="left"></label>
+				<a class="button green mt ml form_submit"><small class="icon plus"></small><span>Add User</span></a>
+				<a class="button red mt ml"><small class="icon cross"></small><span>Delete User</span></a>
+			</p>
 		</div>
 	</div>
 	<div class="clear"></div>
