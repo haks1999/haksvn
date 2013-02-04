@@ -56,7 +56,13 @@ public class RepositoryDao {
 	
 	public com.haks.haksvn.repository.model.Repository updateRepository(com.haks.haksvn.repository.model.Repository repository) {
 		Session session = sessionFactory.getCurrentSession();
-		session.update(repository);
+		
+		
+		//com.haks.haksvn.repository.model.Repository result =
+			//	(com.haks.haksvn.repository.model.Repository)session.get(com.haks.haksvn.repository.model.Repository.class, repository.getRepositorySeq());
+		
+		session.merge(repository);
+		
 		return repository;
 	}
 }

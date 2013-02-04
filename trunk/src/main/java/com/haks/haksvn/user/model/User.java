@@ -14,7 +14,6 @@ import javax.persistence.Table;
 
 import org.hibernate.annotations.FilterDef;
 import org.hibernate.annotations.ParamDef;
-import org.hibernate.annotations.WhereJoinTable;
 import org.hibernate.validator.constraints.NotEmpty;
 
 import com.haks.haksvn.common.code.model.Code;
@@ -74,14 +73,12 @@ public class User{
 	@JoinFormula(value="SELECT c.* FROM code c WHERE c.code_group='user_auth_type_code'")
 	*/
 	//@Formula(value="SELECT c.* FROM code c WHERE c.code_group='user_auth_type_code'")
-	/*
-	@ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
-	@JoinTable(name = "code", joinColumns = { 
-			@JoinColumn(name = "code_value", referencedColumnName = "auth_type", nullable = false) }, 
-			inverseJoinColumns = { @JoinColumn(name = "auth_type", referencedColumnName = "code_value", nullable = false) })
-	@WhereJoinTable(clause = "code_group='user_auth_type_code'")
-	private Code code = new Code();
-	*/
+	@ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL )
+	@JoinColumn(name="auth_type", referencedColumnName="code_id", insertable=false, updatable=false)
+	//@JoinTable(name = "code", joinColumns = { @JoinColumn(name = "code_id", referencedColumnName = "auth_type", nullable = false) })
+	//@WhereJoinTable(clause = "code_group='user_auth_type_code'")
+	private Code authTypeCode = new Code();
+	
 	public User(){
 		
 	}
@@ -148,16 +145,13 @@ public class User{
 		this.authType = authType;
 	}
 
-	/*
-	public Code getCode() {
-		return code;
+	public Code getAuthTypeCode() {
+		return authTypeCode;
 	}
 
-	public void setCode(Code code) {
-		this.code = code;
+	public void setAuthTypeCode(Code authTypeCode) {
+		this.authTypeCode = authTypeCode;
 	}
-*/
-	
 	
 	
 	/*

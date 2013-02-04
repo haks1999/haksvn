@@ -43,7 +43,19 @@ public class RepositoryService {
 		if( repository.getRepositorySeq() < 1 ){
 			return repositoryDao.addRepository(repository);
 		}else{
-			return repositoryDao.updateRepository(repository);
+			// get repository in hibernate session 
+			// 그냥 신규 repo obj 로 업뎃하믄 다른 객체로 인식해서 cascade 가 엉망이 됨
+			// manytoone 등과 같은 relation 이 설정된 경우 주의해야 함
+			Repository repositoryInHibernate = repositoryDao.retrieveRepositoryByRepositorySeq(repository);
+			
+			// exclude userList
+			Repository.Builder.getBuilder(repositoryInHibernate)
+				.active(repository.getActive())
+				.authUserId(repository.getAuthUserId()).authUserPasswd(repository.getAuthUserPasswd())
+				.repositoryLocation(repository.getRepositoryLocation()).repositoryName(repository.getRepositoryName())
+				.tagsPath(repository.getTagsPath()).trunkPath(repository.getTrunkPath());
+			
+			return repositoryDao.updateRepository(repositoryInHibernate);
 		}
 		
 	}

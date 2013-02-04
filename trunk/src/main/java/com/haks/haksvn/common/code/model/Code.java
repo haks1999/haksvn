@@ -7,12 +7,10 @@ import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
-import javax.persistence.ManyToMany;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 import org.hibernate.annotations.FilterDef;
@@ -44,6 +42,18 @@ public class Code {
 	
 	@Column(name = "code_order",nullable = false)
 	private int codeOrder;
+	
+	/*
+	@OneToMany(mappedBy=""fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+	@JoinTable(name = "users", joinColumns = { 
+			@JoinColumn(name = "auth_type", referencedColumnName = "code_id", nullable = false) }, 
+			inverseJoinColumns = { @JoinColumn(name = "code_id", referencedColumnName = "auth_type", nullable = false) })
+	@Column(name="user_seq")
+	*/
+	/*
+	@OneToMany(mappedBy="code", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+	private List<User> userList = new ArrayList<User>();
+	*/
 	
 	public Code(){
 		
@@ -95,5 +105,15 @@ public class Code {
 		this.codeOrder = codeOrder;
 	}
 
+	/*
+	public List<User> getUserList() {
+		return userList;
+	}
+
+	public void setUserList(List<User> userList) {
+		this.userList = userList;
+	}
+	*/
+	
 
 }
