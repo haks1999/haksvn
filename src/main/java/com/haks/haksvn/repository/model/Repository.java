@@ -3,30 +3,28 @@ package com.haks.haksvn.repository.model;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
-import javax.persistence.DiscriminatorColumn;
-import javax.persistence.DiscriminatorType;
-import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.Inheritance;
-import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
+import org.hibernate.annotations.DynamicUpdate;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
+import org.hibernate.annotations.SelectBeforeUpdate;
 import org.hibernate.validator.constraints.NotEmpty;
 
 import com.haks.haksvn.user.model.User;
 
 @Entity
+@DynamicUpdate
+@SelectBeforeUpdate
 @Table(name="repositories")
 public class Repository{
 
@@ -62,17 +60,36 @@ public class Repository{
 	@NotEmpty(message="user password : Mandantory Field")
 	private String authUserPasswd;
 	
-	@OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+	@OneToMany(fetch=FetchType.EAGER)
+	@org.hibernate.annotations.Cascade(value=org.hibernate.annotations.CascadeType.DELETE)
+	//@Cascade(org.hibernate.annotations.CascadeType.REPLICATE)
+	//@Cascade({org.hibernate.annotations.CascadeType.DETACH})
 	@Fetch(FetchMode.SUBSELECT)
 	@JoinTable(name = "repositories_users", joinColumns = { 
 			@JoinColumn(name = "repository_seq", nullable = false, updatable = false) }, 
 			inverseJoinColumns = { @JoinColumn(name = "user_seq", 
 					nullable = false, updatable = false) })
-	private List<User> users = new ArrayList<User>();
+	private List<User> userList = new ArrayList<User>();
 	
 	public Repository(){
 		
 	}
+	
+	
+	/*
+	public Repository (Repository repository){
+		repositorySeq = repository.getRepositorySeq();
+		repositoryLocation = repository.getRepositoryLocation();
+		repositoryName = repository.getRepositoryName();
+		active = repository.getActive();
+		trunkPath = repository.getTrunkPath();
+		tagsPath = repository.getTagsPath();
+		authUserId = repository.getAuthUserId();
+		authUserPasswd = repository.getAuthUserPasswd();
+		userList = repository.getUserList();
+		return this;
+	}
+	*/
 	
 	@Override
 	public String toString(){
@@ -144,12 +161,74 @@ public class Repository{
 		this.authUserPasswd = authUserPasswd;
 	}
 
-	public List<User> getUsers() {
-		return users;
+	public List<User> getUserList() {
+		return userList;
 	}
 
-	public void setUsers(List<User> users) {
-		this.users = users;
+	public void setUsers(List<User> userList) {
+		this.userList = userList;
+	}
+	
+	
+	
+	public static class Builder{
+		
+		private Repository repository;
+		
+		private Builder(Repository repository){
+			this.repository = repository;
+		}
+		
+		public static Builder getBuilder(Repository repository){
+			return new Builder(repository);
+		}
+		
+		public Repository build(){
+			return repository;
+		}
+		
+		
+		public Builder repositoryLocation(String repositoryLocation){
+			repository.setRepositoryLocation(repositoryLocation);
+			return this;
+		}
+		
+		public Builder repositoryName(String repositoryName){
+			repository.setRepositoryName(repositoryName);
+			return this;
+		}
+		
+		public Builder active(String active){
+			repository.setActive(active);
+			return this;
+		}
+		
+		public Builder trunkPath(String trunkPath){
+			repository.setTrunkPath(trunkPath);
+			return this;
+		}
+		
+		public Builder tagsPath(String tagsPath){
+			repository.setTagsPath(tagsPath);
+			return this;
+		}
+		
+		public Builder authUserId(String authUserId){
+			repository.setAuthUserId(authUserId);
+			return this;
+		}
+		
+		public Builder authUserPasswd(String authUserPasswd){
+			repository.setAuthUserPasswd(authUserPasswd);
+			return this;
+		}
+		
+		public Builder userList(List<User> userList){
+			repository.setUsers(userList);
+			return this;
+		}
+		
+		
 	}
 	
 }

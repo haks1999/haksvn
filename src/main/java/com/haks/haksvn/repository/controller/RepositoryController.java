@@ -98,6 +98,6 @@ public class RepositoryController {
     @RequestMapping(value="/listUser/{repositorySeq}", method=RequestMethod.GET)
     public @ResponseBody List<User> listRepositoryUser(@PathVariable int repositorySeq) {
     	
-    	return repositoryService.retrieveRepositoryByRepositorySeq(repositorySeq).getUsers();
+    	return repositoryService.retrieveRepositoryByRepositorySeq(repositorySeq).getUserList();
     }
 }
