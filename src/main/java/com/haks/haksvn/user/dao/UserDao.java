@@ -19,7 +19,6 @@ public class UserDao {
 	
 	public List<User> retrieveUserList() {
 		Session session = sessionFactory.getCurrentSession();
-		
 		@SuppressWarnings("unchecked") List<User> result = 
 					session.createCriteria(User.class)
 				.addOrder(Order.asc("userName"))

@@ -44,7 +44,7 @@ public class Repository{
 	private String repositoryName;
 	
 	@Column(name = "active",nullable = true)
-	private boolean active;
+	private String active;
 	
 	@Column(name = "trunk_path",nullable = false)
 	@NotEmpty(message="trunk path : Mandantory Field")
@@ -104,11 +104,11 @@ public class Repository{
 		this.repositoryName = repositoryName;
 	}
 
-	public boolean isActive() {
+	public String getActive() {
 		return active;
 	}
 
-	public void setActive(boolean active) {
+	public void setActive(String active) {
 		this.active = active;
 	}
 

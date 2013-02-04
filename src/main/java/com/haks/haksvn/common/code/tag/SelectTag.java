@@ -62,9 +62,9 @@ public class SelectTag extends SimpleTagSupport {
 		sb.append( ">");
 		for( Code code : codeList ){
 			sb.append("<option value=\"")
-				.append(code.getCodeValue())
+				.append(code.getCodeId())
 				.append("\"");
-			if( selected && code.getCodeValue().equals(selectedValue)){
+			if( selected && code.getCodeId().equals(selectedValue)){
 				sb.append(" selected");
 			}
 			sb.append(">")

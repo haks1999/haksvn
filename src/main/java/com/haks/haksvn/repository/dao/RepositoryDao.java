@@ -32,7 +32,7 @@ public class RepositoryDao {
 		
 		@SuppressWarnings("unchecked") List<com.haks.haksvn.repository.model.Repository> result = 
 					session.createCriteria(com.haks.haksvn.repository.model.Repository.class)
-				.add(Restrictions.eq("active", true))
+				.add(Restrictions.eq("active", "common.boolean.yn.code.y"))
 				.addOrder(Order.asc("repositoryName"))
 				.list();
 		

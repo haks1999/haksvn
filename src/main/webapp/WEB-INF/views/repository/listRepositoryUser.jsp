@@ -11,8 +11,8 @@
 			for( var inx = 0 ; inx < data.length ; inx++ ){
 				var row = '<tr><td>' + data[inx].userId + '</td>' +
 							'<td>' + data[inx].userName + '</td>' +
-							'<td>' + data[inx].authType + '</td>' +
-							'<td>' + data[inx].email + '</td></tr>';
+							'<td>' + data[inx].email + '</td>' +
+							'<td>' + data[inx].authType + '</td></tr>';
 				$('#tbl_users').append(row);
 			}
 		});
@@ -23,8 +23,7 @@
 	<div class="col w10 last">
 		<div class="content">
 			<div class="box">
-				<div class="head">
-				</div>
+				<div class="head"><div></div></div>
 				<h2><!-- box header --></h2>
 				<div class="desc">
 					<p>
@@ -64,8 +63,7 @@
 				</c:forEach>
 			</table>
 			
-			<p class="w300">
-				<label class="left"></label>
+			<p>
 				<a class="button green mt ml form_submit"><small class="icon plus"></small><span>Add User</span></a>
 				<a class="button red mt ml"><small class="icon cross"></small><span>Delete User</span></a>
 			</p>

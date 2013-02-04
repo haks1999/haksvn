@@ -33,7 +33,7 @@
 						<td><c:out value="${user.userName}" /></td>
 						<td><c:out value="${user.email}" /></td>
 						<td>
-							<c:out value="${user.active}" />
+							<haksvn:select name="active" codeGroup="common.boolean.yn.code" selectedValue="${user.active}" disabled="true" cssClass="readonly_list"></haksvn:select>
 						</td>
 					</tr>
 				</c:forEach>
