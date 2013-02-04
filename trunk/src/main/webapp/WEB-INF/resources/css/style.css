@@ -61,7 +61,7 @@ margin:0px;
 padding:0px;
 }
 
-.body {padding:10px;margin:0px;position:relative;border:1px solid #e4e4e4;border-top:0px;border-bottom:0px;}
+.body {padding:10px;margin:0px;position:relative;border:0px solid #e4e4e4;border-top:0px;border-bottom:0px;}
 
 .desc p {margin:0;}
 
