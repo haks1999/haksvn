@@ -71,7 +71,7 @@
 				</p>
 				<p>
 					<form:label path="active" class="left">Active</form:label>
-					<form:select path="active" items="${common_boolean_yn_code}" itemValue="codeValue" itemLabel="codeName"/>
+					<form:select path="active" items="${requestScope['common.boolean.yn.code']}" itemValue="codeId" itemLabel="codeName"/>
 				</p>
 				<p>
 					<label class="left"></label>

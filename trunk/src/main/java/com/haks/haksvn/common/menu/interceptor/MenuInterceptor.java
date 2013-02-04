@@ -78,7 +78,7 @@ public class MenuInterceptor extends HandlerInterceptorAdapter {
         String selectedMenuNameLevel2 = "";
         String selectedMenuNameLevel3 = "";
 				
-		if("00".equals(menuService.retireveViewType(viewPath))){
+		if("menu.view.type.code.default".equals(menuService.retireveViewType(viewPath))){
 			// ecache 로 변경할 것 menuList 포함
 			//String requestJspPath = "";
 			for( MenuNode menuLevel1 : menuList ){
@@ -101,7 +101,7 @@ public class MenuInterceptor extends HandlerInterceptorAdapter {
 			session.setAttribute("selectedMenuNameLevel2", selectedMenuNameLevel2);
 			session.setAttribute("selectedMenuNameLevel3", selectedMenuNameLevel3);
 		}
-		else if("01".equals(menuService.retireveViewType(viewPath))){
+		else if("menu.view.type.code.leftmenu".equals(menuService.retireveViewType(viewPath))){
 			// ecache 로 변경할 것 menuList 포함
 			//String requestJspPath = "";
 			for( MenuNode menuLevel1 : menuList ){

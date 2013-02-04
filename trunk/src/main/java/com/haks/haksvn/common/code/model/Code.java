@@ -1,15 +1,25 @@
 package com.haks.haksvn.common.code.model;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
 import javax.persistence.Table;
 
 import org.hibernate.annotations.FilterDef;
 import org.hibernate.annotations.FilterDefs;
 import org.hibernate.annotations.ParamDef;
+
+import com.haks.haksvn.user.model.User;
 
 @Entity
 @Table(name="code")
@@ -20,9 +30,8 @@ import org.hibernate.annotations.ParamDef;
 public class Code {
 
 	@Id
-    @GeneratedValue(strategy=GenerationType.AUTO)
-	@Column(name = "code_seq",unique = true, nullable = false)
-    private int codeSeq;
+	@Column(name = "code_id",unique = true, nullable = false)
+    private String codeId;
 	
 	@Column(name = "code_group",nullable = false)
 	private String codeGroup;
@@ -40,12 +49,18 @@ public class Code {
 		
 	}
 
-	public int getCodeSeq() {
-		return codeSeq;
+	@Override
+	public String toString(){
+		return "[ Code ]\n - codeId : " + codeId + "\n - codeGroup : " + codeGroup +
+					"\n - codeName : " + codeName + "\n - codeValue : " + codeValue + "\n - codeOrder : " + codeOrder;
+	}
+	
+	public String getCodeId() {
+		return codeId;
 	}
 
-	public void setCodeSeq(int codeSeq) {
-		this.codeSeq = codeSeq;
+	public void setCodeId(String codeId){
+		this.codeId = codeId;
 	}
 
 	public String getCodeGroup() {
@@ -79,5 +94,6 @@ public class Code {
 	public void setCodeOrder(int codeOrder) {
 		this.codeOrder = codeOrder;
 	}
+
 
 }
