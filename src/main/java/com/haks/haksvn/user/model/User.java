@@ -1,6 +1,5 @@
 package com.haks.haksvn.user.model;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -8,9 +7,9 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 
 import org.hibernate.annotations.FilterDef;
 import org.hibernate.annotations.ParamDef;
@@ -73,11 +72,11 @@ public class User{
 	@JoinFormula(value="SELECT c.* FROM code c WHERE c.code_group='user_auth_type_code'")
 	*/
 	//@Formula(value="SELECT c.* FROM code c WHERE c.code_group='user_auth_type_code'")
-	@ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL )
+	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name="auth_type", referencedColumnName="code_id", insertable=false, updatable=false)
 	//@JoinTable(name = "code", joinColumns = { @JoinColumn(name = "code_id", referencedColumnName = "auth_type", nullable = false) })
 	//@WhereJoinTable(clause = "code_group='user_auth_type_code'")
-	private Code authTypeCode = new Code();
+	private Code authTypeCode;// = new Code();
 	
 	public User(){
 		
