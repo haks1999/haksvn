@@ -20,7 +20,7 @@ insert into code (code_id, code_group, code_name, code_value, code_order) values
 insert into code (code_id, code_group, code_name, code_value, code_order) values ('user.auth.type.code.reviewer'		,'user.auth.type.code'		,'reviewer', '20', 20 );
 insert into code (code_id, code_group, code_name, code_value, code_order) values ('user.auth.type.code.commiter'		,'user.auth.type.code'		,'commiter', '30', 30 );
 
-insert into repositories (repository_seq, repository_location, active, repository_name, trunk_path, tags_path, auth_user_id, auth_user_passwd ) values (1,'https://haksvn.googlecode.com/svn', 'common.boolean.yn.code.y', 'test svn', '/trunk', '/tags', 'haks1999', 'aW9fj8bm9Rt5' );
+insert into repositories (repository_seq, repository_location, active, repository_name, trunk_path, tags_path, auth_user_id, auth_user_passwd ) values (1,'https://haksvn.googlecode.com/svn', 'common.boolean.yn.code.y', 'haksvn google repository', '/trunk', '/tags', 'haks1999', 'aW9fj8bm9Rt5' );
 
 insert into users(user_seq, user_id, user_name, active, email, user_passwd, auth_type) values (1,'admin','administrator','common.boolean.yn.code.y','admin@gmail.com','admin', 'user.auth.type.code.system-admin');
 insert into users(user_seq, user_id, user_name, active, email, user_passwd, auth_type ) values (2,'haks','seungrin.lee','common.boolean.yn.code.y','haks1999@gmail.com','haks', 'user.auth.type.code.system-admin');

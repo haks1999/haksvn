@@ -5,16 +5,20 @@
 		$("#sel_repository").change(retrieveRepositoryUserList);
    	});
 	
-	function retrieveRepositoryUserList(  ){
+	function retrieveRepositoryUserList(){
 		var repositorySeq = $("#sel_repository > option:selected").val();
-		$.getJSON( "<c:url value="/configuration/repositories/listUser"/>" + "/" + repositorySeq, function(data) {
-			for( var inx = 0 ; inx < data.length ; inx++ ){
-				var row = '<tr><td>' + data[inx].userId + '</td>' +
-							'<td>' + data[inx].userName + '</td>' +
-							'<td>' + data[inx].email + '</td>' +
-							'<td>' + data[inx].authType + '</td></tr>';
-				$('#tbl_users').append(row);
-			}
+		$.getJSON( "<c:url value="/configuration/repositories/listUser"/>" + "/" + repositorySeq
+				,function(data) {
+					for( var inx = 0 ; inx < data.length ; inx++ ){
+						var row = $("#tbl_userList > tbody > .sample").clone();
+						var defaultLink = $(row).find(".userId a").attr("href");
+						$(row).find(".userId a").text(data[inx].userId).attr("href", defaultLink + data[inx].userSeq);
+						$(row).children(".userName").text(data[inx].userName);
+						$(row).children(".email").text(data[inx].email);
+						$(row).children(".authType").text(data[inx].authTypeCode.codeName);
+						$(row).removeClass("sample");
+						$('#tbl_userList > tbody').append(row)
+					}
 		});
 	}
 </script>
@@ -42,25 +46,27 @@
 				</div>
 			</div>
 
-			<table id="tbl_users">
-				<tr>
-					<th>ID</th>
-					<th>Name</th>
-					<th>Email</th>
-					<th>User Authority</th>
-				</tr>
-				<c:forEach items="${userList}" var="user">
+			<table id="tbl_userList">
+				<thead>
 					<tr>
-						<td>
-							<a href="<c:url value="/configuration/users/list/${user.userSeq}"/>"><c:out value="${user.userId}" /></a>
-						</td>
-						<td><c:out value="${user.userName}" /></td>
-						<td><c:out value="${user.email}" /></td>
-						<td>
-							<haksvn:select name="active" codeGroup="user_auth_type_code" selectedValue="${user.authType}" disabled="true" cssClass="readonly_list"></haksvn:select>
-						</td>
+						<th class="checkbox"><input type="checkbox"/></th>
+						<th>ID</th>
+						<th>Name</th>
+						<th>Email</th>
+						<th>User Authority</th>
 					</tr>
-				</c:forEach>
+				</thead>
+				<tbody>
+					<tr class="sample">
+						<td class="checkbox"><input type="checkbox"/></td>
+						<td class="userId">
+							<a href="<c:url value="/configuration/users/list/"/>">test</a>
+						</td>
+						<td class="userName"></td>
+						<td class="email"></td>
+						<td class="authType"></td>
+					</tr>
+				</tbody>
 			</table>
 			
 			<p>

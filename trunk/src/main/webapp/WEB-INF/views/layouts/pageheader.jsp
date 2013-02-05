@@ -10,6 +10,7 @@
 	<title><tiles:getAsString name="title" /></title>
 	
 	<link rel="stylesheet" href="<c:url value="/css/style.css"/>" type="text/css"	media="screen" />
+	<link rel="stylesheet" href="<c:url value="/css/haksvn.css"/>" type="text/css"	media="screen" />
 	<script src="<c:url value="/js/jquery.js"/>" type="text/javascript" charset="utf-8"></script>
 	<script src="<c:url value="/js/jquery.blockUI.js"/>" type="text/javascript" charset="utf-8"></script>
 	<script src="<c:url value="/js/jquery.form.js"/>" type="text/javascript" charset="utf-8"></script>
