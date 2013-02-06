@@ -13,3 +13,9 @@ color:#666;
 margin:0px;
 font-size:12px;
 }
+
+.box select {
+border:1px solid #dbdbdb;
+color:#666;
+padding:5px;
+}

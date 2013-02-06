@@ -168,7 +168,6 @@
 		<div class="content">
 			<div class="box">
 				<div class="head"><div></div></div>
-				<h2><!-- box header --></h2>
 				<div class="desc">
 					<p>
 						<label>Repository Name</label> 
