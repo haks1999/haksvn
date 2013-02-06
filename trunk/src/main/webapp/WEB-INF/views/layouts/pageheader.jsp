@@ -11,13 +11,21 @@
 	
 	<link rel="stylesheet" href="<c:url value="/css/style.css"/>" type="text/css"	media="screen" />
 	<link rel="stylesheet" href="<c:url value="/css/haksvn.css"/>" type="text/css"	media="screen" />
-	<script src="<c:url value="/js/jquery.js"/>" type="text/javascript" charset="utf-8"></script>
+	<link rel="stylesheet" href="<c:url value="/css/jquery-ui-1.9.2.custom.css"/>" type="text/css"	media="screen" />
+	<script src="<c:url value="/js/jquery-1.8.3.js"/>" type="text/javascript" charset="utf-8"></script>
 	<script src="<c:url value="/js/jquery.blockUI.js"/>" type="text/javascript" charset="utf-8"></script>
 	<script src="<c:url value="/js/jquery.form.js"/>" type="text/javascript" charset="utf-8"></script>
 	<script src="<c:url value="/js/jquery.validate.min.js"/>" type="text/javascript" charset="utf-8"></script>
+	<script src="<c:url value="/js/jquery-ui-1.9.2.custom.js"/>" type="text/javascript" charset="utf-8"></script>
 	<script src="<c:url value="/js/global.js"/>" type="text/javascript" charset="utf-8"></script>
 	<script src="<c:url value="/js/modal.js"/>" type="text/javascript" charset="utf-8"></script>
+	<script src="<c:url value="/js/haksvn.js"/>" type="text/javascript" charset="utf-8"></script>
 	<script type="text/javascript">
-		$.ajaxSetup({ cache: false });
+		$.ajaxSetup({ 
+			cache : false,
+			error : function(jqXHR, textStatus, errorThrown) {
+				$().Message({type:'error', text: textStatus + " : " + jqXHR.status + " : " + errorThrown});
+		    }	
+		});
 	</script>
 </head>

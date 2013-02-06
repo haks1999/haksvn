@@ -37,13 +37,14 @@ $(document).ready(function() {
 	//Empty the input, when clicked(Search input)		
 });
 
+
 /*
 * jQuery message plugin
 *
 * Created by Peter Viszt (gtpassatgt@gmail.com) on 2010-10-01.
 *
 */
-(function(a){a.fn.Message=function(b){var c={type:"error",time:2000,text:"Error!",target:"#messages",click:true,single:true};var b=a.extend(c,b);var d=Math.ceil(Math.random()*10000);return (function(){var e='<div class="'+b.type+' _msgbox" id="'+d+'" style="display:none"><div class="tl"></div><div class="tr"></div><div class="desc"><p>'+b.text+'</p></div><div class="bl"></div><div class="br"></div></div>';if(b.single){a('._msgbox').remove();};a(b.target).append(e);if(b.click){a("#"+d).addClass("click_close")}a("#"+d).slideDown(function(){setTimeout(function(){a("#"+d).slideUp(function(){a("#"+d).remove()})},b.time)});a(".click_close").live("click",function(){a(this).slideUp(function(){a(this).remove()})})})()}})(jQuery);
+(function(a){a.fn.Message=function(b){var c={type:"error",time:10000,text:"Error!",target:"#_global_message",click:false,single:true};var b=a.extend(c,b);var d=Math.ceil(Math.random()*10000);return (function(){var e='<div class="'+b.type+' _msgbox" id="'+d+'" style="display:none"><div class="tl"></div><div class="tr"></div><div class="desc"><p>'+b.text+'</p></div><div class="bl"></div><div class="br"></div></div>';if(b.single){a('._msgbox').remove();};a(b.target).append(e);if(b.click){a("#"+d).addClass("click_close")}a("#"+d).slideDown(function(){setTimeout(function(){a("#"+d).slideUp(function(){a("#"+d).remove()})},b.time)});a(".click_close").live("click",function(){a(this).slideUp(function(){a(this).remove()})})})()}})(jQuery);
 
 /*
 * jQuery custom checkbox plugin

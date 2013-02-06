@@ -62,4 +62,10 @@ public class UserService {
 		
 	}
 	
+	public List<User> retrieveActiveUserByUserIdOrUserName(String searchString){
+		List<User> userList = userDao.retrieveActiveUserByUserIdOrUserName(searchString);
+		return userList;
+		
+	}
+	
 }

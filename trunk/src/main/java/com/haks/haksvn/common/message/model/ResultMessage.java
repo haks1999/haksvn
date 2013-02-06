@@ -4,6 +4,13 @@ public class ResultMessage extends DefaultMessage{
 
 	private boolean success = true;
 	
+	public ResultMessage(){
+		super();
+	}
+	
+	public ResultMessage(String text){
+		super(text);
+	}
 	
 	
 	@Override

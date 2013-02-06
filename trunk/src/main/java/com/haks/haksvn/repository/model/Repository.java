@@ -11,8 +11,9 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
-import javax.persistence.OneToMany;
+import javax.persistence.ManyToMany;
 import javax.persistence.Table;
+import javax.persistence.UniqueConstraint;
 
 import org.hibernate.annotations.DynamicUpdate;
 import org.hibernate.annotations.Fetch;
@@ -60,15 +61,15 @@ public class Repository{
 	@NotEmpty(message="user password : Mandantory Field")
 	private String authUserPasswd;
 	
-	@OneToMany(fetch=FetchType.EAGER)
+	@ManyToMany(targetEntity = User.class, fetch=FetchType.EAGER)
 	@org.hibernate.annotations.Cascade(value=org.hibernate.annotations.CascadeType.DELETE)
 	//@Cascade(org.hibernate.annotations.CascadeType.REPLICATE)
 	//@Cascade({org.hibernate.annotations.CascadeType.DETACH})
 	@Fetch(FetchMode.SUBSELECT)
-	@JoinTable(name = "repositories_users", joinColumns = { 
-			@JoinColumn(name = "repository_seq", nullable = false, updatable = false) }, 
-			inverseJoinColumns = { @JoinColumn(name = "user_seq", 
-					nullable = false, updatable = false) })
+	@JoinTable(name = "repositories_users", 
+			joinColumns = { @JoinColumn(name = "repository_seq", nullable = false, updatable = false) }, 
+			inverseJoinColumns = { @JoinColumn(name = "user_seq",nullable = false, updatable = false) },
+			uniqueConstraints = { @UniqueConstraint(columnNames = {"repository_seq","user_seq"})})
 	private List<User> userList = new ArrayList<User>();
 	
 	public Repository(){
@@ -187,6 +188,10 @@ public class Repository{
 			return repository;
 		}
 		
+		public Builder repositorySeq(int repositorySeq){
+			repository.setRepositorySeq(repositorySeq);
+			return this;
+		}
 		
 		public Builder repositoryLocation(String repositoryLocation){
 			repository.setRepositoryLocation(repositoryLocation);

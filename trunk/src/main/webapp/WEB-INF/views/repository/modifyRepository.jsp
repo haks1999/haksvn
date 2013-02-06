@@ -24,17 +24,18 @@
 			queryString,
             function(data){
 				$.unblockUI();
-				$().Message({type:data.type,time:10000,text:data.text,target:"#div_repositoryMessage",click:false}); 
+				$().Message({type:data.type,text:data.text});
+				
         },"json");
 		
 		//$().Message({type:'error',time:10000,text:"Some text",target:"#div_repositoryMessage",click:false}); 
 	}
+	
 </script>
 <div id="table" class="help">
 	<h1>Repository Information</h1>
 	<div class="col w10 last">
 		<div class="content">
-			<div id="div_repositoryMessage"></div>
 			<form:form commandName="repository" class="w200" id="frm_repository" method="post">
 					<form:hidden path="repositorySeq" name="repositorySeq"/>
 				<p>
