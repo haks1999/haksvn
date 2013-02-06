@@ -17,6 +17,7 @@
 						</div>
 						<div style="float:left; width:100%;z-index:100;z-index:-1;">
 							<div style="margin-left:200px">
+								<div id="_global_message"></div>
 								<tiles:insertAttribute name="content" />
 							</div>
 						</div>

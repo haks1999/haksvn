@@ -8,13 +8,14 @@ import org.tmatesoft.svn.core.io.SVNRepository;
 import org.tmatesoft.svn.core.io.SVNRepositoryFactory;
 import org.tmatesoft.svn.core.wc.SVNWCUtil;
 
+import com.haks.haksvn.common.exception.HaksvnException;
 import com.haks.haksvn.common.message.model.DefaultMessage;
 import com.haks.haksvn.repository.model.Repository;
 
 @Service
 public class SVNRepositoryService {
 
-	public DefaultMessage testConnection( Repository repository ){
+	public DefaultMessage testConnection( Repository repository ) throws HaksvnException{
 		
 		DefaultMessage message = new DefaultMessage();
 		ISVNEditor editor = null; 
@@ -26,18 +27,14 @@ public class SVNRepositoryService {
             editor.openRoot(-1); 
         }catch(Exception e){
         	e.printStackTrace();
-        	message.setType(DefaultMessage.TYPE.ERROR);
-        	message.setText(e.getMessage());
-        	return message;
+        	throw new HaksvnException(e.getMessage());
 		} finally {
 			if (editor != null) {
 				try {
 					editor.abortEdit();
 				} catch (Exception e) {
 					e.printStackTrace();
-					message.setType(DefaultMessage.TYPE.ERROR);
-					message.setText(e.getMessage());
-					return message;
+					throw new HaksvnException(e.getMessage());
 				}
 			}
 		}

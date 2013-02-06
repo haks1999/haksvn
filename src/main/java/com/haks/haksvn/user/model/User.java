@@ -1,5 +1,8 @@
 package com.haks.haksvn.user.model;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -7,15 +10,19 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
-import javax.persistence.Transient;
 
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
 import org.hibernate.annotations.FilterDef;
 import org.hibernate.annotations.ParamDef;
 import org.hibernate.validator.constraints.NotEmpty;
 
 import com.haks.haksvn.common.code.model.Code;
+import com.haks.haksvn.repository.model.Repository;
 
 @Entity
 @Table(name="users")
@@ -78,6 +85,22 @@ public class User{
 	//@WhereJoinTable(clause = "code_group='user_auth_type_code'")
 	private Code authTypeCode;// = new Code();
 	
+	
+	/*
+	@ManyToMany(fetch=FetchType.EAGER)
+	@org.hibernate.annotations.Cascade(value=org.hibernate.annotations.CascadeType.DELETE)
+	@Fetch(FetchMode.SUBSELECT)
+	@JoinTable(name = "repositories_users", joinColumns = { 
+			@JoinColumn(name = "user_seq", nullable = false, updatable = false) }, 
+			inverseJoinColumns = { @JoinColumn(name = "repository_seq", 
+					nullable = false, updatable = false) })
+					*/
+	/*
+	@ManyToMany(fetch=FetchType.EAGER, mappedBy = "userList")
+	@org.hibernate.annotations.Cascade(value=org.hibernate.annotations.CascadeType.DELETE)
+	@Fetch(FetchMode.SUBSELECT)
+	private List<Repository> repositoryList = new ArrayList<Repository>();
+	*/
 	public User(){
 		
 	}
@@ -152,6 +175,14 @@ public class User{
 		this.authTypeCode = authTypeCode;
 	}
 	
+	/*
+	public List<Repository> getRepositoryList() {
+		return repositoryList;
+	}
+
+	public void setRepositoryList(List<Repository> repositoryList) {
+		this.repositoryList = repositoryList;
+	}
 	
 	/*
 	public Set<Repository> getRepositories() {
@@ -164,5 +195,59 @@ public class User{
 	*/
 	
 	
+
+
+
+	public static class Builder{
+		
+		private User user;
+		
+		private Builder(User user){
+			this.user = user;
+		}
+		
+		public static Builder getBuilder(User user){
+			return new Builder(user);
+		}
+		
+		public User build(){
+			return user;
+		}
+		
+		public Builder userId(String userId){
+			user.setUserId(userId);
+			return this;
+		}
+		
+		public Builder userName(String userName){
+			user.setUserName(userName);
+			return this;
+		}
+		
+		public Builder active(String active){
+			user.setActive(active);
+			return this;
+		}
+		
+		public Builder email(String email){
+			user.setEmail(email);
+			return this;
+		}
+		
+		public Builder userPasswd(String userPasswd){
+			user.setUserPasswd(userPasswd);
+			return this;
+		}
+		
+		public Builder authType(String authType){
+			user.setAuthType(authType);
+			return this;
+		}
+		
+		public Builder authTypeCode(Code authTypeCode){
+			user.setAuthTypeCode(authTypeCode);
+			return this;
+		}
+	}
 	
 }

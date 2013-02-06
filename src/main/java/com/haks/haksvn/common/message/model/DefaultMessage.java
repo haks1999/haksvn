@@ -9,8 +9,16 @@ public class DefaultMessage {
 	}
 	
 	
-	private String type = TYPE.INFO;
+	private String type = TYPE.SUCCESS;
 	private String text = "";
+	
+	public DefaultMessage(){
+		
+	}
+	
+	public DefaultMessage(String text){
+		this.text = text;
+	}
 	
 	public String getType() {
 		return type;

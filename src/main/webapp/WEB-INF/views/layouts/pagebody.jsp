@@ -9,7 +9,7 @@
 				<tiles:insertAttribute name="menu" />
 				<div id="desc">
 					<div class="body">
-						
+						<div id="_global_message"></div>
 						<tiles:insertAttribute name="content" />
 						<!--
 						<div id="messages">mess</div>
