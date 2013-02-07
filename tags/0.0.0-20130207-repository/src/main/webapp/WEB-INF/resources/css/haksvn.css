@@ -1,0 +1,21 @@
+tr.sample{
+	display:none;
+}
+
+input.text,textarea {
+border:1px solid #d6d6d6;
+-moz-border-radius:20px;
+-webkit-border-radius:20px;
+border-radius:20px;
+background:#fff;
+padding:6px;
+color:#666;
+margin:0px;
+font-size:12px;
+}
+
+.box select {
+border:1px solid #dbdbdb;
+color:#666;
+padding:5px;
+}
