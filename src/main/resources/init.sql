@@ -20,22 +20,23 @@ insert into code (code_id, code_group, code_name, code_value, code_order) values
 insert into code (code_id, code_group, code_name, code_value, code_order) values ('user.auth.type.code.reviewer'		,'user.auth.type.code'			,'reviewer'		,'20'	,20 );
 insert into code (code_id, code_group, code_name, code_value, code_order) values ('user.auth.type.code.commiter'		,'user.auth.type.code'			,'commiter'		,'30'	,30 );
 insert into code (code_id, code_group, code_name, code_value, code_order) values ('server.connect.type.code.local'	,'server.connect.type.code'		,'local'		,'n/a'	,10 );
-insert into code (code_id, code_group, code_name, code_value, code_order) values ('server.connect.type.code.ssh'		,'server.connect.type.ssh'		,'ssh'			,'22'	,20 );
-insert into code (code_id, code_group, code_name, code_value, code_order) values ('server.connect.type.code.telnet'	,'server.connect.type.telnet'	,'telnet'		,'23'	,20 );
+insert into code (code_id, code_group, code_name, code_value, code_order) values ('server.connect.type.code.ssh'		,'server.connect.type.code'		,'ssh'			,'22'	,20 );
+insert into code (code_id, code_group, code_name, code_value, code_order) values ('server.connect.type.code.telnet'	,'server.connect.type.code'		,'telnet'		,'23'	,20 );
 insert into code (code_id, code_group, code_name, code_value, code_order) values ('svn.passwd.type.code.plain'		,'svn.passwd.type.code'			,'plain text'	,'10'	,10 );
 insert into code (code_id, code_group, code_name, code_value, code_order) values ('svn.passwd.type.code.md5-apache'	,'svn.passwd.type.code'			,'MD5(Apache)'	,'20'	,20 );
 
 insert into repositories (repository_seq, repository_location, active, repository_name, trunk_path, tags_path, auth_user_id, auth_user_passwd, sync_user ) values (1,'https://haksvn.googlecode.com/svn', 'common.boolean.yn.code.y', 'haksvn google repository', '/trunk', '/tags', 'haks1999', 'aW9fj8bm9Rt5','common.boolean.yn.code.n' );
 insert into repositories (repository_seq, repository_location, active, repository_name, trunk_path, tags_path, auth_user_id, auth_user_passwd, sync_user ) values (2,'https://localhost/svn/main', 'common.boolean.yn.code.y', 'test local repository', '/trunk', '/tags', 'haks1999', 'haks1999','common.boolean.yn.code.y' );
 
---insert into repository_server (repository_seq, connect_type, server_ip, user_id, user_passwd, authz_path, passwd_path)
+insert into repository_server (repository_seq, connect_type, server_ip, user_id, user_passwd, authz_path, passwd_path, passwd_type) values (2, 'server.connect.type.code.local', null, null, null, 'c:\ss', 'c:\aa', 'svn.passwd.type.code.md5-apache' );
 
 insert into users(user_seq, user_id, user_name, active, email, user_passwd, auth_type) values (1,'admin','administrator','common.boolean.yn.code.y','admin@gmail.com','admin', 'user.auth.type.code.system-admin');
 insert into users(user_seq, user_id, user_name, active, email, user_passwd, auth_type) values (2,'haks','seungrin.lee','common.boolean.yn.code.y','haks1999@gmail.com','haks', 'user.auth.type.code.system-admin');
 insert into users(user_seq, user_id, user_name, active, email, user_passwd, auth_type) values (3,'ggae','ildong.yang','common.boolean.yn.code.y','ggae123@gmail.com','ggae', 'user.auth.type.code.system-admin');
-insert into users(user_seq, user_id, user_name, active, email, user_passwd, auth_type) values (4,'user01','test-user001','common.boolean.yn.code.y','user01@gmail.com','user01', 'user.auth.type.code.commiter');
-insert into users(user_seq, user_id, user_name, active, email, user_passwd, auth_type) values (5,'user02','test-user002','common.boolean.yn.code.y','user02@gmail.com','user02', 'user.auth.type.code.commiter');
-insert into users(user_seq, user_id, user_name, active, email, user_passwd, auth_type) values (6,'user03','test-user003','common.boolean.yn.code.y','user03@gmail.com','user03', 'user.auth.type.code.commiter');
+insert into users(user_seq, user_id, user_name, active, email, user_passwd, auth_type) values (4,'spike0201','jinyoon.kim','common.boolean.yn.code.y','spike0201@lgcns.com','1234', 'user.auth.type.code.system-admin');
+insert into users(user_seq, user_id, user_name, active, email, user_passwd, auth_type) values (5,'user01','test-user001','common.boolean.yn.code.y','user01@gmail.com','user01', 'user.auth.type.code.commiter');
+insert into users(user_seq, user_id, user_name, active, email, user_passwd, auth_type) values (6,'user02','test-user002','common.boolean.yn.code.y','user02@gmail.com','user02', 'user.auth.type.code.commiter');
+insert into users(user_seq, user_id, user_name, active, email, user_passwd, auth_type) values (7,'user03','test-user003','common.boolean.yn.code.y','user03@gmail.com','user03', 'user.auth.type.code.commiter');
 
 insert into repositories_users(repository_seq, user_seq) values (1,1);
 insert into repositories_users(repository_seq, user_seq) values (1,2);

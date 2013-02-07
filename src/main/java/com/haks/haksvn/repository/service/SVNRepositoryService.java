@@ -15,9 +15,8 @@ import com.haks.haksvn.repository.model.Repository;
 @Service
 public class SVNRepositoryService {
 
-	public DefaultMessage testConnection( Repository repository ) throws HaksvnException{
+	public boolean testConnection( Repository repository ) throws HaksvnException{
 		
-		DefaultMessage message = new DefaultMessage();
 		ISVNEditor editor = null; 
 		try{
 			SVNRepository targetRepository = SVNRepositoryFactory.create(SVNURL.parseURIDecoded(repository.getRepositoryLocation()));
@@ -38,8 +37,6 @@ public class SVNRepositoryService {
 				}
 			}
 		}
-		message.setType(DefaultMessage.TYPE.SUCCESS);
-    	message.setText("connection test success");
-    	return message;
+    	return true;
 	}
 }

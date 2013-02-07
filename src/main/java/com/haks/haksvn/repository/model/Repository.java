@@ -12,6 +12,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 
@@ -62,7 +63,7 @@ public class Repository{
 	private String authUserPasswd;
 	
 	@Column(name = "sync_user",nullable = false)
-	private String syncUser = "common.boolean.yn.code.n";
+	private String syncUser = "common.boolean.yn.code.y";
 	
 	@ManyToMany(targetEntity = User.class, fetch=FetchType.EAGER)
 	@org.hibernate.annotations.Cascade(value=org.hibernate.annotations.CascadeType.DELETE)
@@ -74,6 +75,13 @@ public class Repository{
 			inverseJoinColumns = { @JoinColumn(name = "user_seq",nullable = false, updatable = false) },
 			uniqueConstraints = { @UniqueConstraint(columnNames = {"repository_seq","user_seq"})})
 	private List<User> userList = new ArrayList<User>();
+	
+	//@OneToOne(optional=true,fetch=FetchType.EAGER)
+	@OneToOne(optional=true, targetEntity = RepositoryServer.class,fetch=FetchType.EAGER)
+	@org.hibernate.annotations.Cascade(value=org.hibernate.annotations.CascadeType.DELETE)
+	@JoinColumn(name="repository_seq", insertable=false, updatable=false)
+	private RepositoryServer repositoryServer;
+	
 	
 	public Repository(){
 		
@@ -181,6 +189,13 @@ public class Repository{
 		this.userList = userList;
 	}
 	
+	public RepositoryServer getRepositoryServer(){
+		return repositoryServer;
+	}
+	
+	public void setRepositoryServer(RepositoryServer repositoryServer){
+		this.repositoryServer = repositoryServer;
+	}
 	
 	
 	public static class Builder{
@@ -246,6 +261,11 @@ public class Repository{
 		
 		public Builder userList(List<User> userList){
 			repository.setUsers(userList);
+			return this;
+		}
+		
+		public Builder repositoryServer(RepositoryServer repositoryServer){
+			repository.setRepositoryServer(repositoryServer);
 			return this;
 		}
 		

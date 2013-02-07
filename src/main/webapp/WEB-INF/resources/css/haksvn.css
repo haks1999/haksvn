@@ -19,3 +19,12 @@ border:1px solid #dbdbdb;
 color:#666;
 padding:5px;
 }
+
+form input.plaincheckbox {
+width: 26px;
+height: 26px;
+padding: 0;
+margin:0;
+vertical-align: bottom;
+position: relative;
+}

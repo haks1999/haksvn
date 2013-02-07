@@ -8,22 +8,11 @@
    	});
 	
 	function testConnection(){
-		
-		$.blockUI({ css: { 
-            border: 'none', 
-            padding: '15px', 
-            backgroundColor: '#000', 
-            '-webkit-border-radius': '10px', 
-            '-moz-border-radius': '10px', 
-            opacity: .5, 
-            color: '#fff' 
-        } }); 
-		
+		ajaxProcessing();
 		var queryString = $('#frm_repository').serialize();
 		$.post("<c:url value="/configuration/repositories/testConnection"/>",
 			queryString,
             function(data){
-				$.unblockUI();
 				$().Message({type:data.type,text:data.text});
 				
         },"json");
@@ -31,13 +20,25 @@
 		//$().Message({type:'error',time:10000,text:"Some text",target:"#div_repositoryMessage",click:false}); 
 	}
 	
+	function selectSynchrozingUser( selection ){
+		if(selection){
+			$('#div_serverSettings').slideDown();
+			frm_repository.syncUser.value = 'common.boolean.yn.code.y';
+		}else{
+			$('#div_serverSettings').slideUp();
+			frm_repository.syncUser.value = 'common.boolean.yn.code.n';
+		}
+	}
+	
 </script>
 <div id="table" class="help">
 	<h1>Repository Information</h1>
 	<div class="col w10 last">
 		<div class="content">
+		
 			<form:form commandName="repository" class="w200" id="frm_repository" method="post">
 					<form:hidden path="repositorySeq" name="repositorySeq"/>
+				<p><span class="strong">Repository Settings</span></p>
 				<p>
 					<form:label path="repositoryName" class="left">Repository Name</form:label>
 					<form:input class="text w_20" path="repositoryName"/>
@@ -74,6 +75,44 @@
 					<form:label path="active" class="left">Active</form:label>
 					<form:select path="active" items="${requestScope['common.boolean.yn.code']}" itemValue="codeId" itemLabel="codeName"/>
 				</p>
+				<p>
+					<c:if test="${repository.syncUser eq 'common.boolean.yn.code.y'}" var="syncUser" />
+					<label for="ckb_syncUser" class="left">Synchronize User</label>
+					<input id="ckb_syncUser" type="checkbox" class="plaincheckbox" ${syncUser? "checked":""} onclick="selectSynchrozingUser(this.checked)"/>
+					<form:hidden path="syncUser"/>
+				</p>
+				<div id="div_serverSettings" style="${syncUser? '' : 'display:none;'}">
+					<hr>
+					<p><span class="strong">Server Settings</span></p>
+					<p>
+						<form:label path="repositoryServer.connectType" class="left">Connection Type</form:label>
+						<form:select path="repositoryServer.connectType" items="${requestScope['server.connect.type.code']}" itemValue="codeId" itemLabel="codeName"/>
+					</p>
+					<p>
+						<form:label path="repositoryServer.serverIp" class="left">Server address</form:label>
+						<form:input path="repositoryServer.serverIp" class="text w_20" />
+					</p>
+					<p>
+						<form:label path="repositoryServer.userId" class="left">User ID</form:label>
+						<form:input path="repositoryServer.userId" class="text w_10" />
+					</p>
+					<p>
+						<form:label path="repositoryServer.userPasswd" class="left">User Password</form:label>
+						<form:input path="repositoryServer.userPasswd" class="text w_10" />
+					</p>
+					<p>
+						<form:label path="repositoryServer.authzPath" class="left">authz file path</form:label>
+						<form:input path="repositoryServer.authzPath" class="text w_30" />
+					</p>
+					<p>
+						<form:label path="repositoryServer.passwdType" class="left">SVN password type</form:label>
+						<form:select path="repositoryServer.passwdType" items="${requestScope['svn.passwd.type.code']}" itemValue="codeId" itemLabel="codeName"/>
+					</p>
+					<p>
+						<form:label path="repositoryServer.passwdPath" class="left">passwd file path</form:label>
+						<form:input path="repositoryServer.passwdPath" class="text w_30" />
+					</p>
+				</div>
 				<p>
 					<label class="left"></label>
 					<a class="button mt yellow " ><small class="icon settings"></small><span onclick="testConnection()">Test Connection</span></a>

@@ -25,7 +25,10 @@
 			cache : false,
 			error : function(jqXHR, textStatus, errorThrown) {
 				$().Message({type:'error', text: textStatus + " : " + jqXHR.status + " : " + errorThrown});
-		    }	
+		    },
+		    complete : function( jqXHR ,textStatus ){
+		    	$.unblockUI();
+		    }
 		});
 	</script>
 </head>
