@@ -19,22 +19,30 @@
 	<div class="col w10 last">
 		<div class="content">
 			<table id="tbl_repositories">
-				<tr>
-					<th>Name</th>
-					<th>Location</th>
-					<th>Active</th>
-				</tr>
-				<c:forEach items="${repositoryList}" var="repository">
+				<thead>
 					<tr>
-						<td>
-							<a href="<c:url value="/configuration/repositories/list/${repository.repositorySeq}"/>"><c:out value="${repository.repositoryName}" /></a>
-						</td>
-						<td><c:out value="${repository.repositoryLocation}" /></td>
-						<td>
-							<haksvn:select name="active" codeGroup="common.boolean.yn.code" selectedValue="${repository.active}" disabled="true" cssClass="readonly_list"></haksvn:select>
-						</td>
+						<th>Name</th>
+						<th>Location</th>
+						<th>Sync User</th>
+						<th>Active</th>
 					</tr>
-				</c:forEach>
+				</thead>
+				<tbody>
+					<c:forEach items="${repositoryList}" var="repository">
+						<tr>
+							<td>
+								<a href="<c:url value="/configuration/repositories/list/${repository.repositorySeq}"/>"><c:out value="${repository.repositoryName}" /></a>
+							</td>
+							<td><c:out value="${repository.repositoryLocation}" /></td>
+							<td>
+								<haksvn:select name="syncUser" codeGroup="common.boolean.yn.code" selectedValue="${repository.syncUser}" disabled="true" cssClass="readonly_list"></haksvn:select>
+							</td>
+							<td>
+								<haksvn:select name="active" codeGroup="common.boolean.yn.code" selectedValue="${repository.active}" disabled="true" cssClass="readonly_list"></haksvn:select>
+							</td>
+						</tr>
+					</c:forEach>
+				</tbody>
 			</table>
 		</div>
 	</div>

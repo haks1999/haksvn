@@ -180,9 +180,7 @@
 						</select>
 					</p>
 				</div>
-				<div class="bottom">
-					<div></div>
-				</div>
+				<div class="bottom"><div></div></div>
 			</div>
 
 			<table id="tbl_userList">
