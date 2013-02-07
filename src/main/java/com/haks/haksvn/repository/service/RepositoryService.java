@@ -60,7 +60,7 @@ public class RepositoryService {
 				.active(repository.getActive())
 				.authUserId(repository.getAuthUserId()).authUserPasswd(repository.getAuthUserPasswd())
 				.repositoryLocation(repository.getRepositoryLocation()).repositoryName(repository.getRepositoryName())
-				.tagsPath(repository.getTagsPath()).trunkPath(repository.getTrunkPath());
+				.tagsPath(repository.getTagsPath()).trunkPath(repository.getTrunkPath()).syncUser(repository.getSyncUser());
 			
 			return repositoryDao.updateRepository(repositoryInHibernate);
 		}
@@ -85,6 +85,7 @@ public class RepositoryService {
 	
 	public Repository deleteRepositoryUser(int repositorySeq, List<String> userIdList) throws HaksvnException{
 		
+		if( userIdList.size() < 1) throw new HaksvnException("does not select user ");
 		// TODO
 		// List.remove 를 통하여 삭제하여 update 실행 시 concurrentmodification 오류 발생
 		// 테스트용으로 신규 리스트에 추가하는 방식으로 하니 잘 돌아감. 이유 분석 필요

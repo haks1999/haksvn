@@ -61,6 +61,9 @@ public class Repository{
 	@NotEmpty(message="user password : Mandantory Field")
 	private String authUserPasswd;
 	
+	@Column(name = "sync_user",nullable = false)
+	private String syncUser = "common.boolean.yn.code.n";
+	
 	@ManyToMany(targetEntity = User.class, fetch=FetchType.EAGER)
 	@org.hibernate.annotations.Cascade(value=org.hibernate.annotations.CascadeType.DELETE)
 	//@Cascade(org.hibernate.annotations.CascadeType.REPLICATE)
@@ -161,6 +164,14 @@ public class Repository{
 	public void setAuthUserPasswd(String authUserPasswd) {
 		this.authUserPasswd = authUserPasswd;
 	}
+	
+	public String getSyncUser(){
+		return syncUser;
+	}
+	
+	public void setSyncUser(String syncUser){
+		this.syncUser = syncUser;
+	}
 
 	public List<User> getUserList() {
 		return userList;
@@ -225,6 +236,11 @@ public class Repository{
 		
 		public Builder authUserPasswd(String authUserPasswd){
 			repository.setAuthUserPasswd(authUserPasswd);
+			return this;
+		}
+		
+		public Builder syncUser(String syncUser){
+			repository.setSyncUser(syncUser);
 			return this;
 		}
 		
