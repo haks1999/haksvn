@@ -90,8 +90,9 @@ public class RepositoryController {
     
     @RequestMapping(value="/testConnection", method=RequestMethod.POST, produces="application/json")
     public @ResponseBody DefaultMessage testConnection(@ModelAttribute("repository") Repository repository) throws HaksvnException {
-		DefaultMessage defaultMessage = svnRepositoryService.testConnection(repository);
-		return defaultMessage;
+    	ResultMessage message = new ResultMessage("connection test success");
+		svnRepositoryService.testConnection(repository);
+		return message;
     }
     
     @RequestMapping(value="/listUser", method=RequestMethod.GET)
