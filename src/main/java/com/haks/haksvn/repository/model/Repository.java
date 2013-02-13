@@ -12,21 +12,19 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
-import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 
 import org.hibernate.annotations.DynamicUpdate;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
-import org.hibernate.annotations.SelectBeforeUpdate;
 import org.hibernate.validator.constraints.NotEmpty;
 
 import com.haks.haksvn.user.model.User;
 
 @Entity
 @DynamicUpdate
-@SelectBeforeUpdate
+//@SelectBeforeUpdate
 @Table(name="repositories")
 public class Repository{
 
@@ -65,6 +63,27 @@ public class Repository{
 	@Column(name = "sync_user",nullable = false)
 	private String syncUser = "common.boolean.yn.code.y";
 	
+	@Column(name = "connect_type")
+	private String connectType;
+	
+	@Column(name = "server_ip")
+	private String serverIp;
+	
+	@Column(name = "user_id")
+	private String userId;
+	
+	@Column(name = "user_passwd")
+	private String userPasswd;
+	
+	@Column(name = "authz_path")
+	private String authzPath;
+	
+	@Column(name = "passwd_path")
+	private String passwdPath;
+	
+	@Column(name = "passwd_type")
+	private String passwdType;
+	
 	@ManyToMany(targetEntity = User.class, fetch=FetchType.EAGER)
 	@org.hibernate.annotations.Cascade(value=org.hibernate.annotations.CascadeType.DELETE)
 	//@Cascade(org.hibernate.annotations.CascadeType.REPLICATE)
@@ -76,12 +95,14 @@ public class Repository{
 			uniqueConstraints = { @UniqueConstraint(columnNames = {"repository_seq","user_seq"})})
 	private List<User> userList = new ArrayList<User>();
 	
-	//@OneToOne(optional=true,fetch=FetchType.EAGER)
-	@OneToOne(optional=true, targetEntity = RepositoryServer.class,fetch=FetchType.EAGER)
-	@org.hibernate.annotations.Cascade(value=org.hibernate.annotations.CascadeType.DELETE)
-	@JoinColumn(name="repository_seq", insertable=false, updatable=false)
+	/*
+	@OneToOne(targetEntity = RepositoryServer.class,fetch=FetchType.EAGER)
+	@org.hibernate.annotations.Cascade(value={org.hibernate.annotations.CascadeType.DELETE})
+	@JoinTable(name = "repository_server", 
+		joinColumns = { @JoinColumn(name = "repository_seq", nullable = false, updatable = false) },
+		inverseJoinColumns = { @JoinColumn(name = "repository_seq",nullable = false, updatable = false) })
 	private RepositoryServer repositoryServer;
-	
+	*/
 	
 	public Repository(){
 		
@@ -106,7 +127,8 @@ public class Repository{
 	@Override
 	public String toString(){
 		return "[ Repository ]\n - repositorySeq : " + repositorySeq + "\n - repositoryLocation : " + repositoryLocation +
-					"\n - repositoryName : " + repositoryName + "\n - active : " + active;
+					"\n - repositoryName : " + repositoryName + "\n - active : " + active  + repositorySeq + "\n - connectType : " + connectType + "\n - syncUser : " + syncUser +
+					"\n - serverIp : " + serverIp + "\n - active : " + authzPath  + "\n - passwdPath : " + passwdPath + "\n - passwdType : " + passwdType ;
 	}
 
 	public int getRepositorySeq() {
@@ -189,14 +211,61 @@ public class Repository{
 		this.userList = userList;
 	}
 	
-	public RepositoryServer getRepositoryServer(){
-		return repositoryServer;
+	public String getConnectType() {
+		return connectType;
+	}
+
+	public void setConnectType(String connectType) {
+		this.connectType = connectType;
+	}
+
+	public String getServerIp() {
+		return serverIp;
+	}
+
+	public void setServerIp(String serverIp) {
+		this.serverIp = serverIp;
+	}
+
+	public String getUserId() {
+		return userId;
+	}
+
+	public void setUserId(String userId) {
+		this.userId = userId;
+	}
+
+	public String getUserPasswd() {
+		return userPasswd;
+	}
+
+	public void setUserPasswd(String userPasswd) {
+		this.userPasswd = userPasswd;
+	}
+
+	public String getAuthzPath() {
+		return authzPath;
+	}
+
+	public void setAuthzPath(String authzPath) {
+		this.authzPath = authzPath;
+	}
+
+	public String getPasswdPath() {
+		return passwdPath;
+	}
+
+	public void setPasswdPath(String passwdPath) {
+		this.passwdPath = passwdPath;
 	}
 	
-	public void setRepositoryServer(RepositoryServer repositoryServer){
-		this.repositoryServer = repositoryServer;
+	public String getPasswdType(){
+		return passwdType;
 	}
 	
+	public void setPasswdType(String passwdType){
+		this.passwdType = passwdType;
+	}
 	
 	public static class Builder{
 		
@@ -264,8 +333,38 @@ public class Repository{
 			return this;
 		}
 		
-		public Builder repositoryServer(RepositoryServer repositoryServer){
-			repository.setRepositoryServer(repositoryServer);
+		public Builder connectType(String connectType){
+			repository.setConnectType(connectType);
+			return this;
+		}
+		
+		public Builder serverIp(String serverIp){
+			repository.setServerIp(serverIp);
+			return this;
+		}
+		
+		public Builder userId(String userId){
+			repository.setUserId(userId);
+			return this;
+		}
+		
+		public Builder userPasswd(String userPasswd){
+			repository.setUserPasswd(userPasswd);
+			return this;
+		}
+		
+		public Builder authzPath(String authzPath){
+			repository.setAuthzPath(authzPath);
+			return this;
+		}
+		
+		public Builder passwdPath(String passwdPath){
+			repository.setPasswdPath(passwdPath);
+			return this;
+		}
+		
+		public Builder passwdType(String passwdType){
+			repository.setPasswdType(passwdType);
 			return this;
 		}
 		

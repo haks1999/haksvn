@@ -24,9 +24,19 @@
 		if(selection){
 			$('#div_serverSettings').slideDown();
 			frm_repository.syncUser.value = 'common.boolean.yn.code.y';
+			frm_repository.connectType.value = 'server.connect.type.code.local';
 		}else{
 			$('#div_serverSettings').slideUp();
 			frm_repository.syncUser.value = 'common.boolean.yn.code.n';
+			frm_repository.connectType.value = '';
+		}
+	}
+	
+	function changeServerConnectType( connectType ){
+		if( connectType == 'server.connect.type.code.local' ){
+			$('#div_serverRemoteSettings').slideUp();
+		}else{
+			$('#div_serverRemoteSettings').slideDown();
 		}
 	}
 	
@@ -76,41 +86,43 @@
 					<form:select path="active" items="${requestScope['common.boolean.yn.code']}" itemValue="codeId" itemLabel="codeName"/>
 				</p>
 				<p>
-					<c:if test="${repository.syncUser eq 'common.boolean.yn.code.y'}" var="syncUser" />
+					<c:if test="${repository.syncUser eq 'common.boolean.yn.code.y'}" var="syncUserYn" />
 					<label for="ckb_syncUser" class="left">Synchronize User</label>
-					<input id="ckb_syncUser" type="checkbox" class="plaincheckbox" ${syncUser? "checked":""} onclick="selectSynchrozingUser(this.checked)"/>
-					<form:hidden path="syncUser"/>
+					<input id="ckb_syncUser" type="checkbox" class="plaincheckbox" ${syncUserYn? "checked":""} onclick="selectSynchrozingUser(this.checked)"/>
+					<form:hidden path="syncUser" />
 				</p>
-				<div id="div_serverSettings" style="${syncUser? '' : 'display:none;'}">
+				<div id="div_serverSettings" style="${syncUserYn? '' : 'display:none;'}">
 					<hr>
 					<p><span class="strong">Server Settings</span></p>
 					<p>
-						<form:label path="repositoryServer.connectType" class="left">Connection Type</form:label>
-						<form:select path="repositoryServer.connectType" items="${requestScope['server.connect.type.code']}" itemValue="codeId" itemLabel="codeName"/>
+						<form:label path="connectType" class="left">Connection Type</form:label>
+						<form:select path="connectType" items="${requestScope['server.connect.type.code']}" itemValue="codeId" itemLabel="codeName" onchange="changeServerConnectType(this.value)"/>
+					</p>
+					<div id="div_serverRemoteSettings" style="${ (repository.connectType eq 'server.connect.type.code.local')||(empty repository.connectType)? 'display:none;' : ''}">
+						<p>
+							<form:label path="serverIp" class="left">Server address</form:label>
+							<form:input path="serverIp" class="text w_20" />
+						</p>
+						<p>
+							<form:label path="userId" class="left">User ID</form:label>
+							<form:input path="userId" class="text w_10" />
+						</p>
+						<p>
+							<form:label path="userPasswd" class="left">User Password</form:label>
+							<form:input path="userPasswd" class="text w_10" />
+						</p>
+					</div>
+					<p>
+						<form:label path="authzPath" class="left">authz file path</form:label>
+						<form:input path="authzPath" class="text w_30" />
 					</p>
 					<p>
-						<form:label path="repositoryServer.serverIp" class="left">Server address</form:label>
-						<form:input path="repositoryServer.serverIp" class="text w_20" />
+						<form:label path="passwdPath" class="left">passwd file path</form:label>
+						<form:input path="passwdPath" class="text w_30" />
 					</p>
 					<p>
-						<form:label path="repositoryServer.userId" class="left">User ID</form:label>
-						<form:input path="repositoryServer.userId" class="text w_10" />
-					</p>
-					<p>
-						<form:label path="repositoryServer.userPasswd" class="left">User Password</form:label>
-						<form:input path="repositoryServer.userPasswd" class="text w_10" />
-					</p>
-					<p>
-						<form:label path="repositoryServer.authzPath" class="left">authz file path</form:label>
-						<form:input path="repositoryServer.authzPath" class="text w_30" />
-					</p>
-					<p>
-						<form:label path="repositoryServer.passwdType" class="left">SVN password type</form:label>
-						<form:select path="repositoryServer.passwdType" items="${requestScope['svn.passwd.type.code']}" itemValue="codeId" itemLabel="codeName"/>
-					</p>
-					<p>
-						<form:label path="repositoryServer.passwdPath" class="left">passwd file path</form:label>
-						<form:input path="repositoryServer.passwdPath" class="text w_30" />
+						<form:label path="passwdType" class="left">SVN password type</form:label>
+						<form:select path="passwdType" items="${requestScope['svn.passwd.type.code']}" itemValue="codeId" itemLabel="codeName"/>
 					</p>
 				</div>
 				<p>
