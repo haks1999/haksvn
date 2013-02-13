@@ -48,21 +48,27 @@ public class RepositoryService {
 	
 	public Repository saveRepository(Repository repository){
 		if( repository.getRepositorySeq() < 1 ){
-			return repositoryDao.addRepository(repository);
+			repositoryDao.addRepository(repository);
+			//repository.getRepositoryServer().setRepositorySeq(repository.getRepositorySeq());
+			//repositoryServerDao.addRepositoryServer(repository.getRepositoryServer());
+			return saveRepository(repository);
 		}else{
 			// get repository in hibernate session 
 			// 그냥 신규 repo obj 로 업뎃하믄 다른 객체로 인식해서 cascade 가 엉망이 됨
 			// manytoone 등과 같은 relation 이 설정된 경우 주의해야 함
+			//repositoryServerDao.updateRepository(repository.getRepositoryServer());
 			Repository repositoryInHibernate = repositoryDao.retrieveRepositoryByRepositorySeq(repository);
-			
 			// exclude userList
 			Repository.Builder.getBuilder(repositoryInHibernate)
 				.active(repository.getActive())
 				.authUserId(repository.getAuthUserId()).authUserPasswd(repository.getAuthUserPasswd())
 				.repositoryLocation(repository.getRepositoryLocation()).repositoryName(repository.getRepositoryName())
-				.tagsPath(repository.getTagsPath()).trunkPath(repository.getTrunkPath()).syncUser(repository.getSyncUser());
-			
-			return repositoryDao.updateRepository(repositoryInHibernate);
+				.tagsPath(repository.getTagsPath()).trunkPath(repository.getTrunkPath()).syncUser(repository.getSyncUser())
+				.connectType(repository.getConnectType()).serverIp(repository.getServerIp())
+				.userId(repository.getUserId()).userPasswd(repository.getUserPasswd())
+				.authzPath(repository.getAuthzPath()).passwdPath(repository.getPasswdPath()).passwdType(repository.getPasswdType());
+			repositoryDao.updateRepository(repositoryInHibernate);
+			return repository;
 		}
 		
 	}

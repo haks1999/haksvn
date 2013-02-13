@@ -73,8 +73,8 @@ public class RepositoryController {
     }
     
     @RequestMapping(value={"/add/save","/list/*/save"}, method=RequestMethod.POST)
-    public ModelAndView addRepository(ModelMap model, @ModelAttribute("repository") @Valid Repository repository, BindingResult result) {
-    	
+    public ModelAndView saveRepository(ModelMap model, @ModelAttribute("repository") @Valid Repository repository, BindingResult result) {
+System.out.println(repository);    	
     	if( result.hasErrors() ){
     		return new ModelAndView("/repository/modifyRepository");
     		//return new ModelAndView("forward:/configuration/repositories/add");
