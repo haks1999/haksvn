@@ -20,6 +20,7 @@ import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
 import org.hibernate.validator.constraints.NotEmpty;
 
+import com.haks.haksvn.common.crypto.MD5Crypt;
 import com.haks.haksvn.user.model.User;
 
 @Entity
@@ -44,6 +45,10 @@ public class Repository{
 	@Column(name = "active",nullable = true)
 	private String active;
 	
+	//@Column(name = "svn_name",nullable = true)
+	@Column(name = "svn_name")
+	private String svnName;
+	
 	@Column(name = "trunk_path",nullable = false)
 	@NotEmpty(message="trunk path : Mandantory Field")
 	private String trunkPath;
@@ -51,6 +56,10 @@ public class Repository{
 	@Column(name = "tags_path",nullable = false)
 	@NotEmpty(message="tags path : Mandantory Field")
 	private String tagsPath;
+	
+	@Column(name = "branches_path",nullable = false)
+	@NotEmpty(message="branches path : Mandantory Field")
+	private String branchesPath;
 	
 	@Column(name = "auth_user_id",nullable = false)
 	@NotEmpty(message="user id : Mandantory Field")
@@ -130,6 +139,26 @@ public class Repository{
 					"\n - repositoryName : " + repositoryName + "\n - active : " + active  + repositorySeq + "\n - connectType : " + connectType + "\n - syncUser : " + syncUser +
 					"\n - serverIp : " + serverIp + "\n - active : " + authzPath  + "\n - passwdPath : " + passwdPath + "\n - passwdType : " + passwdType ;
 	}
+	
+	public String encryptPasswd(String passwd){
+		if( "svn.passwd.type.code.md5-apache".equals(passwdType) ) return MD5Crypt.apacheCrypt(passwd);
+		return passwd;
+	}
+	
+	public String getPasswdFileDelimeter() {
+		if( "svn.passwd.type.code.md5-apache".equals(passwdType) ) return ":";
+		return "=";
+	}
+	
+	public boolean usingSyncUser(){
+		return "common.boolean.yn.code.y".equals(syncUser);
+	}
+	
+	public boolean usingLocalConnect(){
+		return "server.connect.type.code.local".equals(connectType);
+	}
+	
+	
 
 	public int getRepositorySeq() {
 		return repositorySeq;
@@ -162,6 +191,14 @@ public class Repository{
 	public void setActive(String active) {
 		this.active = active;
 	}
+	
+	public String getSvnName(){
+		return svnName;
+	}
+	
+	public void setSvnName(String svnName){
+		this.svnName = svnName;
+	}
 
 	public String getTrunkPath() {
 		return trunkPath;
@@ -177,6 +214,14 @@ public class Repository{
 
 	public void setTagsPath(String tagsPath) {
 		this.tagsPath = tagsPath;
+	}
+	
+	public String getBranchesPath() {
+		return branchesPath;
+	}
+
+	public void setBranchesPath(String branchesPath) {
+		this.branchesPath = branchesPath;
 	}
 
 	public String getAuthUserId() {
@@ -199,6 +244,8 @@ public class Repository{
 		return syncUser;
 	}
 	
+	
+	
 	public void setSyncUser(String syncUser){
 		this.syncUser = syncUser;
 	}
@@ -218,6 +265,8 @@ public class Repository{
 	public void setConnectType(String connectType) {
 		this.connectType = connectType;
 	}
+	
+	
 
 	public String getServerIp() {
 		return serverIp;
@@ -250,6 +299,8 @@ public class Repository{
 	public void setAuthzPath(String authzPath) {
 		this.authzPath = authzPath;
 	}
+	
+	
 
 	public String getPasswdPath() {
 		return passwdPath;
@@ -303,6 +354,11 @@ public class Repository{
 			return this;
 		}
 		
+		public Builder svnName(String svnName){
+			repository.setSvnName(svnName);
+			return this;
+		}
+		
 		public Builder trunkPath(String trunkPath){
 			repository.setTrunkPath(trunkPath);
 			return this;
@@ -310,6 +366,11 @@ public class Repository{
 		
 		public Builder tagsPath(String tagsPath){
 			repository.setTagsPath(tagsPath);
+			return this;
+		}
+		
+		public Builder branchesPath(String branchesPath){
+			repository.setBranchesPath(branchesPath);
 			return this;
 		}
 		

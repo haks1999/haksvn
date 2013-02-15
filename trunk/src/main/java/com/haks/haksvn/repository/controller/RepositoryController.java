@@ -73,8 +73,7 @@ public class RepositoryController {
     }
     
     @RequestMapping(value={"/add/save","/list/*/save"}, method=RequestMethod.POST)
-    public ModelAndView saveRepository(ModelMap model, @ModelAttribute("repository") @Valid Repository repository, BindingResult result) {
-System.out.println(repository);    	
+    public ModelAndView saveRepository(ModelMap model, @ModelAttribute("repository") @Valid Repository repository, BindingResult result) throws Exception{
     	if( result.hasErrors() ){
     		return new ModelAndView("/repository/modifyRepository");
     		//return new ModelAndView("forward:/configuration/repositories/add");
@@ -91,7 +90,7 @@ System.out.println(repository);
     @RequestMapping(value="/testConnection", method=RequestMethod.POST, produces="application/json")
     public @ResponseBody DefaultMessage testConnection(@ModelAttribute("repository") Repository repository) throws HaksvnException {
     	ResultMessage message = new ResultMessage("connection test success");
-		svnRepositoryService.testConnection(repository);
+		svnRepositoryService.testInitalConnection(repository);
 		return message;
     }
     

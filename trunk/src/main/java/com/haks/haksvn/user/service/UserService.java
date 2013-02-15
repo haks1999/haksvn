@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.haks.haksvn.common.message.model.DefaultMessage;
@@ -12,7 +13,7 @@ import com.haks.haksvn.user.dao.UserDao;
 import com.haks.haksvn.user.model.User;
 
 @Service
-@Transactional
+@Transactional(rollbackFor=Exception.class,propagation=Propagation.REQUIRED)
 public class UserService {
 
 	
