@@ -82,6 +82,12 @@
 					<form:errors path="tagsPath" />
 				</p>
 				<p>
+					<form:label path="branchesPath" class="left">Branches Path</form:label>
+					<form:input class="text w_20" path="branchesPath"/>
+					(default: /branches/production)
+					<form:errors path="branchesPath" />
+				</p>
+				<p>
 					<form:label path="active" class="left">Active</form:label>
 					<form:select path="active" items="${requestScope['common.boolean.yn.code']}" itemValue="codeId" itemLabel="codeName"/>
 				</p>

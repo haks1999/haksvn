@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.haks.haksvn.common.exception.HaksvnException;
@@ -14,7 +15,7 @@ import com.haks.haksvn.user.dao.UserDao;
 import com.haks.haksvn.user.model.User;
 
 @Service
-@Transactional
+@Transactional(rollbackFor=Exception.class,propagation=Propagation.REQUIRED)
 public class RepositoryService {
 
 	
@@ -22,6 +23,8 @@ public class RepositoryService {
 	private RepositoryDao repositoryDao;
 	@Autowired
 	private UserDao userDao;
+	@Autowired
+	private SVNRepositoryService svnRepositoryService;
 	
 	
 	
@@ -46,12 +49,10 @@ public class RepositoryService {
 		
 	}
 	
-	public Repository saveRepository(Repository repository){
+	public Repository saveRepository(Repository repository) throws Exception{
+		repository = svnRepositoryService.getRepositorySVNName(repository);
 		if( repository.getRepositorySeq() < 1 ){
-			repositoryDao.addRepository(repository);
-			//repository.getRepositoryServer().setRepositorySeq(repository.getRepositorySeq());
-			//repositoryServerDao.addRepositoryServer(repository.getRepositoryServer());
-			return saveRepository(repository);
+			return repositoryDao.addRepository(repository);
 		}else{
 			// get repository in hibernate session 
 			// 그냥 신규 repo obj 로 업뎃하믄 다른 객체로 인식해서 cascade 가 엉망이 됨
@@ -62,8 +63,8 @@ public class RepositoryService {
 			Repository.Builder.getBuilder(repositoryInHibernate)
 				.active(repository.getActive())
 				.authUserId(repository.getAuthUserId()).authUserPasswd(repository.getAuthUserPasswd())
-				.repositoryLocation(repository.getRepositoryLocation()).repositoryName(repository.getRepositoryName())
-				.tagsPath(repository.getTagsPath()).trunkPath(repository.getTrunkPath()).syncUser(repository.getSyncUser())
+				.repositoryLocation(repository.getRepositoryLocation()).repositoryName(repository.getRepositoryName()).svnName(repository.getSvnName())
+				.tagsPath(repository.getTagsPath()).trunkPath(repository.getTrunkPath()).branchesPath(repository.getBranchesPath()).syncUser(repository.getSyncUser())
 				.connectType(repository.getConnectType()).serverIp(repository.getServerIp())
 				.userId(repository.getUserId()).userPasswd(repository.getUserPasswd())
 				.authzPath(repository.getAuthzPath()).passwdPath(repository.getPasswdPath()).passwdType(repository.getPasswdType());
@@ -78,13 +79,18 @@ public class RepositoryService {
 		Repository repository = repositoryDao.retrieveRepositoryByRepositorySeq(
 						Repository.Builder.getBuilder(new Repository()).repositorySeq(repositorySeq).build());
 		List<User> userList = repository.getUserList();
+		List<User> userToAddList = new ArrayList<User>();
 		for( String userId : userIdList ){
 			for( User currentUser : userList ){
 				if( currentUser.getUserId().equals(userId)) throw new HaksvnException("duplicate user error");
 			}
-			userList.add(userDao.retrieveUserByUserId(User.Builder.getBuilder(new User()).userId(userId).build()));
+			User userToAdd = userDao.retrieveUserByUserId(User.Builder.getBuilder(new User()).userId(userId).build());
+			userToAddList.add(userToAdd);
+			userList.add(userToAdd);
 		}
-		return repositoryDao.updateRepository(repository);
+		repositoryDao.updateRepository(repository);
+		svnRepositoryService.addRepositoryUser(repository, userToAddList);
+		return repository;
 	}
 	
 	
@@ -94,19 +100,28 @@ public class RepositoryService {
 		if( userIdList.size() < 1) throw new HaksvnException("does not select user ");
 		// TODO
 		// List.remove 를 통하여 삭제하여 update 실행 시 concurrentmodification 오류 발생
-		// 테스트용으로 신규 리스트에 추가하는 방식으로 하니 잘 돌아감. 이유 분석 필요
 		Repository repository = repositoryDao.retrieveRepositoryByRepositorySeq(
 						Repository.Builder.getBuilder(new Repository()).repositorySeq(repositorySeq).build());
 		List<User> currentUserList = repository.getUserList();
+		List<User> userToDeleteList = new ArrayList<User>();
 		List<User> userList = new ArrayList<User>();
-		for( String userId : userIdList ){
-			for( User currentUser : currentUserList ){
-				if( !currentUser.getUserId().equals(userId)){
-					userList.add(currentUser);
-				}
+		boolean deleteFlag = false;
+		for( User currentUser : currentUserList ){
+			deleteFlag = false;
+			for( String userId : userIdList ){
+				deleteFlag = currentUser.getUserId().equals(userId);
+				if(deleteFlag) break;
+			}
+			if( deleteFlag ){
+				userToDeleteList.add(currentUser);
+			}else{
+				userList.add(currentUser);
 			}
 		}
 		repository.setUsers(userList);
-		return repositoryDao.updateRepository(repository);
+		repositoryDao.updateRepository(repository);
+		svnRepositoryService.deleteRepositoryUser(repository, userToDeleteList);
+		return repository;
+		
 	}
 }
