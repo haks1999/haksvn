@@ -9,6 +9,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.haks.haksvn.common.message.model.DefaultMessage;
 import com.haks.haksvn.common.message.model.ResultMessage;
+import com.haks.haksvn.repository.service.RepositoryService;
 import com.haks.haksvn.user.dao.UserDao;
 import com.haks.haksvn.user.model.User;
 
@@ -19,6 +20,9 @@ public class UserService {
 	
 	@Autowired
 	private UserDao userDao;
+	
+	@Autowired
+	private RepositoryService repositoryService;
 	
 	
 	
@@ -54,11 +58,30 @@ public class UserService {
 		
 	}
 	
-	public User saveUser(User user){
+	public User saveUser(User user) throws Exception{
 		if( user.getUserSeq() < 1 ){
 			return userDao.addUser(user);
 		}else{
-			return userDao.updateUser(user);
+			User currentUser = userDao.retrieveUserByUserId(user);
+			String currentForSVN = currentUser.getAuthType() + currentUser.getUserPasswd();
+			String afterForSVN = user.getAuthType() + user.getUserPasswd();
+			
+			currentUser = User.Builder.getBuilder(currentUser).active(user.getActive()).authType(user.getAuthType())
+				.authTypeCode(user.getAuthTypeCode()).email(user.getEmail()).userId(user.getUserId())
+				.userName(user.getUserName()).userPasswd(user.getUserPasswd()).build();
+			userDao.updateUser(currentUser);
+			
+			if( !currentForSVN.equals(afterForSVN) ){
+				repositoryService.saveRepositoryList(repositoryService.retrieveRepositoryListByUserId(currentUser.getUserId()));
+			}
+			
+			/*
+			List<com.haks.haksvn.repository.model.Repository> repositoryList = user.getRepositoryList();
+			for( com.haks.haksvn.repository.model.Repository repository : repositoryList ){
+				System.out.println( repository );
+			}
+			*/
+			return user;
 		}
 		
 	}

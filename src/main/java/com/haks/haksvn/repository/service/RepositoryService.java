@@ -11,8 +11,8 @@ import org.springframework.transaction.annotation.Transactional;
 import com.haks.haksvn.common.exception.HaksvnException;
 import com.haks.haksvn.repository.dao.RepositoryDao;
 import com.haks.haksvn.repository.model.Repository;
-import com.haks.haksvn.user.dao.UserDao;
 import com.haks.haksvn.user.model.User;
+import com.haks.haksvn.user.service.UserService;
 
 @Service
 @Transactional(rollbackFor=Exception.class,propagation=Propagation.REQUIRED)
@@ -22,7 +22,7 @@ public class RepositoryService {
 	@Autowired
 	private RepositoryDao repositoryDao;
 	@Autowired
-	private UserDao userDao;
+	private UserService userService;
 	@Autowired
 	private SVNRepositoryService svnRepositoryService;
 	
@@ -49,9 +49,25 @@ public class RepositoryService {
 		
 	}
 	
+	public List<Repository> retrieveRepositoryListByUserId(String userId){
+		List<Repository> result = repositoryDao.retrieveRepositoryListByUserId(userId);
+		return result;
+		
+	}
+	
+	public List<Repository> saveRepositoryList(List<Repository> repositoryList) throws Exception{
+		List<Repository> result = new ArrayList<Repository>(0);
+		for( Repository repository : repositoryList){
+			result.add(saveRepository(repository));
+		}
+		return result;
+	}
+	
 	public Repository saveRepository(Repository repository) throws Exception{
-		repository = svnRepositoryService.getRepositorySVNName(repository);
+		repository = svnRepositoryService.getRepositorySVNInfo(repository);
+		repository.formatAuthzTemplate();
 		if( repository.getRepositorySeq() < 1 ){
+			if( repository.usingSyncUser() ) svnRepositoryService.initRepositoryUser(repository);
 			return repositoryDao.addRepository(repository);
 		}else{
 			// get repository in hibernate session 
@@ -67,9 +83,10 @@ public class RepositoryService {
 				.tagsPath(repository.getTagsPath()).trunkPath(repository.getTrunkPath()).branchesPath(repository.getBranchesPath()).syncUser(repository.getSyncUser())
 				.connectType(repository.getConnectType()).serverIp(repository.getServerIp())
 				.userId(repository.getUserId()).userPasswd(repository.getUserPasswd())
-				.authzPath(repository.getAuthzPath()).passwdPath(repository.getPasswdPath()).passwdType(repository.getPasswdType());
+				.authzPath(repository.getAuthzPath()).passwdPath(repository.getPasswdPath()).passwdType(repository.getPasswdType()).authzTemplate(repository.getAuthzTemplate());
 			repositoryDao.updateRepository(repositoryInHibernate);
-			return repository;
+			if( repositoryInHibernate.usingSyncUser() ) svnRepositoryService.initRepositoryUser(repositoryInHibernate);
+			return repositoryInHibernate;
 		}
 		
 	}
@@ -84,7 +101,7 @@ public class RepositoryService {
 			for( User currentUser : userList ){
 				if( currentUser.getUserId().equals(userId)) throw new HaksvnException("duplicate user error");
 			}
-			User userToAdd = userDao.retrieveUserByUserId(User.Builder.getBuilder(new User()).userId(userId).build());
+			User userToAdd = userService.retrieveUserByUserId(userId);
 			userToAddList.add(userToAdd);
 			userList.add(userToAdd);
 		}

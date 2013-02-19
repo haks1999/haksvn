@@ -1,5 +1,6 @@
 package com.haks.haksvn.repository.service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -80,23 +81,34 @@ public class SVNRepositoryService {
 		return true;
 	}
 	
-	public Repository getRepositorySVNName(Repository repository) throws Exception{
+	public Repository getRepositorySVNInfo(Repository repository) throws Exception{
 		
 		SVNRepository targetRepository = SVNRepositoryFactory.create(SVNURL.parseURIDecoded(repository.getRepositoryLocation()));
 		ISVNAuthenticationManager authManager = SVNWCUtil.createDefaultAuthenticationManager(repository.getAuthUserId(), repository.getAuthUserPasswd());
 		targetRepository.setAuthenticationManager(authManager);
            
 		String root = targetRepository.getRepositoryRoot( true ).toString();
+		repository.setSvnRoot(root);
 		repository.setSvnName(root.substring(root.lastIndexOf("/") + 1));
 			
         return repository;
     	
 	}
 	
+	public void initRepositoryUser( Repository repository) throws HaksvnException{
+		if( !repository.usingSyncUser() ) return;
+		
+		if( repository.usingLocalConnect()){
+			localRepositoryFileDao.backupAccountFile(repository);
+			localRepositoryFileDao.createAccountFile(repository);
+		}
+	}
+	
 	public void addRepositoryUser( Repository repository, List<User> userToAddList ) throws HaksvnException{
 		if( !repository.usingSyncUser() ) return;
 		
 		if( repository.usingLocalConnect()){
+			localRepositoryFileDao.backupAccountFile(repository);
 			localRepositoryFileDao.addAccount(repository, userToAddList);
 		}
 	}
@@ -105,12 +117,10 @@ public class SVNRepositoryService {
 		if( !repository.usingSyncUser() ) return;
 		
 		if( repository.usingLocalConnect()){
+			localRepositoryFileDao.backupAccountFile(repository);
 			localRepositoryFileDao.deleteAccount(repository, userToDeleteList);
 		}
 	}
 	
-	public void initializeSVNAccountFile(Repository repository) throws HaksvnException{
-		localRepositoryFileDao.backupAccountFile(repository);
-	}
 	
 }

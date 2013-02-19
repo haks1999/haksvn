@@ -45,6 +45,9 @@ public class Repository{
 	@Column(name = "active",nullable = true)
 	private String active;
 	
+	@Column(name = "svn_root")
+	private String svnRoot;
+	
 	//@Column(name = "svn_name",nullable = true)
 	@Column(name = "svn_name")
 	private String svnName;
@@ -93,6 +96,9 @@ public class Repository{
 	@Column(name = "passwd_type")
 	private String passwdType;
 	
+	@Column(name = "authz_template", length=2000)
+	private String authzTemplate;
+	
 	@ManyToMany(targetEntity = User.class, fetch=FetchType.EAGER)
 	@org.hibernate.annotations.Cascade(value=org.hibernate.annotations.CascadeType.DELETE)
 	//@Cascade(org.hibernate.annotations.CascadeType.REPLICATE)
@@ -137,9 +143,11 @@ public class Repository{
 	public String toString(){
 		return "[ Repository ]\n - repositorySeq : " + repositorySeq + "\n - repositoryLocation : " + repositoryLocation +
 					"\n - repositoryName : " + repositoryName + "\n - active : " + active  + repositorySeq + "\n - connectType : " + connectType + "\n - syncUser : " + syncUser +
-					"\n - serverIp : " + serverIp + "\n - active : " + authzPath  + "\n - passwdPath : " + passwdPath + "\n - passwdType : " + passwdType ;
+					"\n - serverIp : " + serverIp + "\n - authzPath : " + authzPath  + "\n - passwdPath : " + passwdPath + "\n - passwdType : " + passwdType ;
 	}
 	
+	//TODO 
+	// util 비슷한 아래 메써드를 따로 빼야 하는가
 	public String encryptPasswd(String passwd){
 		if( "svn.passwd.type.code.md5-apache".equals(passwdType) ) return MD5Crypt.apacheCrypt(passwd);
 		return passwd;
@@ -156,6 +164,14 @@ public class Repository{
 	
 	public boolean usingLocalConnect(){
 		return "server.connect.type.code.local".equals(connectType);
+	}
+	
+	public void formatAuthzTemplate(){
+		if( !usingSyncUser() ){
+			authzTemplate = null;
+			return;
+		}
+		authzTemplate = authzTemplate.replaceAll("\r\n", "%n").replaceAll("\n","%n");
 	}
 	
 	
@@ -190,6 +206,14 @@ public class Repository{
 
 	public void setActive(String active) {
 		this.active = active;
+	}
+	
+	public String getSvnRoot(){
+		return svnRoot;
+	}
+	
+	public void setSvnRoot(String svnRoot){
+		this.svnRoot = svnRoot;
 	}
 	
 	public String getSvnName(){
@@ -318,6 +342,14 @@ public class Repository{
 		this.passwdType = passwdType;
 	}
 	
+	public String getAuthzTemplate(){
+		return authzTemplate;
+	}
+	
+	public void setAuthzTemplate(String authzTemplate){
+		this.authzTemplate = authzTemplate;
+	}
+	
 	public static class Builder{
 		
 		private Repository repository;
@@ -429,6 +461,10 @@ public class Repository{
 			return this;
 		}
 		
+		public Builder authzTemplate(String authzTemplate){
+			repository.setAuthzTemplate(authzTemplate);
+			return this;
+		}
 		
 	}
 	
