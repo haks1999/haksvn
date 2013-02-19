@@ -61,6 +61,11 @@
 	    });
 	};
 	
+	function deleteRepository(){
+		$('#frm_repository').attr('action', $('#frm_repository').attr('action').replace('save','delete'));
+		frm_repository.submit();
+	};
+	
 </script>
 <div id="table" class="help">
 	<h1>Repository Information</h1>
@@ -69,6 +74,7 @@
 		
 			<form:form commandName="repository" class="w200" id="frm_repository" method="post">
 					<form:hidden path="repositorySeq" name="repositorySeq"/>
+					<c:if test="${repository.repositorySeq lt 1}" var="isNewRepository" />
 				<p><span class="strong">Repository Settings</span></p>
 				<p>
 					<form:label path="repositoryName" class="left">Repository Name</form:label>
@@ -161,7 +167,9 @@
 					<label class="left"></label>
 					<a class="button mt yellow " ><small class="icon settings"></small><span onclick="testConnection()">Test Connection</span></a>
 					<a class="button green mt ml form_submit"><small class="icon check"></small><span>Confirm</span></a>
-					<a class="button red mt ml"><small class="icon cross"></small><span>Cancel</span></a>
+					<c:if test="${not isNewRepository}">
+						<a class="button red mt ml" onclick="deleteRepository()"><small class="icon cross"></small><span>Delete</span></a>
+					</c:if>
 				</p>
 			</form:form>
 		</div>

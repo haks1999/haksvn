@@ -9,6 +9,8 @@ import org.hibernate.criterion.Restrictions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
+import com.haks.haksvn.user.model.User;
+
 @Repository
 public class RepositoryDao {
 
@@ -55,10 +57,8 @@ public class RepositoryDao {
 	
 	public com.haks.haksvn.repository.model.Repository retrieveRepositoryByRepositorySeq(com.haks.haksvn.repository.model.Repository repository) {
 		Session session = sessionFactory.getCurrentSession();
-		
 		com.haks.haksvn.repository.model.Repository result =
 				(com.haks.haksvn.repository.model.Repository)session.get(com.haks.haksvn.repository.model.Repository.class, repository.getRepositorySeq());
-		
 		return result;
 	}
 	
@@ -70,12 +70,12 @@ public class RepositoryDao {
 	
 	public com.haks.haksvn.repository.model.Repository updateRepository(com.haks.haksvn.repository.model.Repository repository) {
 		Session session = sessionFactory.getCurrentSession();
-		
-		//com.haks.haksvn.repository.model.Repository result =
-			//	(com.haks.haksvn.repository.model.Repository)session.get(com.haks.haksvn.repository.model.Repository.class, repository.getRepositorySeq());
-		
 		session.update(repository);
-		
 		return repository;
+	}
+	
+	public void deleteRepository(com.haks.haksvn.repository.model.Repository repository) {
+		Session session = sessionFactory.getCurrentSession();
+		session.delete(repository);
 	}
 }
