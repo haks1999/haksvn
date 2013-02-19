@@ -68,7 +68,7 @@ public class UserController {
     }
     
     @RequestMapping(value={"/list/{userSeq}/delete"}, method=RequestMethod.POST)
-    public ModelAndView addUser(@PathVariable String userSeq) throws Exception{
+    public ModelAndView deleteUser(@PathVariable String userSeq) throws Exception{
     	
    		userService.deleteUser(User.Builder.getBuilder(new User()).userSeq(Integer.parseInt(userSeq)).build());
    		return new ModelAndView(new RedirectView("/configuration/users/list", true));

@@ -1,8 +1,10 @@
 package com.haks.haksvn.repository.service;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
+import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
@@ -141,5 +143,18 @@ public class RepositoryService {
 		svnRepositoryService.deleteRepositoryUser(repository, userToDeleteList);
 		return repository;
 		
+	}
+	
+	public void deleteRepository(Repository repository) throws HaksvnException{
+		Repository repositoryToDelete = repositoryDao.retrieveRepositoryByRepositorySeq(repository);
+		List<User> userList = repositoryToDelete.getUserList();
+		List<String> userIdList = new ArrayList<String>(0);
+		for( User user : userList ){
+			userIdList.add(user.getUserId());
+		}
+		if( userIdList.size() > 0 ){
+			deleteRepositoryUser(repositoryToDelete.getRepositorySeq(), userIdList);
+		}
+		repositoryDao.deleteRepository(repositoryToDelete);
 	}
 }

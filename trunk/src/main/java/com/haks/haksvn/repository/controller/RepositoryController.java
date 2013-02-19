@@ -86,9 +86,13 @@ public class RepositoryController {
     		return new ModelAndView(new RedirectView("/configuration/repositories/list", true));
     		
     	}
-    	
-    	//return new RedirectView("/configuration/repositories/list",true);
-    	//return "redirect:/configuration/repositories/list";
+    }
+    
+    @RequestMapping(value={"/list/{repositorySeq}/delete"}, method=RequestMethod.POST)
+    public ModelAndView deleteRepository(@PathVariable String repositorySeq) throws Exception{
+   		repositoryService.deleteRepository(Repository.Builder.getBuilder(new Repository()).repositorySeq(Integer.parseInt(repositorySeq)).build());
+   		return new ModelAndView(new RedirectView("/configuration/repositories/list", true));
+    		
     }
     
     @RequestMapping(value="/testConnection", method=RequestMethod.POST, produces="application/json")
