@@ -1,5 +1,6 @@
 package com.haks.haksvn.user.service;
 
+import java.util.Arrays;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -7,8 +8,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.haks.haksvn.common.code.util.CodeUtils;
 import com.haks.haksvn.common.message.model.DefaultMessage;
 import com.haks.haksvn.common.message.model.ResultMessage;
+import com.haks.haksvn.repository.model.Repository;
 import com.haks.haksvn.repository.service.RepositoryService;
 import com.haks.haksvn.user.dao.UserDao;
 import com.haks.haksvn.user.model.User;
@@ -65,14 +68,25 @@ public class UserService {
 			User currentUser = userDao.retrieveUserByUserId(user);
 			String currentForSVN = currentUser.getAuthType() + currentUser.getUserPasswd();
 			String afterForSVN = user.getAuthType() + user.getUserPasswd();
+			boolean currentActive = CodeUtils.isTrue(currentUser.getActive());
+			boolean afterActive = CodeUtils.isTrue(user.getActive());
 			
 			currentUser = User.Builder.getBuilder(currentUser).active(user.getActive()).authType(user.getAuthType())
 				.authTypeCode(user.getAuthTypeCode()).email(user.getEmail()).userId(user.getUserId())
 				.userName(user.getUserName()).userPasswd(user.getUserPasswd()).build();
 			userDao.updateUser(currentUser);
 			
-			if( !currentForSVN.equals(afterForSVN) ){
-				repositoryService.saveRepositoryList(repositoryService.retrieveActiveRepositoryListByUserId(currentUser.getUserId()));
+			boolean needDeleteUser =  currentActive && !afterActive;
+			boolean needReposiotyInit = !currentForSVN.equals(afterForSVN) || needDeleteUser;
+			
+			if( needReposiotyInit ){
+				List<Repository> repositoryList = repositoryService.retrieveActiveRepositoryListByUserId(currentUser.getUserId());
+				repositoryService.saveRepositoryList(repositoryList);
+				if( needDeleteUser ){
+					for( Repository repository : repositoryList ){
+						repositoryService.deleteRepositoryUser(repository.getRepositorySeq(), Arrays.asList(new String[]{user.getUserId()}));
+					}
+				}
 			}
 			return user;
 		}

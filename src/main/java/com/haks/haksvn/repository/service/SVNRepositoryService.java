@@ -96,6 +96,7 @@ public class SVNRepositoryService {
     	
 	}
 	
+	// 초기화 시 passwd 에 대해서는 어떤 작업도 일어나지 않는다
 	public void initRepositoryUser( Repository repository) throws HaksvnException{
 		if( !CodeUtils.isTrue(repository.getSyncUser()) ) return;
 		
