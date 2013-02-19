@@ -14,6 +14,7 @@ import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import javax.persistence.UniqueConstraint;
 
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
@@ -85,7 +86,12 @@ public class User{
 	//@WhereJoinTable(clause = "code_group='user_auth_type_code'")
 	private Code authTypeCode;// = new Code();
 	
-	
+	/*
+	@ManyToMany(mappedBy="userList", fetch=FetchType.EAGER)
+	@org.hibernate.annotations.Cascade(value=org.hibernate.annotations.CascadeType.DELETE)
+	@Fetch(FetchMode.SUBSELECT)
+	private List<Repository> repositoryList = new ArrayList<Repository>();
+	*/
 	/*
 	@ManyToMany(fetch=FetchType.EAGER)
 	@org.hibernate.annotations.Cascade(value=org.hibernate.annotations.CascadeType.DELETE)
@@ -109,6 +115,18 @@ public class User{
 	public String toString(){
 		return "[ User ]\n - userSeq : " + userSeq + "\n - userId : " + userId +
 					"\n - userName : " + userName + "\n - active : " + active + "\n - email : " + email;
+	}
+	
+	public boolean isSystemAdmin(){
+		return "user.auth.type.code.system-admin".equals(authType);
+	}
+	
+	public boolean isReviewer(){
+		return "user.auth.type.code.reviewer".equals(authType);
+	}
+	
+	public boolean isCommiter(){
+		return "user.auth.type.code.commiter".equals(authType);
 	}
 
 	public int getUserSeq() {
@@ -183,6 +201,7 @@ public class User{
 	public void setRepositoryList(List<Repository> repositoryList) {
 		this.repositoryList = repositoryList;
 	}
+	*/
 	
 	/*
 	public Set<Repository> getRepositories() {

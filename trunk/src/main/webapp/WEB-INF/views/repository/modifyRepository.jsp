@@ -38,7 +38,28 @@
 		}else{
 			$('#div_serverRemoteSettings').slideDown();
 		}
-	}
+	};
+	
+	function openAuthzTemplateDialog(){
+		$('#txa_authzTemplate').val(frm_repository.authzTemplate.value);
+		$("#div_authzTemplate").dialog({
+			height: 500,
+		    width: 550,
+		    modal: true,
+		    buttons: {
+				"Restore Default": function() {
+					$('#txa_authzTemplate').val($('#txa_authzDefaultTemplate').val());
+	          	},
+		        "Confirm": function() {
+		          	frm_repository.authzTemplate.value = $('#txa_authzTemplate').val();
+		           	$( this ).dialog( "close" );
+		         },
+		        Cancel: function() {
+		           	$( this ).dialog( "close" );
+		        }
+		    }
+	    });
+	};
 	
 </script>
 <div id="table" class="help">
@@ -123,6 +144,11 @@
 						<form:input path="authzPath" class="text w_30" />
 					</p>
 					<p>
+						<form:label path="authzTemplate" class="left">authz file template</form:label>
+						<form:hidden path="authzTemplate" />
+						<span class="underline italic link" onclick="openAuthzTemplateDialog()">Edit</span>
+					</p>
+					<p>
 						<form:label path="passwdPath" class="left">passwd file path</form:label>
 						<form:input path="passwdPath" class="text w_30" />
 					</p>
@@ -141,4 +167,10 @@
 		</div>
 	</div>
 	<div class="clear"></div>
+</div>
+<div id="div_authzTemplate" title="Authz Template" style="display:none;">
+	<div class="content fullsize">
+		<textarea id="txa_authzTemplate"><c:out value="${repository.authzTemplate}"/></textarea>
+		<textarea id="txa_authzDefaultTemplate" style="display:none;"><c:out value="${authzTemplate}"/></textarea>
+	</div>
 </div>

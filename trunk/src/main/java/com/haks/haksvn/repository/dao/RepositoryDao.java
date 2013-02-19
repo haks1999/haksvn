@@ -2,7 +2,6 @@ package com.haks.haksvn.repository.dao;
 
 import java.util.List;
 
-import org.hibernate.FetchMode;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.criterion.Order;
@@ -38,6 +37,20 @@ public class RepositoryDao {
 		
 		return result;
 	}
+	
+	public List<com.haks.haksvn.repository.model.Repository> retrieveRepositoryListByUserId(String userId) {
+		Session session = sessionFactory.getCurrentSession();
+		
+		@SuppressWarnings("unchecked") List<com.haks.haksvn.repository.model.Repository> result = 
+					session.createCriteria(com.haks.haksvn.repository.model.Repository.class)
+					.createCriteria("userList")
+				.add(Restrictions.eq("userId", userId))
+				.list();
+		
+		return result;
+	}
+	
+	
 	
 	public com.haks.haksvn.repository.model.Repository retrieveRepositoryByRepositorySeq(com.haks.haksvn.repository.model.Repository repository) {
 		Session session = sessionFactory.getCurrentSession();

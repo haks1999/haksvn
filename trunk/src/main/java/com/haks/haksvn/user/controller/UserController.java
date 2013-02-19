@@ -52,7 +52,7 @@ public class UserController {
     }
     
     @RequestMapping(value={"/add/save","/list/*/save"}, method=RequestMethod.POST)
-    public ModelAndView addUser(ModelMap model, @ModelAttribute("user") @Valid User user, BindingResult result) {
+    public ModelAndView addUser(ModelMap model, @ModelAttribute("user") @Valid User user, BindingResult result) throws Exception{
     	if( user.getUserSeq() < 1 ){
     		ResultMessage message = userService.duplicateUser(user);
     		if( !message.isSuccess() ){

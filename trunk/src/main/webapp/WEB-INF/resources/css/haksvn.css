@@ -2,7 +2,7 @@ tr.sample{
 	display:none;
 }
 
-input.text,textarea {
+input.text{
 border:1px solid #d6d6d6;
 -moz-border-radius:20px;
 -webkit-border-radius:20px;
@@ -27,4 +27,29 @@ padding: 0;
 margin:0;
 vertical-align: bottom;
 position: relative;
+}
+
+form span.link {
+height:23px;
+padding-top: 5px;
+vertical-align: bottom;
+position: relative;
+cursor:pointer;
+display: inline-block;
+zoom: 1;
+*display: inline;
+}
+div.fullsize{
+width:100%;
+height:100%;
+overflow:hidden;
+}
+
+div.fullsize textarea{
+font-size:8pt;
+width:100%;
+height:100%;
+-webkit-box-sizing: border-box;
+-moz-box-sizing: border-box;
+box-sizing: border-box;	
 }

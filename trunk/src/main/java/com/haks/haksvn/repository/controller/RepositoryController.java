@@ -1,6 +1,5 @@
 package com.haks.haksvn.repository.controller;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -8,7 +7,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.validation.BindingResult;
@@ -26,6 +24,7 @@ import org.springframework.web.servlet.view.RedirectView;
 import com.haks.haksvn.common.exception.HaksvnException;
 import com.haks.haksvn.common.message.model.DefaultMessage;
 import com.haks.haksvn.common.message.model.ResultMessage;
+import com.haks.haksvn.common.property.service.PropertyService;
 import com.haks.haksvn.repository.model.Repository;
 import com.haks.haksvn.repository.service.RepositoryService;
 import com.haks.haksvn.repository.service.SVNRepositoryService;
@@ -39,6 +38,8 @@ public class RepositoryController {
     private RepositoryService repositoryService;
     @Autowired
     private SVNRepositoryService svnRepositoryService;
+    @Autowired
+    private PropertyService propertyService;
     
     @RequestMapping(value="/list", method=RequestMethod.GET)
     public String forwardRepositoryListPage( ModelMap model ) {
@@ -50,12 +51,12 @@ public class RepositoryController {
     @RequestMapping(value="/list/{repositorySeq}", method=RequestMethod.GET)
     public String forwardRepositoryModifyPage(@PathVariable String repositorySeq, ModelMap model, HttpServletRequest req, final RedirectAttributes redirectAttributes) {
     	Repository repository = repositoryService.retrieveRepositoryByRepositorySeq(Integer.valueOf(repositorySeq));
+    	String authzTemplate = String.format(propertyService.retrievePropertyByPropertyKey("svn.authz.template.default").getPropertyValue());
+    	if( repository.getAuthzTemplate() == null ) repository.setAuthzTemplate(authzTemplate);
+    	repository.setAuthzTemplate(String.format(repository.getAuthzTemplate()));
     	model.addAttribute("repository", repository );
-
-		//ModelAndView mv = new ModelAndView("forward:/configuration/repositories/add",model);
-		//return mv;
+    	model.addAttribute("authzTemplate", authzTemplate );
     	return "/repository/modifyRepository";
-    	//return new ModelAndView("forward:/configuration/repositories/add");
     }
      
     /*
@@ -68,7 +69,10 @@ public class RepositoryController {
     
     @RequestMapping(value="/add")
     public String forwardRepositoryAddPage(ModelMap model, @ModelAttribute("repository") Repository repository, HttpServletRequest request) {
+    	String authzTemplate = String.format(propertyService.retrievePropertyByPropertyKey("svn.authz.template.default").getPropertyValue());
+    	repository.setAuthzTemplate(authzTemplate);
     	model.addAttribute("repository", repository );
+    	model.addAttribute("authzTemplate", authzTemplate );
     	return "/repository/modifyRepository";
     }
     
