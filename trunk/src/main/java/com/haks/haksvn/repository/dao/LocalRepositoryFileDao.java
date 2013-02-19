@@ -5,7 +5,6 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.FileReader;
-import java.io.InputStreamReader;
 import java.io.RandomAccessFile;
 import java.nio.channels.FileChannel;
 import java.nio.channels.FileLock;
@@ -15,13 +14,13 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import org.apache.commons.lang.StringUtils;
 import org.springframework.stereotype.Repository;
 
+import com.haks.haksvn.common.code.util.CodeUtils;
 import com.haks.haksvn.common.exception.HaksvnException;
+import com.haks.haksvn.repository.util.RepositoryUtils;
 import com.haks.haksvn.user.model.User;
 
 @Repository
@@ -56,7 +55,9 @@ public class LocalRepositoryFileDao {
 			
 			for( User user : userToAddList ){
 				raf.seek(raf.length());
-				raf.write(new String( "\r\n"+user.getUserId() + repository.getPasswdFileDelimeter() + repository.encryptPasswd(user.getUserPasswd())).getBytes());
+				raf.write(new String( "\r\n"+user.getUserId() + 
+						RepositoryUtils.getPasswdFileDelimeter(repository.getPasswdType()) + 
+						RepositoryUtils.encryptPasswd(user.getUserPasswd(), repository.getPasswdType())).getBytes());
 			}
 		}catch(Exception e){
 			throw new HaksvnException(e.getMessage());
@@ -87,7 +88,7 @@ public class LocalRepositoryFileDao {
 			String line = "";
 			while( (line = br.readLine()) != null ){
 				if( line.trim().length() < 1) continue;
-				String[] id_passwd = line.split(repository.getPasswdFileDelimeter());
+				String[] id_passwd = line.split(RepositoryUtils.getPasswdFileDelimeter(repository.getPasswdType()));
 				if( id_passwd.length < 2) continue;
 				accountList.put(id_passwd[0], id_passwd[1]);
 			}
@@ -125,7 +126,7 @@ public class LocalRepositoryFileDao {
 			long position = 0;
 			String line = "";
 			while( (line = raf.readLine()) != null ){
-				String[] id_passwd = line.split(repository.getPasswdFileDelimeter());
+				String[] id_passwd = line.split(RepositoryUtils.getPasswdFileDelimeter(repository.getPasswdType()));
 				if( id_passwd.length == 2 && userIdToDeleteSet.contains(id_passwd[0].trim())) {
 					byte[] remainingBytes = new byte[(int) (raf.length() - raf.getFilePointer())];
 					raf.read(remainingBytes);
@@ -197,9 +198,9 @@ public class LocalRepositoryFileDao {
 		List<String> commiterIds = new ArrayList<String>();
 		systemAdminIds.add(repository.getAuthUserId());
 		for( User user : repository.getUserList() ){
-			if( user.isSystemAdmin() ){
+			if( CodeUtils.isSystemAdmin(user.getAuthType()) ){
 				systemAdminIds.add(user.getUserId());
-			}else if( user.isReviewer() ){
+			}else if( CodeUtils.isReviewer(user.getAuthType()) ){
 				reviewerIds.add(user.getUserId());
 			}else{
 				commiterIds.add(user.getUserId());

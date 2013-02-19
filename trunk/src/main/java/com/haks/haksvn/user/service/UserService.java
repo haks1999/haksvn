@@ -72,15 +72,8 @@ public class UserService {
 			userDao.updateUser(currentUser);
 			
 			if( !currentForSVN.equals(afterForSVN) ){
-				repositoryService.saveRepositoryList(repositoryService.retrieveRepositoryListByUserId(currentUser.getUserId()));
+				repositoryService.saveRepositoryList(repositoryService.retrieveActiveRepositoryListByUserId(currentUser.getUserId()));
 			}
-			
-			/*
-			List<com.haks.haksvn.repository.model.Repository> repositoryList = user.getRepositoryList();
-			for( com.haks.haksvn.repository.model.Repository repository : repositoryList ){
-				System.out.println( repository );
-			}
-			*/
 			return user;
 		}
 		

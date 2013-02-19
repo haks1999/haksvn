@@ -117,17 +117,7 @@ public class User{
 					"\n - userName : " + userName + "\n - active : " + active + "\n - email : " + email;
 	}
 	
-	public boolean isSystemAdmin(){
-		return "user.auth.type.code.system-admin".equals(authType);
-	}
 	
-	public boolean isReviewer(){
-		return "user.auth.type.code.reviewer".equals(authType);
-	}
-	
-	public boolean isCommiter(){
-		return "user.auth.type.code.commiter".equals(authType);
-	}
 
 	public int getUserSeq() {
 		return userSeq;
