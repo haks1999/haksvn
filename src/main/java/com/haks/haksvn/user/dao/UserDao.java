@@ -80,5 +80,9 @@ public class UserDao {
 		return result;
 	}
 	
+	public void deleteUser(User user) {
+		Session session = sessionFactory.getCurrentSession();
+		session.delete(user);
+	}
 	
 }

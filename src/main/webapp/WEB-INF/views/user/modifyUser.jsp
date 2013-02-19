@@ -7,6 +7,11 @@
 		$('#frm_user').attr('action', actionUrl);
    	});
 	
+	function deleteUser(){
+		$('#frm_user').attr('action', $('#frm_user').attr('action').replace('save','delete'));
+		frm_user.submit();
+	};
+	
 </script>
 <div id="table" class="help">
 	<h1>User Information</h1>
@@ -14,10 +19,11 @@
 		<div class="content">
 			<form:form commandName="user" class="w200" id="frm_user" method="post">
 					<form:hidden path="userSeq" name="userSeq"/>
+					<c:if test="${user.userSeq lt 1}" var="isNewUser" />
 				<p>
 					<form:label path="userId" class="left">User ID</form:label>
 					<c:choose>
-						<c:when test="${user.userSeq lt 1}">
+						<c:when test="${isNewUser}">
 							<form:input class="text w_10" path="userId"/>
 						</c:when>
 						<c:otherwise>
@@ -52,7 +58,9 @@
 				<p>
 					<label class="left"></label>
 					<a class="button green mt ml form_submit"><small class="icon check"></small><span>Confirm</span></a>
-					<a class="button red mt ml"><small class="icon cross"></small><span>Cancel</span></a>
+					<c:if test="${not isNewUser}">
+						<a class="button red mt ml" onclick="deleteUser()"><small class="icon cross"></small><span>Delete</span></a>
+					</c:if>
 				</p>
 			</form:form>
 		</div>
