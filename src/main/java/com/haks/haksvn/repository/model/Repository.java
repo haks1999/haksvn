@@ -146,36 +146,6 @@ public class Repository{
 					"\n - serverIp : " + serverIp + "\n - authzPath : " + authzPath  + "\n - passwdPath : " + passwdPath + "\n - passwdType : " + passwdType ;
 	}
 	
-	//TODO 
-	// util 비슷한 아래 메써드를 따로 빼야 하는가
-	public String encryptPasswd(String passwd){
-		if( "svn.passwd.type.code.md5-apache".equals(passwdType) ) return MD5Crypt.apacheCrypt(passwd);
-		return passwd;
-	}
-	
-	public String getPasswdFileDelimeter() {
-		if( "svn.passwd.type.code.md5-apache".equals(passwdType) ) return ":";
-		return "=";
-	}
-	
-	public boolean usingSyncUser(){
-		return "common.boolean.yn.code.y".equals(syncUser);
-	}
-	
-	public boolean usingLocalConnect(){
-		return "server.connect.type.code.local".equals(connectType);
-	}
-	
-	public void formatAuthzTemplate(){
-		if( !usingSyncUser() ){
-			authzTemplate = null;
-			return;
-		}
-		authzTemplate = authzTemplate.replaceAll("\r\n", "%n").replaceAll("\n","%n");
-	}
-	
-	
-
 	public int getRepositorySeq() {
 		return repositorySeq;
 	}

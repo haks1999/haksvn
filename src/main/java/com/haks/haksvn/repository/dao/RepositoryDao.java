@@ -38,11 +38,12 @@ public class RepositoryDao {
 		return result;
 	}
 	
-	public List<com.haks.haksvn.repository.model.Repository> retrieveRepositoryListByUserId(String userId) {
+	public List<com.haks.haksvn.repository.model.Repository> retrieveActiveRepositoryListByUserId(String userId) {
 		Session session = sessionFactory.getCurrentSession();
 		
 		@SuppressWarnings("unchecked") List<com.haks.haksvn.repository.model.Repository> result = 
 					session.createCriteria(com.haks.haksvn.repository.model.Repository.class)
+					.add(Restrictions.eq("active", "common.boolean.yn.code.y"))
 					.createCriteria("userList")
 				.add(Restrictions.eq("userId", userId))
 				.list();

@@ -15,6 +15,7 @@ import org.tmatesoft.svn.core.io.SVNRepository;
 import org.tmatesoft.svn.core.io.SVNRepositoryFactory;
 import org.tmatesoft.svn.core.wc.SVNWCUtil;
 
+import com.haks.haksvn.common.code.util.CodeUtils;
 import com.haks.haksvn.common.exception.HaksvnException;
 import com.haks.haksvn.repository.dao.LocalRepositoryFileDao;
 import com.haks.haksvn.repository.model.Repository;
@@ -29,7 +30,7 @@ public class SVNRepositoryService {
 	
 	public boolean testInitalConnection( Repository repository ) throws HaksvnException{
 		boolean testResult = testSVNConnection(repository);
-		if( repository.usingSyncUser() ) testResult = testResult && testSVNAccountFile(repository);
+		if( CodeUtils.isTrue(repository.getSyncUser()) ) testResult = testResult && testSVNAccountFile(repository);
 		return  testResult;
 	}
 
@@ -96,27 +97,27 @@ public class SVNRepositoryService {
 	}
 	
 	public void initRepositoryUser( Repository repository) throws HaksvnException{
-		if( !repository.usingSyncUser() ) return;
+		if( !CodeUtils.isTrue(repository.getSyncUser()) ) return;
 		
-		if( repository.usingLocalConnect()){
+		if( CodeUtils.usingLocalConnect(repository.getConnectType())){
 			localRepositoryFileDao.backupAccountFile(repository);
 			localRepositoryFileDao.createAccountFile(repository);
 		}
 	}
 	
 	public void addRepositoryUser( Repository repository, List<User> userToAddList ) throws HaksvnException{
-		if( !repository.usingSyncUser() ) return;
+		if( !CodeUtils.isTrue(repository.getSyncUser()) ) return;
 		
-		if( repository.usingLocalConnect()){
+		if( CodeUtils.usingLocalConnect(repository.getConnectType())){
 			localRepositoryFileDao.backupAccountFile(repository);
 			localRepositoryFileDao.addAccount(repository, userToAddList);
 		}
 	}
 	
 	public void deleteRepositoryUser( Repository repository, List<User> userToDeleteList ) throws HaksvnException{
-		if( !repository.usingSyncUser() ) return;
+		if( !CodeUtils.isTrue(repository.getSyncUser()) ) return;
 		
-		if( repository.usingLocalConnect()){
+		if( CodeUtils.usingLocalConnect(repository.getConnectType())){
 			localRepositoryFileDao.backupAccountFile(repository);
 			localRepositoryFileDao.deleteAccount(repository, userToDeleteList);
 		}

@@ -8,9 +8,11 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.haks.haksvn.common.code.util.CodeUtils;
 import com.haks.haksvn.common.exception.HaksvnException;
 import com.haks.haksvn.repository.dao.RepositoryDao;
 import com.haks.haksvn.repository.model.Repository;
+import com.haks.haksvn.repository.util.RepositoryUtils;
 import com.haks.haksvn.user.model.User;
 import com.haks.haksvn.user.service.UserService;
 
@@ -49,8 +51,8 @@ public class RepositoryService {
 		
 	}
 	
-	public List<Repository> retrieveRepositoryListByUserId(String userId){
-		List<Repository> result = repositoryDao.retrieveRepositoryListByUserId(userId);
+	public List<Repository> retrieveActiveRepositoryListByUserId(String userId){
+		List<Repository> result = repositoryDao.retrieveActiveRepositoryListByUserId(userId);
 		return result;
 		
 	}
@@ -65,9 +67,9 @@ public class RepositoryService {
 	
 	public Repository saveRepository(Repository repository) throws Exception{
 		repository = svnRepositoryService.getRepositorySVNInfo(repository);
-		repository.formatAuthzTemplate();
+		repository.setAuthzTemplate(CodeUtils.isTrue(repository.getSyncUser())?RepositoryUtils.getFormattedAuthzTemplate(repository.getAuthzTemplate()):null);
 		if( repository.getRepositorySeq() < 1 ){
-			if( repository.usingSyncUser() ) svnRepositoryService.initRepositoryUser(repository);
+			if( CodeUtils.isTrue(repository.getSyncUser()) ) svnRepositoryService.initRepositoryUser(repository);
 			return repositoryDao.addRepository(repository);
 		}else{
 			// get repository in hibernate session 
@@ -85,7 +87,7 @@ public class RepositoryService {
 				.userId(repository.getUserId()).userPasswd(repository.getUserPasswd())
 				.authzPath(repository.getAuthzPath()).passwdPath(repository.getPasswdPath()).passwdType(repository.getPasswdType()).authzTemplate(repository.getAuthzTemplate());
 			repositoryDao.updateRepository(repositoryInHibernate);
-			if( repositoryInHibernate.usingSyncUser() ) svnRepositoryService.initRepositoryUser(repositoryInHibernate);
+			if(CodeUtils.isTrue(repositoryInHibernate.getSyncUser()) ) svnRepositoryService.initRepositoryUser(repositoryInHibernate);
 			return repositoryInHibernate;
 		}
 		
