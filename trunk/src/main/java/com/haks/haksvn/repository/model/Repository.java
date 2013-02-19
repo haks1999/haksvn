@@ -100,7 +100,7 @@ public class Repository{
 	private String authzTemplate;
 	
 	@ManyToMany(targetEntity = User.class, fetch=FetchType.EAGER)
-	@org.hibernate.annotations.Cascade(value=org.hibernate.annotations.CascadeType.DELETE)
+	//@org.hibernate.annotations.Cascade(value=org.hibernate.annotations.CascadeType.DELETE)
 	//@Cascade(org.hibernate.annotations.CascadeType.REPLICATE)
 	//@Cascade({org.hibernate.annotations.CascadeType.DETACH})
 	@Fetch(FetchMode.SUBSELECT)

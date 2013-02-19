@@ -39,8 +39,6 @@ public class UserController {
     @RequestMapping(value="/list/{userSeq}", method=RequestMethod.GET)
     public String forwardUserModifyPage(@PathVariable String userSeq, ModelMap model) {
     	User user = userService.retrieveUserByUserSeq(Integer.valueOf(userSeq));
-    	
-//System.out.println( (Code)user.getCodeList().get(0) );    	
     	model.addAttribute("user", user);
     	return "/user/modifyUser";
     }
@@ -65,6 +63,14 @@ public class UserController {
     	}
     	
    		userService.saveUser(user);
+   		return new ModelAndView(new RedirectView("/configuration/users/list", true));
+    		
+    }
+    
+    @RequestMapping(value={"/list/{userSeq}/delete"}, method=RequestMethod.POST)
+    public ModelAndView addUser(@PathVariable String userSeq) throws Exception{
+    	
+   		userService.deleteUser(User.Builder.getBuilder(new User()).userSeq(Integer.parseInt(userSeq)).build());
    		return new ModelAndView(new RedirectView("/configuration/users/list", true));
     		
     }

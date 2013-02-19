@@ -1,8 +1,8 @@
 package com.haks.haksvn.user.model;
 
-import java.util.ArrayList;
 import java.util.List;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -10,12 +10,11 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
-import javax.persistence.UniqueConstraint;
 
+import org.codehaus.jackson.annotate.JsonIgnore;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
 import org.hibernate.annotations.FilterDef;
@@ -86,12 +85,11 @@ public class User{
 	//@WhereJoinTable(clause = "code_group='user_auth_type_code'")
 	private Code authTypeCode;// = new Code();
 	
-	/*
+	
 	@ManyToMany(mappedBy="userList", fetch=FetchType.EAGER)
-	@org.hibernate.annotations.Cascade(value=org.hibernate.annotations.CascadeType.DELETE)
+	//@org.hibernate.annotations.Cascade(value=org.hibernate.annotations.CascadeType.DELETE)
 	@Fetch(FetchMode.SUBSELECT)
-	private List<Repository> repositoryList = new ArrayList<Repository>();
-	*/
+	private List<Repository> repositoryList;
 	/*
 	@ManyToMany(fetch=FetchType.EAGER)
 	@org.hibernate.annotations.Cascade(value=org.hibernate.annotations.CascadeType.DELETE)
@@ -113,7 +111,7 @@ public class User{
 	
 	@Override
 	public String toString(){
-		return "[ User ]\n - userSeq : " + userSeq + "\n - userId : " + userId +
+		return "\n[ User ]\n - userSeq : " + userSeq + "\n - userId : " + userId +
 					"\n - userName : " + userName + "\n - active : " + active + "\n - email : " + email;
 	}
 	
@@ -183,7 +181,7 @@ public class User{
 		this.authTypeCode = authTypeCode;
 	}
 	
-	/*
+	@JsonIgnore
 	public List<Repository> getRepositoryList() {
 		return repositoryList;
 	}
@@ -191,7 +189,6 @@ public class User{
 	public void setRepositoryList(List<Repository> repositoryList) {
 		this.repositoryList = repositoryList;
 	}
-	*/
 	
 	/*
 	public Set<Repository> getRepositories() {
@@ -221,6 +218,11 @@ public class User{
 		
 		public User build(){
 			return user;
+		}
+		
+		public Builder userSeq(int userSeq){
+			user.setUserSeq(userSeq);
+			return this;
 		}
 		
 		public Builder userId(String userId){

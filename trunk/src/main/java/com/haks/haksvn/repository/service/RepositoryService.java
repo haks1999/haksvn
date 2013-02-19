@@ -48,7 +48,6 @@ public class RepositoryService {
 		
 		Repository result = repositoryDao.retrieveRepositoryByRepositorySeq(repository);
 		return result;
-		
 	}
 	
 	public List<Repository> retrieveActiveRepositoryListByUserId(String userId){

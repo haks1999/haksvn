@@ -9,6 +9,7 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.haks.haksvn.common.code.util.CodeUtils;
+import com.haks.haksvn.common.exception.HaksvnException;
 import com.haks.haksvn.common.message.model.DefaultMessage;
 import com.haks.haksvn.common.message.model.ResultMessage;
 import com.haks.haksvn.repository.model.Repository;
@@ -80,7 +81,8 @@ public class UserService {
 			boolean needReposiotyInit = !currentForSVN.equals(afterForSVN) || needDeleteUser;
 			
 			if( needReposiotyInit ){
-				List<Repository> repositoryList = repositoryService.retrieveActiveRepositoryListByUserId(currentUser.getUserId());
+				//List<Repository> repositoryList = repositoryService.retrieveActiveRepositoryListByUserId(currentUser.getUserId());
+				List<Repository> repositoryList = currentUser.getRepositoryList();
 				repositoryService.saveRepositoryList(repositoryList);
 				if( needDeleteUser ){
 					for( Repository repository : repositoryList ){
@@ -97,6 +99,16 @@ public class UserService {
 		List<User> userList = userDao.retrieveActiveUserByUserIdOrUserName(searchString);
 		return userList;
 		
+	}
+	
+	public void deleteUser(User user) throws HaksvnException{
+		User userToDelete = userDao.retrieveUserByUserSeq(user);
+		if( userToDelete.getRepositoryList() !=null && userToDelete.getRepositoryList().size() > 0 ){
+			for( Repository repository : userToDelete.getRepositoryList() ){
+				repositoryService.deleteRepositoryUser(repository.getRepositorySeq(), Arrays.asList(new String[]{userToDelete.getUserId()}));
+			}
+		}
+		userDao.deleteUser(userToDelete);
 	}
 	
 }
