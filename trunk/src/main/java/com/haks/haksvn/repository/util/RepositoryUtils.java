@@ -1,12 +1,12 @@
 package com.haks.haksvn.repository.util;
 
 import com.haks.haksvn.common.code.util.CodeUtils;
-import com.haks.haksvn.common.crypto.MD5Crypt;
+import com.haks.haksvn.common.crypto.util.CryptoUtils;
 
 public class RepositoryUtils {
 	
 	public static String encryptPasswd(String passwd, String passwdType){
-		if( CodeUtils.isMD5ApacheEncrytion(passwdType) ) return MD5Crypt.apacheCrypt(passwd);
+		if( CodeUtils.isMD5ApacheEncrytion(passwdType) ) return CryptoUtils.encodeMD5Apache(passwd);
 		return passwd;
 	}
 

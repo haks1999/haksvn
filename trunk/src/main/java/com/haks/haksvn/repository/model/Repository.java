@@ -20,7 +20,6 @@ import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
 import org.hibernate.validator.constraints.NotEmpty;
 
-import com.haks.haksvn.common.crypto.MD5Crypt;
 import com.haks.haksvn.user.model.User;
 
 @Entity
@@ -81,11 +80,11 @@ public class Repository{
 	@Column(name = "server_ip")
 	private String serverIp;
 	
-	@Column(name = "user_id")
-	private String userId;
+	@Column(name = "server_user_id")
+	private String serverUserId;
 	
-	@Column(name = "user_passwd")
-	private String userPasswd;
+	@Column(name = "server_user_passwd")
+	private String serverUserPasswd;
 	
 	@Column(name = "authz_path")
 	private String authzPath;
@@ -270,20 +269,20 @@ public class Repository{
 		this.serverIp = serverIp;
 	}
 
-	public String getUserId() {
-		return userId;
+	public String getServerUserId() {
+		return serverUserId;
 	}
 
-	public void setUserId(String userId) {
-		this.userId = userId;
+	public void setServerUserId(String serverUserId) {
+		this.serverUserId = serverUserId;
 	}
 
-	public String getUserPasswd() {
-		return userPasswd;
+	public String getServerUserPasswd() {
+		return serverUserPasswd;
 	}
 
-	public void setUserPasswd(String userPasswd) {
-		this.userPasswd = userPasswd;
+	public void setServerUserPasswd(String serverUserPasswd) {
+		this.serverUserPasswd = serverUserPasswd;
 	}
 
 	public String getAuthzPath() {
@@ -406,13 +405,13 @@ public class Repository{
 			return this;
 		}
 		
-		public Builder userId(String userId){
-			repository.setUserId(userId);
+		public Builder serverUserId(String serverUserId){
+			repository.setServerUserId(serverUserId);
 			return this;
 		}
 		
-		public Builder userPasswd(String userPasswd){
-			repository.setUserPasswd(userPasswd);
+		public Builder serverUserPasswd(String serverUserPasswd){
+			repository.setServerUserPasswd(serverUserPasswd);
 			return this;
 		}
 		

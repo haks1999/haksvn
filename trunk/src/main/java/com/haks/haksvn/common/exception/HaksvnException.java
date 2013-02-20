@@ -1,7 +1,7 @@
 package com.haks.haksvn.common.exception;
 
 @SuppressWarnings("serial")
-public class HaksvnException extends Exception{
+public class HaksvnException extends RuntimeException{
 
 	public HaksvnException(){
 		super();

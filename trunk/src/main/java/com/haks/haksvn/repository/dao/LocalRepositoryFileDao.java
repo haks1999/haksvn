@@ -19,6 +19,7 @@ import org.apache.commons.lang.StringUtils;
 import org.springframework.stereotype.Repository;
 
 import com.haks.haksvn.common.code.util.CodeUtils;
+import com.haks.haksvn.common.crypto.util.CryptoUtils;
 import com.haks.haksvn.common.exception.HaksvnException;
 import com.haks.haksvn.repository.util.RepositoryUtils;
 import com.haks.haksvn.user.model.User;
@@ -35,12 +36,12 @@ public class LocalRepositoryFileDao {
 		return hasWriteAuth(repository.getAuthzPath()) && hasWriteAuth(repository.getPasswdPath());
 	}
 	
-	public void addAccount(com.haks.haksvn.repository.model.Repository repository, List<User> userToAddList) throws HaksvnException{
+	public void addAccount(com.haks.haksvn.repository.model.Repository repository, List<User> userToAddList){
 		addUserListToPasswd(repository, userToAddList);
 		addUserListToAuthz(repository, userToAddList);
 	}
 	
-	private void addUserListToPasswd( com.haks.haksvn.repository.model.Repository repository, List<User> userToAddList ) throws HaksvnException{
+	private void addUserListToPasswd( com.haks.haksvn.repository.model.Repository repository, List<User> userToAddList ){
 		RandomAccessFile raf = null;
 		FileChannel channel = null;
 		FileLock fileLock = null;
@@ -57,7 +58,7 @@ public class LocalRepositoryFileDao {
 				raf.seek(raf.length());
 				raf.write(new String( "\r\n"+user.getUserId() + 
 						RepositoryUtils.getPasswdFileDelimeter(repository.getPasswdType()) + 
-						RepositoryUtils.encryptPasswd(user.getUserPasswd(), repository.getPasswdType())).getBytes());
+						RepositoryUtils.encryptPasswd(CryptoUtils.decodeAES(user.getUserPasswd()), repository.getPasswdType())).getBytes());
 			}
 		}catch(Exception e){
 			throw new HaksvnException(e.getMessage());
@@ -78,7 +79,7 @@ public class LocalRepositoryFileDao {
 		createAuthzFile(repository);
 	}
 	
-	private Map<String,String> retrieveSvnAccountList(com.haks.haksvn.repository.model.Repository repository ) throws HaksvnException{
+	private Map<String,String> retrieveSvnAccountList(com.haks.haksvn.repository.model.Repository repository ){
 		FileReader fr = null;
 		BufferedReader br = null;
 		Map<String,String> accountList = new HashMap<String,String>();
@@ -105,7 +106,7 @@ public class LocalRepositoryFileDao {
 		return accountList;
 	}
 	
-	public void deleteAccount(com.haks.haksvn.repository.model.Repository repository, List<User> userToDeleteList) throws HaksvnException{
+	public void deleteAccount(com.haks.haksvn.repository.model.Repository repository, List<User> userToDeleteList){
 		deleteUserListToPasswd(repository, userToDeleteList);
 		deleteUserListToAuthz(repository, userToDeleteList);
 	}
@@ -158,12 +159,12 @@ public class LocalRepositoryFileDao {
 	}
 	
 	
-	public void createAccountFile(com.haks.haksvn.repository.model.Repository repository) throws HaksvnException{
+	public void createAccountFile(com.haks.haksvn.repository.model.Repository repository){
 		//createPasswdFile <-- 필요할려나...
 		createAuthzFile(repository);
 	}
 	
-	private void createAuthzFile(com.haks.haksvn.repository.model.Repository repository) throws HaksvnException{
+	private void createAuthzFile(com.haks.haksvn.repository.model.Repository repository){
 		if( !validateAuthzTemplate(repository.getAuthzTemplate()) ) return;
 		String content = transAuthzTemplateToContent(repository, repository.getAuthzTemplate());
 		RandomAccessFile raf = null;
@@ -231,7 +232,7 @@ public class LocalRepositoryFileDao {
 	
 	
 	/*
-	private String getAuthzTemplate(com.haks.haksvn.repository.model.Repository repository) throws HaksvnException{
+	private String getAuthzTemplate(com.haks.haksvn.repository.model.Repository repository){
 		InputStreamReader isr = null;
 		BufferedReader br = null;
 		String template = "";
@@ -256,14 +257,14 @@ public class LocalRepositoryFileDao {
 	}
 	*/
 	
-	public void backupAccountFile(com.haks.haksvn.repository.model.Repository repository) throws HaksvnException{
+	public void backupAccountFile(com.haks.haksvn.repository.model.Repository repository){
 		
 		backupFile(repository.getAuthzPath());
 		backupFile(repository.getPasswdPath());
 		
 	}
 	
-	private void backupFile(String path) throws HaksvnException{
+	private void backupFile(String path){
 		FileInputStream fis = null;
 		FileOutputStream fos = null;
 		try{

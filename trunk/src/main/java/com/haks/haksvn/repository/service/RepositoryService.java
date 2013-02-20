@@ -11,6 +11,7 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.haks.haksvn.common.code.util.CodeUtils;
+import com.haks.haksvn.common.crypto.util.CryptoUtils;
 import com.haks.haksvn.common.exception.HaksvnException;
 import com.haks.haksvn.repository.dao.RepositoryDao;
 import com.haks.haksvn.repository.model.Repository;
@@ -58,7 +59,7 @@ public class RepositoryService {
 		
 	}
 	
-	public List<Repository> saveRepositoryList(List<Repository> repositoryList) throws Exception{
+	public List<Repository> saveRepositoryList(List<Repository> repositoryList){
 		List<Repository> result = new ArrayList<Repository>(0);
 		for( Repository repository : repositoryList){
 			result.add(saveRepository(repository));
@@ -66,36 +67,43 @@ public class RepositoryService {
 		return result;
 	}
 	
-	public Repository saveRepository(Repository repository) throws Exception{
+	public Repository saveRepository(Repository repository){
 		repository = svnRepositoryService.getRepositorySVNInfo(repository);
 		repository.setAuthzTemplate(CodeUtils.isTrue(repository.getSyncUser())?RepositoryUtils.getFormattedAuthzTemplate(repository.getAuthzTemplate()):null);
 		if( repository.getRepositorySeq() < 1 ){
-			if( CodeUtils.isTrue(repository.getSyncUser()) ) svnRepositoryService.initRepositoryUser(repository);
-			return repositoryDao.addRepository(repository);
+			return addRepository(repository);
 		}else{
-			// get repository in hibernate session 
-			// 그냥 신규 repo obj 로 업뎃하믄 다른 객체로 인식해서 cascade 가 엉망이 됨
-			// manytoone 등과 같은 relation 이 설정된 경우 주의해야 함
-			//repositoryServerDao.updateRepository(repository.getRepositoryServer());
-			Repository repositoryInHibernate = repositoryDao.retrieveRepositoryByRepositorySeq(repository);
-			// exclude userList
-			Repository.Builder.getBuilder(repositoryInHibernate)
-				.active(repository.getActive())
-				.authUserId(repository.getAuthUserId()).authUserPasswd(repository.getAuthUserPasswd())
-				.repositoryLocation(repository.getRepositoryLocation()).repositoryName(repository.getRepositoryName()).svnName(repository.getSvnName())
-				.tagsPath(repository.getTagsPath()).trunkPath(repository.getTrunkPath()).branchesPath(repository.getBranchesPath()).syncUser(repository.getSyncUser())
-				.connectType(repository.getConnectType()).serverIp(repository.getServerIp())
-				.userId(repository.getUserId()).userPasswd(repository.getUserPasswd())
-				.authzPath(repository.getAuthzPath()).passwdPath(repository.getPasswdPath()).passwdType(repository.getPasswdType()).authzTemplate(repository.getAuthzTemplate());
-			repositoryDao.updateRepository(repositoryInHibernate);
-			if(CodeUtils.isTrue(repositoryInHibernate.getSyncUser()) ) svnRepositoryService.initRepositoryUser(repositoryInHibernate);
-			return repositoryInHibernate;
+			return updateRepository(repository);
 		}
-		
 	}
 	
-	public Repository addRepositoryUser(int repositorySeq, List<String> userIdList) throws HaksvnException{
-		
+	private Repository addRepository(Repository repository){
+		if( CodeUtils.isTrue(repository.getSyncUser()) ) svnRepositoryService.initRepositoryUser(repository);
+		repository.setAuthUserPasswd(CryptoUtils.encodeAES(repository.getAuthUserPasswd()));
+		return repositoryDao.addRepository(repository);
+	}
+	
+	private Repository updateRepository(Repository repository){
+		// get repository in hibernate session 
+		// 그냥 신규 repo obj 로 업뎃하믄 다른 객체로 인식해서 cascade 가 엉망이 됨
+		// manytoone 등과 같은 relation 이 설정된 경우 주의해야 함
+		//repositoryServerDao.updateRepository(repository.getRepositoryServer());
+		Repository repositoryInHibernate = repositoryDao.retrieveRepositoryByRepositorySeq(repository);
+		// exclude userList
+		Repository.Builder.getBuilder(repositoryInHibernate)
+			.active(repository.getActive())
+			.authUserId(repository.getAuthUserId()).authUserPasswd(CryptoUtils.encodeAES(repository.getAuthUserPasswd()))
+			.repositoryLocation(repository.getRepositoryLocation()).repositoryName(repository.getRepositoryName()).svnName(repository.getSvnName())
+			.tagsPath(repository.getTagsPath()).trunkPath(repository.getTrunkPath()).branchesPath(repository.getBranchesPath()).syncUser(repository.getSyncUser())
+			.connectType(repository.getConnectType()).serverIp(repository.getServerIp())
+			.serverUserId(repository.getServerUserId()).serverUserPasswd(repository.getServerUserPasswd())
+			.authzPath(repository.getAuthzPath()).passwdPath(repository.getPasswdPath()).passwdType(repository.getPasswdType()).authzTemplate(repository.getAuthzTemplate());
+		repositoryDao.updateRepository(repositoryInHibernate);
+		if(CodeUtils.isTrue(repositoryInHibernate.getSyncUser()) ) svnRepositoryService.initRepositoryUser(repositoryInHibernate);
+		return repositoryInHibernate;
+	}
+	
+	public Repository addRepositoryUser(int repositorySeq, List<String> userIdList){
 		Repository repository = repositoryDao.retrieveRepositoryByRepositorySeq(
 						Repository.Builder.getBuilder(new Repository()).repositorySeq(repositorySeq).build());
 		List<User> userList = repository.getUserList();
@@ -115,7 +123,7 @@ public class RepositoryService {
 	
 	
 	
-	public Repository deleteRepositoryUser(int repositorySeq, List<String> userIdList) throws HaksvnException{
+	public Repository deleteRepositoryUser(int repositorySeq, List<String> userIdList){
 		
 		if( userIdList.size() < 1) throw new HaksvnException("does not select user ");
 		// TODO
@@ -145,7 +153,7 @@ public class RepositoryService {
 		
 	}
 	
-	public void deleteRepository(Repository repository) throws HaksvnException{
+	public void deleteRepository(Repository repository){
 		Repository repositoryToDelete = repositoryDao.retrieveRepositoryByRepositorySeq(repository);
 		List<User> userList = repositoryToDelete.getUserList();
 		List<String> userIdList = new ArrayList<String>(0);
