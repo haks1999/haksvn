@@ -93,7 +93,7 @@
 				</p>
 				<p>
 					<form:label path="authUserPasswd" class="left">Repository User Password</form:label>
-					<form:input class="text w_10" path="authUserPasswd"/>
+					<form:password class="text w_10" path="authUserPasswd"/>
 					<form:errors path="authUserPasswd" />
 				</p>
 				<p>
@@ -137,12 +137,12 @@
 							<form:input path="serverIp" class="text w_20" />
 						</p>
 						<p>
-							<form:label path="userId" class="left">User ID</form:label>
-							<form:input path="userId" class="text w_10" />
+							<form:label path="serverUserId" class="left">Server User ID</form:label>
+							<form:input path="serverUserId" class="text w_10" />
 						</p>
 						<p>
-							<form:label path="userPasswd" class="left">User Password</form:label>
-							<form:input path="userPasswd" class="text w_10" />
+							<form:label path="serverUserPasswd" class="left">Server User Password</form:label>
+							<form:input path="serverUserPasswd" class="text w_10" />
 						</p>
 					</div>
 					<p>

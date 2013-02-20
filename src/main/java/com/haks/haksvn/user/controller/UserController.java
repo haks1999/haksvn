@@ -39,6 +39,7 @@ public class UserController {
     @RequestMapping(value="/list/{userSeq}", method=RequestMethod.GET)
     public String forwardUserModifyPage(@PathVariable String userSeq, ModelMap model) {
     	User user = userService.retrieveUserByUserSeq(Integer.valueOf(userSeq));
+    	user.setUserPasswd("");
     	model.addAttribute("user", user);
     	return "/user/modifyUser";
     }

@@ -1,8 +1,8 @@
-package com.haks.haksvn.common.crypto;
+package com.haks.haksvn.common.crypto.util;
 
 import java.security.MessageDigest;
 
-public final class MD5Crypt {
+final class MD5 {
 
 	static private final String SALTCHARS = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890";
 	static private final String itoa64 = "./0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
@@ -69,7 +69,7 @@ public final class MD5Crypt {
 			salt.append(SALTCHARS.substring(index, index + 1));
 		}
 
-		return MD5Crypt.crypt(password, salt.toString());
+		return MD5.crypt(password, salt.toString());
 	}
 
 	/**
@@ -95,7 +95,7 @@ public final class MD5Crypt {
 	 */
 
 	static public final String crypt(String password, String salt) {
-		return MD5Crypt.crypt(password, salt, "$1$");
+		return MD5.crypt(password, salt, "$1$");
 	}
 
 	/**
@@ -126,7 +126,7 @@ public final class MD5Crypt {
 			salt.append(SALTCHARS.substring(index, index + 1));
 		}
 
-		return MD5Crypt.apacheCrypt(password, salt.toString());
+		return MD5.apacheCrypt(password, salt.toString());
 	}
 
 	/**
@@ -152,7 +152,7 @@ public final class MD5Crypt {
 	 */
 
 	static public final String apacheCrypt(String password, String salt) {
-		return MD5Crypt.crypt(password, salt, "$apr1$");
+		return MD5.crypt(password, salt, "$apr1$");
 	}
 
 	/**
@@ -343,10 +343,10 @@ public final class MD5Crypt {
 	static public final boolean verifyPassword(String plaintextPass,
 			String md5CryptText) {
 		if (md5CryptText.startsWith("$1$")) {
-			return md5CryptText.equals(MD5Crypt.crypt(plaintextPass,
+			return md5CryptText.equals(MD5.crypt(plaintextPass,
 					md5CryptText));
 		} else if (md5CryptText.startsWith("$apr1$")) {
-			return md5CryptText.equals(MD5Crypt.apacheCrypt(plaintextPass,
+			return md5CryptText.equals(MD5.apacheCrypt(plaintextPass,
 					md5CryptText));
 		} else {
 			throw new RuntimeException("Bad md5CryptText");

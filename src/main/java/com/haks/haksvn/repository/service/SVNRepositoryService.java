@@ -28,13 +28,13 @@ public class SVNRepositoryService {
 	@Autowired
 	LocalRepositoryFileDao localRepositoryFileDao;
 	
-	public boolean testInitalConnection( Repository repository ) throws HaksvnException{
+	public boolean testInitalConnection( Repository repository ){
 		boolean testResult = testSVNConnection(repository);
 		if( CodeUtils.isTrue(repository.getSyncUser()) ) testResult = testResult && testSVNAccountFile(repository);
 		return  testResult;
 	}
 
-	public boolean testSVNConnection( Repository repository ) throws HaksvnException{
+	public boolean testSVNConnection( Repository repository ){
 		
 		ISVNEditor editor = null; 
 		try{
@@ -73,31 +73,34 @@ public class SVNRepositoryService {
     	return true;
 	}
 	
-	public boolean testSVNServerConnection( Repository repository ) throws HaksvnException{
+	public boolean testSVNServerConnection( Repository repository ){
 		return false;
 	}
 	
-	public boolean testSVNAccountFile( Repository repository ) throws HaksvnException{
+	public boolean testSVNAccountFile( Repository repository ){
 		if( !localRepositoryFileDao.hasFileAuth(repository) ) throw new HaksvnException("authz/passwd file does not exist or does not has write auth.");
 		return true;
 	}
 	
-	public Repository getRepositorySVNInfo(Repository repository) throws Exception{
-		
-		SVNRepository targetRepository = SVNRepositoryFactory.create(SVNURL.parseURIDecoded(repository.getRepositoryLocation()));
-		ISVNAuthenticationManager authManager = SVNWCUtil.createDefaultAuthenticationManager(repository.getAuthUserId(), repository.getAuthUserPasswd());
-		targetRepository.setAuthenticationManager(authManager);
-           
-		String root = targetRepository.getRepositoryRoot( true ).toString();
-		repository.setSvnRoot(root);
-		repository.setSvnName(root.substring(root.lastIndexOf("/") + 1));
+	public Repository getRepositorySVNInfo(Repository repository){
+		try{
+			SVNRepository targetRepository = SVNRepositoryFactory.create(SVNURL.parseURIDecoded(repository.getRepositoryLocation()));
+			ISVNAuthenticationManager authManager = SVNWCUtil.createDefaultAuthenticationManager(repository.getAuthUserId(), repository.getAuthUserPasswd());
+			targetRepository.setAuthenticationManager(authManager);
+	           
+			String root = targetRepository.getRepositoryRoot( true ).toString();
+			repository.setSvnRoot(root);
+			repository.setSvnName(root.substring(root.lastIndexOf("/") + 1));
+		}catch(Exception e){
+			throw new HaksvnException(e);
+		}
 			
         return repository;
     	
 	}
 	
 	// 초기화 시 passwd 에 대해서는 어떤 작업도 일어나지 않는다
-	public void initRepositoryUser( Repository repository) throws HaksvnException{
+	public void initRepositoryUser( Repository repository){
 		if( !CodeUtils.isTrue(repository.getSyncUser()) ) return;
 		
 		if( CodeUtils.usingLocalConnect(repository.getConnectType())){
@@ -106,7 +109,7 @@ public class SVNRepositoryService {
 		}
 	}
 	
-	public void addRepositoryUser( Repository repository, List<User> userToAddList ) throws HaksvnException{
+	public void addRepositoryUser( Repository repository, List<User> userToAddList ){
 		if( !CodeUtils.isTrue(repository.getSyncUser()) ) return;
 		
 		if( CodeUtils.usingLocalConnect(repository.getConnectType())){
@@ -115,7 +118,7 @@ public class SVNRepositoryService {
 		}
 	}
 	
-	public void deleteRepositoryUser( Repository repository, List<User> userToDeleteList ) throws HaksvnException{
+	public void deleteRepositoryUser( Repository repository, List<User> userToDeleteList ){
 		if( !CodeUtils.isTrue(repository.getSyncUser()) ) return;
 		
 		if( CodeUtils.usingLocalConnect(repository.getConnectType())){

@@ -51,7 +51,7 @@ public class User{
 	private String email;
 	
 	@Column(name = "user_passwd",nullable = false)
-	private String userPasswd;
+	private String userPasswd = "";
 	
 	@Column(name = "auth_type",nullable = false)
 	private String authType;
@@ -157,6 +157,7 @@ public class User{
 		this.email = email;
 	}
 
+	@JsonIgnore
 	public String getUserPasswd() {
 		return userPasswd;
 	}

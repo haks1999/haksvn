@@ -20,7 +20,7 @@ import com.haks.haksvn.user.service.UserService;
  */
 @Controller
 @RequestMapping(value="/common/users")
-public class CommonUserController {
+public class CommonUserAjaxController {
      
     @Autowired
     private UserService userService;

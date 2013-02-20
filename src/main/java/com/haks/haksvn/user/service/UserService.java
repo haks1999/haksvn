@@ -9,7 +9,7 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.haks.haksvn.common.code.util.CodeUtils;
-import com.haks.haksvn.common.exception.HaksvnException;
+import com.haks.haksvn.common.crypto.util.CryptoUtils;
 import com.haks.haksvn.common.message.model.DefaultMessage;
 import com.haks.haksvn.common.message.model.ResultMessage;
 import com.haks.haksvn.repository.model.Repository;
@@ -62,37 +62,42 @@ public class UserService {
 		
 	}
 	
-	public User saveUser(User user) throws Exception{
+	public User saveUser(User user){
 		if( user.getUserSeq() < 1 ){
-			return userDao.addUser(user);
+			return addUser(user);
 		}else{
-			User currentUser = userDao.retrieveUserByUserId(user);
-			String currentForSVN = currentUser.getAuthType() + currentUser.getUserPasswd();
-			String afterForSVN = user.getAuthType() + user.getUserPasswd();
-			boolean currentActive = CodeUtils.isTrue(currentUser.getActive());
-			boolean afterActive = CodeUtils.isTrue(user.getActive());
-			
-			currentUser = User.Builder.getBuilder(currentUser).active(user.getActive()).authType(user.getAuthType())
-				.authTypeCode(user.getAuthTypeCode()).email(user.getEmail()).userId(user.getUserId())
-				.userName(user.getUserName()).userPasswd(user.getUserPasswd()).build();
-			userDao.updateUser(currentUser);
-			
-			boolean needDeleteUser =  currentActive && !afterActive;
-			boolean needReposiotyInit = !currentForSVN.equals(afterForSVN) || needDeleteUser;
-			
-			if( needReposiotyInit ){
-				//List<Repository> repositoryList = repositoryService.retrieveActiveRepositoryListByUserId(currentUser.getUserId());
-				List<Repository> repositoryList = currentUser.getRepositoryList();
-				repositoryService.saveRepositoryList(repositoryList);
-				if( needDeleteUser ){
-					for( Repository repository : repositoryList ){
-						repositoryService.deleteRepositoryUser(repository.getRepositorySeq(), Arrays.asList(new String[]{user.getUserId()}));
-					}
+			return updateUser(user);
+		}
+	}
+	
+	private User addUser(User user){
+		user.setUserPasswd(CryptoUtils.encodeAES(user.getUserPasswd()));
+		return userDao.addUser(user);
+	}
+	
+	private User updateUser(User user){
+		User currentUser = userDao.retrieveUserByUserId(user);
+		boolean changedAuth = !currentUser.getAuthType().equals(user.getAuthType());
+		boolean changedPasswd = user.getUserPasswd().length() > 0;
+		boolean changedToInActive = CodeUtils.isTrue(currentUser.getActive()) && !CodeUtils.isTrue(user.getActive());
+		
+		currentUser = User.Builder.getBuilder(currentUser).active(user.getActive()).authType(user.getAuthType())
+			.authTypeCode(user.getAuthTypeCode()).email(user.getEmail()).userId(user.getUserId())
+			.userName(user.getUserName()).build();
+		if(changedPasswd) currentUser.setUserPasswd(CryptoUtils.encodeAES(user.getUserPasswd()));
+		userDao.updateUser(currentUser);
+		
+		if( changedAuth || changedPasswd || changedToInActive ){
+			//List<Repository> repositoryList = repositoryService.retrieveActiveRepositoryListByUserId(currentUser.getUserId());
+			List<Repository> repositoryList = currentUser.getRepositoryList();
+			repositoryService.saveRepositoryList(repositoryList);
+			if( changedToInActive ){
+				for( Repository repository : repositoryList ){
+					repositoryService.deleteRepositoryUser(repository.getRepositorySeq(), Arrays.asList(new String[]{user.getUserId()}));
 				}
 			}
-			return user;
 		}
-		
+		return user;
 	}
 	
 	public List<User> retrieveActiveUserByUserIdOrUserName(String searchString){
@@ -101,7 +106,7 @@ public class UserService {
 		
 	}
 	
-	public void deleteUser(User user) throws HaksvnException{
+	public void deleteUser(User user){
 		User userToDelete = userDao.retrieveUserByUserSeq(user);
 		if( userToDelete.getRepositoryList() !=null && userToDelete.getRepositoryList().size() > 0 ){
 			for( Repository repository : userToDelete.getRepositoryList() ){

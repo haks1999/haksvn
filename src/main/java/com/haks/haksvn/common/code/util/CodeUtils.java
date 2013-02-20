@@ -1,6 +1,5 @@
 package com.haks.haksvn.common.code.util;
 
-import com.haks.haksvn.common.crypto.MD5Crypt;
 
 public class CodeUtils {
 
