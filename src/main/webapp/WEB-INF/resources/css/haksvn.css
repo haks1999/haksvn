@@ -53,3 +53,67 @@ height:100%;
 -moz-box-sizing: border-box;
 box-sizing: border-box;	
 }
+
+div.errorpage .leftcolumn{
+float: left;
+padding: 35px;
+width: 240px;
+position: relative;
+z-index: 1;
+}
+
+div.errorpage .rightcolumn{
+float: left;
+padding: 35px;
+width: 321px;
+margin-left: -1px;
+}
+
+div.errorpage .leftcolumn h1{
+vertical-align: baseline;
+font-family: "Droid Custom", Georgia, Garamond, serif;
+font-weight: normal;
+font-size: 128px;
+line-height: 128px;
+letter-spacing: -5px;
+color: #000;
+width: 240px;
+top: 265px;
+opacity: .1;
+}
+
+div.errorpage .leftcolumn span{
+font-size: 28px;
+line-height: 28px;
+font-weight: bold;
+text-align: right;
+text-transform: uppercase;
+letter-spacing: -1px;
+display: block;
+margin-top: -20px;
+margin: 0;
+padding: 0;
+border: 0;
+outline: 0;
+vertical-align: baseline;
+background: transparent;
+}
+
+div.errorpage .rightcolumn h2{
+font-size: 27px;
+margin: 7px 0 20px;
+line-height: 31px;
+color: #454545;
+letter-spacing: -1px;
+font-family: "Droid Custom", Georgia, Garamond, serif;
+font-weight: normal;
+}
+
+div.errorpage .rightcolumn p{
+margin: 0 0 1.5em;
+padding: 0;
+border: 0;
+outline: 0;
+vertical-align: baseline;
+background: transparent;
+}
