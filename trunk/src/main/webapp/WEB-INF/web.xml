@@ -55,6 +55,21 @@
 	    <url-pattern>/console/*</url-pattern>
 	</servlet-mapping>
 	
+	<error-page>
+      	<error-code>401</error-code>
+      	<location>/WEB-INF/views/common/error/error401.jsp</location>
+	</error-page>
+	
+	<error-page>
+      	<error-code>404</error-code>
+      	<location>/WEB-INF/views/common/error/error404.jsp</location>
+	</error-page>
+	
+	<error-page>
+      	<error-code>500</error-code>
+      	<location>/WEB-INF/views/common/error/error500.jsp</location>
+	</error-page>
+	
 	<welcome-file-list>
 		<welcome-file>/WEB-INF/views/login.jsp</welcome-file>
 	</welcome-file-list>

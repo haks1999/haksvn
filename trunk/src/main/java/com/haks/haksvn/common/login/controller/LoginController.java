@@ -15,7 +15,7 @@ public class LoginController {
     
     
     @RequestMapping(value="/login", method=RequestMethod.GET)
-    public String retrieveLoginPage(Model model, HttpServletRequest request, HttpServletResponse response) {
+    public String forwardToLoginPage(Model model, HttpServletRequest request, HttpServletResponse response) {
          
 		return "login";
     }
@@ -24,5 +24,14 @@ public class LoginController {
     public RedirectView doLogin(Model model, HttpServletRequest request, HttpServletResponse response) {
          
 		return new RedirectView("/transfer/request/retrieveRequestList",true);
+    }
+    
+    
+    
+    //
+    @RequestMapping(value="/500", method=RequestMethod.GET)
+    public String forwardTo500Page(Model model, HttpServletRequest request, HttpServletResponse response) {
+         
+		return "common/error/error500";
     }
 }
