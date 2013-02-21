@@ -1,6 +1,25 @@
 <%@ page contentType="text/html; charset=utf-8"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ taglib uri="http://tiles.apache.org/tags-tiles" prefix="tiles"%>
+<c:if test="${not empty com.haks.haksvn.common.security.util.ContextHolder.getLoginUser()}">
+	<c:redirect url="${pageContext.request.contextPath}/transfer/request/retrieveRequestList" />
+</c:if>
+<script type="text/javascript">
+$(function() {
+	$('#frm_login input[name$="userId"]').each(function(){ this.focus();});
+	$("#frm_login input").keypress(function(event) {
+	    if (event.which == 13) {
+	        event.preventDefault();
+	        $("#frm_login").submit();
+	    }
+	});
+	
+	var resultMessage = '<c:out value="${resultMessage}"/>';
+	if( resultMessage.length > 0 ){
+		$().Message({type:'error', text: resultMessage});
+	}
+});
+</script>
 <body>
 	<tiles:insertAttribute name="header" />
 	<div id="wrapper">
@@ -16,20 +35,20 @@
 				</div>
 				<div id="desc">
 					<div class="body">
-						<form name="loginForm" method="post" action="<c:url value="/login"/>">
+						<div id="_global_message"></div>
+						<form id="frm_login" method="post" class="w100" action="<c:url value="/login"/>" style="margin-top:20px;padding-bottom:20px;">
 							<p>
-								<span class="strong">username</span>
-								<label></label>
-								<input type="text" class="text" name="username"/>
-								<br />
+								<label class="left">User ID</label>
+								<input type="text" class="text w_20" name="userId"/>
 							</p>
 							<p>
-								<span class="strong">password</span>
-								<label></label>
-								<input type="password" class="text" name="password"/>
-								<br />
+								<label class="left">Password</label>
+								<input type="password" class="text w_20" name="userPasswd"/>
 							</p>
-							<a class="button green  form_submit" id="doLogin"><span>Login</span></a>
+							<p>
+								<label class="left"></label>
+								<a class="button green mt ml form_submit"><span>Login</span></a>
+							</p>
 						</form>
 					</div>
 					<div class="clear"></div>

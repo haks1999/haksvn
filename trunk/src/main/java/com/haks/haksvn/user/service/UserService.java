@@ -3,6 +3,8 @@ package com.haks.haksvn.user.service;
 import java.util.Arrays;
 import java.util.List;
 
+import org.hibernate.Session;
+import org.hibernate.criterion.Restrictions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
@@ -104,6 +106,10 @@ public class UserService {
 		List<User> userList = userDao.retrieveActiveUserByUserIdOrUserName(searchString);
 		return userList;
 		
+	}
+	
+	public User retrieveActiveUserByUserIdAndPasswd(User user) {
+		return userDao.retrieveActiveUserByUserIdAndPasswd(user);
 	}
 	
 	public void deleteUser(User user){

@@ -51,7 +51,7 @@ public class UserController {
     }
     
     @RequestMapping(value={"/add/save","/list/*/save"}, method=RequestMethod.POST)
-    public ModelAndView addUser(ModelMap model, @ModelAttribute("user") @Valid User user, BindingResult result) throws Exception{
+    public ModelAndView addUser(ModelMap model, @ModelAttribute("user") @Valid User user, BindingResult result){
     	if( user.getUserSeq() < 1 ){
     		ResultMessage message = userService.duplicateUser(user);
     		if( !message.isSuccess() ){
@@ -69,7 +69,7 @@ public class UserController {
     }
     
     @RequestMapping(value={"/list/{userSeq}/delete"}, method=RequestMethod.POST)
-    public ModelAndView deleteUser(@PathVariable String userSeq) throws Exception{
+    public ModelAndView deleteUser(@PathVariable String userSeq){
     	
    		userService.deleteUser(User.Builder.getBuilder(new User()).userSeq(Integer.parseInt(userSeq)).build());
    		return new ModelAndView(new RedirectView("/configuration/users/list", true));
