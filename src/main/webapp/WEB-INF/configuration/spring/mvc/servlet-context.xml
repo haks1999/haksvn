@@ -36,6 +36,13 @@
 			<mvc:mapping path="/configuration/**"/>
 			<beans:bean class="com.haks.haksvn.common.code.interceptor.CodeInterceptor" />
 		</mvc:interceptor>
+		<mvc:interceptor>
+			<!-- TODO exclude를 못해 include로...-->
+			<mvc:mapping path="/transfer/**"/>
+			<mvc:mapping path="/configuration/**"/>
+			<mvc:mapping path="/common/**"/>
+			<beans:bean class="com.haks.haksvn.common.security.interceptor.AuthenticationInterceptor" />
+		</mvc:interceptor>
 	</mvc:interceptors>
 	
 	<!-- Resolves views selected for rendering by @Controllers to .jsp resources 
@@ -63,6 +70,16 @@
 		<beans:property name="contentType" value="text/html; charset=UTF-8" />
 	</beans:bean>
 	
+	<beans:bean class="org.springframework.web.servlet.handler.SimpleMappingExceptionResolver">
+   		<beans:property name="exceptionMappings">
+	      <beans:props>
+	         <beans:prop key="com.haks.haksvn.common.exception.HaksvnAuthenticationException">
+	            login
+	         </beans:prop>
+	      </beans:props>
+   		</beans:property>
+   		<beans:property name="defaultErrorView" value="common/error/error500"/>
+	</beans:bean>
 	
 	<!-- 
 	<context:component-scan base-package="com.haks.haksvn.common.menu.controller" />

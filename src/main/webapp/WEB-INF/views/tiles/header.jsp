@@ -6,9 +6,14 @@
 	</div>
 	<div class="col w5 last right bottomlast">
 		<p class="last">
-			<!-- 
-			Logged in as <span class="strong">Admin,</span> <a href="">Logout</a>
-			-->
+			<%
+				com.haks.haksvn.common.security.model.LoginUser loginUser = com.haks.haksvn.common.security.util.ContextHolder.getLoginUser();
+				if( loginUser != null ){
+			%>
+				Logged in as <span class="strong" style="margin-right:20px;"><%=loginUser.getUserName()%></span><a href="<c:url value="/logout"/>">Logout</a>
+			<%
+				}
+			%>
 		</p>
 	</div>
 	<div class="clear"></div>
