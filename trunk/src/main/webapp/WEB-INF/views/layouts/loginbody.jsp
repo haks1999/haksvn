@@ -1,9 +1,6 @@
 <%@ page contentType="text/html; charset=utf-8"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ taglib uri="http://tiles.apache.org/tags-tiles" prefix="tiles"%>
-<c:if test="${not empty com.haks.haksvn.common.security.util.ContextHolder.getLoginUser()}">
-	<c:redirect url="${pageContext.request.contextPath}/transfer/request/retrieveRequestList" />
-</c:if>
 <script type="text/javascript">
 $(function() {
 	$('#frm_login input[name$="userId"]').each(function(){ this.focus();});
