@@ -28,18 +28,21 @@
 			<!-- TODO mapping 을 뺄 수는 없을까 -->
 			<mvc:mapping path="/transfer/**"/>
 			<mvc:mapping path="/configuration/**"/>
+			<mvc:mapping path="/source/**"/>
 			<beans:bean class="com.haks.haksvn.common.menu.interceptor.MenuInterceptor" />
 		</mvc:interceptor>
 		<mvc:interceptor>
 			<!-- TODO mapping 을 뺄 수는 없을까 -->
 			<mvc:mapping path="/transfer/**"/>
 			<mvc:mapping path="/configuration/**"/>
+			<mvc:mapping path="/source/**"/>
 			<beans:bean class="com.haks.haksvn.common.code.interceptor.CodeInterceptor" />
 		</mvc:interceptor>
 		<mvc:interceptor>
 			<!-- TODO exclude를 못해 include로...-->
 			<mvc:mapping path="/transfer/**"/>
 			<mvc:mapping path="/configuration/**"/>
+			<mvc:mapping path="/source/**"/>
 			<mvc:mapping path="/common/**"/>
 			<beans:bean class="com.haks.haksvn.common.security.interceptor.AuthenticationInterceptor" />
 		</mvc:interceptor>

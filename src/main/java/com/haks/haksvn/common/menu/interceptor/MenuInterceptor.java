@@ -61,7 +61,7 @@ public class MenuInterceptor extends HandlerInterceptorAdapter {
 		String path = request.getRequestURI().substring(request.getContextPath().length());
 		String level[] = path.split("/");
 		
-		String viewPath = "/"+level[1]+"/"+level[2] + "/" + level[3];
+		String viewPath = "/"+level[1]+"/"+level[2] + ((level.length > 3 ) ? ("/" + level[3]):"");
 		String targetJsp = "/WEB-INF/views/" + mv.getViewName() + ".jsp";
 
 		ApplicationContext ac = ServletUtil.getApplicationContext(request

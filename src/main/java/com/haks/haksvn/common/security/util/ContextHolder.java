@@ -16,7 +16,11 @@ public class ContextHolder {
 	}
 
 	public static LoginUser getLoginUser(){
-		return (LoginUser)RequestContextHolder.currentRequestAttributes().getAttribute(SESSION_KEY_LOGIN_USER, RequestAttributes.SCOPE_SESSION);
+		try{
+			return (LoginUser)RequestContextHolder.currentRequestAttributes().getAttribute(SESSION_KEY_LOGIN_USER, RequestAttributes.SCOPE_SESSION);
+		}catch(IllegalStateException e){
+			return null;
+		}
 	}
 	
 	public static void deleteLoginUser(){
