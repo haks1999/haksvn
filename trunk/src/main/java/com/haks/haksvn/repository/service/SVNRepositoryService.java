@@ -120,12 +120,12 @@ public class SVNRepositoryService {
 		}
 	}
 	
-	public void addRepositoryUser( Repository repository, List<User> userToAddList ){
+	public void addRepositoryUser( Repository repository, List<User> userToAddList, boolean overwrite ){
 		if( !CodeUtils.isTrue(repository.getSyncUser()) ) return;
 		
 		if( CodeUtils.usingLocalConnect(repository.getConnectType())){
 			localRepositoryFileDao.backupAccountFile(repository);
-			localRepositoryFileDao.addAccount(repository, userToAddList);
+			localRepositoryFileDao.addAccount(repository, userToAddList, overwrite);
 		}
 	}
 	
