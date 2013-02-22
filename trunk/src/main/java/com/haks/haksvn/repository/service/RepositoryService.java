@@ -66,6 +66,12 @@ public class RepositoryService {
 		
 	}
 	
+	public Repository retrieveAccesibleActiveRepositoryByRepositorySeq(int repositorySeq){
+		Repository result = repositoryDao.retrieveActiveRepositoryByRepositorySeqAndUserId( repositorySeq, ContextHolder.getLoginUser().getUserId());
+		return result;
+		
+	}
+	
 	public List<Repository> saveRepositoryList(List<Repository> repositoryList){
 		List<Repository> result = new ArrayList<Repository>(0);
 		for( Repository repository : repositoryList){

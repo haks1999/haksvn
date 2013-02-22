@@ -27,7 +27,7 @@ public class LoginController {
     UserService userService;
     
     @RequestMapping(value="/login", method=RequestMethod.GET)
-    public String forwardToLoginPage() {
+    public String forwardLoginPage() {
          
 		return "login";
     }

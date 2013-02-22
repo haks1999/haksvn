@@ -53,6 +53,20 @@ public class RepositoryDao {
 		return result;
 	}
 	
+	public com.haks.haksvn.repository.model.Repository retrieveActiveRepositoryByRepositorySeqAndUserId(int repositorySeq,String userId) {
+		Session session = sessionFactory.getCurrentSession();
+		
+		com.haks.haksvn.repository.model.Repository result = 
+					(com.haks.haksvn.repository.model.Repository)session.createCriteria(com.haks.haksvn.repository.model.Repository.class)
+					.add(Restrictions.eq("active", "common.boolean.yn.code.y"))
+					.add(Restrictions.eq("repositorySeq", repositorySeq))
+					.createCriteria("userList")
+				.add(Restrictions.eq("userId", userId))
+				.uniqueResult();
+		
+		return result;
+	}
+	
 	
 	
 	public com.haks.haksvn.repository.model.Repository retrieveRepositoryByRepositorySeq(com.haks.haksvn.repository.model.Repository repository) {
