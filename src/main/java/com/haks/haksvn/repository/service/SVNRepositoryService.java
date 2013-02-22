@@ -2,28 +2,26 @@ package com.haks.haksvn.repository.service;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Iterator;
 import java.util.List;
+import java.util.ListIterator;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import org.tmatesoft.svn.core.SVNDirEntry;
-import org.tmatesoft.svn.core.SVNException;
+import org.tmatesoft.svn.core.SVNLogEntry;
 import org.tmatesoft.svn.core.SVNNodeKind;
-import org.tmatesoft.svn.core.SVNURL;
-import org.tmatesoft.svn.core.auth.ISVNAuthenticationManager;
-import org.tmatesoft.svn.core.io.ISVNEditor;
-import org.tmatesoft.svn.core.io.SVNRepository;
-import org.tmatesoft.svn.core.io.SVNRepositoryFactory;
-import org.tmatesoft.svn.core.wc.SVNWCUtil;
 
+import com.google.common.collect.Lists;
 import com.haks.haksvn.common.code.util.CodeUtils;
 import com.haks.haksvn.common.exception.HaksvnException;
+import com.haks.haksvn.common.paging.model.Paging;
 import com.haks.haksvn.repository.dao.LocalRepositoryFileDao;
+import com.haks.haksvn.repository.dao.SVNRepositoryDao;
 import com.haks.haksvn.repository.model.Repository;
-import com.haks.haksvn.repository.util.SVNRepositoryUtils;
+import com.haks.haksvn.source.model.SVNSource;
+import com.haks.haksvn.source.model.SVNSourceLog;
 import com.haks.haksvn.user.model.User;
 
 @Service
@@ -31,7 +29,11 @@ import com.haks.haksvn.user.model.User;
 public class SVNRepositoryService {
 	
 	@Autowired
-	LocalRepositoryFileDao localRepositoryFileDao;
+	private LocalRepositoryFileDao localRepositoryFileDao;
+	
+	@Autowired
+	private SVNRepositoryDao svnRepositoryDao;
+	
 	
 	public boolean testInitalConnection( Repository repository ){
 		boolean testResult = testSVNConnection(repository);
@@ -40,44 +42,7 @@ public class SVNRepositoryService {
 	}
 
 	public boolean testSVNConnection( Repository repository ){
-		
-		ISVNEditor editor = null; 
-		SVNRepository targetRepository = null;
-		try{
-			targetRepository = SVNRepositoryFactory.create(SVNURL.parseURIDecoded(repository.getRepositoryLocation()));
-			ISVNAuthenticationManager authManager = SVNWCUtil.createDefaultAuthenticationManager(repository.getAuthUserId(), repository.getAuthUserPasswd());
-			targetRepository.setAuthenticationManager(authManager);
-            
-			String relativeRoot = repository.getRepositoryLocation().replace(targetRepository.getRepositoryRoot( true ).toString(), "");
-			
-            if( targetRepository.checkPath( relativeRoot  + repository.getTrunkPath() ,  -1 ) == SVNNodeKind.NONE){
-            	throw new HaksvnException( "[" + repository.getTrunkPath() + "] is not exist in repository.");
-            }
-            if( targetRepository.checkPath( relativeRoot + repository.getTagsPath() ,  -1 ) == SVNNodeKind.NONE){
-            	throw new HaksvnException( "[" + repository.getTagsPath() + "] is not exist in repository.");
-            }
-            if( targetRepository.checkPath( relativeRoot + repository.getBranchesPath() ,  -1 ) == SVNNodeKind.NONE){
-            	throw new HaksvnException( "[" + repository.getBranchesPath() + "] is not exist in repository.");
-            }
-            
-            editor = targetRepository.getCommitEditor("testConnection", null);
-            editor.openRoot(-1);
-            
-        }catch(Exception e){
-        	e.printStackTrace();
-        	throw new HaksvnException(e.getMessage());
-		} finally {
-			if(targetRepository!=null) targetRepository.closeSession();
-			if (editor != null) {
-				try {
-					editor.abortEdit();
-				} catch (Exception e) {
-					e.printStackTrace();
-					throw new HaksvnException(e.getMessage());
-				}
-			}
-		}
-    	return true;
+		return svnRepositoryDao.isAuthorizedRepository(repository);
 	}
 	
 	public boolean testSVNServerConnection( Repository repository ){
@@ -90,23 +55,7 @@ public class SVNRepositoryService {
 	}
 	
 	public Repository getRepositorySVNInfo(Repository repository){
-		SVNRepository targetRepository = null;
-		try{
-			targetRepository = SVNRepositoryFactory.create(SVNURL.parseURIDecoded(repository.getRepositoryLocation()));
-			ISVNAuthenticationManager authManager = SVNWCUtil.createDefaultAuthenticationManager(repository.getAuthUserId(), repository.getAuthUserPasswd());
-			targetRepository.setAuthenticationManager(authManager);
-	           
-			String root = targetRepository.getRepositoryRoot( true ).toString();
-			repository.setSvnRoot(root);
-			repository.setSvnName(root.substring(root.lastIndexOf("/") + 1));
-		}catch(Exception e){
-			e.printStackTrace();
-			throw new HaksvnException(e);
-		}finally{
-			if(targetRepository!=null) targetRepository.closeSession();
-		}
-			
-        return repository;
+		return svnRepositoryDao.getSVNInfo(repository);
     	
 	}
 	
@@ -139,26 +88,38 @@ public class SVNRepositoryService {
 	}
 	
 	
-	
-	
-	@SuppressWarnings("unchecked")
-	//TODO
-	// svnrepository의 session 을 사용하여 connection 재사용하도록
-	public Collection<SVNDirEntry> retrieveSVNDirEntryListByPath( Repository repository, String path ){
-		
-		SVNRepository targetRepository = null;
-		Collection<SVNDirEntry> entries = new ArrayList<SVNDirEntry>();
-		try{
-			targetRepository = SVNRepositoryFactory.create(SVNURL.parseURIDecoded(repository.getRepositoryLocation()));
-			targetRepository.setAuthenticationManager(SVNRepositoryUtils.createISVNAuthManagerByUser(repository));
-			entries = targetRepository.getDir( repository.getRepositoryLocation().substring(repository.getSvnRoot().length()) + path, -1 , null , (Collection<SVNDirEntry>) null );
-        }catch(Exception e){
-        	e.printStackTrace();
-        	throw new HaksvnException(e);
-        }finally{
-        	if(targetRepository!=null) targetRepository.closeSession();
-        }
-		return entries;
+	public List<SVNSource> retrieveSVNSourceList( Repository repository, String path ){
+		// list 조회 시, log 는 가져오지 않는다.
+		List<SVNSource> svnSourceList = new ArrayList<SVNSource>();
+		Collection<SVNDirEntry> entries = svnRepositoryDao.retrieveSVNDirEntryList(repository, path);
+		for( SVNDirEntry svnDirEntry : entries ){
+			SVNSource svnSource = SVNSource.Builder.getBuilder(new SVNSource())
+					.title(svnDirEntry.getName()).name(svnDirEntry.getName()).path(path+"/"+svnDirEntry.getName())
+					.size(svnDirEntry.getSize()).revision(svnDirEntry.getRevision()).build();
+			svnSource.setIsFolder(svnDirEntry.getKind() == SVNNodeKind.DIR);
+			svnSource.setIsLazy(svnSource.getIsFolder());
+			svnSourceList.add(svnSource);
+		}
+		return svnSourceList;
     }
+	
+	public SVNSource retrieveSVNSourceContent(Repository repository, SVNSource svnSource){
+		return svnRepositoryDao.retrieveFileContentByRevision(repository, svnSource);
+	}
+	
+	public List<SVNSourceLog> retrieveSVNSourceLogs(Repository repository, String path, Paging paging ){
+		List<SVNSourceLog> svnSourceLogList = new ArrayList<SVNSourceLog>();
+		Collection<SVNLogEntry> entries = svnRepositoryDao.retrieveSVNLogEntryList(repository, path);
+		List<SVNLogEntry> entryList = Lists.newArrayList(entries);
+		ListIterator<SVNLogEntry> reverseEntries = entryList.listIterator(entryList.size());
+		int count = 0;
+		while( reverseEntries.hasPrevious() && count++ < paging.getLimit()){
+			SVNLogEntry svnLogEntry = reverseEntries.previous();
+			svnSourceLogList.add(SVNSourceLog.Builder.getBuilder(new SVNSourceLog())
+					.author(svnLogEntry.getAuthor()).date(svnLogEntry.getDate().toString()).message(svnLogEntry.getMessage())
+					.revision(svnLogEntry.getRevision()).build());
+		}
+		return svnSourceLogList;
+	}
 	
 }

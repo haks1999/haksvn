@@ -1,4 +1,5 @@
 <%@ include file="/WEB-INF/views/common/include/taglib.jspf"%>
+<%@ include file="/WEB-INF/views/common/include/syntaxhighlighter.jspf"%>
 <script type="text/javascript">
 	$(function() {
 		
@@ -8,12 +9,23 @@
 	});
 	
 	function listRepositorySource(){
-		
-		
-		
 		var repositorySeq = $("#sel_repository > option:selected").val();
-		$("#tree").dynatree({
+		$("#div_sourceTree").dynatree({
 			onActivate: function(node) {
+				if( node.data.isFolder ) return;
+				$.post("<c:url value="/source/browse/detail"/>",
+						{path:node.data.path, 
+							revision:node.data.revision,
+							repositorySeq:repositorySeq},
+			            function(data){
+								//$("#pre_fileContent").removeClass().addClass("brush: "+getShBrush(data.path)).text(data.content);
+								//SyntaxHighlighter.highlight();
+								//SyntaxHighlighter.highlight($("#pre_fileContent"));
+								var brush = getShBrush(data.path);//new SyntaxHighlighter.brushes.JScript();
+								//brush = new SyntaxHighlighter.brushes.Xml();
+					            brush.init({ toolbar: false });
+					            $('#pre_fileContent').html(brush.getHtml(data.content));
+			        },"json");
             },
             initAjax: {
 	            url: "<c:url value="/source/browse/list"/>",
@@ -26,9 +38,9 @@
 	 		    });
 	 		}
         });
-		$("#tree").dynatree("getTree").reload();
+		$("#div_sourceTree").dynatree("getTree").reload();
 	};
-	
+	SyntaxHighlighter.all();
 </script>
 <div id="table" class="help">
 	<h1></h1>
@@ -50,8 +62,18 @@
 				</div>
 				<div class="bottom"><div></div></div>
 			</div>
-			<div id="tree"></div>
-
+			
+			<div id="div_sourceTree" style="position:absolute;display:block;width:300px;height:350px;float:left;margin-right:-370px;left:10px;"></div>
+			<div style="float:left; width:100%;z-index:-1;">
+				<div style="margin-left:320px">
+					<pre id="pre_fileContent" class="brush: xml">
+						function test(){return true;};
+					</pre>
+				</div>
+			</div>
+						
+						
+						
 			<!-- 
 			<table id="tbl_userList">
 				<thead>
@@ -84,5 +106,7 @@
 			 -->
 		</div>
 	</div>
+	
+
 	<div class="clear"></div>
 </div>

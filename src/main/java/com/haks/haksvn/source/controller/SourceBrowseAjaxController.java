@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -15,6 +16,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import com.haks.haksvn.common.exception.HaksvnException;
 import com.haks.haksvn.common.message.model.DefaultMessage;
 import com.haks.haksvn.common.message.model.ResultMessage;
+import com.haks.haksvn.repository.model.Repository;
 import com.haks.haksvn.source.model.SVNSource;
 import com.haks.haksvn.source.service.SourceService;
 
@@ -31,6 +33,15 @@ public class SourceBrowseAjaxController {
     												@RequestParam(value = "path", required = true) String path	){
     	
 		return sourceService.retrieveSVNSourceList(repositorySeq, path);
+    }
+	
+	@RequestMapping(value="/detail")
+    public @ResponseBody SVNSource getSVNSource(@ModelAttribute("svnSource") SVNSource svnSource,
+    										@RequestParam(value = "repositorySeq", required = true) String repositorySeq){
+    	
+		svnSource = sourceService.retrieveSVNSource(repositorySeq, svnSource);
+		svnSource.setContent(svnSource.getContent().replaceAll("<","&lt;"));	// for syntaxhighligher
+		return svnSource;
     }
 	
 	
