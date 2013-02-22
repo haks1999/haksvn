@@ -45,10 +45,11 @@ public class RepositoryAjaxController {
     
     @RequestMapping(value="/addUser/{repositorySeq}", method=RequestMethod.POST)
     public @ResponseBody ResultMessage addRepositoryUser(@PathVariable int repositorySeq,
-    												@RequestParam(value = "userId", required = true) String[] userIdList){
+    												@RequestParam(value = "userId", required = true) String[] userIdList,
+    												@RequestParam(value = "overwrite", required = false) boolean overwrite){
     	
     	ResultMessage message = new ResultMessage("users added");
-    	repositoryService.addRepositoryUser(Integer.valueOf(repositorySeq),Arrays.asList(userIdList));
+    	repositoryService.addRepositoryUser(Integer.valueOf(repositorySeq),Arrays.asList(userIdList),overwrite);
     	return message;
     }
     

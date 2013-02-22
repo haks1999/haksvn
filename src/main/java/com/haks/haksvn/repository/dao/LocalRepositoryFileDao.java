@@ -36,7 +36,8 @@ public class LocalRepositoryFileDao {
 		return hasWriteAuth(repository.getAuthzPath()) && hasWriteAuth(repository.getPasswdPath());
 	}
 	
-	public void addAccount(com.haks.haksvn.repository.model.Repository repository, List<User> userToAddList){
+	public void addAccount(com.haks.haksvn.repository.model.Repository repository, List<User> userToAddList, boolean overwrite){
+		if( overwrite ) deleteUserListToPasswd(repository, userToAddList);
 		addUserListToPasswd(repository, userToAddList);
 		addUserListToAuthz(repository, userToAddList);
 	}
@@ -72,6 +73,7 @@ public class LocalRepositoryFileDao {
 			}
 		}
 	}
+	
 	
 	private void addUserListToAuthz( com.haks.haksvn.repository.model.Repository repository, List<User> userToAddList ) throws HaksvnException{
 		//TODO

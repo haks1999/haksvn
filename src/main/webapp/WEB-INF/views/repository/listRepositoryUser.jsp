@@ -5,22 +5,10 @@
   }
   </style>
 <script type="text/javascript">
-
-
-
-
 	$(function() {
 		retrieveRepositoryUserList();
 		$("#sel_repository").change(retrieveRepositoryUserList);
-		
-		
-		
-		
-		
-		    
 	});
-	
-	
 	    
 	function retrieveRepositoryUserList(){
 		var repositorySeq = $("#sel_repository > option:selected").val();
@@ -43,7 +31,6 @@
 	
 	function delRepositoryUser(){
 		var repositorySeq = $("#sel_repository > option:selected").val();
-		
 		$.post("<c:url value="/configuration/repositories/delUser"/>" + "/" + repositorySeq,
 				$('#tbl_userList input[name="userId"]:checked').serialize(),
 	            function(data){
@@ -55,7 +42,7 @@
 	
 	function addRepositoryUser(){
 		var repositorySeq = $("#sel_repository > option:selected").val();
-		var userIds = {userId: selectedUsers};
+		var userIds = {userId: selectedUsers, overwrite: $('#ckb_overwrite').is(':checked')};
 		$.post("<c:url value="/configuration/repositories/addUser"/>" + "/" + repositorySeq,
 				$.param(userIds,true),
 	            function(data){
@@ -142,7 +129,7 @@
 		enableSearchUserAutocomplete();
 		$("#div_searchUser").dialog({
 			resizable: false,
-			height: 230,
+			height: 260,
 		    witdh: 600,
 		    modal: true,
 		    buttons: {
@@ -220,5 +207,6 @@
 	<div class="module text">
   		<p>Enter user id or user name <br>(minimum 3 characters)</p>
 		<input id="ipt_users" class="text w_20">
+		<span class="italic"><input id="ckb_overwrite" type="checkbox"/>Overwrite if a user exists in passwd</span>
 	</div>
 </div>

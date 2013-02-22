@@ -116,7 +116,7 @@ public class RepositoryService {
 		return repositoryInHibernate;
 	}
 	
-	public Repository addRepositoryUser(int repositorySeq, List<String> userIdList){
+	public Repository addRepositoryUser(int repositorySeq, List<String> userIdList, boolean overwrite){
 		Repository repository = repositoryDao.retrieveRepositoryByRepositorySeq(
 						Repository.Builder.getBuilder(new Repository()).repositorySeq(repositorySeq).build());
 		List<User> userList = repository.getUserList();
@@ -130,7 +130,7 @@ public class RepositoryService {
 			userList.add(userToAdd);
 		}
 		repositoryDao.updateRepository(repository);
-		svnRepositoryService.addRepositoryUser(repository, userToAddList);
+		svnRepositoryService.addRepositoryUser(repository, userToAddList, overwrite);
 		return repository;
 	}
 	
