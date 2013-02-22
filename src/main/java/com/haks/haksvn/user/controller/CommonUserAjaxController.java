@@ -7,10 +7,14 @@ import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.haks.haksvn.common.exception.HaksvnException;
+import com.haks.haksvn.common.message.model.DefaultMessage;
+import com.haks.haksvn.common.message.model.ResultMessage;
 import com.haks.haksvn.user.model.User;
 import com.haks.haksvn.user.service.UserService;
 
@@ -40,4 +44,20 @@ public class CommonUserAjaxController {
     	return simpleUserList;
     }
     
+    @ExceptionHandler(HaksvnException.class)
+    public @ResponseBody ResultMessage haksvnExceptionHandler(Exception e) {
+    	ResultMessage message = new ResultMessage(e.getMessage());
+    	message.setSuccess(false);
+    	message.setType(DefaultMessage.TYPE.ERROR);
+        return message;
+    }
+    
+    @ExceptionHandler(Exception.class)
+    public @ResponseBody ResultMessage exceptionHandler(Exception e) {
+    	e.printStackTrace();
+    	ResultMessage message = new ResultMessage(e.getMessage());
+    	message.setSuccess(false);
+    	message.setType(DefaultMessage.TYPE.ERROR);
+        return message;
+    }
 }

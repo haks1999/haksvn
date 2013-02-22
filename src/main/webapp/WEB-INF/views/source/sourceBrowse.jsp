@@ -1,14 +1,33 @@
 <%@ include file="/WEB-INF/views/common/include/taglib.jspf"%>
 <script type="text/javascript">
-
-
-
-
 	$(function() {
-		    
+		
+		listRepositorySource();
+		$("#sel_repository").change(listRepositorySource);
+		
 	});
 	
-	
+	function listRepositorySource(){
+		
+		
+		
+		var repositorySeq = $("#sel_repository > option:selected").val();
+		$("#tree").dynatree({
+			onActivate: function(node) {
+            },
+            initAjax: {
+	            url: "<c:url value="/source/browse/list"/>",
+	            data: {repositorySeq: repositorySeq, path:""}
+	        },
+			onLazyRead: function(node){
+	 			node.appendAjax({
+	 		    	url: "<c:url value="/source/browse/list"/>",
+	 		        data: {repositorySeq: repositorySeq, path:node.data.path}
+	 		    });
+	 		}
+        });
+		$("#tree").dynatree("getTree").reload();
+	};
 	
 </script>
 <div id="table" class="help">
@@ -31,6 +50,7 @@
 				</div>
 				<div class="bottom"><div></div></div>
 			</div>
+			<div id="tree"></div>
 
 			<!-- 
 			<table id="tbl_userList">

@@ -62,7 +62,16 @@ public class RepositoryAjaxController {
     }
     
     @ExceptionHandler(HaksvnException.class)
-    public @ResponseBody ResultMessage HaksvnExceptionHandler(HaksvnException e) {
+    public @ResponseBody ResultMessage haksvnExceptionHandler(Exception e) {
+    	ResultMessage message = new ResultMessage(e.getMessage());
+    	message.setSuccess(false);
+    	message.setType(DefaultMessage.TYPE.ERROR);
+        return message;
+    }
+    
+    @ExceptionHandler(Exception.class)
+    public @ResponseBody ResultMessage exceptionHandler(Exception e) {
+    	e.printStackTrace();
     	ResultMessage message = new ResultMessage(e.getMessage());
     	message.setSuccess(false);
     	message.setType(DefaultMessage.TYPE.ERROR);

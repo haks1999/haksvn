@@ -1,12 +1,16 @@
 package com.haks.haksvn.repository.service;
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Iterator;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
+import org.tmatesoft.svn.core.SVNDirEntry;
+import org.tmatesoft.svn.core.SVNException;
 import org.tmatesoft.svn.core.SVNNodeKind;
 import org.tmatesoft.svn.core.SVNURL;
 import org.tmatesoft.svn.core.auth.ISVNAuthenticationManager;
@@ -19,6 +23,7 @@ import com.haks.haksvn.common.code.util.CodeUtils;
 import com.haks.haksvn.common.exception.HaksvnException;
 import com.haks.haksvn.repository.dao.LocalRepositoryFileDao;
 import com.haks.haksvn.repository.model.Repository;
+import com.haks.haksvn.repository.util.SVNRepositoryUtils;
 import com.haks.haksvn.user.model.User;
 
 @Service
@@ -37,8 +42,9 @@ public class SVNRepositoryService {
 	public boolean testSVNConnection( Repository repository ){
 		
 		ISVNEditor editor = null; 
+		SVNRepository targetRepository = null;
 		try{
-			SVNRepository targetRepository = SVNRepositoryFactory.create(SVNURL.parseURIDecoded(repository.getRepositoryLocation()));
+			targetRepository = SVNRepositoryFactory.create(SVNURL.parseURIDecoded(repository.getRepositoryLocation()));
 			ISVNAuthenticationManager authManager = SVNWCUtil.createDefaultAuthenticationManager(repository.getAuthUserId(), repository.getAuthUserPasswd());
 			targetRepository.setAuthenticationManager(authManager);
             
@@ -61,6 +67,7 @@ public class SVNRepositoryService {
         	e.printStackTrace();
         	throw new HaksvnException(e.getMessage());
 		} finally {
+			if(targetRepository!=null) targetRepository.closeSession();
 			if (editor != null) {
 				try {
 					editor.abortEdit();
@@ -83,8 +90,9 @@ public class SVNRepositoryService {
 	}
 	
 	public Repository getRepositorySVNInfo(Repository repository){
+		SVNRepository targetRepository = null;
 		try{
-			SVNRepository targetRepository = SVNRepositoryFactory.create(SVNURL.parseURIDecoded(repository.getRepositoryLocation()));
+			targetRepository = SVNRepositoryFactory.create(SVNURL.parseURIDecoded(repository.getRepositoryLocation()));
 			ISVNAuthenticationManager authManager = SVNWCUtil.createDefaultAuthenticationManager(repository.getAuthUserId(), repository.getAuthUserPasswd());
 			targetRepository.setAuthenticationManager(authManager);
 	           
@@ -92,7 +100,10 @@ public class SVNRepositoryService {
 			repository.setSvnRoot(root);
 			repository.setSvnName(root.substring(root.lastIndexOf("/") + 1));
 		}catch(Exception e){
+			e.printStackTrace();
 			throw new HaksvnException(e);
+		}finally{
+			if(targetRepository!=null) targetRepository.closeSession();
 		}
 			
         return repository;
@@ -127,5 +138,27 @@ public class SVNRepositoryService {
 		}
 	}
 	
+	
+	
+	
+	@SuppressWarnings("unchecked")
+	//TODO
+	// svnrepository의 session 을 사용하여 connection 재사용하도록
+	public Collection<SVNDirEntry> retrieveSVNDirEntryListByPath( Repository repository, String path ){
+		
+		SVNRepository targetRepository = null;
+		Collection<SVNDirEntry> entries = new ArrayList<SVNDirEntry>();
+		try{
+			targetRepository = SVNRepositoryFactory.create(SVNURL.parseURIDecoded(repository.getRepositoryLocation()));
+			targetRepository.setAuthenticationManager(SVNRepositoryUtils.createISVNAuthManagerByUser(repository));
+			entries = targetRepository.getDir( repository.getRepositoryLocation().substring(repository.getSvnRoot().length()) + path, -1 , null , (Collection<SVNDirEntry>) null );
+        }catch(Exception e){
+        	e.printStackTrace();
+        	throw new HaksvnException(e);
+        }finally{
+        	if(targetRepository!=null) targetRepository.closeSession();
+        }
+		return entries;
+    }
 	
 }
