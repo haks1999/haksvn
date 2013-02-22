@@ -17,11 +17,11 @@ public class SVNSource {
 	
 	private String name;
 	private String path;
-	private String author;
-	private long revision;
-	private String date;
-	private String commitMessage;
 	private long size;
+	private long revision;
+	private boolean isTextMimeType;
+	private String content;
+	private List<SVNSourceLog> logs;
 	
 	public SVNSource(){
 		
@@ -29,9 +29,8 @@ public class SVNSource {
 	
 	@Override
 	public String toString(){
-		return "\n[ SVNSource ]\n - title : " + title + "\n - isFolder : " + isFolder +
-					"\n - name : " + name + "\n - path : " + path + "\n - author : " + author + "\n - size : " + size +
-					"\n - revision : " + revision + "\n - date : " + date + "\n - commitMessage : " + commitMessage;
+		return "\n[ SVNSource ]\n - title : " + title + "\n - isFolder : " + isFolder + "\n - isTextMimeType : " + isTextMimeType +
+					"\n - name : " + name + "\n - path : " + path + "\n - size : " + size + "\n - revision : " + revision;
 	}
 
 	public String getTitle() {
@@ -74,38 +73,6 @@ public class SVNSource {
 		this.path = path;
 	}
 
-	public String getAuthor() {
-		return author;
-	}
-
-	public void setAuthor(String author) {
-		this.author = author;
-	}
-
-	public long getRevision() {
-		return revision;
-	}
-
-	public void setRevision(long revision) {
-		this.revision = revision;
-	}
-
-	public String getDate() {
-		return date;
-	}
-
-	public void setDate(String date) {
-		this.date = date;
-	}
-
-	public String getCommitMessage() {
-		return commitMessage;
-	}
-
-	public void setCommitMessage(String commitMessage) {
-		this.commitMessage = commitMessage;
-	}
-
 	public long getSize() {
 		return size;
 	}
@@ -114,7 +81,41 @@ public class SVNSource {
 		this.size = size;
 	}
 	
+	public long getRevision(){
+		return revision;
+	}
 	
+	public void setRevision(long revision){
+		this.revision = revision;
+	}
+	
+	public boolean getIsTextMimeType(){
+		return isTextMimeType;
+	}
+	
+	public void setIsTextMimeType(boolean isTextMimeType){
+		this.isTextMimeType = isTextMimeType;
+	}
+	
+	public String getContent() {
+		return content;
+	}
+
+	public void setContent(String content) {
+		this.content = content;
+	}
+
+	public List<SVNSourceLog> getLogs() {
+		return logs;
+	}
+
+	public void setLogs(List<SVNSourceLog> logs) {
+		this.logs = logs;
+	}
+
+
+
+
 	public static class Builder{
 		
 		private SVNSource svnSource;
@@ -156,8 +157,8 @@ public class SVNSource {
 			return this;
 		}
 		
-		public Builder author(String author){
-			svnSource.setAuthor(author);
+		public Builder size(long size){
+			svnSource.setSize(size);
 			return this;
 		}
 		
@@ -166,18 +167,18 @@ public class SVNSource {
 			return this;
 		}
 		
-		public Builder date(String date){
-			svnSource.setDate(date);
+		public Builder textMimeType(boolean isTextMimeType){
+			svnSource.setIsTextMimeType(isTextMimeType);
 			return this;
 		}
 		
-		public Builder commitMessage(String commitMessage){
-			svnSource.setCommitMessage(commitMessage);
+		public Builder content(String content){
+			svnSource.setContent(content);
 			return this;
 		}
 		
-		public Builder size(long size){
-			svnSource.setSize(size);
+		public Builder logs(List<SVNSourceLog> logs){
+			svnSource.setLogs(logs);
 			return this;
 		}
 		

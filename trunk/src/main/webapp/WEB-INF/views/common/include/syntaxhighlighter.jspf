@@ -1,0 +1,37 @@
+<%@ page contentType="text/html; charset=utf-8" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+
+<link rel="stylesheet" href="<c:url value="/css/syntaxhighlighter/shCore.css"/>" type="text/css"	media="screen" />
+<link rel="stylesheet" href="<c:url value="/css/syntaxhighlighter/shCoreEclipse.css"/>" type="text/css"	media="screen" />
+<link rel="stylesheet" href="<c:url value="/css/syntaxhighlighter/shCoreDefault.css"/>" type="text/css"	media="screen" />
+<link rel="stylesheet" href="<c:url value="/css/syntaxhighlighter/shThemeEclipse.css"/>" type="text/css"	media="screen" />
+<link rel="stylesheet" href="<c:url value="/css/syntaxhighlighter/shThemeDefault.css"/>" type="text/css"	media="screen" />
+<script src="<c:url value="/js/syntaxhighlighter/shCore.js"/>" type="text/javascript" charset="utf-8"></script>
+<script src="<c:url value="/js/syntaxhighlighter/shAutoloader.js"/>" type="text/javascript" charset="utf-8"></script>
+<script src="<c:url value="/js/syntaxhighlighter/shLegacy.js"/>" type="text/javascript" charset="utf-8"></script>
+<script src="<c:url value="/js/syntaxhighlighter/shBrushAS3.js"/>" type="text/javascript" charset="utf-8"></script>
+<script src="<c:url value="/js/syntaxhighlighter/shBrushBash.js"/>" type="text/javascript" charset="utf-8"></script>
+<script src="<c:url value="/js/syntaxhighlighter/shBrushCss.js"/>" type="text/javascript" charset="utf-8"></script>
+<script src="<c:url value="/js/syntaxhighlighter/shBrushDiff.js"/>" type="text/javascript" charset="utf-8"></script>
+<script src="<c:url value="/js/syntaxhighlighter/shBrushJava.js"/>" type="text/javascript" charset="utf-8"></script>
+<script src="<c:url value="/js/syntaxhighlighter/shBrushJavaFx.js"/>" type="text/javascript" charset="utf-8"></script>
+<script src="<c:url value="/js/syntaxhighlighter/shBrushJScript.js"/>" type="text/javascript" charset="utf-8"></script>
+<script src="<c:url value="/js/syntaxhighlighter/shBrushPerl.js"/>" type="text/javascript" charset="utf-8"></script>
+<script src="<c:url value="/js/syntaxhighlighter/shBrushPlain.js"/>" type="text/javascript" charset="utf-8"></script>
+<script src="<c:url value="/js/syntaxhighlighter/shBrushRuby.js"/>" type="text/javascript" charset="utf-8"></script>
+<script src="<c:url value="/js/syntaxhighlighter/shBrushSql.js"/>" type="text/javascript" charset="utf-8"></script>
+<script src="<c:url value="/js/syntaxhighlighter/shBrushXml.js"/>" type="text/javascript" charset="utf-8"></script>
+<script type="text/javascript">
+	function getShBrush( path ){
+		var ext = path.substr(path.lastIndexOf(".")+1);
+		if( "/js/".indexOf(ext) > 0 ) return new SyntaxHighlighter.brushes.JScript();
+		if( "/sh/bat/properties/".indexOf(ext) > 0 ) return new SyntaxHighlighter.brushes.Bash();
+		if( "/css/".indexOf(ext) > 0 ) return new SyntaxHighlighter.brushes.Css();
+		if( "/java/".indexOf(ext) > 0 ) return new SyntaxHighlighter.brushes.Java();
+		if( "/perl/pl/".indexOf(ext) > 0 ) return new SyntaxHighlighter.brushes.Perl();
+		if( "/sql/".indexOf(ext) > 0 ) return new SyntaxHighlighter.brushes.Sql();
+		if( "/xml/".indexOf(ext) > 0 ) return new SyntaxHighlighter.brushes.Xml();
+		return new SyntaxHighlighter.brushes.Plain();
+	}
+</script>
+	
