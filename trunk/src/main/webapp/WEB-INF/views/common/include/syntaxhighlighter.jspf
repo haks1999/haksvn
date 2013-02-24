@@ -3,9 +3,7 @@
 
 <link rel="stylesheet" href="<c:url value="/css/syntaxhighlighter/shCore.css"/>" type="text/css"	media="screen" />
 <link rel="stylesheet" href="<c:url value="/css/syntaxhighlighter/shCoreEclipse.css"/>" type="text/css"	media="screen" />
-<link rel="stylesheet" href="<c:url value="/css/syntaxhighlighter/shCoreDefault.css"/>" type="text/css"	media="screen" />
 <link rel="stylesheet" href="<c:url value="/css/syntaxhighlighter/shThemeEclipse.css"/>" type="text/css"	media="screen" />
-<link rel="stylesheet" href="<c:url value="/css/syntaxhighlighter/shThemeDefault.css"/>" type="text/css"	media="screen" />
 <script src="<c:url value="/js/syntaxhighlighter/shCore.js"/>" type="text/javascript" charset="utf-8"></script>
 <script src="<c:url value="/js/syntaxhighlighter/shAutoloader.js"/>" type="text/javascript" charset="utf-8"></script>
 <script src="<c:url value="/js/syntaxhighlighter/shLegacy.js"/>" type="text/javascript" charset="utf-8"></script>

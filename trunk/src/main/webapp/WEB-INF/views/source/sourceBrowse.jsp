@@ -12,20 +12,26 @@
 		var repositorySeq = $("#sel_repository > option:selected").val();
 		$("#div_sourceTree").dynatree({
 			onActivate: function(node) {
-				if( node.data.isFolder ) return;
+				return;
+				if( node.isLoading ) return;
+				//alert( node.data.children );
+				retrieveSourceList(node.getChildren());
+				//if( node.data.isFolder ) return;
+				/*
 				$.post("<c:url value="/source/browse/detail"/>",
 						{path:node.data.path, 
 							revision:node.data.revision,
 							repositorySeq:repositorySeq},
 			            function(data){
-								//$("#pre_fileContent").removeClass().addClass("brush: "+getShBrush(data.path)).text(data.content);
-								//SyntaxHighlighter.highlight();
-								//SyntaxHighlighter.highlight($("#pre_fileContent"));
 								var brush = getShBrush(data.path);//new SyntaxHighlighter.brushes.JScript();
-								//brush = new SyntaxHighlighter.brushes.Xml();
 					            brush.init({ toolbar: false });
 					            $('#pre_fileContent').html(brush.getHtml(data.content));
 			        },"json");
+				*/
+            },
+            onSelect: function( flag, node ){
+            	if( node.isLoading ) return;
+            	retrieveSourceList(node.getChildren());
             },
             initAjax: {
 	            url: "<c:url value="/source/browse/list"/>",
@@ -34,13 +40,53 @@
 			onLazyRead: function(node){
 	 			node.appendAjax({
 	 		    	url: "<c:url value="/source/browse/list"/>",
-	 		        data: {repositorySeq: repositorySeq, path:node.data.path}
+	 		        data: {repositorySeq: repositorySeq, path:node.data.path},
+	 		        success: function(node){
+	 		        	retrieveSourceList(node.getChildren());
+	 		        }
+	 		        /*
+	 		        success: function(data, textStatus){
+	 		        	var list = data.sourceList;
+	 		        	if( !node.data.isFileChildren ) node.data.isFileChildren = [];
+	                    res = [];
+	                    for(var inx=0, len=list.length; inx<len; inx++){
+	                        var source = list[i];
+	                        if(source.isFolder){
+	                        	res.push({title: source.title, path: source.path, isFolder:source.isFolder, isLazy: source.isLazy
+     								,isFileChildren:[]});
+	                        }else{
+	                        	node.data.isFileChildren.push(source);
+	                        }
+	                        
+	                    }
+	                    node.setLazyNodeStatus(DTNodeStatus_Ok);
+	                    node.addChild(res);
+	 		        	//retrieveSourceList(node.getChildren());
+	 		        }
+	 		        */
+
 	 		    });
 	 		}
         });
 		$("#div_sourceTree").dynatree("getTree").reload();
 	};
-	SyntaxHighlighter.all();
+	
+	
+	function retrieveSourceList(sourceNodeList){
+		$("#tbl_sourceList tbody tr:not(.sample)").remove();
+		if( !sourceNodeList || sourceNodeList == null ) return;
+		for( var inx = 0 ; inx < sourceNodeList.length ; inx++ ){
+			var row = $("#tbl_sourceList > tbody > .sample").clone();
+			$(row).children(".name").text(sourceNodeList[inx].data.name);
+			$(row).children(".size").text(sourceNodeList[inx].data.size);
+			$(row).children(".revision").text(sourceNodeList[inx].data.revision);
+			$(row).children(".date").text(sourceNodeList[inx].data.date);
+			$(row).children(".author").text(sourceNodeList[inx].data.author);
+			$(row).removeClass("sample");
+			$('#tbl_sourceList > tbody').append(row);
+		}
+	};
+	//SyntaxHighlighter.all();
 </script>
 <div id="table" class="help">
 	<h1></h1>
@@ -66,9 +112,35 @@
 			<div id="div_sourceTree" style="position:absolute;display:block;width:300px;height:350px;float:left;margin-right:-370px;left:10px;"></div>
 			<div style="float:left; width:100%;z-index:-1;">
 				<div style="margin-left:320px">
+					<!-- 
 					<pre id="pre_fileContent" class="brush: xml">
 						function test(){return true;};
 					</pre>
+					-->
+					
+					
+					<table id="tbl_sourceList">
+						<thead>
+							<tr>
+								<th>Filename</th>
+								<th>Size</th>
+								<th>Revision</th>
+								<th>Date</th>
+								<th>Author</th>
+							</tr>
+						</thead>
+						<tbody>
+							<tr class="sample">
+								<td class="name"></td>
+								<td class="size"></td>
+								<td class="revision"></td>
+								<td class="date"></td>
+								<td class="author"></td>
+							</tr>
+						</tbody>
+					</table>
+			
+			
 				</div>
 			</div>
 						
