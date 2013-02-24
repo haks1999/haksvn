@@ -117,3 +117,7 @@ outline: 0;
 vertical-align: baseline;
 background: transparent;
 }
+
+.dynatree-display-none {
+display:none;
+}
