@@ -429,9 +429,6 @@ DynaTreeNode.prototype = {
 			// TODO: we should not set this in the <span> tag also, if we set it here:
 			this.li.className = isLastSib ? cn.lastsib : "";
 			
-			// root , folder ¸»°í´Â display none
-			if( data.path && !data.isFolder ) this.li.className = this.li.className + " dynatree-display-none";
-
 			// Allow tweaking, binding, after node was created for the first time
 			if(firstTime && opts.onCreate){
 				opts.onCreate.call(tree, this, this.span);
