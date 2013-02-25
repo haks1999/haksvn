@@ -20,18 +20,25 @@ import com.haks.haksvn.source.model.SVNSource;
 import com.haks.haksvn.source.service.SourceService;
 
 @Controller
-@RequestMapping(value="/source/browse")
-public class SourceBrowseController {
+@RequestMapping(value="/source")
+public class SourceController {
          
 
 	@Autowired
     private RepositoryService repositoryService;
     
-	@RequestMapping(value="", method=RequestMethod.GET)
+	@RequestMapping(value="/browse", method=RequestMethod.GET)
     public String forwardSourceBrowsePage( ModelMap model ) {
         List<Repository> repositoryList = repositoryService.retrieveAccesibleActiveRepositoryList();
     	model.addAttribute("repositoryList", repositoryList );
         return "/source/sourceBrowse";
+    }
+	
+	@RequestMapping(value="/changes", method=RequestMethod.GET)
+    public String forwardSourceChangePage( ModelMap model ) {
+        List<Repository> repositoryList = repositoryService.retrieveAccesibleActiveRepositoryList();
+    	model.addAttribute("repositoryList", repositoryList );
+        return "/source/listChange";
     }
  
 	

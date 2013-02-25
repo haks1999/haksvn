@@ -117,3 +117,11 @@ outline: 0;
 vertical-align: baseline;
 background: transparent;
 }
+
+div.paging span{
+margin-right:10px;
+}
+div.paging span.newer,div.paging span.older{
+display:none;
+cursor:pointer;
+}

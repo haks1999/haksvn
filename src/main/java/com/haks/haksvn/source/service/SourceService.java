@@ -10,6 +10,7 @@ import com.haks.haksvn.repository.model.Repository;
 import com.haks.haksvn.repository.service.RepositoryService;
 import com.haks.haksvn.repository.service.SVNRepositoryService;
 import com.haks.haksvn.source.model.SVNSource;
+import com.haks.haksvn.source.model.SVNSourceLog;
 
 @Service
 public class SourceService {
@@ -27,8 +28,13 @@ public class SourceService {
 	public SVNSource retrieveSVNSource(String repositorySeq, SVNSource svnSource){
 		Repository repository = repositoryService.retrieveAccesibleActiveRepositoryByRepositorySeq(Integer.parseInt(repositorySeq));
 		svnSource = svnRepositoryService.retrieveSVNSourceContent(repository, svnSource);
-		svnSource.setLogs(svnRepositoryService.retrieveSVNSourceLogs(repository, svnSource.getPath(), Paging.Builder.getBuilder(new Paging()).limit(5).build()));
+		//svnSource.setLogs(svnRepositoryService.retrieveSVNSourceLogs(repository, svnSource.getPath(), Paging.Builder.getBuilder(new Paging()).limit(5).build()));
 		return svnSource;
+	}
+	
+	public Paging<List<SVNSourceLog>> retrieveSVNSourceLogList(int repositorySeq, Paging<SVNSource> paging){
+		Repository repository = repositoryService.retrieveAccesibleActiveRepositoryByRepositorySeq(repositorySeq);
+		return svnRepositoryService.retrieveSVNSourceLogs(repository, paging );
 	}
 	
 	

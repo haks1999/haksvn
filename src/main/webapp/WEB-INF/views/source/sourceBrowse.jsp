@@ -57,7 +57,6 @@
 	                        }else{
 	                        	node.data.fileChildren.push(source);
 	                        }
-	                        
 	                    }
 	                    if(res.length < 1 ){
 	                    	var expandObj = $('#div_sourceTree li[dtnode="'+node.toString()+'"] span.dynatree-expanded');
@@ -70,37 +69,10 @@
 	 		        	retrieveSourceList(node.data.fileChildren);
 		            }
 		        );
-				/*
-	 			node.appendAjax({
-	 		    	url: "<c:url value="/source/browse/list"/>",
-	 		        data: {repositorySeq: repositorySeq, path:node.data.path},
-	 		        //success: function(node){
-	 		        //	retrieveSourceList(node.getChildren());
-	 		        //}
-	 		        success: function(result, textStatus){
-	 		        	if( !node.data.fileChildren ) node.data.fileChildren = [];
-	 		        	alert( result );
-	                    res = [];
-	                    for(var inx=0, len=result.folders.length; inx<len; inx++){
-	                        var source = result.folders[i];
-	                        //if(source.isFolder){
-	                        	res.push({title: source.title, path: source.path, isFolder:source.isFolder, isLazy: source.isLazy
-     								,fileChildren:[]});
-	                        //}else{
-	                        //	alert(source);
-	                        //	node.data.fileChildren.push(source);
-	                        //}
-	                        
-	                    }
-	                    node.setLazyNodeStatus(DTNodeStatus_Ok);
-	                    node.addChild(res);
-	 		        	retrieveSourceList(node.data.fileChildren);
-	 		        }
-	 		    });
-				*/
 	 		}
         });
 		$("#div_sourceTree").dynatree("getTree").reload();
+		retrieveSourceList([]);
 	};
 	
 	
