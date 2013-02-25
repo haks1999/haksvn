@@ -1,15 +1,13 @@
 package com.haks.haksvn.source.controller;
 
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -19,18 +17,20 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import com.haks.haksvn.common.exception.HaksvnException;
 import com.haks.haksvn.common.message.model.DefaultMessage;
 import com.haks.haksvn.common.message.model.ResultMessage;
+import com.haks.haksvn.common.paging.model.Paging;
 import com.haks.haksvn.source.model.SVNSource;
+import com.haks.haksvn.source.model.SVNSourceLog;
 import com.haks.haksvn.source.service.SourceService;
 
 @Controller
-@RequestMapping(value="/source/browse")
-public class SourceBrowseAjaxController {
+@RequestMapping(value="/source")
+public class SourceAjaxController {
          
 	
 	@Autowired
 	private SourceService sourceService;
     
-	@RequestMapping(value="/list", method=RequestMethod.GET ,params ={"repositorySeq","path"})
+	@RequestMapping(value="/browse/list", method=RequestMethod.GET ,params ={"repositorySeq","path"})
     public @ResponseBody List<SVNSource> listSVNSource(@RequestParam(value = "repositorySeq", required = true) String repositorySeq
     												,@RequestParam(value = "path", required = true) String path){
     	
@@ -57,15 +57,22 @@ public class SourceBrowseAjaxController {
 		return map;
     }
     */
-	
-	
-	@RequestMapping(value="/detail")
+	@RequestMapping(value="/browse/detail")
     public @ResponseBody SVNSource getSVNSource(@ModelAttribute("svnSource") SVNSource svnSource,
     										@RequestParam(value = "repositorySeq", required = true) String repositorySeq){
     	
 		svnSource = sourceService.retrieveSVNSource(repositorySeq, svnSource);
 		svnSource.setContent(svnSource.getContent().replaceAll("<","&lt;"));	// for syntaxhighligher
 		return svnSource;
+    }
+	
+	@RequestMapping(value="/changes/{repositorySeq}")
+    public @ResponseBody Paging<List<SVNSourceLog>> listSVNSourceLog(@PathVariable int repositorySeq,
+    										@ModelAttribute("paging") Paging<SVNSource> paging){
+		
+		SVNSource svnSource = SVNSource.Builder.getBuilder(new SVNSource()).path("").build();
+		paging.setModel(svnSource);
+		return sourceService.retrieveSVNSourceLogList(repositorySeq, paging);
     }
 	
 	

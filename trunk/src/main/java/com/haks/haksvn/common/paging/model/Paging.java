@@ -1,15 +1,19 @@
 package com.haks.haksvn.common.paging.model;
 
-import org.springframework.stereotype.Component;
 
-@Component
-public class Paging {
+public class Paging<T> {
 
 	private int start = 0;
 	private int limit = 20;
+	private int total = -1;
+	private T model;
 	
 	public Paging(){
 		
+	}
+	
+	public Paging(T model){
+		this.model = model;
 	}
 
 	public int getStart() {
@@ -28,19 +32,39 @@ public class Paging {
 		this.limit = limit;
 	}
 	
+	
+	
+	public int getTotal() {
+		return total;
+	}
+
+	public void setTotal(int total) {
+		this.total = total;
+	}
+
+	public T getModel() {
+		return model;
+	}
+
+	public void setModel(T model) {
+		this.model = model;
+	}
+
+
+
 	public static class Builder{
 		
-		private Paging paging;
+		private Paging<?> paging;
 		
-		private Builder(Paging paging){
+		private Builder(Paging<?> paging){
 			this.paging = paging;
 		}
 		
-		public static Builder getBuilder(Paging paging){
+		public static Builder getBuilder(Paging<?> paging){
 			return new Builder(paging);
 		}
 		
-		public Paging build(){
+		public Paging<?> build(){
 			return paging;
 		}
 		
@@ -51,6 +75,11 @@ public class Paging {
 		
 		public Builder limit(int limit){
 			paging.setLimit(limit);
+			return this;
+		}
+		
+		public Builder total(int total){
+			paging.setTotal(total);
 			return this;
 		}
 		
