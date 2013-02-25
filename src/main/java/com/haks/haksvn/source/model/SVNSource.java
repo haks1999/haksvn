@@ -17,7 +17,9 @@ public class SVNSource {
 	
 	private String name;
 	private String path;
-	private long size;
+	private String date;
+	private String author;
+	private String size;
 	private long revision;
 	private boolean isTextMimeType;
 	private String content;
@@ -64,6 +66,22 @@ public class SVNSource {
 	public void setName(String name) {
 		this.name = name;
 	}
+	
+	public String getDate(){
+		return date;
+	}
+	
+	public void setDate(String date){
+		this.date = date;
+	}
+	
+	public String getAuthor(){
+		return author;
+	}
+	
+	public void setAuthor(String author){
+		this.author = author;
+	}
 
 	public String getPath() {
 		return path;
@@ -73,11 +91,11 @@ public class SVNSource {
 		this.path = path;
 	}
 
-	public long getSize() {
+	public String getSize() {
 		return size;
 	}
 
-	public void setSize(long size) {
+	public void setSize(String size) {
 		this.size = size;
 	}
 	
@@ -152,12 +170,22 @@ public class SVNSource {
 			return this;
 		}
 		
+		public Builder date(String date){
+			svnSource.setDate(date);
+			return this;
+		}
+		
+		public Builder author(String author){
+			svnSource.setAuthor(author);
+			return this;
+		}
+		
 		public Builder path(String path){
 			svnSource.setPath(path);
 			return this;
 		}
 		
-		public Builder size(long size){
+		public Builder size(String size){
 			svnSource.setSize(size);
 			return this;
 		}
