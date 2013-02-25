@@ -36,6 +36,14 @@
 		</put-attribute>	
 	</definition>
 	
+	<definition name="error.400.default" extends=".default">
+		<put-attribute name="pageBody">
+			<definition extends=".defaultBody"  template="/WEB-INF/views/layouts/errorbody.jsp">
+				<put-attribute name="errorContent" value="/WEB-INF/views/common/error/400.jsp" />
+			</definition>
+		</put-attribute>	
+	</definition>
+	
 	<definition name="error.401.default" extends=".default">
 		<put-attribute name="pageBody">
 			<definition extends=".defaultBody"  template="/WEB-INF/views/layouts/errorbody.jsp">
