@@ -1,7 +1,10 @@
 package com.haks.haksvn.repository.service;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.ListIterator;
 
@@ -16,6 +19,7 @@ import org.tmatesoft.svn.core.SVNNodeKind;
 import com.google.common.collect.Lists;
 import com.haks.haksvn.common.code.util.CodeUtils;
 import com.haks.haksvn.common.exception.HaksvnException;
+import com.haks.haksvn.common.format.util.FormatUtils;
 import com.haks.haksvn.common.paging.model.Paging;
 import com.haks.haksvn.repository.dao.LocalRepositoryFileDao;
 import com.haks.haksvn.repository.dao.SVNRepositoryDao;
@@ -94,12 +98,17 @@ public class SVNRepositoryService {
 		Collection<SVNDirEntry> entries = svnRepositoryDao.retrieveSVNDirEntryList(repository, path);
 		for( SVNDirEntry svnDirEntry : entries ){
 			SVNSource svnSource = SVNSource.Builder.getBuilder(new SVNSource())
-					.title(svnDirEntry.getName()).name(svnDirEntry.getName()).path(path+"/"+svnDirEntry.getName())
-					.size(svnDirEntry.getSize()).revision(svnDirEntry.getRevision()).build();
+					.title(svnDirEntry.getName()).name(svnDirEntry.getName()).path(path+"/"+svnDirEntry.getName()).author(svnDirEntry.getAuthor())
+					.size(FormatUtils.fileSize(svnDirEntry.getSize())).revision(svnDirEntry.getRevision()).date(FormatUtils.simpleDate(svnDirEntry.getDate())).build();
 			svnSource.setIsFolder(svnDirEntry.getKind() == SVNNodeKind.DIR);
 			svnSource.setIsLazy(svnSource.getIsFolder());
 			svnSourceList.add(svnSource);
 		}
+		Collections.sort(svnSourceList, new Comparator<SVNSource>(){
+		     public int compare(SVNSource src1, SVNSource src2){
+		    	 return src1.getName().compareToIgnoreCase(src2.getName());
+		     }
+		});
 		return svnSourceList;
     }
 	
@@ -116,7 +125,7 @@ public class SVNRepositoryService {
 		while( reverseEntries.hasPrevious() && count++ < paging.getLimit()){
 			SVNLogEntry svnLogEntry = reverseEntries.previous();
 			svnSourceLogList.add(SVNSourceLog.Builder.getBuilder(new SVNSourceLog())
-					.author(svnLogEntry.getAuthor()).date(svnLogEntry.getDate().toString()).message(svnLogEntry.getMessage())
+					.author(svnLogEntry.getAuthor()).date(FormatUtils.simpleDate(svnLogEntry.getDate())).message(svnLogEntry.getMessage())
 					.revision(svnLogEntry.getRevision()).build());
 		}
 		return svnSourceLogList;

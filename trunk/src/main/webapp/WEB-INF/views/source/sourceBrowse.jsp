@@ -11,8 +11,15 @@
 	function listRepositorySource(){
 		var repositorySeq = $("#sel_repository > option:selected").val();
 		$("#div_sourceTree").dynatree({
-			onActivate: function(node) {
-				return;
+			onClick: function(node, event) {
+				//if( node.isLoading ) return;
+				if(node.data.isFolder) node.expand();
+				retrieveSourceList(node.data.fileChildren);
+				return true;
+		      },
+			onSelect: function(select, node) {
+				//retrieveSourceList(node.getChildren());
+				return true;
 				if( node.isLoading ) return;
 				//alert( node.data.children );
 				retrieveSourceList(node.getChildren());
@@ -29,43 +36,68 @@
 			        },"json");
 				*/
             },
-            onSelect: function( flag, node ){
-            	if( node.isLoading ) return;
-            	retrieveSourceList(node.getChildren());
-            },
+            clickFolderMode: 1,
+            selectMode: 1,
             initAjax: {
 	            url: "<c:url value="/source/browse/list"/>",
 	            data: {repositorySeq: repositorySeq, path:""}
 	        },
 			onLazyRead: function(node){
+				$.getJSON(
+					"<c:url value="/source/browse/list"/>",
+					{repositorySeq: repositorySeq, path:node.data.path},
+		            function(result){
+		            	if( !node.data.fileChildren ) node.data.fileChildren = [];
+	                    res = [];
+	                    for(var inx=0, len=result.length; inx<len; inx++){
+	                        var source = result[inx];
+	                        if(source.isFolder){
+	                        	res.push({title: source.title, path: source.path, isFolder:source.isFolder, isLazy: source.isLazy
+     								,fileChildren:[]});
+	                        }else{
+	                        	node.data.fileChildren.push(source);
+	                        }
+	                        
+	                    }
+	                    if(res.length < 1 ){
+	                    	var expandObj = $('#div_sourceTree li[dtnode="'+node.toString()+'"] span.dynatree-expanded');
+	                    	expandObj.removeClass('dynatree-expanded').removeClass('dynatree-has-children');
+	                    	$(expandObj).find('span.dynatree-expander').removeClass('dynatree-expanded').addClass('dynatree-connector');
+	                    	node.data.isLazy = false;
+	                    }
+	                    node.setLazyNodeStatus(DTNodeStatus_Ok);
+	                    node.addChild(res);
+	 		        	retrieveSourceList(node.data.fileChildren);
+		            }
+		        );
+				/*
 	 			node.appendAjax({
 	 		    	url: "<c:url value="/source/browse/list"/>",
 	 		        data: {repositorySeq: repositorySeq, path:node.data.path},
-	 		        success: function(node){
-	 		        	retrieveSourceList(node.getChildren());
-	 		        }
-	 		        /*
-	 		        success: function(data, textStatus){
-	 		        	var list = data.sourceList;
-	 		        	if( !node.data.isFileChildren ) node.data.isFileChildren = [];
+	 		        //success: function(node){
+	 		        //	retrieveSourceList(node.getChildren());
+	 		        //}
+	 		        success: function(result, textStatus){
+	 		        	if( !node.data.fileChildren ) node.data.fileChildren = [];
+	 		        	alert( result );
 	                    res = [];
-	                    for(var inx=0, len=list.length; inx<len; inx++){
-	                        var source = list[i];
-	                        if(source.isFolder){
+	                    for(var inx=0, len=result.folders.length; inx<len; inx++){
+	                        var source = result.folders[i];
+	                        //if(source.isFolder){
 	                        	res.push({title: source.title, path: source.path, isFolder:source.isFolder, isLazy: source.isLazy
-     								,isFileChildren:[]});
-	                        }else{
-	                        	node.data.isFileChildren.push(source);
-	                        }
+     								,fileChildren:[]});
+	                        //}else{
+	                        //	alert(source);
+	                        //	node.data.fileChildren.push(source);
+	                        //}
 	                        
 	                    }
 	                    node.setLazyNodeStatus(DTNodeStatus_Ok);
 	                    node.addChild(res);
-	 		        	//retrieveSourceList(node.getChildren());
+	 		        	retrieveSourceList(node.data.fileChildren);
 	 		        }
-	 		        */
-
 	 		    });
+				*/
 	 		}
         });
 		$("#div_sourceTree").dynatree("getTree").reload();
@@ -75,16 +107,19 @@
 	function retrieveSourceList(sourceNodeList){
 		$("#tbl_sourceList tbody tr:not(.sample)").remove();
 		if( !sourceNodeList || sourceNodeList == null ) return;
+		$("#tbl_sourceList tbody tr.sample").css('display',sourceNodeList.length < 1?'inline':'');
 		for( var inx = 0 ; inx < sourceNodeList.length ; inx++ ){
 			var row = $("#tbl_sourceList > tbody > .sample").clone();
-			$(row).children(".name").text(sourceNodeList[inx].data.name);
-			$(row).children(".size").text(sourceNodeList[inx].data.size);
-			$(row).children(".revision").text(sourceNodeList[inx].data.revision);
-			$(row).children(".date").text(sourceNodeList[inx].data.date);
-			$(row).children(".author").text(sourceNodeList[inx].data.author);
+			$(row).children(".name").text(sourceNodeList[inx].name);
+			$(row).children(".size").text(sourceNodeList[inx].size);
+			$(row).children(".revision").text(sourceNodeList[inx].revision);
+			$(row).children(".date").text(sourceNodeList[inx].date);
+			$(row).children(".author").text(sourceNodeList[inx].author);
 			$(row).removeClass("sample");
+			$(row).css('display','');
 			$('#tbl_sourceList > tbody').append(row);
 		}
+		
 	};
 	//SyntaxHighlighter.all();
 </script>
@@ -109,9 +144,17 @@
 				<div class="bottom"><div></div></div>
 			</div>
 			
-			<div id="div_sourceTree" style="position:absolute;display:block;width:300px;height:350px;float:left;margin-right:-370px;left:10px;"></div>
+			<div class="box header" style="position:absolute;display:block;width:300px;float:left;margin-right:-370px;left:10px;">
+				<div class="head"><div></div></div>
+				<h2>Repository Tree</h2>
+				<div class="desc">
+					<div id="div_sourceTree" style="height:300px;" ></div>
+				</div>
+				<div class="bottom"><div></div></div>
+			</div>
+			
 			<div style="float:left; width:100%;z-index:-1;">
-				<div style="margin-left:320px">
+				<div style="margin-left:320px;min-height:350px;">
 					<!-- 
 					<pre id="pre_fileContent" class="brush: xml">
 						function test(){return true;};
@@ -122,16 +165,16 @@
 					<table id="tbl_sourceList">
 						<thead>
 							<tr>
-								<th>Filename</th>
-								<th>Size</th>
-								<th>Revision</th>
-								<th>Date</th>
-								<th>Author</th>
+								<th width="300px">Filename</th>
+								<th width="100px">Size</th>
+								<th width="50px">Revision</th>
+								<th width="150px">Date</th>
+								<th width="100px">Author</th>
 							</tr>
 						</thead>
 						<tbody>
-							<tr class="sample">
-								<td class="name"></td>
+							<tr class="sample" style="display:inline;">
+								<td class="name">No files in the selected directory.</td>
 								<td class="size"></td>
 								<td class="revision"></td>
 								<td class="date"></td>
