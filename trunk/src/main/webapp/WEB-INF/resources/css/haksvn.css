@@ -43,15 +43,18 @@ div.fullsize{
 width:100%;
 height:100%;
 overflow:hidden;
+font-size:8pt;
 }
 
 div.fullsize textarea{
-font-size:8pt;
 width:100%;
 height:100%;
+min-height:300px;
 -webkit-box-sizing: border-box;
 -moz-box-sizing: border-box;
-box-sizing: border-box;	
+box-sizing: border-box;
+white-space: pre-wrap;
+word-wrap: break-word;
 }
 
 div.errorpage .leftcolumn{
@@ -124,4 +127,9 @@ margin-right:10px;
 div.paging span.newer,div.paging span.older{
 display:none;
 cursor:pointer;
+}
+
+.box h2 font.normal{
+font-weight:normal;
+font-size:10pt;
 }

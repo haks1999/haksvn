@@ -3,13 +3,26 @@
 <script type="text/javascript">
 	$(function() {
 		
-		listRepositorySource();
-		$("#sel_repository").change(listRepositorySource);
+		var repositorySeq = '<c:out value="${repositorySeq}" />';
+		if( repositorySeq.length < 1 && $("#sel_repository").size() > 0){
+			changeRepository();
+			return;
+		}else if($("#sel_repository").size() < 1 ){
+			return;
+		}
 		
+		$("#sel_repository").val('<c:out value="${repositorySeq}" />');
+		listRepositorySource();
+		$("#sel_repository").change(changeRepository);
 	});
 	
+	function changeRepository(){
+		frm_repository.action = "<c:url value="/source/browse"/>" + "/" + $("#sel_repository > option:selected").val();
+		frm_repository.submit();
+	}
+	
 	function listRepositorySource(){
-		var repositorySeq = $("#sel_repository > option:selected").val();
+		//var repositorySeq = $("#sel_repository > option:selected").val();
 		$("#div_sourceTree").dynatree({
 			onClick: function(node, event) {
 				//if( node.isLoading ) return;
@@ -40,12 +53,12 @@
             selectMode: 1,
             initAjax: {
 	            url: "<c:url value="/source/browse/list"/>",
-	            data: {repositorySeq: repositorySeq, path:""}
+	            data: {repositorySeq: '<c:out value="${repositorySeq}" />', path:'<c:out value="${path}" />'}
 	        },
 			onLazyRead: function(node){
 				$.getJSON(
 					"<c:url value="/source/browse/list"/>",
-					{repositorySeq: repositorySeq, path:node.data.path},
+					{repositorySeq: '<c:out value="${repositorySeq}" />', path:node.data.path},
 		            function(result){
 		            	if( !node.data.fileChildren ) node.data.fileChildren = [];
 	                    res = [];
@@ -95,6 +108,7 @@
 	};
 	//SyntaxHighlighter.all();
 </script>
+<form id="frm_repository" action=""></form>
 <div id="table" class="help">
 	<h1></h1>
 	<div class="col w10 last">
@@ -118,7 +132,7 @@
 			
 			<div class="box header" style="position:absolute;display:block;width:300px;float:left;margin-right:-370px;left:10px;">
 				<div class="head"><div></div></div>
-				<h2>Repository Tree</h2>
+				<h2><font class="normal">Path: /<c:out value="${path}" /></font></h2>
 				<div class="desc">
 					<div id="div_sourceTree" style="height:300px;" ></div>
 				</div>
