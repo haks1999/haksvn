@@ -23,6 +23,7 @@
 	</ul>
 	<div class="clear"></div>
 </div>
+
 <div id="submenu">
 	<c:forEach items="${menuList}" var="menuLevel1" >
 		<div class="modules_left_hidden <c:out value="${menuLevel1.menuName}" /> submenuList">
@@ -35,9 +36,11 @@
 			</div>
 		</div>
 	</c:forEach>
-
 	<!-- 
 	<div class="title">Help</div>
 	<div class="modules_right"></div>
 	-->
+</div>
+<div id="loader-main">
+	<img src="<c:url value="/images/ajax-loader_arrow.gif"/>"/><span>Loading</span>
 </div>

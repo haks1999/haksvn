@@ -24,6 +24,7 @@ import org.tmatesoft.svn.core.wc.SVNWCUtil;
 
 import com.haks.haksvn.common.exception.HaksvnException;
 import com.haks.haksvn.repository.model.Repository;
+import com.haks.haksvn.repository.util.RepositoryUtils;
 import com.haks.haksvn.repository.util.SVNRepositoryUtils;
 import com.haks.haksvn.source.model.SVNSource;
 
@@ -99,7 +100,7 @@ public class SVNRepositoryDao {
 		Collection<SVNDirEntry> entries = new ArrayList<SVNDirEntry>();
 		try{
 			targetRepository = SVNRepositoryUtils.getUserAuthSVNRepository(repository);
-			entries = targetRepository.getDir( repository.getRepositoryLocation().substring(repository.getSvnRoot().length()) + path, -1 , null , (Collection<SVNDirEntry>) null );
+			entries = targetRepository.getDir( RepositoryUtils.getRelativeRepositoryPath(repository, path), -1 , null , (Collection<SVNDirEntry>) null );
         }catch(Exception e){
         	e.printStackTrace();
         	throw new HaksvnException(e);
@@ -115,13 +116,13 @@ public class SVNRepositoryDao {
 		ByteArrayOutputStream baos = null;
         try{
         	targetRepository = SVNRepositoryUtils.getUserAuthSVNRepository(repository);
-        	SVNNodeKind nodeKind = targetRepository.checkPath(repository.getRepositoryLocation().substring(repository.getSvnRoot().length()) + svnSource.getPath(), svnSource.getRevision());
+        	SVNNodeKind nodeKind = targetRepository.checkPath(RepositoryUtils.getRelativeRepositoryPath(repository, svnSource.getPath()), svnSource.getRevision());
             if (nodeKind == SVNNodeKind.NONE || nodeKind == SVNNodeKind.DIR ) {
             	throw new HaksvnException( "[" + svnSource.getPath() + "] is not a file.");
             } 
         	SVNProperties fileProperties = new SVNProperties();
             baos = new ByteArrayOutputStream();
-            targetRepository.getFile(repository.getRepositoryLocation().substring(repository.getSvnRoot().length()) + svnSource.getPath(), svnSource.getRevision(), fileProperties, baos);
+            targetRepository.getFile(RepositoryUtils.getRelativeRepositoryPath(repository, svnSource.getPath()), svnSource.getRevision(), fileProperties, baos);
             String mimeType = fileProperties.getStringValue(SVNProperty.MIME_TYPE);
             boolean isTextType = SVNProperty.isTextMimeType(mimeType);
             svnSource.setIsTextMimeType(isTextType);
@@ -149,7 +150,7 @@ public class SVNRepositoryDao {
         try {
         	targetRepository = SVNRepositoryUtils.getUserAuthSVNRepository(repository);
         	// path, null, startrevision, endrevision, include all paths, strict
-            logEntries = targetRepository.log(new String[]{repository.getRepositoryLocation().substring(repository.getSvnRoot().length()) + path}, null,0, -1, false, true);
+            logEntries = targetRepository.log(new String[]{RepositoryUtils.getRelativeRepositoryPath(repository, path)}, null,0, -1, false, true);
         }catch (Exception e) {
         	e.printStackTrace();
         	throw new HaksvnException(e);

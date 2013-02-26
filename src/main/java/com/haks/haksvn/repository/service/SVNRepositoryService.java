@@ -122,8 +122,17 @@ public class SVNRepositoryService {
 		
 		Collection<SVNLogEntry> entries = svnRepositoryDao.retrieveSVNLogEntryList(repository, paging.getModel().getPath());
 		List<SVNLogEntry> entryList = Lists.newArrayList(entries);
-		ListIterator<SVNLogEntry> reverseEntries = entryList.listIterator(entryList.size());
 		Paging.Builder.getBuilder(resultPaging).limit(paging.getLimit()).start(paging.getStart()).total(entryList.size()).build();
+		//entryList = entryList.subList(resultPaging.getStart(), resultPaging.getStart()+resultPaging.getLimit() > resultPaging.getTotal() ? resultPaging.getTotal():resultPaging.getStart()+resultPaging.getLimit());
+		entryList = entryList.subList(entryList.size()-paging.getStart()-paging.getLimit() < 0 ? 0:entryList.size()-paging.getStart()-paging.getLimit(), entryList.size()-paging.getStart());
+		ListIterator<SVNLogEntry> reverseEntries = entryList.listIterator(entryList.size());
+		while( reverseEntries.hasPrevious()){
+			SVNLogEntry svnLogEntry = reverseEntries.previous();
+			svnSourceLogList.add(SVNSourceLog.Builder.getBuilder(new SVNSourceLog())
+					.author(svnLogEntry.getAuthor()).date(FormatUtils.simpleDate(svnLogEntry.getDate())).message(svnLogEntry.getMessage())
+					.revision(svnLogEntry.getRevision()).build());
+		}
+		/*
 		int count = 0;
 		while( reverseEntries.hasPrevious() && count++ < paging.getStart()+paging.getLimit()){
 			if(paging.getStart() > count-1 ) continue;
@@ -132,6 +141,7 @@ public class SVNRepositoryService {
 					.author(svnLogEntry.getAuthor()).date(FormatUtils.simpleDate(svnLogEntry.getDate())).message(svnLogEntry.getMessage())
 					.revision(svnLogEntry.getRevision()).build());
 		}
+		*/
 		Collections.sort(svnSourceLogList, new Comparator<SVNSourceLog>(){
 		     public int compare(SVNSourceLog src1, SVNSourceLog src2){
 		    	 long comp = src1.getRevision() - src2.getRevision();

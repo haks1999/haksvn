@@ -43,6 +43,8 @@ public class MenuInterceptor extends HandlerInterceptorAdapter {
 		return (path.indexOf("/resources/") < 0 && (path.indexOf(".json") < 0)); 
 	}
 
+	//TODO 여기 로직 다 뜯어 고칠 것
+	private final String[] dynamicMenuRestPathList = {"/source/browse","/source/changes"};
 	@Override
 	public void postHandle(HttpServletRequest request,
 			HttpServletResponse response, Object handler, ModelAndView mv)
@@ -62,6 +64,9 @@ public class MenuInterceptor extends HandlerInterceptorAdapter {
 		String level[] = path.split("/");
 		
 		String viewPath = "/"+level[1]+"/"+level[2] + ((level.length > 3 ) ? ("/" + level[3]):"");
+		for( String dynamicMenuRestPath : dynamicMenuRestPathList ){
+			if( viewPath.startsWith(dynamicMenuRestPath)) viewPath = dynamicMenuRestPath;
+		}
 		String targetJsp = "/WEB-INF/views/" + mv.getViewName() + ".jsp";
 
 		ApplicationContext ac = ServletUtil.getApplicationContext(request
@@ -77,7 +82,6 @@ public class MenuInterceptor extends HandlerInterceptorAdapter {
         String selectedMenuNameLevel1 = "";
         String selectedMenuNameLevel2 = "";
         String selectedMenuNameLevel3 = "";
-				
 		if("menu.view.type.code.default".equals(menuService.retireveViewType(viewPath))){
 			// ecache 로 변경할 것 menuList 포함
 			//String requestJspPath = "";

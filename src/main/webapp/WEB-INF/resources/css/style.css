@@ -495,7 +495,7 @@ background-repeat:no-repeat;
 .box h2{font-size:14px;margin:0;padding:8px 0 7px 10px;}
 .box.header .head {background:url(../images/box_tl_h.png) no-repeat top left;position:absolute;top:0px;left:0px;}
 .box.header .head div {background:url(../images/box_tr_h.png) no-repeat top right;position:absolute;width:5px;top:0px;right:0px;}
-.box.header h2{background:#d0d0d0 url(../images/box_c.png) repeat-x top left;border-bottom:1px solid #b6b6b6;padding:10px 0 9px 10px;}
+.box.header h2{background:#d0d0d0 url(../images/box_c.png) repeat-x top left;border-bottom:1px solid #b6b6b6;padding:10px 0 9px 10px;word-wrap:break-word;}
 /*-------------------------BOXES--------------------------*/
 
 

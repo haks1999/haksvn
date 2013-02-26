@@ -2,7 +2,7 @@
 <%@ include file="/WEB-INF/views/common/include/syntaxhighlighter.jspf"%>
 <script type="text/javascript">
 	$(function() {
-		
+		/*
 		var repositorySeq = '<c:out value="${repositorySeq}" />';
 		if( repositorySeq.length < 1 && $("#sel_repository").size() > 0){
 			changeRepository();
@@ -10,6 +10,7 @@
 		}else if($("#sel_repository").size() < 1 ){
 			return;
 		}
+		*/
 		
 		$("#sel_repository").val('<c:out value="${repositorySeq}" />');
 		listRepositorySource();
@@ -51,10 +52,13 @@
             },
             clickFolderMode: 1,
             selectMode: 1,
+            /*
             initAjax: {
 	            url: "<c:url value="/source/browse/list"/>",
 	            data: {repositorySeq: '<c:out value="${repositorySeq}" />', path:'<c:out value="${path}" />'}
 	        },
+	        */
+	        children:[{title:'[SVN]',path:'<c:out value="${path}" />',isLazy:true,isFolder:true, expand:true}],
 			onLazyRead: function(node){
 				$.getJSON(
 					"<c:url value="/source/browse/list"/>",
@@ -86,6 +90,9 @@
         });
 		$("#div_sourceTree").dynatree("getTree").reload();
 		retrieveSourceList([]);
+		$("#div_sourceTree").dynatree("getRoot").visit(function(node){
+			node.reloadChildren();
+		});
 	};
 	
 	
@@ -132,7 +139,15 @@
 			
 			<div class="box header" style="position:absolute;display:block;width:300px;float:left;margin-right:-370px;left:10px;">
 				<div class="head"><div></div></div>
-				<h2><font class="normal">Path: /<c:out value="${path}" /></font></h2>
+				<h2>
+					<font class="path">Path:
+						<c:set var="pathLink" value="${pageContext.request.contextPath}/source/browse/${repositorySeq}"/>
+						<c:forEach var="pathFrag" items="${fn:split(path, '/')}">
+							<c:set var="pathLink" value="${pathLink}/${pathFrag}"/>
+							/<a href="${pathLink}"><c:out value="${pathFrag}" /></a>
+						</c:forEach>
+					</font>
+				</h2>
 				<div class="desc">
 					<div id="div_sourceTree" style="height:300px;" ></div>
 				</div>

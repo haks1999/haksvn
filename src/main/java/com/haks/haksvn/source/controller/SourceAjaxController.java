@@ -2,21 +2,17 @@ package com.haks.haksvn.source.controller;
 
 import java.util.List;
 
+import javax.servlet.http.HttpServletResponse;
+
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.ResponseStatus;
 
-import com.haks.haksvn.common.exception.HaksvnException;
-import com.haks.haksvn.common.message.model.DefaultMessage;
-import com.haks.haksvn.common.message.model.ResultMessage;
 import com.haks.haksvn.common.paging.model.Paging;
 import com.haks.haksvn.source.model.SVNSource;
 import com.haks.haksvn.source.model.SVNSourceLog;
@@ -66,31 +62,41 @@ public class SourceAjaxController {
 		return svnSource;
     }
 	
-	@RequestMapping(value="/changes/{repositorySeq}")
-    public @ResponseBody Paging<List<SVNSourceLog>> listSVNSourceLog(@PathVariable int repositorySeq,
+	@RequestMapping(value="/changes/list")
+    public @ResponseBody Paging<List<SVNSourceLog>> listSVNSourceLog(@RequestParam(value = "repositorySeq", required = true) int repositorySeq,
+    										@RequestParam(value = "path", required = true) String path,
     										@ModelAttribute("paging") Paging<SVNSource> paging){
 		
-		SVNSource svnSource = SVNSource.Builder.getBuilder(new SVNSource()).path("").build();
+		SVNSource svnSource = SVNSource.Builder.getBuilder(new SVNSource()).path(path).build();
 		paging.setModel(svnSource);
 		return sourceService.retrieveSVNSourceLogList(repositorySeq, paging);
     }
 	
 	
+	/*
 	@ExceptionHandler(HaksvnException.class)
+	@ResponseStatus(value = HttpStatus.SERVICE_UNAVAILABLE, reason = "Exception occcurs...")
     public @ResponseBody ResultMessage haksvnExceptionHandler(Exception e) {
     	ResultMessage message = new ResultMessage(e.getMessage());
     	message.setSuccess(false);
     	message.setType(DefaultMessage.TYPE.ERROR);
         return message;
     }
+    */
     
     @ExceptionHandler(Exception.class)
-    @ResponseStatus(value = HttpStatus.SERVICE_UNAVAILABLE, reason = "Exception occcurs...")
-    public @ResponseBody ResultMessage exceptionHandler(Exception e) {
+    public void exceptionHandler(Exception e, HttpServletResponse response) throws Exception{
+    	/*
     	e.printStackTrace();
     	ResultMessage message = new ResultMessage(e.getMessage());
     	message.setSuccess(false);
     	message.setType(DefaultMessage.TYPE.ERROR);
         return message;
+        */
+    	e.printStackTrace();
+        response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+        response.getWriter().write(e.getMessage());
+        response.flushBuffer();
     }
+    
 }
