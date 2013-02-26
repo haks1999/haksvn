@@ -27,10 +27,15 @@
 		$.ajaxSetup({ 
 			cache : false,
 			error : function(jqXHR, textStatus, errorThrown) {
-				$().Message({type:'error', text: textStatus + " : " + jqXHR.status + " : " + errorThrown});
+				var errorMsg = jqXHR.responseText !== '' ? jqXHR.responseText:errorThrown;
+				$().Message({type:'error', text: textStatus + " : " + jqXHR.status + " : " + errorMsg});
 		    },
 		    complete : function( jqXHR ,textStatus ){
 		    	$.unblockUI();
+		    	$('#loader-main').hide();
+		    },
+		    beforeSend: function(){
+		    	$('#loader-main').show();
 		    }
 		});
 	</script>

@@ -1,15 +1,21 @@
 <%@ include file="/WEB-INF/views/common/include/taglib.jspf"%>
 <script type="text/javascript">
 	$(function() {
+		$("#sel_repository").val('<c:out value="${repositorySeq}" />');
 		retrieveRepositoryChangeList();
-		$("#sel_repository").change(retrieveRepositoryChangeList);
+		$("#sel_repository").change(changeRepository);
 	});
 	
+	function changeRepository(){
+		frm_repository.action = "<c:url value="/source/changes"/>" + "/" + $("#sel_repository > option:selected").val();
+		frm_repository.submit();
+	}
 	
 	function retrieveRepositoryChangeList(){
-		var repositorySeq = $("#sel_repository > option:selected").val();
 		$("#tbl_changeList tbody tr:not(.sample)").remove();
-		$.getJSON( "<c:url value="/source/changes"/>" + "/" + repositorySeq,
+		_paging.path = '<c:out value="${path}" />';
+		_paging.repositorySeq = $("#sel_repository > option:selected").val();
+		$.getJSON( "<c:url value="/source/changes/list"/>",
 				_paging,
 				function(data) {
 					var model = data.model;
@@ -27,20 +33,26 @@
 		});
 	};
 	
-	var _paging = {start:0,limit:5,total:-1};
+	var _paging = {start:0,limit:30,total:-1};
 	function changePagingInfo(){
-		var start = _paging.total-_paging.start-1;
+		var start = _paging.total-_paging.start;
 		var end = start-_paging.limit+1;
-		$('div.paging .start').text(start);
-		$('div.paging .end').text(end);
-		$('div.paging .total').text(_paging.total);
-		$('div.paging .older').css('display',end > 0 ?'inline':'none');
+		$('span.paging .start').text(start);
+		$('span.paging .end').text(end<0?1:end);
+		$('span.paging .total').text(_paging.total);
+		$('span.paging .older').css('display',end > 0 ?'inline':'none');
+		$('span.paging .newer').css('display',(start >= Number(_paging.total)) ?'none':'inline');
 	}
 	function changePagingOlder(){
 		_paging.start = _paging.start + _paging.limit;
 		retrieveRepositoryChangeList();
 	}
+	function changePagingNewer(){
+		_paging.start = _paging.start - _paging.limit;
+		retrieveRepositoryChangeList();
+	}
 </script>
+<form id="frm_repository" action=""></form>
 <div id="table" class="help">
 	<h1></h1>
 	<div class="col w10 last">
@@ -61,11 +73,20 @@
 				</div>
 				<div class="bottom"><div></div></div>
 			</div>
-			<div class="paging">
+			<div>
 				<p>
-					<span>Total <a class="start"></a>-<a class="end"></a> of <a class="total"></a></span>
-					<span class="underline italic link newer" onclick="changePagingNewer()">Newer</span>
-					<span class="underline italic link older" onclick="changePagingOlder()">Older</span>
+					<span class="paging">
+						<span>Total <a class="start"></a>-<a class="end"></a> of <a class="total"></a></span>
+						<span class="underline italic link newer" onclick="changePagingNewer()">Newer</span>
+						<span class="underline italic link older" onclick="changePagingOlder()">Older</span>
+					</span>
+					<font class="path">Path:
+						<c:set var="pathLink" value="${pageContext.request.contextPath}/source/browse/${repositorySeq}"/>
+						<c:forEach var="pathFrag" items="${fn:split(path, '/')}">
+							<c:set var="pathLink" value="${pathLink}/${pathFrag}"/>
+							/<a href="${pathLink}"><c:out value="${pathFrag}" /></a>
+						</c:forEach>
+					</font>
 				</p>
 			</div>
 			<table id="tbl_changeList">

@@ -121,15 +121,43 @@ vertical-align: baseline;
 background: transparent;
 }
 
-div.paging span{
+span.paging{
+maring-right:20px;	
+}
+span.paging span{
 margin-right:10px;
 }
-div.paging span.newer,div.paging span.older{
+span.paging span.newer,span.paging span.older{
 display:none;
 cursor:pointer;
 }
 
-.box h2 font.normal{
+font.path{
 font-weight:normal;
 font-size:10pt;
+}
+font.path a{
+color:#483D8B;
+}
+font.path a:hover{
+color:#00008B;
+}
+
+#loader-main{
+display:none;
+position:absolute;
+right:50px;
+top:80px;
+height:23px;
+width:80px;
+z-index:50;
+background-color:white;
+font-size:9pt;
+border:1px dotted gray;
+text-align: center;
+line-height:22px;
+}
+#loader-main img{
+vertical-align: middle;
+margin-right:3px;	
 }
