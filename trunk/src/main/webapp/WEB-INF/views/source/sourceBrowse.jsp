@@ -1,17 +1,6 @@
 <%@ include file="/WEB-INF/views/common/include/taglib.jspf"%>
-<%@ include file="/WEB-INF/views/common/include/syntaxhighlighter.jspf"%>
 <script type="text/javascript">
 	$(function() {
-		/*
-		var repositorySeq = '<c:out value="${repositorySeq}" />';
-		if( repositorySeq.length < 1 && $("#sel_repository").size() > 0){
-			changeRepository();
-			return;
-		}else if($("#sel_repository").size() < 1 ){
-			return;
-		}
-		*/
-		
 		$("#sel_repository").val('<c:out value="${repositorySeq}" />');
 		listRepositorySource();
 		$("#sel_repository").change(changeRepository);
@@ -23,41 +12,14 @@
 	}
 	
 	function listRepositorySource(){
-		//var repositorySeq = $("#sel_repository > option:selected").val();
 		$("#div_sourceTree").dynatree({
 			onClick: function(node, event) {
-				//if( node.isLoading ) return;
 				if(node.data.isFolder) node.expand();
 				retrieveSourceList(node.data.fileChildren);
 				return true;
 		      },
-			onSelect: function(select, node) {
-				//retrieveSourceList(node.getChildren());
-				return true;
-				if( node.isLoading ) return;
-				//alert( node.data.children );
-				retrieveSourceList(node.getChildren());
-				//if( node.data.isFolder ) return;
-				/*
-				$.post("<c:url value="/source/browse/detail"/>",
-						{path:node.data.path, 
-							revision:node.data.revision,
-							repositorySeq:repositorySeq},
-			            function(data){
-								var brush = getShBrush(data.path);//new SyntaxHighlighter.brushes.JScript();
-					            brush.init({ toolbar: false });
-					            $('#pre_fileContent').html(brush.getHtml(data.content));
-			        },"json");
-				*/
-            },
             clickFolderMode: 1,
             selectMode: 1,
-            /*
-            initAjax: {
-	            url: "<c:url value="/source/browse/list"/>",
-	            data: {repositorySeq: '<c:out value="${repositorySeq}" />', path:'<c:out value="${path}" />'}
-	        },
-	        */
 	        children:[{title:'[SVN]',path:'<c:out value="${path}" />',isLazy:true,isFolder:true, expand:true}],
 			onLazyRead: function(node){
 				$.getJSON(
@@ -100,9 +62,11 @@
 		$("#tbl_sourceList tbody tr:not(.sample)").remove();
 		if( !sourceNodeList || sourceNodeList == null ) return;
 		$("#tbl_sourceList tbody tr.sample").css('display',sourceNodeList.length < 1?'inline':'');
+		var repositorySeq = '<c:out value="${repositorySeq}" />';
+		var hrefRoot = '<c:url value="/source/browse"/>';
 		for( var inx = 0 ; inx < sourceNodeList.length ; inx++ ){
 			var row = $("#tbl_sourceList > tbody > .sample").clone();
-			$(row).children(".name").text(sourceNodeList[inx].name);
+			$(row).find(".name a").text(sourceNodeList[inx].name).attr('href',(hrefRoot + "/" + repositorySeq + "/" + sourceNodeList[inx].path + "?rev=" + sourceNodeList[inx].revision).replace("//", "/"));
 			$(row).children(".size").text(sourceNodeList[inx].size);
 			$(row).children(".revision").text(sourceNodeList[inx].revision);
 			$(row).children(".date").text(sourceNodeList[inx].date);
@@ -156,13 +120,6 @@
 			
 			<div style="float:left; width:100%;z-index:-1;">
 				<div style="margin-left:320px;min-height:350px;">
-					<!-- 
-					<pre id="pre_fileContent" class="brush: xml">
-						function test(){return true;};
-					</pre>
-					-->
-					
-					
 					<table id="tbl_sourceList">
 						<thead>
 							<tr>
@@ -175,7 +132,7 @@
 						</thead>
 						<tbody>
 							<tr class="sample" style="display:inline;">
-								<td class="name">No files in the selected directory.</td>
+								<td class="name"><a href="">No files in the selected directory.</a></td>
 								<td class="size"></td>
 								<td class="revision"></td>
 								<td class="date"></td>

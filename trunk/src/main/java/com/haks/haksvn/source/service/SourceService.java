@@ -20,13 +20,13 @@ public class SourceService {
 	@Autowired 
 	private RepositoryService repositoryService;
 	
-	public List<SVNSource> retrieveSVNSourceList(String repositorySeq, String path ){
-		Repository repository = repositoryService.retrieveAccesibleActiveRepositoryByRepositorySeq(Integer.parseInt(repositorySeq));
+	public List<SVNSource> retrieveSVNSourceList(int repositorySeq, String path ){
+		Repository repository = repositoryService.retrieveAccesibleActiveRepositoryByRepositorySeq(repositorySeq);
 		return svnRepositoryService.retrieveSVNSourceList(repository, path);
 	}
 	
-	public SVNSource retrieveSVNSource(String repositorySeq, SVNSource svnSource){
-		Repository repository = repositoryService.retrieveAccesibleActiveRepositoryByRepositorySeq(Integer.parseInt(repositorySeq));
+	public SVNSource retrieveSVNSource(int repositorySeq, SVNSource svnSource){
+		Repository repository = repositoryService.retrieveAccesibleActiveRepositoryByRepositorySeq(repositorySeq);
 		svnSource = svnRepositoryService.retrieveSVNSourceContent(repository, svnSource);
 		//svnSource.setLogs(svnRepositoryService.retrieveSVNSourceLogs(repository, svnSource.getPath(), Paging.Builder.getBuilder(new Paging()).limit(5).build()));
 		return svnSource;

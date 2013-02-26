@@ -33,7 +33,6 @@
 		<servlet-name>appServlet</servlet-name>
 		<url-pattern>/</url-pattern>
 	</servlet-mapping>
-
 	
 	<servlet>
 	    <servlet-name>H2Console</servlet-name>

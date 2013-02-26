@@ -27,7 +27,7 @@ public class SourceAjaxController {
 	private SourceService sourceService;
     
 	@RequestMapping(value="/browse/list", method=RequestMethod.GET ,params ={"repositorySeq","path"})
-    public @ResponseBody List<SVNSource> listSVNSource(@RequestParam(value = "repositorySeq", required = true) String repositorySeq
+    public @ResponseBody List<SVNSource> listSVNSource(@RequestParam(value = "repositorySeq", required = true) int repositorySeq
     												,@RequestParam(value = "path", required = true) String path){
     	
 		return sourceService.retrieveSVNSourceList(repositorySeq, path);
@@ -53,6 +53,7 @@ public class SourceAjaxController {
 		return map;
     }
     */
+	/*
 	@RequestMapping(value="/browse/detail")
     public @ResponseBody SVNSource getSVNSource(@ModelAttribute("svnSource") SVNSource svnSource,
     										@RequestParam(value = "repositorySeq", required = true) String repositorySeq){
@@ -61,6 +62,7 @@ public class SourceAjaxController {
 		svnSource.setContent(svnSource.getContent().replaceAll("<","&lt;"));	// for syntaxhighligher
 		return svnSource;
     }
+    */
 	
 	@RequestMapping(value="/changes/list")
     public @ResponseBody Paging<List<SVNSourceLog>> listSVNSourceLog(@RequestParam(value = "repositorySeq", required = true) int repositorySeq,

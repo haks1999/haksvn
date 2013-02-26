@@ -7,18 +7,18 @@ import javax.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
-import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.HandlerMapping;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.view.RedirectView;
 
-import com.haks.haksvn.common.paging.model.Paging;
 import com.haks.haksvn.repository.model.Repository;
 import com.haks.haksvn.repository.service.RepositoryService;
 import com.haks.haksvn.source.model.SVNSource;
+import com.haks.haksvn.source.service.SourceService;
 
 @Controller
 @RequestMapping(value="/source")
@@ -27,6 +27,8 @@ public class SourceController {
 
 	@Autowired
     private RepositoryService repositoryService;
+	@Autowired
+    private SourceService sourceService;
     
 	@RequestMapping(value="/browse", method=RequestMethod.GET)
     public ModelAndView forwardSourceBrowsePage( ModelMap model ) {
@@ -62,6 +64,25 @@ public class SourceController {
     	model.addAttribute("repositorySeq", repositorySeq );
     	model.addAttribute("path", path);
         return "/source/sourceBrowse";
+    }
+	
+	
+	
+	@RequestMapping(value={"/browse/{repositorySeq}/**"}, method=RequestMethod.GET,params ={"rev"})
+    public String forwardSourceDetailPage( ModelMap model,
+    							HttpServletRequest request,
+    							@RequestParam(value = "rev", required = true) long revision,
+    							@PathVariable int repositorySeq) {
+		String path = (String)request.getAttribute(HandlerMapping.PATH_WITHIN_HANDLER_MAPPING_ATTRIBUTE);
+		path = path.replaceFirst("/source/browse/" + String.valueOf(repositorySeq),"");
+		if(path.startsWith("/")) path=path.replaceFirst("/","");
+		SVNSource svnSource = SVNSource.Builder.getBuilder(new SVNSource()).path(path).revision(revision).build();
+		svnSource = sourceService.retrieveSVNSource(repositorySeq, svnSource);
+		//svnSource.setContent(svnSource.getContent().replaceAll("<","&lt;"));	// for syntaxhighligher
+		model.addAttribute("svnSource", svnSource);
+		model.addAttribute("repositorySeq", repositorySeq );
+System.out.println("svnSource---- : " + svnSource);		
+        return "/source/sourceDetail";
     }
 	
 	@RequestMapping(value="/changes", method=RequestMethod.GET)
