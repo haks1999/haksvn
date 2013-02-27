@@ -63,7 +63,7 @@
     	</init-param>
     	<init-param>
 	        <param-name>logLevel</param-name>
-	        <param-value>TRACE</param-value>
+	        <param-value>INFO</param-value>
 	    </init-param>
     </filter>
     

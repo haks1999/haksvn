@@ -37,7 +37,6 @@ public class MenuInterceptor extends HandlerInterceptorAdapter {
 	@Override
 	public boolean preHandle(HttpServletRequest request,
 			HttpServletResponse response, Object handler) throws Exception {
-System.out.println("interceptor : pre : " + request.getRequestURI());
 		String path = request.getRequestURI();
 		return true;
 		//return (!path.startsWith("/resources/") && (path.indexOf(".json") < 0)); 
@@ -49,7 +48,6 @@ System.out.println("interceptor : pre : " + request.getRequestURI());
 	public void postHandle(HttpServletRequest request,
 			HttpServletResponse response, Object handler, ModelAndView mv)
 			throws Exception {
-System.out.println("interceptor : post");		
 		
 		if(mv == null || mv.getViewName() == null || "".equals(mv.getViewName())) return;
 		
