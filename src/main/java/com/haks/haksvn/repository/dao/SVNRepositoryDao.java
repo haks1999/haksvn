@@ -159,4 +159,20 @@ public class SVNRepositoryDao {
         }
         return logEntries;
     }
+	/*
+	@SuppressWarnings("unchecked")
+	public Collection<SVNLogEntry> retrieveSVNLogEntryList(Repository repository, String path){
+		
+		new SVNLogClient(ISVNAuthenticationManager)
+		
+		 final List entries = new LinkedList(); 
+  svnClient.doList(mrepositoryURL, SVNRevision.HEAD, SVNRevision.HEAD, 
+false, 
+  false, new ISVNDirEntryHandler() { 
+      public void handleDirEntry(SVNDirEntry entry) throws SVNException { 
+          entries.add(entry); 
+      } 
+  }); 
+    }
+    */
 }
