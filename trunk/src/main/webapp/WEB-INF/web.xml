@@ -74,6 +74,13 @@
     	<dispatcher>FORWARD</dispatcher>
     </filter-mapping>
     
+    <filter-mapping>
+        <filter-name>UrlRewriteFilter</filter-name>
+        <url-pattern>/source/changes/*</url-pattern>
+        <dispatcher>REQUEST</dispatcher>
+    	<dispatcher>FORWARD</dispatcher>
+    </filter-mapping>
+    
 	<error-page>
       	<error-code>400</error-code>
       	<location>/WEB-INF/views/common/error/error400.jsp</location>

@@ -60,9 +60,7 @@ public class SourceController {
     public String forwardSourceBrowsePage( ModelMap model,
     							HttpServletRequest request,
     							@PathVariable int repositorySeq) {
-		String path = (String)request.getAttribute(HandlerMapping.PATH_WITHIN_HANDLER_MAPPING_ATTRIBUTE);
-		path = path.replaceFirst("/source/browse/r/" + String.valueOf(repositorySeq),"").replaceAll("%2E", ".").replaceAll("_resources_","resources");
-		if(path.startsWith("/")) path=path.replaceFirst("/","");
+		String path = reverseUrlRewrite(request,"/source/browse/r", repositorySeq);
         List<Repository> repositoryList = repositoryService.retrieveAccesibleActiveRepositoryList();
     	model.addAttribute("repositoryList", repositoryList );
     	model.addAttribute("repositorySeq", repositorySeq );
@@ -77,9 +75,7 @@ public class SourceController {
     							HttpServletRequest request,
     							@RequestParam(value = "rev", required = true) long revision,
     							@PathVariable int repositorySeq) {
-		String path = (String)request.getAttribute(HandlerMapping.PATH_WITHIN_HANDLER_MAPPING_ATTRIBUTE);
-		path = path.replaceFirst("/source/browse/r/" + String.valueOf(repositorySeq),"").replaceAll("%2E", ".").replaceAll("_resources_","resources");
-		if(path.startsWith("/")) path=path.replaceFirst("/","");
+		String path = reverseUrlRewrite(request,"/source/browse/r", repositorySeq);
 		SVNSource svnSource = SVNSource.Builder.getBuilder(new SVNSource()).path(path).revision(revision).build();
 		svnSource = sourceService.retrieveSVNSource(repositorySeq, svnSource);
 		//svnSource.setContent(svnSource.getContent().replaceAll("<","&lt;"));	// for syntaxhighligher
@@ -99,7 +95,7 @@ public class SourceController {
     	}
     }
 	
-	@RequestMapping(value={"/changes/{repositorySeq}"}, method=RequestMethod.GET)
+	@RequestMapping(value={"/changes/r/{repositorySeq}"}, method=RequestMethod.GET)
     public String forwardSourceChangePage( ModelMap model,
     							@PathVariable int repositorySeq) {
         List<Repository> repositoryList = repositoryService.retrieveAccesibleActiveRepositoryList();
@@ -109,13 +105,11 @@ public class SourceController {
         return "/source/listChange";
     }
 	
-	@RequestMapping(value={"/changes/{repositorySeq}/**"}, method=RequestMethod.GET)
+	@RequestMapping(value={"/changes/r/{repositorySeq}/**"}, method=RequestMethod.GET)
     public String forwardSourceChangePage( ModelMap model,
     							HttpServletRequest request,
     							@PathVariable int repositorySeq) {
-		String path = (String)request.getAttribute(HandlerMapping.PATH_WITHIN_HANDLER_MAPPING_ATTRIBUTE);
-		path = path.replaceFirst("/source/changes/" + String.valueOf(repositorySeq),"");
-		if(path.startsWith("/")) path=path.replaceFirst("/","");
+		String path = reverseUrlRewrite(request,"/source/changes/r", repositorySeq);
         List<Repository> repositoryList = repositoryService.retrieveAccesibleActiveRepositoryList();
     	model.addAttribute("repositoryList", repositoryList );
     	model.addAttribute("repositorySeq", repositorySeq );
@@ -133,6 +127,13 @@ public class SourceController {
 		return sourceService.retrieveSVNSourceLogList(repositorySeq, paging);
     }
  */
+	
+	private String reverseUrlRewrite(HttpServletRequest request, String mapping, int repositorySeq){
+		String path = (String)request.getAttribute(HandlerMapping.PATH_WITHIN_HANDLER_MAPPING_ATTRIBUTE);
+		path = path.replaceFirst(mapping + "/" + String.valueOf(repositorySeq),"").replaceAll("%2E", ".").replaceAll("_resources_","resources");
+		if(path.startsWith("/")) path=path.replaceFirst("/","");
+		return path;
+	}
 	
  
 }
