@@ -42,7 +42,11 @@ public class SourceController {
     	}
     }
 	
-	@RequestMapping(value={"/browse/{repositorySeq}"}, method=RequestMethod.GET)
+	// .jsp 등의 확장자는 여기서 처리하지 못하여 url rewrite로 . 을 %2E 로 변경해준다 
+	// 그러기 위하여 url 중간에 /r/ 을 넣어 rewrite 완료 여부를 구분한다.
+	// 여기서 %2E 를 다시 . 으로 변경
+	// /resources/ 이거는 이유를 모르겠지만 다 스태틱으로 넘기는듯... 일단 이것도 url rewrite
+	@RequestMapping(value={"/browse/r/{repositorySeq}"}, method=RequestMethod.GET)
     public String forwardSourceBrowsePage( ModelMap model,
     							@PathVariable int repositorySeq) {
         List<Repository> repositoryList = repositoryService.retrieveAccesibleActiveRepositoryList();
@@ -52,12 +56,12 @@ public class SourceController {
         return "/source/sourceBrowse";
     }
 	
-	@RequestMapping(value={"/browse/{repositorySeq}/**"}, method=RequestMethod.GET)
+	@RequestMapping(value={"/browse/r/{repositorySeq}/**"}, method=RequestMethod.GET)
     public String forwardSourceBrowsePage( ModelMap model,
     							HttpServletRequest request,
     							@PathVariable int repositorySeq) {
 		String path = (String)request.getAttribute(HandlerMapping.PATH_WITHIN_HANDLER_MAPPING_ATTRIBUTE);
-		path = path.replaceFirst("/source/browse/" + String.valueOf(repositorySeq),"");
+		path = path.replaceFirst("/source/browse/r/" + String.valueOf(repositorySeq),"").replaceAll("%2E", ".").replaceAll("_resources_","resources");
 		if(path.startsWith("/")) path=path.replaceFirst("/","");
         List<Repository> repositoryList = repositoryService.retrieveAccesibleActiveRepositoryList();
     	model.addAttribute("repositoryList", repositoryList );
@@ -68,20 +72,19 @@ public class SourceController {
 	
 	
 	
-	@RequestMapping(value={"/browse/{repositorySeq}/**"}, method=RequestMethod.GET,params ={"rev"})
+	@RequestMapping(value={"/browse/r/{repositorySeq}/**"}, method=RequestMethod.GET,params ={"rev"})
     public String forwardSourceDetailPage( ModelMap model,
     							HttpServletRequest request,
     							@RequestParam(value = "rev", required = true) long revision,
     							@PathVariable int repositorySeq) {
 		String path = (String)request.getAttribute(HandlerMapping.PATH_WITHIN_HANDLER_MAPPING_ATTRIBUTE);
-		path = path.replaceFirst("/source/browse/" + String.valueOf(repositorySeq),"");
+		path = path.replaceFirst("/source/browse/r/" + String.valueOf(repositorySeq),"").replaceAll("%2E", ".").replaceAll("_resources_","resources");
 		if(path.startsWith("/")) path=path.replaceFirst("/","");
 		SVNSource svnSource = SVNSource.Builder.getBuilder(new SVNSource()).path(path).revision(revision).build();
 		svnSource = sourceService.retrieveSVNSource(repositorySeq, svnSource);
 		//svnSource.setContent(svnSource.getContent().replaceAll("<","&lt;"));	// for syntaxhighligher
 		model.addAttribute("svnSource", svnSource);
 		model.addAttribute("repositorySeq", repositorySeq );
-System.out.println("svnSource---- : " + svnSource);		
         return "/source/sourceDetail";
     }
 	

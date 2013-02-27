@@ -11,7 +11,6 @@
 
 	<!-- DispatcherServlet Context: defines this servlet's request-processing 
 		infrastructure -->
-
 	<!-- Enables the Spring MVC @Controller programming model -->
 	<mvc:annotation-driven />
 
@@ -19,9 +18,10 @@
 		up static resources in the ${webappRoot}/resources directory -->
 	<mvc:resources mapping="**/*.js" location="/WEB-INF/resources/" />
 	<mvc:resources mapping="**/*.css" location="/WEB-INF/resources/" />
-	<mvc:resources mapping="**/*.html" location="/WEB-INF/resources/" />
-	<mvc:resources mapping="**/*.png" location="/WEB-INF/resources/" />
 	<mvc:resources mapping="**/*.gif" location="/WEB-INF/resources/" />
+	<mvc:resources mapping="**/*.jpg" location="/WEB-INF/resources/" />
+	<mvc:resources mapping="**/*.png" location="/WEB-INF/resources/" />
+	<mvc:resources mapping="**/*.ico" location="/WEB-INF/resources/" />
 
 	<mvc:interceptors>
 		<mvc:interceptor>
@@ -46,8 +46,17 @@
 			<mvc:mapping path="/common/**"/>
 			<beans:bean class="com.haks.haksvn.common.security.interceptor.AuthenticationInterceptor" />
 		</mvc:interceptor>
+		<mvc:interceptor>
+			<mvc:mapping path="/source/**"/>
+			<beans:bean class="org.springframework.web.servlet.mvc.WebContentInterceptor">
+		        <beans:property name="cacheSeconds" value="0"/>
+		        <beans:property name="useExpiresHeader" value="true"/>
+		        <beans:property name="useCacheControlHeader" value="true"/>
+		        <beans:property name="useCacheControlNoStore" value="true"/>
+		    </beans:bean>
+		</mvc:interceptor>
 	</mvc:interceptors>
-	
+
 	<!-- Resolves views selected for rendering by @Controllers to .jsp resources 
 		in the /WEB-INF/views directory -->
 	<beans:bean
