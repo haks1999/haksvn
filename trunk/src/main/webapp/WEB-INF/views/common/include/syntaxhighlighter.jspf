@@ -12,7 +12,7 @@
 <script src="<c:url value="/js/syntaxhighlighter/shBrushCss.js"/>" type="text/javascript" charset="utf-8"></script>
 <script src="<c:url value="/js/syntaxhighlighter/shBrushDiff.js"/>" type="text/javascript" charset="utf-8"></script>
 <script src="<c:url value="/js/syntaxhighlighter/shBrushJava.js"/>" type="text/javascript" charset="utf-8"></script>
-<script src="<c:url value="/js/syntaxhighlighter/shBrushJavaFx.js"/>" type="text/javascript" charset="utf-8"></script>
+<script src="<c:url value="/js/syntaxhighlighter/shBrushJavaFX.js"/>" type="text/javascript" charset="utf-8"></script>
 <script src="<c:url value="/js/syntaxhighlighter/shBrushJScript.js"/>" type="text/javascript" charset="utf-8"></script>
 <script src="<c:url value="/js/syntaxhighlighter/shBrushPerl.js"/>" type="text/javascript" charset="utf-8"></script>
 <script src="<c:url value="/js/syntaxhighlighter/shBrushPlain.js"/>" type="text/javascript" charset="utf-8"></script>
@@ -41,7 +41,7 @@
 		if( "/java/".indexOf(ext) > 0 ) return "java";
 		if( "/perl/pl/".indexOf(ext) > 0 ) return "perl";
 		if( "/sql/".indexOf(ext) > 0 ) return "sql";
-		if( "/xml/html/xhtml/xslt/jsp/jspf/".indexOf(ext) > 0 ) return "xml";
+		if( "/xml/html/xhtml/xslt/jsp/jspf/tld/".indexOf(ext) > 0 ) return "xml";
 		return "plain";
 	}
 </script>

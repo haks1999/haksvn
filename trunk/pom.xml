@@ -157,6 +157,13 @@
 			<version>${org.aspectj-version}</version>
 		</dependency>
 
+		<!-- UrlRewriteFilter -->
+		<dependency>
+        	<groupId>org.tuckey</groupId>
+        	<artifactId>urlrewritefilter</artifactId>
+        	<version>4.0.3</version>
+    	</dependency>
+    	
 		<!-- Logging -->
 		<dependency>
 			<groupId>org.slf4j</groupId>
