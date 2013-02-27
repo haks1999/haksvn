@@ -59,9 +59,9 @@
 	
 	
 	function retrieveSourceList(sourceNodeList){
-		$("#tbl_sourceList tbody tr:not(.sample)").remove();
+		$("#tbl_sourceList tbody tr").not(".nodata").not(".sample").remove();
 		if( !sourceNodeList || sourceNodeList == null ) return;
-		$("#tbl_sourceList tbody tr.sample").css('display',sourceNodeList.length < 1?'inline':'');
+		$("#tbl_sourceList tbody tr[class~=nodata]").css('display',sourceNodeList.length < 1?'inline':'none');
 		var repositorySeq = '<c:out value="${repositorySeq}" />';
 		var hrefRoot = '<c:url value="/source/browse"/>';
 		for( var inx = 0 ; inx < sourceNodeList.length ; inx++ ){
@@ -131,8 +131,9 @@
 							</tr>
 						</thead>
 						<tbody>
-							<tr class="sample" style="display:inline;">
-								<td class="name"><a href="">No files in the selected directory.</a></td>
+							<tr class="nodata"><td colspan="5">No files in the selected directory.</td></tr>
+							<tr class="sample">
+								<td class="name"><a href=""></a></td>
 								<td class="size"></td>
 								<td class="revision"></td>
 								<td class="date"></td>

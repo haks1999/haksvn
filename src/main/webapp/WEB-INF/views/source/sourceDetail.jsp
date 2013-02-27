@@ -10,7 +10,7 @@
 		$('#pre_fileContent').addClass('brush:'+getShBrush('<c:out value="${svnSource.path}" />'));
 		SyntaxHighlighter.defaults['auto-links'] = false;
 		SyntaxHighlighter.defaults['toolbar'] = false;
-		SyntaxHighlighter.all();
+		//SyntaxHighlighter.all();
 	});
 	
 </script>
@@ -45,3 +45,6 @@
 	
 	<div class="clear"></div>
 </div>
+<script type="text/javascript">
+SyntaxHighlighter.all();
+</script>

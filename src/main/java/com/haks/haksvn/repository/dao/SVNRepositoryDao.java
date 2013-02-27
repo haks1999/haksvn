@@ -126,7 +126,7 @@ public class SVNRepositoryDao {
             String mimeType = fileProperties.getStringValue(SVNProperty.MIME_TYPE);
             boolean isTextType = SVNProperty.isTextMimeType(mimeType);
             svnSource.setIsTextMimeType(isTextType);
-            svnSource.setContent(isTextType?baos.toString():"");
+            svnSource.setContent(isTextType?baos.toString():"not a text file");
             
         }catch (Exception e) {
         	e.printStackTrace();
