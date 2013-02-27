@@ -3,24 +3,19 @@ package com.haks.haksvn.repository.dao;
 import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Iterator;
 import java.util.List;
-import java.util.Set;
 
 import org.springframework.stereotype.Component;
+import org.tmatesoft.svn.core.ISVNLogEntryHandler;
 import org.tmatesoft.svn.core.SVNDirEntry;
 import org.tmatesoft.svn.core.SVNException;
 import org.tmatesoft.svn.core.SVNLogEntry;
-import org.tmatesoft.svn.core.SVNLogEntryPath;
 import org.tmatesoft.svn.core.SVNNodeKind;
 import org.tmatesoft.svn.core.SVNProperties;
 import org.tmatesoft.svn.core.SVNProperty;
-import org.tmatesoft.svn.core.SVNURL;
-import org.tmatesoft.svn.core.auth.ISVNAuthenticationManager;
 import org.tmatesoft.svn.core.io.ISVNEditor;
 import org.tmatesoft.svn.core.io.SVNRepository;
-import org.tmatesoft.svn.core.io.SVNRepositoryFactory;
-import org.tmatesoft.svn.core.wc.SVNWCUtil;
+import org.tmatesoft.svn.core.wc.SVNLogClient;
 
 import com.haks.haksvn.common.exception.HaksvnException;
 import com.haks.haksvn.repository.model.Repository;
@@ -151,6 +146,35 @@ public class SVNRepositoryDao {
         	targetRepository = SVNRepositoryUtils.getUserAuthSVNRepository(repository);
         	// path, null, startrevision, endrevision, include all paths, strict
             logEntries = targetRepository.log(new String[]{RepositoryUtils.getRelativeRepositoryPath(repository, path)}, null,0, -1, false, true);
+        }catch (Exception e) {
+        	e.printStackTrace();
+        	throw new HaksvnException(e);
+        }finally{
+        	if(targetRepository!=null) targetRepository.closeSession();
+        }
+        return logEntries;
+    }
+	
+	public Collection<SVNLogEntry> retrieveSVNLogEntryListAround(Repository repository, String path, long revision){
+		SVNRepository targetRepository = null;
+		Collection<SVNLogEntry> logEntries = new ArrayList<SVNLogEntry>();
+        try {
+        	targetRepository = SVNRepositoryUtils.getUserAuthSVNRepository(repository);
+        	
+        	final List<SVNLogEntry> newerLogList = new ArrayList<SVNLogEntry>();
+        	targetRepository.log(new String[]{RepositoryUtils.getRelativeRepositoryPath(repository, path)}, revision, -1, false, true, 5, new ISVNLogEntryHandler() { 
+                public void handleLogEntry(SVNLogEntry entry) throws SVNException { 
+                	newerLogList.add(entry); 
+                } 
+            });
+        	
+        	final List<SVNLogEntry> olderLogList = new ArrayList<SVNLogEntry>();
+        	targetRepository.log(new String[]{RepositoryUtils.getRelativeRepositoryPath(repository, path)}, revision, 0, false, true, 5, new ISVNLogEntryHandler() { 
+                public void handleLogEntry(SVNLogEntry entry) throws SVNException { 
+                	newerLogList.add(entry); 
+                } 
+            });
+            
         }catch (Exception e) {
         	e.printStackTrace();
         	throw new HaksvnException(e);

@@ -11,10 +11,13 @@
  */
 package svnkit;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Set;
 
+import org.tmatesoft.svn.core.ISVNLogEntryHandler;
 import org.tmatesoft.svn.core.SVNException;
 import org.tmatesoft.svn.core.SVNLogEntry;
 import org.tmatesoft.svn.core.SVNLogEntryPath;
@@ -166,6 +169,29 @@ public class RetrieveFileLogTest {
              */
             logEntries = repository.log(filePath, null,
                     startRevision, endRevision, true, true);
+            
+            
+            
+            // by haks
+            // path, start, end, 
+            
+            final List<SVNLogEntry> tempList = new ArrayList<SVNLogEntry>();
+            filePath = new String[]{"/trunk/src/main/java/com/haks/haksvn/repository/service/SVNRepositoryService.java"};
+            repository.log(filePath, 33, 32, false, true, 3, new ISVNLogEntryHandler() { 
+                public void handleLogEntry(SVNLogEntry entry) throws SVNException { 
+                	tempList.add(entry); 
+                } 
+            });
+            
+            for( SVNLogEntry svnLogEntry : tempList ){
+            	System.out.println("---------------------------------------------");
+            	System.out.println("revision: " + svnLogEntry.getRevision());
+            	System.out.println("author: " + svnLogEntry.getAuthor());
+            	System.out.println("date: " + svnLogEntry.getDate());
+            	System.out.println("log message: " + svnLogEntry.getMessage());
+            }
+            
+            System.exit(1);
 
         } catch (SVNException svne) {
             System.out.println("error while collecting log information for '"
