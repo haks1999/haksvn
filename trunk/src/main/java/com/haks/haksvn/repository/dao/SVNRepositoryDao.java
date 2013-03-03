@@ -15,13 +15,14 @@ import org.tmatesoft.svn.core.SVNProperties;
 import org.tmatesoft.svn.core.SVNProperty;
 import org.tmatesoft.svn.core.io.ISVNEditor;
 import org.tmatesoft.svn.core.io.SVNRepository;
-import org.tmatesoft.svn.core.wc.SVNLogClient;
 
+import com.google.common.collect.Lists;
 import com.haks.haksvn.common.exception.HaksvnException;
 import com.haks.haksvn.repository.model.Repository;
 import com.haks.haksvn.repository.util.RepositoryUtils;
 import com.haks.haksvn.repository.util.SVNRepositoryUtils;
 import com.haks.haksvn.source.model.SVNSource;
+import com.haks.haksvn.source.model.SVNSourceLog;
 
 @Component
 public class SVNRepositoryDao {
@@ -105,6 +106,33 @@ public class SVNRepositoryDao {
 		return entries;
     }
 	
+	public SVNSource retrieveSVNSourceWithoutContentAndLogs(Repository repository, SVNSource svnSource){
+		
+		SVNRepository targetRepository = null;
+        try{
+        	targetRepository = SVNRepositoryUtils.getUserAuthSVNRepository(repository);
+        	SVNNodeKind nodeKind = targetRepository.checkPath(RepositoryUtils.getRelativeRepositoryPath(repository, svnSource.getPath()), svnSource.getRevision());
+        	svnSource.setIsFolder(nodeKind == SVNNodeKind.DIR);
+        	SVNProperties fileProperties = new SVNProperties();
+            targetRepository.getFile(RepositoryUtils.getRelativeRepositoryPath(repository, svnSource.getPath()), svnSource.getRevision(), fileProperties, null);
+            String mimeType = fileProperties.getStringValue(SVNProperty.MIME_TYPE);
+            boolean isTextType = SVNProperty.isTextMimeType(mimeType);
+            svnSource.setIsTextMimeType(isTextType);
+            svnSource.setSize(targetRepository.info(RepositoryUtils.getRelativeRepositoryPath(repository, svnSource.getPath()), svnSource.getRevision()).getSize());
+        }catch (Exception e) {
+        	e.printStackTrace();
+        	throw new HaksvnException(e);
+        }finally{
+        	try{
+        		if(targetRepository!=null) targetRepository.closeSession();
+        	}catch(Exception e){
+        		e.printStackTrace();
+        	}
+        }
+		return svnSource;
+		
+	}
+	
 	public SVNSource retrieveFileContentByRevision(Repository repository, SVNSource svnSource){
 		
 		SVNRepository targetRepository = null;
@@ -122,6 +150,7 @@ public class SVNRepositoryDao {
             boolean isTextType = SVNProperty.isTextMimeType(mimeType);
             svnSource.setIsTextMimeType(isTextType);
             svnSource.setContent(isTextType?baos.toString():"not a text file");
+            svnSource.setSize(targetRepository.info(RepositoryUtils.getRelativeRepositoryPath(repository, svnSource.getPath()), svnSource.getRevision()).getSize());
             
         }catch (Exception e) {
         	e.printStackTrace();
@@ -155,25 +184,34 @@ public class SVNRepositoryDao {
         return logEntries;
     }
 	
-	public Collection<SVNLogEntry> retrieveSVNLogEntryListAround(Repository repository, String path, long revision){
+	//TODO
+	// log조회는 캐슁이 가능할듯
+	public SVNSource retrieveOlderAndNewerAndCurSVNSourceLogList(Repository repository, final SVNSource svnSource){
 		SVNRepository targetRepository = null;
-		Collection<SVNLogEntry> logEntries = new ArrayList<SVNLogEntry>();
         try {
         	targetRepository = SVNRepositoryUtils.getUserAuthSVNRepository(repository);
         	
         	final List<SVNLogEntry> newerLogList = new ArrayList<SVNLogEntry>();
-        	targetRepository.log(new String[]{RepositoryUtils.getRelativeRepositoryPath(repository, path)}, revision, -1, false, true, 5, new ISVNLogEntryHandler() { 
+        	targetRepository.log(new String[]{RepositoryUtils.getRelativeRepositoryPath(repository, svnSource.getPath())}, svnSource.getRevision(), -1, false, true, 5, new ISVNLogEntryHandler() { 
                 public void handleLogEntry(SVNLogEntry entry) throws SVNException { 
+                	if( entry.getRevision() == svnSource.getRevision() ) return;
                 	newerLogList.add(entry); 
                 } 
             });
         	
         	final List<SVNLogEntry> olderLogList = new ArrayList<SVNLogEntry>();
-        	targetRepository.log(new String[]{RepositoryUtils.getRelativeRepositoryPath(repository, path)}, revision, 0, false, true, 5, new ISVNLogEntryHandler() { 
+        	targetRepository.log(new String[]{RepositoryUtils.getRelativeRepositoryPath(repository, svnSource.getPath())}, svnSource.getRevision(), 0, false, true, 5, new ISVNLogEntryHandler() { 
                 public void handleLogEntry(SVNLogEntry entry) throws SVNException { 
-                	newerLogList.add(entry); 
+                	if( entry.getRevision() == svnSource.getRevision() ) return;
+                	olderLogList.add(entry); 
                 } 
             });
+        	
+        	@SuppressWarnings("unchecked")
+			List<SVNLogEntry> curLog = Lists.newArrayList(targetRepository.log(new String[]{RepositoryUtils.getRelativeRepositoryPath(repository, svnSource.getPath())}, null,svnSource.getRevision(), svnSource.getRevision(), false, true));
+        	svnSource.setNewerLogs(SVNRepositoryUtils.transform(newerLogList, new ArrayList<SVNSourceLog>(0)));
+        	svnSource.setOlderLogs(SVNRepositoryUtils.transform(olderLogList, new ArrayList<SVNSourceLog>(0)));
+        	svnSource.setLog(SVNRepositoryUtils.transform(curLog, new ArrayList<SVNSourceLog>(0)).get(0));
             
         }catch (Exception e) {
         	e.printStackTrace();
@@ -181,7 +219,7 @@ public class SVNRepositoryDao {
         }finally{
         	if(targetRepository!=null) targetRepository.closeSession();
         }
-        return logEntries;
+        return svnSource;
     }
 	/*
 	@SuppressWarnings("unchecked")

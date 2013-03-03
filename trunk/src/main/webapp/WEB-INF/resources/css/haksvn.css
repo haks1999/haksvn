@@ -161,3 +161,30 @@ line-height:22px;
 vertical-align: middle;
 margin-right:3px;	
 }
+.desc div.division{
+margin-bottom:20px;	
+}
+.desc div.division .title{
+margin-bottom:10px;font-weight:bold;font-size:13pt;
+}
+.box.align-tr{
+position:absolute;width:320px;z-index:10;right:10px;
+}
+.font12{
+font-size:12pt;
+}
+a.pmOpener img{
+vertical-align:bottom;padding-top:1px;cursor:pointer;
+}
+a.pmOpener.closed img.pClosed,a.pmOpener.opened img.mOpened{
+display:inline-block;
+}
+a.pmOpener.opened img.pClosed,a.pmOpener.closed img.mOpened{
+display:none;
+}
+.display-none{
+display:none;
+}
+.visible-hidden{
+visibility:hidden;
+}

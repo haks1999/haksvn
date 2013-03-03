@@ -24,6 +24,7 @@ import com.haks.haksvn.common.paging.model.Paging;
 import com.haks.haksvn.repository.dao.LocalRepositoryFileDao;
 import com.haks.haksvn.repository.dao.SVNRepositoryDao;
 import com.haks.haksvn.repository.model.Repository;
+import com.haks.haksvn.repository.util.SVNRepositoryUtils;
 import com.haks.haksvn.source.model.SVNSource;
 import com.haks.haksvn.source.model.SVNSourceLog;
 import com.haks.haksvn.user.model.User;
@@ -91,6 +92,9 @@ public class SVNRepositoryService {
 		}
 	}
 	
+	public SVNSource retrieveSVNSourceWithoutContentAndLogs( Repository repository, SVNSource svnSource ){
+		return svnRepositoryDao.retrieveSVNSourceWithoutContentAndLogs(repository, svnSource);
+    }
 	
 	public List<SVNSource> retrieveSVNSourceList( Repository repository, String path ){
 		// list 조회 시, log 는 가져오지 않는다.
@@ -98,8 +102,8 @@ public class SVNRepositoryService {
 		Collection<SVNDirEntry> entries = svnRepositoryDao.retrieveSVNDirEntryList(repository, path);
 		for( SVNDirEntry svnDirEntry : entries ){
 			SVNSource svnSource = SVNSource.Builder.getBuilder(new SVNSource())
-					.title(svnDirEntry.getName()).name(svnDirEntry.getName()).path(path+"/"+svnDirEntry.getName()).author(svnDirEntry.getAuthor())
-					.size(FormatUtils.fileSize(svnDirEntry.getSize())).revision(svnDirEntry.getRevision()).date(FormatUtils.simpleDate(svnDirEntry.getDate())).build();
+					.title(svnDirEntry.getName()).name(svnDirEntry.getName()).path(path+"/"+svnDirEntry.getName()).author(svnDirEntry.getAuthor()).size(svnDirEntry.getSize())
+					.formattedSize(FormatUtils.fileSize(svnDirEntry.getSize())).revision(svnDirEntry.getRevision()).date(FormatUtils.simpleDate(svnDirEntry.getDate())).build();
 			svnSource.setIsFolder(svnDirEntry.getKind() == SVNNodeKind.DIR);
 			svnSource.setIsLazy(svnSource.getIsFolder());
 			svnSourceList.add(svnSource);
@@ -116,39 +120,20 @@ public class SVNRepositoryService {
 		return svnRepositoryDao.retrieveFileContentByRevision(repository, svnSource);
 	}
 	
-	public Paging<List<SVNSourceLog>> retrieveSVNSourceLogs(Repository repository, Paging<SVNSource> paging ){
+	public Paging<List<SVNSourceLog>> retrieveSVNSourceLogList(Repository repository, Paging<SVNSource> paging ){
 		List<SVNSourceLog> svnSourceLogList = new ArrayList<SVNSourceLog>();
 		Paging<List<SVNSourceLog>> resultPaging = new Paging<List<SVNSourceLog>>(svnSourceLogList);
 		
 		Collection<SVNLogEntry> entries = svnRepositoryDao.retrieveSVNLogEntryList(repository, paging.getModel().getPath());
 		List<SVNLogEntry> entryList = Lists.newArrayList(entries);
 		Paging.Builder.getBuilder(resultPaging).limit(paging.getLimit()).start(paging.getStart()).total(entryList.size()).build();
-		//entryList = entryList.subList(resultPaging.getStart(), resultPaging.getStart()+resultPaging.getLimit() > resultPaging.getTotal() ? resultPaging.getTotal():resultPaging.getStart()+resultPaging.getLimit());
 		entryList = entryList.subList(entryList.size()-paging.getStart()-paging.getLimit() < 0 ? 0:entryList.size()-paging.getStart()-paging.getLimit(), entryList.size()-paging.getStart());
-		ListIterator<SVNLogEntry> reverseEntries = entryList.listIterator(entryList.size());
-		while( reverseEntries.hasPrevious()){
-			SVNLogEntry svnLogEntry = reverseEntries.previous();
-			svnSourceLogList.add(SVNSourceLog.Builder.getBuilder(new SVNSourceLog())
-					.author(svnLogEntry.getAuthor()).date(FormatUtils.simpleDate(svnLogEntry.getDate())).message(svnLogEntry.getMessage())
-					.revision(svnLogEntry.getRevision()).build());
-		}
-		/*
-		int count = 0;
-		while( reverseEntries.hasPrevious() && count++ < paging.getStart()+paging.getLimit()){
-			if(paging.getStart() > count-1 ) continue;
-			SVNLogEntry svnLogEntry = reverseEntries.previous();
-			svnSourceLogList.add(SVNSourceLog.Builder.getBuilder(new SVNSourceLog())
-					.author(svnLogEntry.getAuthor()).date(FormatUtils.simpleDate(svnLogEntry.getDate())).message(svnLogEntry.getMessage())
-					.revision(svnLogEntry.getRevision()).build());
-		}
-		*/
-		Collections.sort(svnSourceLogList, new Comparator<SVNSourceLog>(){
-		     public int compare(SVNSourceLog src1, SVNSourceLog src2){
-		    	 long comp = src1.getRevision() - src2.getRevision();
-		    	 return comp < 0 ? 1 : (comp > 0 ? -1 : 0);
-		     }
-		});
+		SVNRepositoryUtils.transform(entryList, svnSourceLogList);
 		return resultPaging;
+	}
+	
+	public SVNSource retrieveOlderAndNewerAndCurSVNSourceLogList(Repository repository, SVNSource svnSource){
+		return svnRepositoryDao.retrieveOlderAndNewerAndCurSVNSourceLogList(repository, svnSource);
 	}
 	
 }
