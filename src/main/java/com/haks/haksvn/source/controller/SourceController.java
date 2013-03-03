@@ -111,6 +111,9 @@ public class SourceController {
     							@PathVariable int repositorySeq) {
 		String path = reverseUrlRewrite(request,"/source/changes/r", repositorySeq);
         List<Repository> repositoryList = repositoryService.retrieveAccesibleActiveRepositoryList();
+        SVNSource svnSource = SVNSource.Builder.getBuilder(new SVNSource()).path(path).revision(-1).build();
+		svnSource = sourceService.retrieveSVNSourceWithoutContentAndLogs(repositorySeq, svnSource);
+		model.addAttribute("svnSource", svnSource);
     	model.addAttribute("repositoryList", repositoryList );
     	model.addAttribute("repositorySeq", repositorySeq );
     	model.addAttribute("path", path);

@@ -45,7 +45,9 @@ public class LoginController {
     			ContextHolder.addLoginUser(new LoginUser(user));
     			String redirectUrl = "/transfer/request/retrieveRequestList";
     			try{
-    				String refererPath = new URI(referer).getPath().substring(request.getContextPath().length());
+    				URI uri =  new URI(referer);
+    				String refererPath = uri.getPath().substring(request.getContextPath().length());
+    				if(uri.getQuery() !=null ) refererPath += "?"+uri.getQuery();
     				redirectUrl = refererPath.length() < 2 || refererPath.contains("/login") ? redirectUrl:refererPath;
     			}catch(Exception e){
     				throw new HaksvnException(e);

@@ -67,8 +67,8 @@
 		for( var inx = 0 ; inx < sourceNodeList.length ; inx++ ){
 			var row = $("#tbl_sourceList > tbody > .sample").clone();
 			$(row).find(".name a").text(sourceNodeList[inx].name).attr('href',(hrefRoot + "/" + repositorySeq + "/" + sourceNodeList[inx].path + "?rev=" + sourceNodeList[inx].revision).replace("//", "/"));
-			$(row).children(".size").text(sourceNodeList[inx].size);
-			$(row).children(".revision").text(sourceNodeList[inx].revision);
+			$(row).children(".size").text(sourceNodeList[inx].formattedSize);
+			$(row).children(".revision").text('r'+sourceNodeList[inx].revision);
 			$(row).children(".date").text(sourceNodeList[inx].date);
 			$(row).children(".author").text(sourceNodeList[inx].author);
 			$(row).removeClass("sample");
@@ -133,7 +133,7 @@
 						<tbody>
 							<tr class="nodata"><td colspan="5">No files in the selected directory.</td></tr>
 							<tr class="sample">
-								<td class="name"><a href=""></a></td>
+								<td class="name"><font class="path font12"><a href=""></a></font></td>
 								<td class="size"></td>
 								<td class="revision"></td>
 								<td class="date"></td>
@@ -141,43 +141,8 @@
 							</tr>
 						</tbody>
 					</table>
-			
-			
 				</div>
 			</div>
-						
-						
-						
-			<!-- 
-			<table id="tbl_userList">
-				<thead>
-					<tr>
-						<th class="checkbox"><input type="checkbox"/></th>
-						<th>ID</th>
-						<th>Name</th>
-						<th>Email</th>
-						<th>User Authority</th>
-					</tr>
-				</thead>
-				<tbody>
-					<tr class="sample">
-						<td class="checkbox"><input name="userId" type="checkbox"/></td>
-						<td class="userId">
-							<a href="<c:url value="/configuration/users/list/"/>">test</a>
-						</td>
-						<td class="userName"></td>
-						<td class="email"></td>
-						<td class="authType"></td>
-					</tr>
-				</tbody>
-			</table>
-			 -->
-			 <!-- 
-			<p>
-				<a class="button green mt ml" onclick="openSearchUserDialog()"><small class="icon plus"></small><span>Add User</span></a>
-				<a class="button red mt ml" onclick="delRepositoryUser()"><small class="icon cross"></small><span>Delete User</span></a>
-			</p>
-			 -->
 		</div>
 	</div>
 	

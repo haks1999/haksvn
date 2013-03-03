@@ -81,10 +81,14 @@
 						<span class="underline italic link older" onclick="changePagingOlder()">Older</span>
 					</span>
 					<font class="path">Path:
-						<c:set var="pathLink" value="${pageContext.request.contextPath}/source/browse/${repositorySeq}"/>
-						<c:forEach var="pathFrag" items="${fn:split(path, '/')}">
+						<c:set var="pathLink" value="${pageContext.request.contextPath}/source/changes/${repositorySeq}"/>
+						<c:forEach var="pathFrag" items="${fn:split(path, '/')}" varStatus="loop">
 							<c:set var="pathLink" value="${pathLink}/${pathFrag}"/>
-							/<a href="${pathLink}"><c:out value="${pathFrag}" /></a>
+							<c:choose>
+								<c:when test="${!loop.last}">/<a href="${pathLink}"><c:out value="${pathFrag}" /></a></c:when>
+								<c:when test="${(loop.last) && (svnSource.isFolder)}">/<a href="${pathLink}"><c:out value="${pathFrag}" /></a></c:when>
+								<c:otherwise>/<c:out value="${pathFrag}" /></c:otherwise>
+							</c:choose>
 						</c:forEach>
 					</font>
 				</p>

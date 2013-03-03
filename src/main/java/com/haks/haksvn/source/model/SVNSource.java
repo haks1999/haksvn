@@ -19,11 +19,14 @@ public class SVNSource {
 	private String path;
 	private String date;
 	private String author;
-	private String size;
+	private long size;
+	private String formattedSize;
 	private long revision;
 	private boolean isTextMimeType;
 	private String content;
-	private List<SVNSourceLog> logs;
+	private SVNSourceLog log;
+	private List<SVNSourceLog> olderLogs;
+	private List<SVNSourceLog> newerLogs;
 	
 	public SVNSource(){
 		
@@ -32,7 +35,7 @@ public class SVNSource {
 	@Override
 	public String toString(){
 		return "\n[ SVNSource ]\n - title : " + title + "\n - isFolder : " + isFolder + "\n - isTextMimeType : " + isTextMimeType +
-					"\n - name : " + name + "\n - path : " + path + "\n - size : " + size + "\n - revision : " + revision;
+					"\n - name : " + name + "\n - path : " + path + "\n - formattedSize : " + formattedSize + "\n - revision : " + revision;
 	}
 
 	public String getTitle() {
@@ -90,13 +93,21 @@ public class SVNSource {
 	public void setPath(String path) {
 		this.path = path;
 	}
-
-	public String getSize() {
+	
+	public long getSize(){
 		return size;
 	}
-
-	public void setSize(String size) {
+	
+	public void setSize(long size){
 		this.size = size;
+	}
+
+	public String getFormattedSize() {
+		return formattedSize;
+	}
+
+	public void setFormattedSize(String formattedSize) {
+		this.formattedSize = formattedSize;
 	}
 	
 	public long getRevision(){
@@ -123,14 +134,29 @@ public class SVNSource {
 		this.content = content;
 	}
 
-	public List<SVNSourceLog> getLogs() {
-		return logs;
+	public List<SVNSourceLog> getOlderLogs() {
+		return olderLogs;
 	}
 
-	public void setLogs(List<SVNSourceLog> logs) {
-		this.logs = logs;
+	public void setOlderLogs(List<SVNSourceLog> olderLogs) {
+		this.olderLogs = olderLogs;
+	}
+	
+	public List<SVNSourceLog> getNewerLogs() {
+		return newerLogs;
 	}
 
+	public void setNewerLogs(List<SVNSourceLog> newerLogs) {
+		this.newerLogs = newerLogs;
+	}
+	
+	public SVNSourceLog getLog(){
+		return log;
+	}
+
+	public void setLog(SVNSourceLog log){
+		this.log = log;
+	}
 
 
 
@@ -185,8 +211,13 @@ public class SVNSource {
 			return this;
 		}
 		
-		public Builder size(String size){
+		public Builder size(long size){
 			svnSource.setSize(size);
+			return this;
+		}
+		
+		public Builder formattedSize(String formattedSize){
+			svnSource.setFormattedSize(formattedSize);
 			return this;
 		}
 		
@@ -205,8 +236,18 @@ public class SVNSource {
 			return this;
 		}
 		
-		public Builder logs(List<SVNSourceLog> logs){
-			svnSource.setLogs(logs);
+		public Builder olderLogs(List<SVNSourceLog> olderLogs){
+			svnSource.setOlderLogs(olderLogs);
+			return this;
+		}
+		
+		public Builder newerLogs(List<SVNSourceLog> newerLogs){
+			svnSource.setNewerLogs(newerLogs);
+			return this;
+		}
+		
+		public Builder log(SVNSourceLog log){
+			svnSource.setLog(log);
 			return this;
 		}
 		
