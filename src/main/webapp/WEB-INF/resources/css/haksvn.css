@@ -161,6 +161,13 @@ line-height:22px;
 vertical-align: middle;
 margin-right:3px;	
 }
+.desc span.menu-tr{
+float:right;
+margin-left:5px;
+}
+.desc span.menu-tr a{
+text-decoration:underline;cursor:pointer;
+}
 .desc div.division{
 margin-bottom:20px;	
 }

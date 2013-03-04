@@ -63,7 +63,9 @@
 					<div class="head"><div></div></div>
 					<div class="desc">
 						<p>
-							<font class="path" style="float:right;text-decoration:underline;cursor:pointer;"><a onclick="toggleDetailInfo(this)">Hide</a></font>
+							<span class="menu-tr">
+								<font class="path"><a onclick="toggleDetailInfo(this)">Hide</a></font>
+							</span>
 						</p>
 						<div class="division">
 							<p class="title">
@@ -71,7 +73,7 @@
 							</p>
 							<p>
 								<span>
-									<font class="path"><a href="${repoBrowsePathLink}/${svnSource.path}?rev=${svnSource.revision}">r<c:out value="${svnSource.revision}"/></a></font>
+									<font class="path"><a href="${repoChangesPathLink}/${svnSource.path}?rev=${svnSource.revision}">r<c:out value="${svnSource.revision}"/></a></font>
 									&nbsp;by&nbsp;<c:out value="${svnSource.log.author}"/>
 									,&nbsp;<c:out value="${svnSource.log.date}"/>
 								</span>
@@ -91,7 +93,7 @@
 									</a>
 									<span>
 										<font class="path">
-										<a href="${repoBrowsePathLink}/${svnSource.path}?rev=${newerLog.revision}">r<c:out value="${newerLog.revision}"/></a></font>
+										<a href="${repoChangesPathLink}/${svnSource.path}?rev=${newerLog.revision}">r<c:out value="${newerLog.revision}"/></a></font>
 										&nbsp;by&nbsp;<c:out value="${newerLog.author}"/>
 										,&nbsp;<c:out value="${newerLog.date}"/>,Diff
 									</span>
@@ -116,7 +118,7 @@
 										<img class="pClosed" src="<c:url value="/images/plus_small_white.png"/>"/><img class="mOpened" src="<c:url value="/images/minus_small_white.png"/>"/>
 									</a>
 									<span>
-										<font class="path"><a href="${repoBrowsePathLink}/${svnSource.path}?rev=${olderLog.revision}">r<c:out value="${olderLog.revision}"/></a></font>
+										<font class="path"><a href="${repoChangesPathLink}/${svnSource.path}?rev=${olderLog.revision}">r<c:out value="${olderLog.revision}"/></a></font>
 										&nbsp;by&nbsp;<c:out value="${olderLog.author}"/>
 										,&nbsp;<c:out value="${olderLog.date}"/>,Diff
 									</span>

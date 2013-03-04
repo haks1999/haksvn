@@ -1,5 +1,7 @@
 package com.haks.haksvn.source.model;
 
+import java.util.List;
+
 import org.springframework.stereotype.Component;
 
 @Component
@@ -9,6 +11,7 @@ public class SVNSourceLog {
 	private long revision;
 	private String date;
 	private String message;
+	private List<SVNSourceLogChanged> changedList;
 	
 	public SVNSourceLog(){
 		
@@ -52,6 +55,14 @@ public class SVNSourceLog {
 	public void setMessage(String message) {
 		this.message = message;
 	}
+	
+	public List<SVNSourceLogChanged> getChangedList(){
+		return changedList;
+	}
+	
+	public void setChangedList(List<SVNSourceLogChanged> changedList){
+		this.changedList = changedList;
+	}
 
 	public static class Builder{
 		
@@ -86,6 +97,11 @@ public class SVNSourceLog {
 		
 		public Builder message(String message){
 			svnSourceLog.setMessage(message);
+			return this;
+		}
+		
+		public Builder changedList(List<SVNSourceLogChanged> changedList){
+			svnSourceLog.setChangedList(changedList);
 			return this;
 		}
 		
