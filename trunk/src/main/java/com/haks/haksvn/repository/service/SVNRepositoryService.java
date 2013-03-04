@@ -116,10 +116,6 @@ public class SVNRepositoryService {
 		return svnSourceList;
     }
 	
-	public SVNSource retrieveSVNSourceContent(Repository repository, SVNSource svnSource){
-		return svnRepositoryDao.retrieveFileContentByRevision(repository, svnSource);
-	}
-	
 	public Paging<List<SVNSourceLog>> retrieveSVNSourceLogList(Repository repository, Paging<SVNSource> paging ){
 		List<SVNSourceLog> svnSourceLogList = new ArrayList<SVNSourceLog>();
 		Paging<List<SVNSourceLog>> resultPaging = new Paging<List<SVNSourceLog>>(svnSourceLogList);
@@ -128,10 +124,14 @@ public class SVNRepositoryService {
 		List<SVNLogEntry> entryList = Lists.newArrayList(entries);
 		Paging.Builder.getBuilder(resultPaging).limit(paging.getLimit()).start(paging.getStart()).total(entryList.size()).build();
 		entryList = entryList.subList(entryList.size()-paging.getStart()-paging.getLimit() < 0 ? 0:entryList.size()-paging.getStart()-paging.getLimit(), entryList.size()-paging.getStart());
-		SVNRepositoryUtils.transform(entryList, svnSourceLogList);
+		SVNRepositoryUtils.transform(entryList, svnSourceLogList,paging.getModel().getPath());
 		return resultPaging;
 	}
 	
+	public SVNSource retrieveSVNSourceContent(Repository repository, SVNSource svnSource){
+		return svnRepositoryDao.retrieveFileContentByRevision(repository, svnSource);
+	}
+
 	public SVNSource retrieveOlderAndNewerAndCurSVNSourceLogList(Repository repository, SVNSource svnSource){
 		return svnRepositoryDao.retrieveOlderAndNewerAndCurSVNSourceLogList(repository, svnSource);
 	}

@@ -21,9 +21,13 @@
 					var model = data.model;
 					_paging.total = data.total;
 					changePagingInfo();
+					var repositorySeq = '<c:out value="${repositorySeq}" />';
+					var hrefRoot = '<c:url value="/source/changes"/>';
+					var path = '<c:out value="${path}" />';
 					for( var inx = 0 ; inx < model.length ; inx++ ){
 						var row = $("#tbl_changeList > tbody > .sample").clone();
-						$(row).children(".revision").text(model[inx].revision);
+						//$(row).find(".revision a").text(model[inx].revision);
+						$(row).find(".revision a").text('r'+model[inx].revision).attr('href',(hrefRoot + "/" + repositorySeq + (path.length<1?"":"/") + path + "?rev=" + model[inx].revision).replace("//", "/"));
 						$(row).children(".message").text(model[inx].message);
 						$(row).children(".date").text(model[inx].date);
 						$(row).children(".author").text(model[inx].author);
@@ -104,7 +108,7 @@
 				</thead>
 				<tbody>
 					<tr class="sample">
-						<td class="revision"></td>
+						<td class="revision"><font class="path font12"><a href=""></a></font></td>
 						<td class="message"></td>
 						<td class="date"></td>
 						<td class="author"></td>

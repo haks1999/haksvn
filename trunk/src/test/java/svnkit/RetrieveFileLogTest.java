@@ -15,6 +15,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.tmatesoft.svn.core.ISVNLogEntryHandler;
@@ -177,7 +178,7 @@ public class RetrieveFileLogTest {
             
             final List<SVNLogEntry> tempList = new ArrayList<SVNLogEntry>();
             filePath = new String[]{"/trunk/src/main/java/com/haks/haksvn/repository/service/SVNRepositoryService.java"};
-            repository.log(filePath, 33, 32, false, true, 3, new ISVNLogEntryHandler() { 
+            repository.log(filePath, 33, 32, true, true, 3, new ISVNLogEntryHandler() { 
                 public void handleLogEntry(SVNLogEntry entry) throws SVNException { 
                 	tempList.add(entry); 
                 } 
@@ -189,6 +190,12 @@ public class RetrieveFileLogTest {
             	System.out.println("author: " + svnLogEntry.getAuthor());
             	System.out.println("date: " + svnLogEntry.getDate());
             	System.out.println("log message: " + svnLogEntry.getMessage());
+            	
+            	Map<String,SVNLogEntryPath> map = svnLogEntry.getChangedPaths();
+            	for( Map.Entry<String, SVNLogEntryPath> elem : map.entrySet() ){
+            		System.out.println( "changedpaths : " + elem.getKey() + ", " + elem.getValue().getType() + ", " + elem.getValue().getPath());
+            	}
+            	
             }
             
             System.exit(1);

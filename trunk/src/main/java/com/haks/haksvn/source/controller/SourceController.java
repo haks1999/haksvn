@@ -120,6 +120,33 @@ public class SourceController {
         return "/source/listChange";
     }
 	
+	@RequestMapping(value={"/changes/r/{repositorySeq}"}, method=RequestMethod.GET,params ={"rev"})
+    public String forwardChangeDetailPage( ModelMap model,
+    							@RequestParam(value = "rev", required = true) long revision,
+    							@PathVariable int repositorySeq) {
+		String path = "";
+		SVNSource svnSource = SVNSource.Builder.getBuilder(new SVNSource()).path(path).revision(revision).build();
+		svnSource = sourceService.retrieveSVNSourceWithoutContent(repositorySeq, svnSource);
+		model.addAttribute("svnSource", svnSource);
+		model.addAttribute("repositorySeq", repositorySeq );
+		model.addAttribute("path", path);
+        return "/source/changeDetail";
+    }
+	
+	@RequestMapping(value={"/changes/r/{repositorySeq}/**"}, method=RequestMethod.GET,params ={"rev"})
+    public String forwardChangeDetailPage( ModelMap model,
+    							HttpServletRequest request,
+    							@RequestParam(value = "rev", required = true) long revision,
+    							@PathVariable int repositorySeq) {
+		String path = reverseUrlRewrite(request,"/source/changes/r", repositorySeq);
+		SVNSource svnSource = SVNSource.Builder.getBuilder(new SVNSource()).path(path).revision(revision).build();
+		svnSource = sourceService.retrieveSVNSourceWithoutContent(repositorySeq, svnSource);
+		model.addAttribute("svnSource", svnSource);
+		model.addAttribute("repositorySeq", repositorySeq );
+		model.addAttribute("path", path);
+        return "/source/changeDetail";
+    }
+	
 	/*
 	@RequestMapping(value="/changes/{repositorySeq}")
     public String forwardSourceChangePage(@PathVariable int repositorySeq,

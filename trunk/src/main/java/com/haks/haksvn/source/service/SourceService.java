@@ -33,6 +33,12 @@ public class SourceService {
 		return svnSource;
 	}
 	
+	public SVNSource retrieveSVNSourceWithoutContent(int repositorySeq, SVNSource svnSource){
+		Repository repository = repositoryService.retrieveAccesibleActiveRepositoryByRepositorySeq(repositorySeq);
+		svnSource = svnRepositoryService.retrieveOlderAndNewerAndCurSVNSourceLogList(repository, svnSource);
+		return svnSource;
+	}
+	
 	public SVNSource retrieveSVNSourceWithoutContentAndLogs(int repositorySeq, SVNSource svnSource){
 		Repository repository = repositoryService.retrieveAccesibleActiveRepositoryByRepositorySeq(repositorySeq);
 		svnSource = svnRepositoryService.retrieveSVNSourceWithoutContentAndLogs(repository, svnSource);
