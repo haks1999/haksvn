@@ -63,12 +63,14 @@
 		if( !sourceNodeList || sourceNodeList == null ) return;
 		$("#tbl_sourceList tbody tr[class~=nodata]").css('display',sourceNodeList.length < 1?'inline':'none');
 		var repositorySeq = '<c:out value="${repositorySeq}" />';
-		var hrefRoot = '<c:url value="/source/browse"/>';
+		var path = '<c:out value="${path}" />';
+		var browseHrefRoot = '<c:url value="/source/browse"/>';
+		var changesHrefRoot = '<c:url value="/source/changes"/>';
 		for( var inx = 0 ; inx < sourceNodeList.length ; inx++ ){
 			var row = $("#tbl_sourceList > tbody > .sample").clone();
-			$(row).find(".name a").text(sourceNodeList[inx].name).attr('href',(hrefRoot + "/" + repositorySeq + "/" + sourceNodeList[inx].path + "?rev=" + sourceNodeList[inx].revision).replace("//", "/"));
+			$(row).find(".name a").text(sourceNodeList[inx].name).attr('href',(browseHrefRoot + "/" + repositorySeq + "/" + sourceNodeList[inx].path + "?rev=" + sourceNodeList[inx].revision).replace("//", "/"));
 			$(row).children(".size").text(sourceNodeList[inx].formattedSize);
-			$(row).children(".revision").text('r'+sourceNodeList[inx].revision);
+			$(row).find(".revision a").text('r'+sourceNodeList[inx].revision).attr('href',(changesHrefRoot + "/" + repositorySeq + "/" + path + "?rev=" + sourceNodeList[inx].revision).replace("//", "/").replace("/?","?"));
 			$(row).children(".date").text(sourceNodeList[inx].date);
 			$(row).children(".author").text(sourceNodeList[inx].author);
 			$(row).removeClass("sample");
@@ -79,6 +81,7 @@
 	};
 	//SyntaxHighlighter.all();
 </script>
+<c:set var="repoBrowsePathLink" value="${pageContext.request.contextPath}/source/browse/${repositorySeq}"/>
 <form id="frm_repository" action=""></form>
 <div id="table" class="help">
 	<h1></h1>
@@ -105,7 +108,8 @@
 				<div class="head"><div></div></div>
 				<h2>
 					<font class="path">Path:
-						<c:set var="pathLink" value="${pageContext.request.contextPath}/source/browse/${repositorySeq}"/>
+						<c:set var="pathLink" value="${repoBrowsePathLink}"/>
+						/<a href="${pathLink}">[SVN root]</a>
 						<c:forEach var="pathFrag" items="${fn:split(path, '/')}">
 							<c:set var="pathLink" value="${pathLink}/${pathFrag}"/>
 							/<a href="${pathLink}"><c:out value="${pathFrag}" /></a>
@@ -135,7 +139,7 @@
 							<tr class="sample">
 								<td class="name"><font class="path font12"><a href=""></a></font></td>
 								<td class="size"></td>
-								<td class="revision"></td>
+								<td class="revision"><font class="path font12"><a href=""></a></font></td>
 								<td class="date"></td>
 								<td class="author"></td>
 							</tr>
