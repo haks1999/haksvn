@@ -25,10 +25,10 @@
 	
 	function toggleDetailInfo(toggler){
 		if($(toggler).text() === 'Hide'){
-			$(toggler).parent().parent().siblings('.division').css('display','none');
+			$(toggler).parent().parent().parent().siblings('.division').css('display','none');
 			$(toggler).text('Show');
 		}else{
-			$(toggler).parent().parent().siblings('.division').css('display','');
+			$(toggler).parent().parent().parent().siblings('.division').css('display','');
 			$(toggler).text('Hide');
 		}
 	}
@@ -45,10 +45,10 @@
 				<div class="desc">
 					<p>
 						<font class="path">Path:
-							<c:set var="browsePathLink" value="${repoBrowsePathLink}"/>
-							/<a href="${pathLink}">[SVN root]</a>
+							<c:set var="pathLink" value="${repoBrowsePathLink}"/>
+							/<a href="${repoBrowsePathLink}">[SVN root]</a>
 							<c:forEach var="pathFrag" items="${fn:split(svnSource.path, '/')}" varStatus="loop">
-								<c:set var="browsePathLink" value="${pathLink}/${pathFrag}"/>
+								<c:set var="pathLink" value="${pathLink}/${pathFrag}"/>
 								<c:if test="${!loop.last}">/<a href="${pathLink}"><c:out value="${pathFrag}" /></a></c:if>
 								<c:if test="${loop.last}">/<c:out value="${pathFrag}" /></c:if>
 							</c:forEach>
