@@ -26,6 +26,7 @@ import com.haks.haksvn.repository.dao.SVNRepositoryDao;
 import com.haks.haksvn.repository.model.Repository;
 import com.haks.haksvn.repository.util.SVNRepositoryUtils;
 import com.haks.haksvn.source.model.SVNSource;
+import com.haks.haksvn.source.model.SVNSourceDiff;
 import com.haks.haksvn.source.model.SVNSourceLog;
 import com.haks.haksvn.user.model.User;
 
@@ -134,6 +135,15 @@ public class SVNRepositoryService {
 
 	public SVNSource retrieveOlderAndNewerAndCurSVNSourceLogList(Repository repository, SVNSource svnSource){
 		return svnRepositoryDao.retrieveOlderAndNewerAndCurSVNSourceLogList(repository, svnSource);
+	}
+	
+	//TODO 
+	// 이전 버전이 없을때도 오류 안 나도록
+	public SVNSourceDiff retrieveDiffWithPrevious(Repository repository, SVNSource svnSource){
+		SVNSource svnSourceDest = svnRepositoryDao.retrieveOlderAndNewerAndCurSVNSourceLogList(repository, svnSource);
+		SVNSource svnSourceSrc = SVNSource.Builder.getBuilder(new SVNSource()).path(svnSourceDest.getPath()).revision(svnSourceDest.getOlderLogs().get(0).getRevision()).build();
+		
+		return svnRepositoryDao.retrieveDiff(repository, svnSourceSrc, svnSourceDest);
 	}
 	
 }
