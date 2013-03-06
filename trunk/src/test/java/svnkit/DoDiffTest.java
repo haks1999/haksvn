@@ -56,11 +56,11 @@ public class DoDiffTest {
 		
 		
 		// 아래 코드는 정상 작동함
-		diffClient.doDiff(repositorySVNURL, SVNRevision.create(22), SVNRevision.create(0), SVNRevision.create(96), SVNDepth.FILES, true, baos);
+		diffClient.doDiff(repositorySVNURL, SVNRevision.create(96), repositorySVNURL, SVNRevision.create(97), SVNDepth.FILES, true, baos);
 		
 		
 		
-		//System.out.println(baos.toString());
+		System.out.println(baos.toString());
 		
 		//repository.closeSession();
 		

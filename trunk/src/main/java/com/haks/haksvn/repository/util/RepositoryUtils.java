@@ -22,8 +22,15 @@ public class RepositoryUtils {
 	
 	public static String getRelativeRepositoryPath(Repository repository, String path){
 		String relativeRoot = repository.getRepositoryLocation().substring(repository.getSvnRoot().length());
-		if( relativeRoot.startsWith("/")) relativeRoot.replaceFirst("/", "");
+		if( !relativeRoot.startsWith("/")) relativeRoot = "/" + relativeRoot;
 		if( path.length() > 0 && !relativeRoot.endsWith("/")) relativeRoot = relativeRoot + "/";
-		return relativeRoot + path;
+		return (relativeRoot + path).replaceAll("//", "/");
+	}
+	
+	public static String getAbsoluteRepositoryPath(Repository repository, String path){
+		String relativePath = getRelativeRepositoryPath(repository, path).replaceFirst("[/]", "");
+		String repoLoc = repository.getRepositoryLocation();
+		if( !repoLoc.endsWith("/")) repoLoc = repoLoc + "/";
+		return repoLoc + relativePath;
 	}
 }

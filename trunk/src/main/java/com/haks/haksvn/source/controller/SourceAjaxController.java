@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.haks.haksvn.common.paging.model.Paging;
 import com.haks.haksvn.source.model.SVNSource;
+import com.haks.haksvn.source.model.SVNSourceDiff;
 import com.haks.haksvn.source.model.SVNSourceLog;
 import com.haks.haksvn.source.service.SourceService;
 
@@ -72,6 +73,15 @@ public class SourceAjaxController {
 		SVNSource svnSource = SVNSource.Builder.getBuilder(new SVNSource()).path(path).build();
 		paging.setModel(svnSource);
 		return sourceService.retrieveSVNSourceLogList(repositorySeq, paging);
+    }
+	
+	@RequestMapping(value="/changes/diff")
+    public @ResponseBody SVNSourceDiff diffWithPrevious(@RequestParam(value = "repositorySeq", required = true) int repositorySeq,
+    										@RequestParam(value = "path", required = true) String path,
+    										@RequestParam(value = "rev", required = true) long rev){
+		
+		SVNSource svnSource = SVNSource.Builder.getBuilder(new SVNSource()).path(path).revision(rev).build();
+		return sourceService.retrieveDiffWithPrevious(repositorySeq, svnSource);
     }
 	
 	

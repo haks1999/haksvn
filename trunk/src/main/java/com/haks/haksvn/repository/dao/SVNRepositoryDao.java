@@ -7,14 +7,20 @@ import java.util.List;
 
 import org.springframework.stereotype.Component;
 import org.tmatesoft.svn.core.ISVNLogEntryHandler;
+import org.tmatesoft.svn.core.SVNDepth;
 import org.tmatesoft.svn.core.SVNDirEntry;
 import org.tmatesoft.svn.core.SVNException;
 import org.tmatesoft.svn.core.SVNLogEntry;
 import org.tmatesoft.svn.core.SVNNodeKind;
 import org.tmatesoft.svn.core.SVNProperties;
 import org.tmatesoft.svn.core.SVNProperty;
+import org.tmatesoft.svn.core.SVNURL;
 import org.tmatesoft.svn.core.io.ISVNEditor;
 import org.tmatesoft.svn.core.io.SVNRepository;
+import org.tmatesoft.svn.core.wc.SVNClientManager;
+import org.tmatesoft.svn.core.wc.SVNDiffClient;
+import org.tmatesoft.svn.core.wc.SVNRevision;
+import org.tmatesoft.svn.core.wc.SVNWCUtil;
 
 import com.google.common.collect.Lists;
 import com.haks.haksvn.common.exception.HaksvnException;
@@ -22,6 +28,7 @@ import com.haks.haksvn.repository.model.Repository;
 import com.haks.haksvn.repository.util.RepositoryUtils;
 import com.haks.haksvn.repository.util.SVNRepositoryUtils;
 import com.haks.haksvn.source.model.SVNSource;
+import com.haks.haksvn.source.model.SVNSourceDiff;
 import com.haks.haksvn.source.model.SVNSourceLog;
 
 @Component
@@ -222,6 +229,36 @@ public class SVNRepositoryDao {
         }
         return svnSource;
     }
+	
+	public SVNSourceDiff retrieveDiff(Repository repository, SVNSource svnSourceSrc, SVNSource svnSourceDest){
+		SVNRepository targetRepository = null;
+		ByteArrayOutputStream baos = null;
+		SVNSourceDiff svnSourceDiff = new SVNSourceDiff();
+        try {
+        	targetRepository = SVNRepositoryUtils.getUserAuthSVNRepository(repository);
+        	SVNDiffClient diffClient = SVNClientManager.newInstance(SVNWCUtil.createDefaultOptions(true), targetRepository.getAuthenticationManager()).getDiffClient();
+        	
+        	baos = new ByteArrayOutputStream();
+        	diffClient.doDiff(SVNURL.parseURIDecoded(RepositoryUtils.getAbsoluteRepositoryPath(repository, svnSourceSrc.getPath())), 
+        						SVNRevision.create(svnSourceSrc.getRevision()), 
+        						SVNURL.parseURIDecoded(RepositoryUtils.getAbsoluteRepositoryPath(repository, svnSourceDest.getPath())),
+        						SVNRevision.create(svnSourceDest.getRevision()), SVNDepth.FILES, true, baos);
+        	svnSourceDiff.setDiff(baos.toString());
+        	
+        }catch(Exception e){
+        	e.printStackTrace();
+        	throw new HaksvnException(e);
+        }finally{
+        	try{
+	        	if(baos!=null)baos.flush();baos.close();
+	        	if(targetRepository!=null) targetRepository.closeSession();
+        	}catch(Exception e){
+        		e.printStackTrace();
+            	throw new HaksvnException(e);
+        	}
+        }
+        return svnSourceDiff;
+	}
 	/*
 	@SuppressWarnings("unchecked")
 	public Collection<SVNLogEntry> retrieveSVNLogEntryList(Repository repository, String path){

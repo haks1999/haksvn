@@ -4,12 +4,25 @@
 	});
 	
 	
-	function toggleChangedPath(pmOpener){
+	
+	function retrieveDiffWithPrevious(pmOpener, path, rev){
+		$.getJSON( "<c:url value="/source/changes/diff"/>",
+				{repositorySeq: '<c:out value="${repositorySeq}" />',
+				path: path,
+				rev: rev},
+				function(data) {
+					alert(data.diff);
+					$(pmOpener).parent().next().find('td').text(data.diff);
+		});
+	}
+	
+	function toggleChangedPath(pmOpener, path, rev){
 		if($(pmOpener).hasClass('opened')){
 			$(pmOpener).removeClass('opened').addClass('closed');
 			//$(pmOpener).parent().next('p').addClass('display-none');
 		}else{
 			$(pmOpener).removeClass('closed').addClass('opened');
+			retrieveDiffWithPrevious(pmOpener, path,rev);
 			//$(pmOpener).parent().next('p').removeClass('display-none');
 		}
 	}
@@ -92,7 +105,7 @@
 						
 						<c:forEach var="changed" items="${svnSource.log.changedList}">
 							<p>
-								<a class="pmOpener closed" onclick="toggleChangedPath(this)">
+								<a class="pmOpener closed" onclick="toggleChangedPath(this,'${changed.path}','${svnSource.log.revision}')">
 									<img class="pClosed" src="<c:url value="/images/plus_small_white.png"/>"/><img class="mOpened" src="<c:url value="/images/minus_small_white.png"/>"/>
 								</a>
 								<span>
@@ -102,6 +115,9 @@
 									</font>
 								</span>
 							</p>
+							<table>
+									<tr><td>111</td></tr>
+								</table>
 						</c:forEach>
 						
 					</div>
