@@ -11,8 +11,7 @@
 				path: path,
 				rev: rev},
 				function(data) {
-					alert(data.diff);
-					$(pmOpener).parent().next().find('td').text(data.diff);
+					$(pmOpener).parent().next('pre').html(data.diffToHtml);
 		});
 	}
 	
@@ -115,10 +114,53 @@
 									</font>
 								</span>
 							</p>
-							<table>
-									<tr><td>111</td></tr>
-								</table>
+							<pre class="diff-changed">
+							</pre>
 						</c:forEach>
+						<!-- @@ -120,6 +120,33 @@ -->
+						
+						<!-- 
+						<pre>
+							<table class="diff-changed">
+								
+								
+<tr><td></td><td></td><td>       return "/source/listChange";</td></tr>
+<tr><td></td><td></td><td>     }</td></tr>
+<tr><td></td><td></td><td> 	</td></tr>
+<tr><td></td><td>+</td><td>	@RequestMapping(value={"/changes/r/{repositorySeq}"}, method=RequestMethod.GET,params ={"rev"})</td></tr>
+<tr><td></td><td>+</td><td>    public String forwardChangeDetailPage( ModelMap model,</td></tr>
+<tr><td></td><td>+</td><td>    							@RequestParam(value = "rev", required = true) long revision,</td></tr>
+<tr><td></td><td>+</td><td>    							@PathVariable int repositorySeq) {</td></tr>
+<tr><td></td><td>+</td><td>		String path = "";</td></tr>
+<tr><td></td><td>+</td><td>		SVNSource svnSource = SVNSource.Builder.getBuilder(new SVNSource()).path(path).revision(revision).build();</td></tr>
+<tr><td></td><td>+</td><td>		svnSource = sourceService.retrieveSVNSourceWithoutContent(repositorySeq, svnSource);</td></tr>
+<tr><td></td><td>+</td><td>		model.addAttribute("svnSource", svnSource);</td></tr>
+<tr><td></td><td>+</td><td>		model.addAttribute("repositorySeq", repositorySeq );</td></tr>
+<tr><td></td><td>+</td><td>		model.addAttribute("path", path);</td></tr>
+<tr><td></td><td>+</td><td>        return "/source/changeDetail";</td></tr>
+<tr><td></td><td>+</td><td>    }</td></tr>
+<tr><td></td><td>+</td><td>	</td></tr>
+<tr><td></td><td>+</td><td>	@RequestMapping(value={"/changes/r/{repositorySeq}/**"}, method=RequestMethod.GET,params ={"rev"})</td></tr>
+<tr><td></td><td>+</td><td>    public String forwardChangeDetailPage( ModelMap model,</td></tr>
+<tr><td></td><td>+</td><td>    							HttpServletRequest request,</td></tr>
+<tr><td></td><td>+</td><td>    							@RequestParam(value = "rev", required = true) long revision,</td></tr>
+<tr><td></td><td>+</td><td>    							@PathVariable int repositorySeq) {</td></tr>
+<tr><td></td><td>+</td><td>		String path = reverseUrlRewrite(request,"/source/changes/r", repositorySeq);</td></tr>
+<tr><td></td><td>+</td><td>		SVNSource svnSource = SVNSource.Builder.getBuilder(new SVNSource()).path(path).revision(revision).build();</td></tr>
+<tr><td></td><td>+</td><td>		svnSource = sourceService.retrieveSVNSourceWithoutContent(repositorySeq, svnSource);</td></tr>
+<tr><td></td><td>+</td><td>		model.addAttribute("svnSource", svnSource);</td></tr>
+<tr><td></td><td>+</td><td>		model.addAttribute("repositorySeq", repositorySeq );</td></tr>
+<tr><td></td><td>+</td><td>		model.addAttribute("path", path);</td></tr>
+<tr><td></td><td>+</td><td>        return "/source/changeDetail";</td></tr>
+<tr><td></td><td>+</td><td>    }</td></tr>
+<tr><td></td><td>+</td><td>	</td></tr>
+<tr><td></td><td></td><td> 	/*</td></tr>
+<tr><td></td><td></td><td> 	@RequestMapping(value="/changes/{repositorySeq}")</td>
+<tr><td></td><td></td><td>     public String forwardSourceChangePage(@PathVariable int repositorySeq,</td></tr>
+								
+							</table>
+						</pre>
+						 -->
 						
 					</div>
 				</div>

@@ -12,6 +12,7 @@ import com.haks.haksvn.repository.service.SVNRepositoryService;
 import com.haks.haksvn.source.model.SVNSource;
 import com.haks.haksvn.source.model.SVNSourceDiff;
 import com.haks.haksvn.source.model.SVNSourceLog;
+import com.haks.haksvn.source.util.SourceUtils;
 
 @Service
 public class SourceService {
@@ -53,7 +54,10 @@ public class SourceService {
 	
 	public SVNSourceDiff retrieveDiffWithPrevious(int repositorySeq, SVNSource svnSource){
 		Repository repository = repositoryService.retrieveAccesibleActiveRepositoryByRepositorySeq(repositorySeq);
-		return svnRepositoryService.retrieveDiffWithPrevious(repository, svnSource);
+		SVNSourceDiff svnSourceDiff = svnRepositoryService.retrieveDiffWithPrevious(repository, svnSource);
+		svnSourceDiff.setDiffToHtml(SourceUtils.diffToHtml(svnSourceDiff.getDiff()));
+		svnSourceDiff.setDiff("");
+		return svnSourceDiff;
 	}
 	
 }
