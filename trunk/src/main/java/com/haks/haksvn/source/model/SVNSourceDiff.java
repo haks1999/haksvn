@@ -6,6 +6,7 @@ import org.springframework.stereotype.Component;
 public class SVNSourceDiff {
 
 	private String diff;
+	private String diffToHtml;
 	private SVNSource src;
 	private SVNSource dest;
 	
@@ -24,6 +25,14 @@ public class SVNSourceDiff {
 
 	public void setDiff(String diff) {
 		this.diff = diff;
+	}
+	
+	public String getDiffToHtml(){
+		return diffToHtml;
+	}
+	
+	public void setDiffToHtml(String diffToHtml){
+		this.diffToHtml = diffToHtml;
 	}
 
 	public SVNSource getSrc() {

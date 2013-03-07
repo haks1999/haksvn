@@ -1,5 +1,8 @@
 package svnkit;
 import java.io.ByteArrayOutputStream;
+import java.util.Scanner;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.tmatesoft.svn.core.SVNDepth;
 import org.tmatesoft.svn.core.SVNURL;
@@ -20,7 +23,8 @@ public class DoDiffTest {
 		String url = "https://haksvn.googlecode.com/svn";
 		String name = "haks1999";
 		String password = "aW9fj8bm9Rt5--";
-		String path = "/trunk/src/main/java/com/haks/haksvn/source/controller/SourceController.java";
+		//String path = "/trunk/src/main/java/com/haks/haksvn/source/controller/SourceController.java";
+		String path="/trunk/src/main/java/com/haks/haksvn/repository/dao/SVNRepositoryDao.java";
 		long rev1 = 97;
 		long rev2 = 96;
 
@@ -59,8 +63,14 @@ public class DoDiffTest {
 		diffClient.doDiff(repositorySVNURL, SVNRevision.create(96), repositorySVNURL, SVNRevision.create(97), SVNDepth.FILES, true, baos);
 		
 		
+		String str = baos.toString();
 		
-		System.out.println(baos.toString());
+		System.out.println(str);
+		diffToHtml(str);
+		
+		baos.close();
+		
+		
 		
 		//repository.closeSession();
 		
@@ -83,6 +93,73 @@ public class DoDiffTest {
          System.out.println(actualDiffOutput);
          svnOperationFactory.dispose(); 
 		*/
+	}
+	
+	
+	
+	public static String diffToHtml(String diff){
+		
+		Scanner scanner = new Scanner(diff);
+		boolean startDiff = false;
+		int srcStartLineNum = -1;
+		int targetStartLineNum = -1;
+		while (scanner.hasNextLine()) {
+		  String line = scanner.nextLine();
+		  if( !startDiff ){
+			  if( line.startsWith("@@") ){
+				  startDiff = true;
+				  srcStartLineNum = Integer.parseInt(line.substring(line.indexOf("-")+1, line.indexOf(",")));
+				  targetStartLineNum = srcStartLineNum;
+			  }
+			  continue;
+		  }
+		  
+		  DiffLine diffLine = new DoDiffTest().new DiffLine(line, srcStartLineNum, targetStartLineNum);
+		  if( line.startsWith("-")){
+			  srcStartLineNum++;
+		  }else if( line.startsWith("+")){
+			  targetStartLineNum++;
+		  }else{
+			  srcStartLineNum++;targetStartLineNum++;
+		  }
+		  
+		  System.out.println(diffLine.toTableTr());
+		  
+		}
+		
+		scanner.close();
+		
+		
+		return null;
+	}
+	
+	public class DiffLine{
+		private int srcLineNumber;
+		private int targetLineNumber;
+		private String type;
+		private int spaces = 0;
+		String line;
+		boolean isSource = false;
+		boolean isTarget = false;
+		
+		public DiffLine(String line, int srcLineNumber, int targetLineNumber){
+			type = line.length() < 1 ? "":line.substring(0,1);
+			isSource = "-".equals(type);
+			isTarget = "+".equals(type);
+			if( !isSource && !isTarget ){
+				isSource = true;isTarget = true;
+			}
+			this.srcLineNumber = srcLineNumber;
+			this.targetLineNumber = targetLineNumber;
+			this.line = line.length() < 2 ? "":line.substring(1);
+			while(line.length() < spaces && !Character.isWhitespace(line.charAt(spaces++)) );
+		}
+		
+		public String toTableTr(){
+			return "<tr><td>" + (isSource?String.valueOf(srcLineNumber):"")+"</td><td>"+(isTarget?String.valueOf(targetLineNumber):"")+"</td><td>"+type+"</td>"+
+					//"<td style=\"padding-left:"+spaces*5+"px;\">"+line.trim()+"</td></tr>";
+					"<td>"+line+"</td></tr>";
+		}
 	}
 	
 }

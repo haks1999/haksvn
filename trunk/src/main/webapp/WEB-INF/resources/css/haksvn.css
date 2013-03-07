@@ -177,6 +177,18 @@ margin-bottom:10px;font-weight:bold;font-size:13pt;
 .box.align-tr{
 position:absolute;width:320px;z-index:10;right:10px;
 }
+pre.diff-changed table td{
+line-height:14px;
+padding-top:2px;
+padding-bottom:2px;
+padding-left:0px;
+padding-right:0px;
+background-color:transparent;
+font-family:Lucida Grande, Verdana, Arial, sans-serif;
+}
+pre.diff-changed table tr:hover td{
+background-color:transparent;
+}
 .font12{
 font-size:12pt;
 }
