@@ -1,12 +1,14 @@
 package com.haks.haksvn.source.model;
 
 import org.springframework.stereotype.Component;
+import org.tmatesoft.svn.core.SVNLogEntryPath;
 
 @Component
 public class SVNSourceLogChanged {
 
 	private String path;
 	private char type;
+	private String typeName;
 	
 	public SVNSourceLogChanged(){
 		
@@ -33,6 +35,15 @@ public class SVNSourceLogChanged {
 
 	public void setType(char type) {
 		this.type = type;
+		this.typeName = type == 'A'?"Added":(type=='D'?"Deleted":(type=='M'?"Modified":"Replaced"));
+	}
+	
+	public String getTypeName(){
+		return typeName;
+	}
+	
+	public void setTypeName(String typeName){
+		this.typeName = typeName;
 	}
 
 	public static class Builder{

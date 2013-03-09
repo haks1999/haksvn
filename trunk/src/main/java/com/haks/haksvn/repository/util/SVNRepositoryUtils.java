@@ -24,6 +24,7 @@ import com.haks.haksvn.common.crypto.util.CryptoUtils;
 import com.haks.haksvn.common.format.util.FormatUtils;
 import com.haks.haksvn.common.security.util.ContextHolder;
 import com.haks.haksvn.repository.model.Repository;
+import com.haks.haksvn.source.model.SVNSource;
 import com.haks.haksvn.source.model.SVNSourceLog;
 import com.haks.haksvn.source.model.SVNSourceLogChanged;
 
@@ -67,6 +68,11 @@ public class SVNRepositoryUtils {
         		if(path.length() > 0 && !elem.getValue().getPath().startsWith("/"+path)) continue;	// changedpath 는 path과 관련없이 다 가져오므로 여기서 걸러낸다
         		changedList.add(SVNSourceLogChanged.Builder.getBuilder(new SVNSourceLogChanged()).path(elem.getValue().getPath()).type(elem.getValue().getType()).build());
         	}
+        	Collections.sort(changedList, new Comparator<SVNSourceLogChanged>(){
+   		     public int compare(SVNSourceLogChanged src1, SVNSourceLogChanged src2){
+   		    	 return src1.getPath().compareToIgnoreCase(src2.getPath());
+   		     }
+        	});
         	svnSourceLogList.add(SVNSourceLog.Builder.getBuilder(new SVNSourceLog())
 					.author(svnLogEntry.getAuthor()).date(FormatUtils.simpleDate(svnLogEntry.getDate())).message(svnLogEntry.getMessage().length() < 1 ? "[No log message]":svnLogEntry.getMessage())
 					.revision(svnLogEntry.getRevision()).changedList(changedList).build());
