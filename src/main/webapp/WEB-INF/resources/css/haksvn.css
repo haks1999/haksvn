@@ -177,17 +177,58 @@ margin-bottom:10px;font-weight:bold;font-size:13pt;
 .box.align-tr{
 position:absolute;width:320px;z-index:10;right:10px;
 }
+pre.diff-changed{
+white-space: pre-wrap;
+white-space: -moz-pre-wrap;
+white-space: -pre-wrap;
+white-space: -o-pre-wrap;
+margin-left:25px;
+}
+pre.diff-changed table{
+border-collapse:separate;
+}
 pre.diff-changed table td{
 line-height:14px;
-padding-top:2px;
-padding-bottom:2px;
-padding-left:0px;
-padding-right:0px;
+padding-top:0px;
+padding-bottom:0px;
+padding-left:2px;
+padding-right:2px;
 background-color:transparent;
 font-family:Lucida Grande, Verdana, Arial, sans-serif;
+white-space: pre-wrap;
+white-space: -moz-pre-wrap;
+white-space: -pre-wrap;
+white-space: -o-pre-wrap;
+}
+pre.diff-changed table td.line{
+width:40px;
+}
+pre.diff-changed table td.mark{
+width:10px;
 }
 pre.diff-changed table tr:hover td{
-background-color:transparent;
+}
+pre.diff-changed table tr.isFirst td.target{
+border-top: 1px solid #3a3;
+}
+pre.diff-changed table tr.isLast td.target{
+border-bottom: 1px solid #3a3;
+}
+pre.diff-changed table td.target{
+background: #ddf8cc;
+border: 1px solid #3a3;
+border-width: 0 1px 0 1px;
+}
+pre.diff-changed table tr.isFirst td.source{
+border-top: 1px solid #a33;
+}
+pre.diff-changed table tr.isLast td.source{
+border-bottom: 1px solid #a33;
+}
+pre.diff-changed table td.source{
+background: #ffd8d8;
+border: 1px solid #a33;
+border-width: 0 1px 0 1px;
 }
 .font12{
 font-size:12pt;
@@ -206,4 +247,8 @@ display:none;
 }
 .visible-hidden{
 visibility:hidden;
+}
+.loading{
+background-image:url(../images/ajax-loader_arrow.gif);
+background-repeat:no-repeat;
 }

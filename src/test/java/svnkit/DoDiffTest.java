@@ -12,6 +12,9 @@ import org.tmatesoft.svn.core.wc.SVNDiffClient;
 import org.tmatesoft.svn.core.wc.SVNRevision;
 import org.tmatesoft.svn.core.wc.SVNWCUtil;
 
+import com.haks.haksvn.source.util.SourceUtils;
+import com.haks.haksvn.source.util.SourceUtils.DiffLine;
+
 public class DoDiffTest {
 
 	public static void main(String[] args) throws Exception {
@@ -24,7 +27,8 @@ public class DoDiffTest {
 		String name = "haks1999";
 		String password = "aW9fj8bm9Rt5--";
 		//String path = "/trunk/src/main/java/com/haks/haksvn/source/controller/SourceController.java";
-		String path="/trunk/src/main/java/com/haks/haksvn/repository/dao/SVNRepositoryDao.java";
+		//String path="/trunk/src/main/java/com/haks/haksvn/repository/dao/SVNRepositoryDao.java";
+		String path="/trunk/src/main/webapp/WEB-INF/views/source/sourceDetail.jsp";
 		long rev1 = 97;
 		long rev2 = 96;
 
@@ -98,7 +102,7 @@ public class DoDiffTest {
 	
 	
 	public static String diffToHtml(String diff){
-		
+		StringBuffer html = new StringBuffer("<table><tr><td>...</td><td></td><td></td><td></td></tr>");
 		Scanner scanner = new Scanner(diff);
 		boolean startDiff = false;
 		int srcStartLineNum = -1;
@@ -122,15 +126,11 @@ public class DoDiffTest {
 		  }else{
 			  srcStartLineNum++;targetStartLineNum++;
 		  }
-		  
-		  System.out.println(diffLine.toTableTr());
-		  
+		  html.append(diffLine.toTableTr());
 		}
-		
+		html.append("<tr><td>...</td><td></td><td></td><td></td></tr></table>");
 		scanner.close();
-		
-		
-		return null;
+		return html.toString();
 	}
 	
 	public class DiffLine{

@@ -11,18 +11,23 @@
 				path: path,
 				rev: rev},
 				function(data) {
+					$(pmOpener).parent().next('pre').removeClass('loading').addClass('loaded');
 					$(pmOpener).parent().next('pre').html(data.diffToHtml);
 		});
 	}
 	
 	function toggleChangedPath(pmOpener, path, rev){
+		var pre = $(pmOpener).parent().next('pre');
 		if($(pmOpener).hasClass('opened')){
 			$(pmOpener).removeClass('opened').addClass('closed');
-			//$(pmOpener).parent().next('p').addClass('display-none');
+			$(pre).addClass('display-none');
 		}else{
 			$(pmOpener).removeClass('closed').addClass('opened');
-			retrieveDiffWithPrevious(pmOpener, path,rev);
-			//$(pmOpener).parent().next('p').removeClass('display-none');
+			$(pre).removeClass('display-none');
+			if( !$(pre).hasClass('loaded')){
+				$(pre).addClass('loading');
+				retrieveDiffWithPrevious(pmOpener, path,rev);
+			}
 		}
 	}
 	
@@ -104,80 +109,24 @@
 						
 						<c:forEach var="changed" items="${svnSource.log.changedList}">
 							<p>
-								<a class="pmOpener closed" onclick="toggleChangedPath(this,'${changed.path}','${svnSource.log.revision}')">
+								<c:if test="${changed.typeName == 'Modified'}" var="isModified" />
+								<a class="pmOpener closed ${isModified ? '':'visible-hidden'}" onclick="toggleChangedPath(this,'${changed.path}','${svnSource.log.revision}')">
 									<img class="pClosed" src="<c:url value="/images/plus_small_white.png"/>"/><img class="mOpened" src="<c:url value="/images/minus_small_white.png"/>"/>
 								</a>
-								<span>
+								<span><c:out value="${changed.typeName}" />
 									<font class="path font12">
 										<c:set var="changedFullPath" value="${repoBrowsePathLink}/${changed.path}?rev=${svnSource.log.revision}" />
 										<a href="${fn:replace(changedFullPath,'//','/')}"><c:out value="${changed.path}"/></a>
 									</font>
 								</span>
 							</p>
-							<pre class="diff-changed">
+							<pre class="diff-changed display-none">
 							</pre>
 						</c:forEach>
-						<!-- @@ -120,6 +120,33 @@ -->
-						
-						<!-- 
-						<pre>
-							<table class="diff-changed">
-								
-								
-<tr><td></td><td></td><td>       return "/source/listChange";</td></tr>
-<tr><td></td><td></td><td>     }</td></tr>
-<tr><td></td><td></td><td> 	</td></tr>
-<tr><td></td><td>+</td><td>	@RequestMapping(value={"/changes/r/{repositorySeq}"}, method=RequestMethod.GET,params ={"rev"})</td></tr>
-<tr><td></td><td>+</td><td>    public String forwardChangeDetailPage( ModelMap model,</td></tr>
-<tr><td></td><td>+</td><td>    							@RequestParam(value = "rev", required = true) long revision,</td></tr>
-<tr><td></td><td>+</td><td>    							@PathVariable int repositorySeq) {</td></tr>
-<tr><td></td><td>+</td><td>		String path = "";</td></tr>
-<tr><td></td><td>+</td><td>		SVNSource svnSource = SVNSource.Builder.getBuilder(new SVNSource()).path(path).revision(revision).build();</td></tr>
-<tr><td></td><td>+</td><td>		svnSource = sourceService.retrieveSVNSourceWithoutContent(repositorySeq, svnSource);</td></tr>
-<tr><td></td><td>+</td><td>		model.addAttribute("svnSource", svnSource);</td></tr>
-<tr><td></td><td>+</td><td>		model.addAttribute("repositorySeq", repositorySeq );</td></tr>
-<tr><td></td><td>+</td><td>		model.addAttribute("path", path);</td></tr>
-<tr><td></td><td>+</td><td>        return "/source/changeDetail";</td></tr>
-<tr><td></td><td>+</td><td>    }</td></tr>
-<tr><td></td><td>+</td><td>	</td></tr>
-<tr><td></td><td>+</td><td>	@RequestMapping(value={"/changes/r/{repositorySeq}/**"}, method=RequestMethod.GET,params ={"rev"})</td></tr>
-<tr><td></td><td>+</td><td>    public String forwardChangeDetailPage( ModelMap model,</td></tr>
-<tr><td></td><td>+</td><td>    							HttpServletRequest request,</td></tr>
-<tr><td></td><td>+</td><td>    							@RequestParam(value = "rev", required = true) long revision,</td></tr>
-<tr><td></td><td>+</td><td>    							@PathVariable int repositorySeq) {</td></tr>
-<tr><td></td><td>+</td><td>		String path = reverseUrlRewrite(request,"/source/changes/r", repositorySeq);</td></tr>
-<tr><td></td><td>+</td><td>		SVNSource svnSource = SVNSource.Builder.getBuilder(new SVNSource()).path(path).revision(revision).build();</td></tr>
-<tr><td></td><td>+</td><td>		svnSource = sourceService.retrieveSVNSourceWithoutContent(repositorySeq, svnSource);</td></tr>
-<tr><td></td><td>+</td><td>		model.addAttribute("svnSource", svnSource);</td></tr>
-<tr><td></td><td>+</td><td>		model.addAttribute("repositorySeq", repositorySeq );</td></tr>
-<tr><td></td><td>+</td><td>		model.addAttribute("path", path);</td></tr>
-<tr><td></td><td>+</td><td>        return "/source/changeDetail";</td></tr>
-<tr><td></td><td>+</td><td>    }</td></tr>
-<tr><td></td><td>+</td><td>	</td></tr>
-<tr><td></td><td></td><td> 	/*</td></tr>
-<tr><td></td><td></td><td> 	@RequestMapping(value="/changes/{repositorySeq}")</td>
-<tr><td></td><td></td><td>     public String forwardSourceChangePage(@PathVariable int repositorySeq,</td></tr>
-								
-							</table>
-						</pre>
-						 -->
 						
 					</div>
 				</div>
 			</div>
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
 		
 			
 			
