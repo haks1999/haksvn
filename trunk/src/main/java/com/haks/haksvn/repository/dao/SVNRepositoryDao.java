@@ -156,7 +156,7 @@ public class SVNRepositoryDao {
             String mimeType = fileProperties.getStringValue(SVNProperty.MIME_TYPE);
             boolean isTextType = SVNProperty.isTextMimeType(mimeType);
             svnSource.setIsTextMimeType(isTextType);
-            svnSource.setContent(isTextType?baos.toString():"not a text file");
+            svnSource.setContent(isTextType?baos.toString("utf-8"):"not a text file");
             svnSource.setSize(targetRepository.info(RepositoryUtils.getRelativeRepositoryPath(repository, svnSource.getPath()), svnSource.getRevision()).getSize());
             
         }catch (Exception e) {
@@ -243,8 +243,7 @@ public class SVNRepositoryDao {
         						SVNRevision.create(svnSourceSrc.getRevision()), 
         						SVNURL.parseURIDecoded(RepositoryUtils.getAbsoluteRepositoryPath(repository, svnSourceDest.getPath())),
         						SVNRevision.create(svnSourceDest.getRevision()), SVNDepth.FILES, true, baos);
-        	svnSourceDiff.setDiff(baos.toString());
-        	
+        	svnSourceDiff.setDiff(baos.toString("utf-8"));
         }catch(Exception e){
         	e.printStackTrace();
         	throw new HaksvnException(e);

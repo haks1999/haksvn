@@ -31,6 +31,14 @@
 		}
 	}
 	
+	function expandAllChanged(){
+		$('a.hasChange').not('.opened').trigger('click');
+	}
+	
+	function collapseAllChanged(){
+		$('a.hasChange').not('.closed').trigger('click');
+	}
+	
 </script>
 <c:set var="repoBrowsePathLink" value="${pageContext.request.contextPath}/source/browse/${repositorySeq}"/>
 <c:set var="repoChangesPathLink" value="${pageContext.request.contextPath}/source/changes/${repositorySeq}"/>
@@ -103,14 +111,14 @@
 					</div>
 					<div>
 						<p>
-							<span><font class="path">expand all</font></span>
-							<span><font class="path">collapse all</font></span>
+							<span><font class="path"><a onclick="expandAllChanged()" style="text-decoration:underline;cursor:pointer;">expand all</a></font></span>
+							<span><font class="path"><a onclick="collapseAllChanged()" style="text-decoration:underline;cursor:pointer;">collapse all</a></font></span>
 						</p>
 						
 						<c:forEach var="changed" items="${svnSource.log.changedList}">
 							<p>
 								<c:if test="${changed.typeName == 'Modified'}" var="isModified" />
-								<a class="pmOpener closed ${isModified ? '':'visible-hidden'}" onclick="toggleChangedPath(this,'${changed.path}','${svnSource.log.revision}')">
+								<a class="pmOpener closed ${isModified ? 'hasChange':'visible-hidden'}" onclick="toggleChangedPath(this,'${changed.path}','${svnSource.log.revision}')">
 									<img class="pClosed" src="<c:url value="/images/plus_small_white.png"/>"/><img class="mOpened" src="<c:url value="/images/minus_small_white.png"/>"/>
 								</a>
 								<span><c:out value="${changed.typeName}" />
