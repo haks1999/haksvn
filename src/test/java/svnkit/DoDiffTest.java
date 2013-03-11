@@ -12,6 +12,7 @@ import org.tmatesoft.svn.core.wc.SVNDiffClient;
 import org.tmatesoft.svn.core.wc.SVNRevision;
 import org.tmatesoft.svn.core.wc.SVNWCUtil;
 
+import com.haks.haksvn.source.model.SVNSource;
 import com.haks.haksvn.source.util.SourceUtils;
 import com.haks.haksvn.source.util.SourceUtils.DiffLine;
 
@@ -28,9 +29,14 @@ public class DoDiffTest {
 		String password = "aW9fj8bm9Rt5--";
 		//String path = "/trunk/src/main/java/com/haks/haksvn/source/controller/SourceController.java";
 		//String path="/trunk/src/main/java/com/haks/haksvn/repository/dao/SVNRepositoryDao.java";
-		String path="/trunk/src/main/webapp/WEB-INF/views/source/sourceDetail.jsp";
-		long rev1 = 97;
-		long rev2 = 96;
+		
+		//String path="/trunk/src/main/webapp/WEB-INF/views/source/sourceDetail.jsp";
+		//long rev1 = 97;
+		//long rev2 = 96;
+		
+		String path="/trunk/src/main/java/com/haks/haksvn/source/util/SourceUtils.java";
+		long rev1 = 104;
+		long rev2 = 103;
 
 		//SVNRepository repository = SVNRepositoryFactory.create(SVNURL.parseURIDecoded(url));
 		ISVNAuthenticationManager authManager = SVNWCUtil.createDefaultAuthenticationManager(name, password);
@@ -64,13 +70,18 @@ public class DoDiffTest {
 		
 		
 		// 아래 코드는 정상 작동함
-		diffClient.doDiff(repositorySVNURL, SVNRevision.create(96), repositorySVNURL, SVNRevision.create(97), SVNDepth.FILES, true, baos);
+		diffClient.doDiff(repositorySVNURL, SVNRevision.create(rev2), repositorySVNURL, SVNRevision.create(rev1), SVNDepth.FILES, true, baos);
 		
 		
 		String str = baos.toString();
 		
 		System.out.println(str);
-		diffToHtml(str);
+		//diffToHtml(str);
+		
+		
+		//SVNSource svnSourceSrc = SVNSource.Builder.getBuilder(new SVNSource()).path(path).revision(srcRev).build();
+		//SVNSource svnSourceTrg = SVNSource.Builder.getBuilder(new SVNSource()).path(path).revision(trgRev).build();
+		//SourceUtils.diffToSideBySideHtml(str);
 		
 		baos.close();
 		

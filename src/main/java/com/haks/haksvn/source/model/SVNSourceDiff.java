@@ -8,7 +8,7 @@ public class SVNSourceDiff {
 	private String diff;
 	private String diffToHtml;
 	private SVNSource src;
-	private SVNSource dest;
+	private SVNSource trg;
 	
 	public SVNSourceDiff(){
 		
@@ -43,12 +43,12 @@ public class SVNSourceDiff {
 		this.src = src;
 	}
 
-	public SVNSource getDest() {
-		return dest;
+	public SVNSource getTrg() {
+		return trg;
 	}
 
-	public void setDest(SVNSource dest) {
-		this.dest = dest;
+	public void setTrg(SVNSource trg) {
+		this.trg = trg;
 	}
 
 
@@ -82,8 +82,8 @@ public class SVNSourceDiff {
 			return this;
 		}
 		
-		public Builder dest(SVNSource dest){
-			svnSourceDiff.setDest(dest);
+		public Builder trg(SVNSource trg){
+			svnSourceDiff.setTrg(trg);
 			return this;
 		}
 		

@@ -230,6 +230,17 @@ background: #ffd8d8;
 border: 1px solid #a33;
 border-width: 0 1px 0 1px;
 }
+pre.diff table tr.isFirst td.empty{
+border-top: 1px solid #888;
+}
+pre.diff table tr.isLast td.empty{
+border-bottom: 1px solid #888;
+}
+pre.diff table td.empty{
+background: #eee;
+border: 1px solid #888;
+border-width: 0 1px 0 1px;
+}
 .font12{
 font-size:12pt;
 }

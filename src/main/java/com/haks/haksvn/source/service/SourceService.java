@@ -52,21 +52,29 @@ public class SourceService {
 		return svnRepositoryService.retrieveSVNSourceLogList(repository, paging );
 	}
 	
-	public SVNSourceDiff retrieveDiffWithPrevious(int repositorySeq, SVNSource svnSource){
+	public SVNSourceDiff retrieveDiffByPrevious(int repositorySeq, SVNSource svnSource){
 		Repository repository = repositoryService.retrieveAccesibleActiveRepositoryByRepositorySeq(repositorySeq);
-		SVNSourceDiff svnSourceDiff = svnRepositoryService.retrieveDiffWithPrevious(repository, svnSource);
-		svnSourceDiff.setDiffToHtml(SourceUtils.diffToHtml(svnSourceDiff.getDiff()));
-		svnSourceDiff.setDiff("");
+		SVNSourceDiff svnSourceDiff = svnRepositoryService.retrieveDiffByPrevious(repository, svnSource);
+		
 		return svnSourceDiff;
 	}
 	
-	public SVNSourceDiff retrieveDiffWithRevisions(int repositorySeq, SVNSource svnSourceSrc, SVNSource svnSourceTrg){
+	public SVNSourceDiff retrieveDiffWithContentsByPrevious(int repositorySeq, SVNSource svnSource){
 		Repository repository = repositoryService.retrieveAccesibleActiveRepositoryByRepositorySeq(repositorySeq);
-		SVNSourceDiff svnSourceDiff = svnRepositoryService.retrieveDiffWithRevisions(repository, svnSourceSrc, svnSourceTrg);
+		SVNSourceDiff svnSourceDiff = svnRepositoryService.retrieveDiffByPrevious(repository, svnSource);
+		SVNSource svnSourceSrc = svnRepositoryService.retrieveSVNSourceContent(repository, svnSourceDiff.getSrc());
+		SVNSource svnSourceTrg = svnRepositoryService.retrieveSVNSourceContent(repository, svnSourceDiff.getTrg());
+		svnSourceDiff.getSrc().setContent(svnSourceSrc.getContent());
+		svnSourceDiff.getSrc().setContent(svnSourceTrg.getContent());
+		return svnSourceDiff;
+	}
+	
+	public SVNSourceDiff retrieveDiffWithContentsByRevisions(int repositorySeq, SVNSource svnSourceSrc, SVNSource svnSourceTrg){
+		Repository repository = repositoryService.retrieveAccesibleActiveRepositoryByRepositorySeq(repositorySeq);
+		SVNSourceDiff svnSourceDiff = svnRepositoryService.retrieveDiffByRevisions(repository, svnSourceSrc, svnSourceTrg);
 		svnSourceSrc = svnRepositoryService.retrieveSVNSourceContent(repository, svnSourceSrc);
 		svnSourceTrg = svnRepositoryService.retrieveSVNSourceContent(repository, svnSourceTrg);
-		svnSourceDiff.setDiffToHtml(SourceUtils.diffToHtml(svnSourceDiff.getDiff()));
-		svnSourceDiff.setDiff("");
+		
 		return svnSourceDiff;
 	}
 	
