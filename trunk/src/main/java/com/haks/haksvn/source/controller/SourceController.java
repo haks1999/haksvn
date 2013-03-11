@@ -21,6 +21,7 @@ import com.haks.haksvn.repository.service.RepositoryService;
 import com.haks.haksvn.source.model.SVNSource;
 import com.haks.haksvn.source.model.SVNSourceDiff;
 import com.haks.haksvn.source.service.SourceService;
+import com.haks.haksvn.source.util.SourceUtils;
 
 @Controller
 @RequestMapping(value="/source")
@@ -150,14 +151,27 @@ public class SourceController {
     }
 	
 	@RequestMapping(value="/changes/diff")
-    public String forwardDiffDetailPage(@RequestParam(value = "repositorySeq", required = true) int repositorySeq,
+    public String forwardDiffDetailPage(ModelMap model,
+    										@RequestParam(value = "repositorySeq", required = true) int repositorySeq,
     										@RequestParam(value = "path", required = true) String path,
     										@RequestParam(value = "srcRev", required = true) long srcRev,
     										@RequestParam(value = "trgRev", required = true) long trgRev){
 		
 		SVNSource svnSourceSrc = SVNSource.Builder.getBuilder(new SVNSource()).path(path).revision(srcRev).build();
 		SVNSource svnSourceTrg = SVNSource.Builder.getBuilder(new SVNSource()).path(path).revision(trgRev).build();
-		return "11" ;//sourceService.retrieveDiffWithRevisions(repositorySeq, svnSourceSrc, svnSourceTrg);
+		SVNSourceDiff svnSourceDiff = new SVNSourceDiff();
+		if( srcRev < 0 ){
+			svnSourceDiff = sourceService.retrieveDiffWithContentsByPrevious(repositorySeq, svnSourceTrg);
+		}else{
+			svnSourceDiff = sourceService.retrieveDiffWithContentsByRevisions(repositorySeq, svnSourceSrc, svnSourceTrg);
+		}
+		svnSourceDiff.setDiffToHtml(SourceUtils.diffToSideBySideHtml(svnSourceDiff.getDiff(), svnSourceDiff.getSrc().getContent(), svnSourceDiff.getTrg().getContent()));
+		svnSourceDiff.setDiff("");
+		model.addAttribute("svnSourceDiff", svnSourceDiff);
+		model.addAttribute("svnSourceSrc", svnSourceSrc );
+		model.addAttribute("svnSourceTrg", svnSourceTrg);
+		
+		return "/source/diffDetail";
     }
 	
 	/*

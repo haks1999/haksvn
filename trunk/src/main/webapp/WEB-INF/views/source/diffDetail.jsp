@@ -21,6 +21,7 @@
 			
 			
 			<pre class="diff">
+				${svnSourceDiff.diffToHtml}
 			</pre>
 			
 			

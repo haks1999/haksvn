@@ -18,6 +18,7 @@ import com.haks.haksvn.source.model.SVNSource;
 import com.haks.haksvn.source.model.SVNSourceDiff;
 import com.haks.haksvn.source.model.SVNSourceLog;
 import com.haks.haksvn.source.service.SourceService;
+import com.haks.haksvn.source.util.SourceUtils;
 
 @Controller
 @RequestMapping(value="/source")
@@ -81,7 +82,10 @@ public class SourceAjaxController {
     										@RequestParam(value = "rev", required = true) long rev){
 		
 		SVNSource svnSource = SVNSource.Builder.getBuilder(new SVNSource()).path(path).revision(rev).build();
-		return sourceService.retrieveDiffWithPrevious(repositorySeq, svnSource);
+		SVNSourceDiff svnSourceDiff = sourceService.retrieveDiffByPrevious(repositorySeq, svnSource);
+		svnSourceDiff.setDiffToHtml(SourceUtils.diffToHtml(svnSourceDiff.getDiff()));
+		svnSourceDiff.setDiff("");
+		return svnSourceDiff;
     }
 	
 	

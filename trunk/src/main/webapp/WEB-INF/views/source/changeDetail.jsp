@@ -42,6 +42,7 @@
 </script>
 <c:set var="repoBrowsePathLink" value="${pageContext.request.contextPath}/source/browse/${repositorySeq}"/>
 <c:set var="repoChangesPathLink" value="${pageContext.request.contextPath}/source/changes/${repositorySeq}"/>
+<c:set var="repoDiffPathLink" value="${pageContext.request.contextPath}/source/changes/diff"/>
 <div id="table" class="help">
 	<h1></h1>
 	<div class="col w10 last">
@@ -125,6 +126,9 @@
 									<font class="path font12">
 										<c:set var="changedFullPath" value="${repoBrowsePathLink}/${changed.path}?rev=${svnSource.log.revision}" />
 										<a href="${fn:replace(changedFullPath,'//','/')}"><c:out value="${changed.path}"/></a>
+									</font>
+									<font class="path font12">
+										<a href="${repoDiffPathLink}?repositorySeq=${repositorySeq}&trgRev=${svnSource.revision}&srcRev=-1&path=${changed.path}">Diff</a>
 									</font>
 								</span>
 							</p>
