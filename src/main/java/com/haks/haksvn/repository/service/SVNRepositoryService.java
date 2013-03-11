@@ -140,10 +140,13 @@ public class SVNRepositoryService {
 	//TODO 
 	// 이전 버전이 없을때도 오류 안 나도록
 	public SVNSourceDiff retrieveDiffWithPrevious(Repository repository, SVNSource svnSource){
-		SVNSource svnSourceDest = svnRepositoryDao.retrieveOlderAndNewerAndCurSVNSourceLogList(repository, svnSource);
-		SVNSource svnSourceSrc = SVNSource.Builder.getBuilder(new SVNSource()).path(svnSourceDest.getPath()).revision(svnSourceDest.getOlderLogs().get(0).getRevision()).build();
-		
-		return svnRepositoryDao.retrieveDiff(repository, svnSourceSrc, svnSourceDest);
+		SVNSource svnSourceTrg = svnRepositoryDao.retrieveOlderAndNewerAndCurSVNSourceLogList(repository, svnSource);
+		SVNSource svnSourceSrc = SVNSource.Builder.getBuilder(new SVNSource()).path(svnSourceTrg.getPath()).revision(svnSourceTrg.getOlderLogs().get(0).getRevision()).build();
+		return svnRepositoryDao.retrieveDiff(repository, svnSourceSrc, svnSourceTrg);
+	}
+	
+	public SVNSourceDiff retrieveDiffWithRevisions(Repository repository, SVNSource svnSourceSrc, SVNSource svnSourceTrg){
+		return svnRepositoryDao.retrieveDiff(repository, svnSourceSrc,  svnSourceTrg);
 	}
 	
 }

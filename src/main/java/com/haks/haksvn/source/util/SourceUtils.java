@@ -57,7 +57,6 @@ public class SourceUtils {
 		private int srcLineNumber;
 		private int targetLineNumber;
 		private String type;
-		private int spaces = 0;
 		String line;
 		boolean isSource = false;
 		boolean isTarget = false;
@@ -73,7 +72,6 @@ public class SourceUtils {
 			this.srcLineNumber = srcLineNumber;
 			this.targetLineNumber = targetLineNumber;
 			this.line = line.length() < 2 ? "":line.substring(1);
-			while(line.length() < spaces && !Character.isWhitespace(line.charAt(spaces++)) );
 		}
 		
 		public boolean isSource(){
@@ -100,5 +98,54 @@ public class SourceUtils {
 			return "<tr" + rowCls + "><td>" + srcLineNumberText+"</td><td>"+targetLineNumberText+"</td><td>"+type+"</td>"+
 					"<td" + lineTdCls + ">"+line.replaceAll("&","&amp;").replaceAll("<", "&lt;").replaceAll(">", "&gt;")+"</td></tr>";
 		}
+	}
+	
+	
+	public static String diffToSideBySideHtml(String diff){
+		StringBuffer html = new StringBuffer("<table>");
+		Scanner scanner = new Scanner(diff);
+		int srcStartLineNum = -1;
+		int targetStartLineNum = -1;
+		
+		scanner.nextLine();	//Index: sourceDetail.jsp
+		scanner.nextLine();	//===================================================================
+		scanner.nextLine();	//--- sourceDetail.jsp	(revision 96)
+		scanner.nextLine();	//+++ sourceDetail.jsp	(revision 97)
+		
+		boolean befHasType = false;
+		DiffLine befDiffLine = null;
+		while (scanner.hasNextLine()) {
+		  String line = scanner.nextLine();
+		  if( line.startsWith("@@") ){
+			  befHasType = false;
+			  html.append("<tr><td>...</td><td></td><td></td><td></td></tr>");
+			  srcStartLineNum = Integer.parseInt(line.substring(line.indexOf("-")+1, line.indexOf(",")));
+			  targetStartLineNum = srcStartLineNum;
+			  continue;
+		  }
+		  
+		  DiffLine diffLine = new SourceUtils().new DiffLine(line, srcStartLineNum, targetStartLineNum);
+		  if( diffLine.isTarget()){
+			  targetStartLineNum++;
+		  }else if( diffLine.isSource()){
+			  srcStartLineNum++;
+		  }else{
+			  srcStartLineNum++;targetStartLineNum++;
+		  }
+		  boolean curHasType = diffLine.isTarget()||diffLine.isSource();
+		  boolean isFirst = !befHasType && curHasType;
+		  boolean isLast = befHasType && !curHasType;
+		  diffLine.setIsFirst(isFirst);
+		  if(befDiffLine !=null ){
+			  befDiffLine.setIsLast(isLast);
+			  html.append(befDiffLine.toTableTr());
+		  }
+		  befHasType = curHasType;
+		  befDiffLine = diffLine;
+		}
+		 if(befDiffLine !=null ) html.append(befDiffLine.toTableTr());
+		html.append("<tr><td class=\"line\">...</td><td class=\"line\"></td><td class=\"mark\"></td><td></td></tr></table>");
+		scanner.close();
+		return html.toString();
 	}
 }

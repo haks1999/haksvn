@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.HandlerMapping;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.view.RedirectView;
@@ -18,6 +19,7 @@ import org.springframework.web.servlet.view.RedirectView;
 import com.haks.haksvn.repository.model.Repository;
 import com.haks.haksvn.repository.service.RepositoryService;
 import com.haks.haksvn.source.model.SVNSource;
+import com.haks.haksvn.source.model.SVNSourceDiff;
 import com.haks.haksvn.source.service.SourceService;
 
 @Controller
@@ -145,6 +147,17 @@ public class SourceController {
 		model.addAttribute("repositorySeq", repositorySeq );
 		model.addAttribute("path", path);
         return "/source/changeDetail";
+    }
+	
+	@RequestMapping(value="/changes/diff")
+    public String forwardDiffDetailPage(@RequestParam(value = "repositorySeq", required = true) int repositorySeq,
+    										@RequestParam(value = "path", required = true) String path,
+    										@RequestParam(value = "srcRev", required = true) long srcRev,
+    										@RequestParam(value = "trgRev", required = true) long trgRev){
+		
+		SVNSource svnSourceSrc = SVNSource.Builder.getBuilder(new SVNSource()).path(path).revision(srcRev).build();
+		SVNSource svnSourceTrg = SVNSource.Builder.getBuilder(new SVNSource()).path(path).revision(trgRev).build();
+		return "11" ;//sourceService.retrieveDiffWithRevisions(repositorySeq, svnSourceSrc, svnSourceTrg);
     }
 	
 	/*

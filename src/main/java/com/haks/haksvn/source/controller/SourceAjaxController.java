@@ -75,7 +75,7 @@ public class SourceAjaxController {
 		return sourceService.retrieveSVNSourceLogList(repositorySeq, paging);
     }
 	
-	@RequestMapping(value="/changes/diff")
+	@RequestMapping(value="/changes/diff", headers="Accept=application/json")
     public @ResponseBody SVNSourceDiff diffWithPrevious(@RequestParam(value = "repositorySeq", required = true) int repositorySeq,
     										@RequestParam(value = "path", required = true) String path,
     										@RequestParam(value = "rev", required = true) long rev){
