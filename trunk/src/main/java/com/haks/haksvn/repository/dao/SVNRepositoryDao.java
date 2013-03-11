@@ -148,7 +148,9 @@ public class SVNRepositoryDao {
         	targetRepository = SVNRepositoryUtils.getUserAuthSVNRepository(repository);
         	SVNNodeKind nodeKind = targetRepository.checkPath(RepositoryUtils.getRelativeRepositoryPath(repository, svnSource.getPath()), svnSource.getRevision());
             if (nodeKind == SVNNodeKind.NONE || nodeKind == SVNNodeKind.DIR ) {
-            	throw new HaksvnException( "[" + svnSource.getPath() + "] is not a file.");
+            	svnSource.setContent( "[" + svnSource.getPath() + "] is not a file.");
+            	return svnSource;
+            	//throw new HaksvnException( "[" + svnSource.getPath() + "] is not a file.");
             } 
         	SVNProperties fileProperties = new SVNProperties();
             baos = new ByteArrayOutputStream();
@@ -230,7 +232,7 @@ public class SVNRepositoryDao {
         return svnSource;
     }
 	
-	public SVNSourceDiff retrieveDiff(Repository repository, SVNSource svnSourceSrc, SVNSource svnSourceDest){
+	public SVNSourceDiff retrieveDiff(Repository repository, SVNSource svnSourceSrc, SVNSource svnSourceTrg){
 		SVNRepository targetRepository = null;
 		ByteArrayOutputStream baos = null;
 		SVNSourceDiff svnSourceDiff = new SVNSourceDiff();
@@ -241,8 +243,8 @@ public class SVNRepositoryDao {
         	baos = new ByteArrayOutputStream();
         	diffClient.doDiff(SVNURL.parseURIDecoded(RepositoryUtils.getAbsoluteRepositoryPath(repository, svnSourceSrc.getPath())), 
         						SVNRevision.create(svnSourceSrc.getRevision()), 
-        						SVNURL.parseURIDecoded(RepositoryUtils.getAbsoluteRepositoryPath(repository, svnSourceDest.getPath())),
-        						SVNRevision.create(svnSourceDest.getRevision()), SVNDepth.FILES, true, baos);
+        						SVNURL.parseURIDecoded(RepositoryUtils.getAbsoluteRepositoryPath(repository, svnSourceTrg.getPath())),
+        						SVNRevision.create(svnSourceTrg.getRevision()), SVNDepth.FILES, true, baos);
         	svnSourceDiff.setDiff(baos.toString("utf-8"));
         }catch(Exception e){
         	e.printStackTrace();

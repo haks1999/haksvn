@@ -128,7 +128,7 @@
 									</font>
 								</span>
 							</p>
-							<pre class="diff-changed display-none">
+							<pre class="diff display-none">
 							</pre>
 						</c:forEach>
 						

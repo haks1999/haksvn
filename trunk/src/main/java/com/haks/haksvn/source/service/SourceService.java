@@ -60,4 +60,14 @@ public class SourceService {
 		return svnSourceDiff;
 	}
 	
+	public SVNSourceDiff retrieveDiffWithRevisions(int repositorySeq, SVNSource svnSourceSrc, SVNSource svnSourceTrg){
+		Repository repository = repositoryService.retrieveAccesibleActiveRepositoryByRepositorySeq(repositorySeq);
+		SVNSourceDiff svnSourceDiff = svnRepositoryService.retrieveDiffWithRevisions(repository, svnSourceSrc, svnSourceTrg);
+		svnSourceSrc = svnRepositoryService.retrieveSVNSourceContent(repository, svnSourceSrc);
+		svnSourceTrg = svnRepositoryService.retrieveSVNSourceContent(repository, svnSourceTrg);
+		svnSourceDiff.setDiffToHtml(SourceUtils.diffToHtml(svnSourceDiff.getDiff()));
+		svnSourceDiff.setDiff("");
+		return svnSourceDiff;
+	}
+	
 }
