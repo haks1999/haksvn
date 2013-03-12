@@ -182,6 +182,7 @@ white-space: pre-wrap;
 white-space: -moz-pre-wrap;
 white-space: -pre-wrap;
 white-space: -o-pre-wrap;
+word-wrap: break-word; 
 margin-left:25px;
 }
 pre.diff table{
@@ -199,6 +200,7 @@ white-space: pre-wrap;
 white-space: -moz-pre-wrap;
 white-space: -pre-wrap;
 white-space: -o-pre-wrap;
+word-wrap: break-word; 
 }
 pre.diff table td.line{
 width:40px;

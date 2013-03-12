@@ -149,7 +149,10 @@ public class SVNRepositoryService {
 	}
 	
 	public SVNSourceDiff retrieveDiffByRevisions(Repository repository, SVNSource svnSourceSrc, SVNSource svnSourceTrg){
-		return svnRepositoryDao.retrieveDiff(repository, svnSourceSrc,  svnSourceTrg);
+		SVNSourceDiff svnSourceDiff = svnRepositoryDao.retrieveDiff(repository, svnSourceSrc,  svnSourceTrg);
+		svnSourceDiff.setSrc(svnSourceSrc);
+		svnSourceDiff.setTrg(svnSourceTrg);
+		return svnSourceDiff;
 	}
 	
 }

@@ -219,8 +219,8 @@ public class SourceUtils {
 		//
 		
 		
-		String[] srcContentList = srcContent.split("\r\n");
-		String[] trgContentList = trgContent.split("\r\n");
+		String[] srcContentList = srcContent.split("\\r?\\n");
+		String[] trgContentList = trgContent.split("\\r?\\n");
 		int maxLine = srcContentList.length > trgContentList.length ? srcContentList.length:trgContentList.length;
 		
 		StringBuffer html = new StringBuffer("<table>");
