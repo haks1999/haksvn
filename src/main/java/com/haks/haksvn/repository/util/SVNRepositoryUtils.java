@@ -38,7 +38,7 @@ public class SVNRepositoryUtils {
 	}
 	
 	public static ISVNAuthenticationManager createISVNAuthManagerByUser(Repository repository){
-		boolean isPersonalAuth = !CodeUtils.isTrue(repository.getSyncUser());
+		boolean isPersonalAuth = CodeUtils.isTrue(repository.getSyncUser());
 		String svnUserId = isPersonalAuth?ContextHolder.getLoginUser().getUserId():repository.getAuthUserId();
 		String svnUserPasswd = CryptoUtils.decodeAES(isPersonalAuth?ContextHolder.getLoginUser().getUserPasswd():repository.getAuthUserPasswd());
 		return SVNWCUtil.createDefaultAuthenticationManager(svnUserId, svnUserPasswd);
@@ -59,19 +59,30 @@ public class SVNRepositoryUtils {
 	}
 	
 	@SuppressWarnings("unchecked")
-	public static List<SVNSourceLog> transform(List<SVNLogEntry> svnLogEntryList, List<SVNSourceLog> svnSourceLogList, String path){
+	public static List<SVNSourceLog> transform(List<SVNLogEntry> svnLogEntryList, List<SVNSourceLog> svnSourceLogList, String path, Repository repository){
 		ListIterator<SVNLogEntry> reverseEntries = svnLogEntryList.listIterator(svnLogEntryList.size());
 		while( reverseEntries.hasPrevious()){
 			SVNLogEntry svnLogEntry = reverseEntries.previous();
 			ArrayList<SVNSourceLogChanged> changedList = new ArrayList<SVNSourceLogChanged>(0);
         	for( Map.Entry<String, SVNLogEntryPath> elem : ((Map<String,SVNLogEntryPath>)svnLogEntry.getChangedPaths()).entrySet() ){
-        		if(path.length() > 0 && !elem.getValue().getPath().startsWith("/"+path)) continue;	// changedpath 는 path과 관련없이 다 가져오므로 여기서 걸러낸다
-        		changedList.add(SVNSourceLogChanged.Builder.getBuilder(new SVNSourceLogChanged()).path(elem.getValue().getPath()).type(elem.getValue().getType()).build());
+        		String changedPath = elem.getValue().getPath();
+        		
+        		if( !changedPath.startsWith(repository.getTagsPath()) || !changedPath.startsWith(repository.getTrunkPath()) || !changedPath.startsWith(repository.getBranchesPath())){
+        			if( changedPath.indexOf(repository.getTagsPath()) > -1 ){
+        				changedPath = changedPath.substring(changedPath.indexOf(repository.getTagsPath()));
+        			}else if( changedPath.indexOf(repository.getTrunkPath()) > -1 ){
+        				changedPath = changedPath.substring(changedPath.indexOf(repository.getTrunkPath()));
+        			}else if( changedPath.indexOf(repository.getBranchesPath()) > -1 ){
+        				changedPath = changedPath.substring(changedPath.indexOf(repository.getBranchesPath()));
+        			}
+        		}
+        		if(path.length() > 0 && !changedPath.startsWith("/"+path)) continue;	// changedpath 는 path과 관련없이 다 가져오므로 여기서 걸러낸다
+        		changedList.add(SVNSourceLogChanged.Builder.getBuilder(new SVNSourceLogChanged()).path(changedPath).type(elem.getValue().getType()).build());
         	}
         	Collections.sort(changedList, new Comparator<SVNSourceLogChanged>(){
-   		     public int compare(SVNSourceLogChanged src1, SVNSourceLogChanged src2){
-   		    	 return src1.getPath().compareToIgnoreCase(src2.getPath());
-   		     }
+	   		     public int compare(SVNSourceLogChanged src1, SVNSourceLogChanged src2){
+	   		    	 return src1.getPath().compareToIgnoreCase(src2.getPath());
+	   		     }
         	});
         	svnSourceLogList.add(SVNSourceLog.Builder.getBuilder(new SVNSourceLog())
 					.author(svnLogEntry.getAuthor()).date(FormatUtils.simpleDate(svnLogEntry.getDate())).message(svnLogEntry.getMessage().length() < 1 ? "[No log message]":svnLogEntry.getMessage())

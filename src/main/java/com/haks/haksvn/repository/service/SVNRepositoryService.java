@@ -125,7 +125,7 @@ public class SVNRepositoryService {
 		List<SVNLogEntry> entryList = Lists.newArrayList(entries);
 		Paging.Builder.getBuilder(resultPaging).limit(paging.getLimit()).start(paging.getStart()).total(entryList.size()).build();
 		entryList = entryList.subList(entryList.size()-paging.getStart()-paging.getLimit() < 0 ? 0:entryList.size()-paging.getStart()-paging.getLimit(), entryList.size()-paging.getStart());
-		SVNRepositoryUtils.transform(entryList, svnSourceLogList,paging.getModel().getPath());
+		SVNRepositoryUtils.transform(entryList, svnSourceLogList,paging.getModel().getPath(), repository);
 		return resultPaging;
 	}
 	

@@ -219,9 +219,9 @@ public class SVNRepositoryDao {
         	// curLog 조회 시, changedPath flag true 로 해서 조회함. 위의 것들과 차이 있음
         	@SuppressWarnings("unchecked")
 			List<SVNLogEntry> curLog = Lists.newArrayList(targetRepository.log(new String[]{RepositoryUtils.getRelativeRepositoryPath(repository, svnSource.getPath())}, null,svnSource.getRevision(), svnSource.getRevision(), true, true));
-        	svnSource.setNewerLogs(SVNRepositoryUtils.transform(newerLogList, new ArrayList<SVNSourceLog>(0),svnSource.getPath()));
-        	svnSource.setOlderLogs(SVNRepositoryUtils.transform(olderLogList, new ArrayList<SVNSourceLog>(0),svnSource.getPath()));
-        	svnSource.setLog(SVNRepositoryUtils.transform(curLog, new ArrayList<SVNSourceLog>(0),svnSource.getPath()).get(0));
+        	svnSource.setNewerLogs(SVNRepositoryUtils.transform(newerLogList, new ArrayList<SVNSourceLog>(0),svnSource.getPath(), repository));
+        	svnSource.setOlderLogs(SVNRepositoryUtils.transform(olderLogList, new ArrayList<SVNSourceLog>(0),svnSource.getPath(), repository));
+        	svnSource.setLog(SVNRepositoryUtils.transform(curLog, new ArrayList<SVNSourceLog>(0),svnSource.getPath(), repository).get(0));
             
         }catch (Exception e) {
         	e.printStackTrace();
