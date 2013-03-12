@@ -168,8 +168,9 @@ public class SourceController {
 		svnSourceDiff.setDiffToHtml(SourceUtils.diffToSideBySideHtml(svnSourceDiff.getDiff(), svnSourceDiff.getSrc().getContent(), svnSourceDiff.getTrg().getContent()));
 		svnSourceDiff.setDiff("");
 		model.addAttribute("svnSourceDiff", svnSourceDiff);
-		model.addAttribute("svnSourceSrc", svnSourceSrc );
-		model.addAttribute("svnSourceTrg", svnSourceTrg);
+		model.addAttribute("svnSourceSrc", svnSourceDiff.getSrc() );
+		model.addAttribute("svnSourceTrg", svnSourceDiff.getTrg());
+		model.addAttribute("repositorySeq", repositorySeq);
 		
 		return "/source/diffDetail";
     }

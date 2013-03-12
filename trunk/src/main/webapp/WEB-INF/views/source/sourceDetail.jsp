@@ -36,6 +36,7 @@
 </script>
 <c:set var="repoBrowsePathLink" value="${pageContext.request.contextPath}/source/browse/${repositorySeq}"/>
 <c:set var="repoChangesPathLink" value="${pageContext.request.contextPath}/source/changes/${repositorySeq}"/>
+<c:set var="repoDiffPathLink" value="${pageContext.request.contextPath}/source/changes/diff"/>
 <div id="table" class="help">
 	<h1></h1>
 	<div class="col w10 last">
@@ -101,7 +102,8 @@
 								<p class="display-none">
 									<span>
 										<c:out value="${newerLog.message}"/><br/>
-										<font class="path"><a href="${repoBrowsePathLink}/${svnSource.path}?rev=${newerLog.revision}">View File</a></font>
+										<font class="path"><a href="${repoBrowsePathLink}/${svnSource.path}?rev=${newerLog.revision}">View File</a></font>,&nbsp;
+										<font class="path"><a href="${repoDiffPathLink}?repositorySeq=${repositorySeq}&trgRev=${svnSource.revision}&srcRev=${newerLog.revision}&path=${svnSource.path}">Diff</a></font>
 									</span>
 								</p>
 								
@@ -120,13 +122,14 @@
 									<span>
 										<font class="path"><a href="${repoChangesPathLink}/${svnSource.path}?rev=${olderLog.revision}">r<c:out value="${olderLog.revision}"/></a></font>
 										&nbsp;by&nbsp;<c:out value="${olderLog.author}"/>
-										,&nbsp;<c:out value="${olderLog.date}"/>,Diff
+										,&nbsp;<c:out value="${olderLog.date}"/>
 									</span>
 								</p>
 								<p class="display-none">
 									<span>
 										<c:out value="${olderLog.message}"/><br/>
-										<font class="path"><a href="${repoBrowsePathLink}/${svnSource.path}?rev=${olderLog.revision}">View File</a></font>
+										<font class="path"><a href="${repoBrowsePathLink}/${svnSource.path}?rev=${olderLog.revision}">View File</a></font>,&nbsp;
+										<font class="path"><a href="${repoDiffPathLink}?repositorySeq=${repositorySeq}&trgRev=${svnSource.revision}&srcRev=${olderLog.revision}&path=${svnSource.path}">Diff</a></font>
 									</span>
 								</p>
 							</c:forEach>

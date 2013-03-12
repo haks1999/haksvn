@@ -65,7 +65,7 @@ public class SourceService {
 		SVNSource svnSourceSrc = svnRepositoryService.retrieveSVNSourceContent(repository, svnSourceDiff.getSrc());
 		SVNSource svnSourceTrg = svnRepositoryService.retrieveSVNSourceContent(repository, svnSourceDiff.getTrg());
 		svnSourceDiff.getSrc().setContent(svnSourceSrc.getContent());
-		svnSourceDiff.getSrc().setContent(svnSourceTrg.getContent());
+		svnSourceDiff.getTrg().setContent(svnSourceTrg.getContent());
 		return svnSourceDiff;
 	}
 	
@@ -74,7 +74,8 @@ public class SourceService {
 		SVNSourceDiff svnSourceDiff = svnRepositoryService.retrieveDiffByRevisions(repository, svnSourceSrc, svnSourceTrg);
 		svnSourceSrc = svnRepositoryService.retrieveSVNSourceContent(repository, svnSourceSrc);
 		svnSourceTrg = svnRepositoryService.retrieveSVNSourceContent(repository, svnSourceTrg);
-		
+		svnSourceDiff.getSrc().setContent(svnSourceSrc.getContent());
+		svnSourceDiff.getTrg().setContent(svnSourceTrg.getContent());
 		return svnSourceDiff;
 	}
 	
