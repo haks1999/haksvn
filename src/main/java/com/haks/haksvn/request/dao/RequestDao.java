@@ -8,7 +8,7 @@ import org.hibernate.criterion.Order;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
-import com.haks.haksvn.request.model.Request;
+import com.haks.haksvn.request.model.Transfer;
 
 @Repository
 public class RequestDao {
@@ -16,11 +16,11 @@ public class RequestDao {
 	@Autowired
 	private SessionFactory sessionFactory;
 	
-	public List<Request> retrieveRequestList(){
+	public List<Transfer> retrieveRequestList(){
 		Session session = sessionFactory.getCurrentSession();
 		
 		@SuppressWarnings("unchecked")
-		List<Request> result = session.createCriteria(Request.class)
+		List<Transfer> result = session.createCriteria(Transfer.class)
 				.addOrder(Order.asc("transferSeq"))
 				.list();
 		
