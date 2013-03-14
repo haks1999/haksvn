@@ -3,9 +3,9 @@ package com.haks.haksvn.common.paging.model;
 
 public class Paging<T> {
 
-	private int start = 0;
-	private int limit = 20;
-	private int total = -1;
+	private long start = 0;
+	private long limit = 20;
+	private long total = -1;
 	private T model;
 	
 	public Paging(){
@@ -16,29 +16,29 @@ public class Paging<T> {
 		this.model = model;
 	}
 
-	public int getStart() {
+	public long getStart() {
 		return start;
 	}
 
-	public void setStart(int start) {
+	public void setStart(long start) {
 		this.start = start;
 	}
 
-	public int getLimit() {
+	public long getLimit() {
 		return limit;
 	}
 
-	public void setLimit(int limit) {
+	public void setLimit(long limit) {
 		this.limit = limit;
 	}
 	
 	
 	
-	public int getTotal() {
+	public long getTotal() {
 		return total;
 	}
 
-	public void setTotal(int total) {
+	public void setTotal(long total) {
 		this.total = total;
 	}
 
@@ -68,17 +68,17 @@ public class Paging<T> {
 			return paging;
 		}
 		
-		public Builder start(int start){
+		public Builder start(long start){
 			paging.setStart(start);
 			return this;
 		}
 		
-		public Builder limit(int limit){
+		public Builder limit(long limit){
 			paging.setLimit(limit);
 			return this;
 		}
 		
-		public Builder total(int total){
+		public Builder total(long total){
 			paging.setTotal(total);
 			return this;
 		}

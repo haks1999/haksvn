@@ -75,7 +75,7 @@ public class RetrieveFileLogTest {
     	String url = "https://haksvn.googlecode.com/svn";
 		String name = "haks1999";
 		String password = "aW9fj8bm9Rt5--";
-        String[] filePath = {"/trunk/pom.xml"};
+        String[] filePath = {"/tags/0.0.0-20130122/pom.xml"};
         long startRevision = 0;
         long endRevision = -1;//HEAD (the latest) revision
         /*
@@ -168,8 +168,7 @@ public class RetrieveFileLogTest {
              * 
              * The return value is a Collection filled up with SVNLogEntry Objects.
              */
-            logEntries = repository.log(filePath, null,
-                    startRevision, endRevision, true, true);
+            //logEntries = repository.log(filePath, null,startRevision, endRevision, true, false);
             
             
             
@@ -177,8 +176,9 @@ public class RetrieveFileLogTest {
             // path, start, end, 
             
             final List<SVNLogEntry> tempList = new ArrayList<SVNLogEntry>();
-            filePath = new String[]{"/trunk/src/main/java/com/haks/haksvn/repository/service/SVNRepositoryService.java"};
-            repository.log(filePath, 33, 32, true, true, 3, new ISVNLogEntryHandler() { 
+            //filePath = new String[]{"/trunk/src/main/java/com/haks/haksvn/repository/service/SVNRepositoryService.java"};
+            
+            repository.log(filePath, 2, -1, true, true, 3, new ISVNLogEntryHandler() { 
                 public void handleLogEntry(SVNLogEntry entry) throws SVNException { 
                 	tempList.add(entry); 
                 } 

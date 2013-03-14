@@ -1,30 +1,25 @@
 package com.haks.haksvn.repository.service;
 
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
-import java.util.ListIterator;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import org.tmatesoft.svn.core.SVNDirEntry;
-import org.tmatesoft.svn.core.SVNLogEntry;
 import org.tmatesoft.svn.core.SVNNodeKind;
 
-import com.google.common.collect.Lists;
 import com.haks.haksvn.common.code.util.CodeUtils;
 import com.haks.haksvn.common.exception.HaksvnException;
 import com.haks.haksvn.common.format.util.FormatUtils;
-import com.haks.haksvn.common.paging.model.Paging;
+import com.haks.haksvn.common.paging.model.NextPaging;
 import com.haks.haksvn.repository.dao.LocalRepositoryFileDao;
 import com.haks.haksvn.repository.dao.SVNRepositoryDao;
 import com.haks.haksvn.repository.model.Repository;
-import com.haks.haksvn.repository.util.SVNRepositoryUtils;
 import com.haks.haksvn.source.model.SVNSource;
 import com.haks.haksvn.source.model.SVNSourceDiff;
 import com.haks.haksvn.source.model.SVNSourceLog;
@@ -117,15 +112,29 @@ public class SVNRepositoryService {
 		return svnSourceList;
     }
 	
-	public Paging<List<SVNSourceLog>> retrieveSVNSourceLogList(Repository repository, Paging<SVNSource> paging ){
-		List<SVNSourceLog> svnSourceLogList = new ArrayList<SVNSourceLog>();
-		Paging<List<SVNSourceLog>> resultPaging = new Paging<List<SVNSourceLog>>(svnSourceLogList);
+	// 한 번에 svnentrylog 를 조회해 온 후, 페이징 하는 방식이었으나
+	// svnentrylog 를 아예 조금씩 가져오도록 수정. log 가 많아지면 기존 방식으로는 감당하기 어려움.
+	// 커넥션이 1-2 번 더 생기나 더 이득임
+	public NextPaging<List<SVNSourceLog>> retrieveSVNSourceLogList(Repository repository, NextPaging<SVNSource> paging ){
 		
-		Collection<SVNLogEntry> entries = svnRepositoryDao.retrieveSVNLogEntryList(repository, paging.getModel().getPath());
-		List<SVNLogEntry> entryList = Lists.newArrayList(entries);
-		Paging.Builder.getBuilder(resultPaging).limit(paging.getLimit()).start(paging.getStart()).total(entryList.size()).build();
-		entryList = entryList.subList(entryList.size()-paging.getStart()-paging.getLimit() < 0 ? 0:entryList.size()-paging.getStart()-paging.getLimit(), entryList.size()-paging.getStart());
-		SVNRepositoryUtils.transform(entryList, svnSourceLogList,paging.getModel().getPath(), repository);
+		SVNSource svnSource = svnRepositoryDao.retrieveSVNLogList(repository, paging.getModel(), paging.getStart(), paging.getDirection(), paging.getLimit());
+		List<SVNSourceLog> logList = svnSource.getOlderLogs();
+		
+		SVNSource svnSourceCheckStartLog = SVNSource.Builder.getBuilder(new SVNSource()).path(svnSource.getPath()).revision(logList.get(0).getRevision()).build();
+		svnSourceCheckStartLog = svnRepositoryDao.retrieveOlderAndNewerAndCurSVNSourceLogList(repository, svnSourceCheckStartLog);
+		
+		SVNSource svnSourceCheckEndLog = null;
+		boolean isLastPage = logList.size() < paging.getLimit();
+		if( !isLastPage ){
+			svnSourceCheckEndLog = SVNSource.Builder.getBuilder(new SVNSource()).path(svnSource.getPath()).revision(logList.get(logList.size()-1).getRevision()).build();
+			svnSourceCheckEndLog = svnRepositoryDao.retrieveOlderAndNewerAndCurSVNSourceLogList(repository, svnSourceCheckEndLog);
+		}
+		boolean hasPrev = svnSourceCheckStartLog.getNewerLogs().size() > 0;
+		boolean hasNext = isLastPage?false:svnSourceCheckEndLog.getOlderLogs().size() > 0;
+		
+		NextPaging<List<SVNSourceLog>> resultPaging = new NextPaging<List<SVNSourceLog>>(svnSource.getOlderLogs());
+		NextPaging.Builder.getBuilder(resultPaging).limit(paging.getLimit()).start(logList.get(0).getRevision()).end(logList.get(logList.size()-1).getRevision()).hasNext(hasNext).hasPrev(hasPrev);
+		
 		return resultPaging;
 	}
 	
@@ -153,6 +162,10 @@ public class SVNRepositoryService {
 		svnSourceDiff.setSrc(svnSourceSrc);
 		svnSourceDiff.setTrg(svnSourceTrg);
 		return svnSourceDiff;
+	}
+	
+	public SVNSource checkIsTagAndChangeRevision(Repository repository, SVNSource svnSource){
+		return svnRepositoryDao.checkIsTagAndChangeRevision(repository, svnSource);
 	}
 	
 }

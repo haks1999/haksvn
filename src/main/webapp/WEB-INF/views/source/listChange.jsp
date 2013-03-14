@@ -13,20 +13,24 @@
 	
 	function retrieveRepositoryChangeList(){
 		$("#tbl_changeList tbody tr:not(.sample)").remove();
+		initPagingInfo();
 		_paging.path = '<c:out value="${path}" />';
 		_paging.repositorySeq = $("#sel_repository > option:selected").val();
 		$.getJSON( "<c:url value="/source/changes/list"/>",
 				_paging,
 				function(data) {
 					var model = data.model;
-					_paging.total = data.total;
+					//_paging.total = data.total;
+					_paging.start = data.start;
+					_paging.end = data.end;
+					_paging.hasNext = data.hasNext;
+					_paging.hasPrev = data.hasPrev;
 					changePagingInfo();
 					var repositorySeq = '<c:out value="${repositorySeq}" />';
 					var hrefRoot = '<c:url value="/source/changes"/>';
 					var path = '<c:out value="${path}" />';
 					for( var inx = 0 ; inx < model.length ; inx++ ){
 						var row = $("#tbl_changeList > tbody > .sample").clone();
-						//$(row).find(".revision a").text(model[inx].revision);
 						$(row).find(".revision a").text('r'+model[inx].revision).attr('href',(hrefRoot + "/" + repositorySeq + (path.length<1?"":"/") + path + "?rev=" + model[inx].revision).replace("//", "/"));
 						$(row).children(".message").text(model[inx].message);
 						$(row).children(".date").text(model[inx].date);
@@ -37,22 +41,30 @@
 		});
 	};
 	
-	var _paging = {start:0,limit:30,total:-1};
+	var _paging = {start:-1,end:-1,limit:30,direction:0};
+	function initPagingInfo(){
+		$('span.paging .start').text('');
+		$('span.paging .end').text('');
+		$('span.paging .older').css('display','none');
+		$('span.paging .newer').css('display','none');
+	}
 	function changePagingInfo(){
-		var start = _paging.total-_paging.start;
-		var end = start-_paging.limit+1;
-		$('span.paging .start').text(start);
-		$('span.paging .end').text(end<0?1:end);
-		$('span.paging .total').text(_paging.total);
-		$('span.paging .older').css('display',end > 0 ?'inline':'none');
-		$('span.paging .newer').css('display',(start >= Number(_paging.total)) ?'none':'inline');
+		$('span.paging .start').text(_paging.start);
+		$('span.paging .end').text(_paging.end);
+		//$('span.paging .total').text(_paging.total);
+		$('span.paging .older').css('display',_paging.hasNext?'inline':'none');
+		$('span.paging .newer').css('display',_paging.hasPrev?'inline':'none');
 	}
 	function changePagingOlder(){
-		_paging.start = _paging.start + _paging.limit;
+		//_paging.start = _paging.start + _paging.limit;
+		_paging.start = _paging.end+1;
+		_paging.direction = 0;
 		retrieveRepositoryChangeList();
 	}
 	function changePagingNewer(){
-		_paging.start = _paging.start - _paging.limit;
+		//_paging.start = _paging.start - _paging.limit;
+		_paging.start = _paging.start-1;
+		_paging.direction = -1;
 		retrieveRepositoryChangeList();
 	}
 </script>
@@ -80,7 +92,7 @@
 			<div>
 				<p>
 					<span class="paging">
-						<span>Total <a class="start"></a>-<a class="end"></a> of <a class="total"></a></span>
+						<span>r<a class="start"></a> - r<a class="end"></a></span>
 						<span class="underline italic link newer" onclick="changePagingNewer()">Newer</span>
 						<span class="underline italic link older" onclick="changePagingOlder()">Older</span>
 					</span>

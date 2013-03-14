@@ -140,6 +140,38 @@ public class SVNRepositoryDao {
 		
 	}
 	
+	public SVNSource checkIsTagAndChangeRevision(Repository repository, SVNSource svnSource){
+		// tagging 은 해당 리비젼으로 찾을 수 없다... //TODO 공통으로 처리 가능하도록
+    	SVNRepository targetRepository = null;
+        try{
+        	targetRepository = SVNRepositoryUtils.getUserAuthSVNRepository(repository);
+        	
+        	String relativePath = RepositoryUtils.getRelativeRepositoryPath(repository, svnSource.getPath());
+        	//if( relativePath.startsWith(repository.getTagsPath()) || relativePath.startsWith(repository.getBranchesPath()) ) 
+        	SVNNodeKind nodeKind = targetRepository.checkPath(RepositoryUtils.getRelativeRepositoryPath(repository, svnSource.getPath()), svnSource.getRevision());
+        	if( nodeKind != SVNNodeKind.NONE ) return svnSource;
+        	
+        	final List<SVNLogEntry> logList = new ArrayList<SVNLogEntry>(0);
+            targetRepository.log(new String[]{relativePath}, -1, 0, true, true, 1, new ISVNLogEntryHandler() { 
+                public void handleLogEntry(SVNLogEntry entry) throws SVNException { 
+                	logList.add(entry); 
+                } 
+            });
+            if( logList.size() < 1 ) return svnSource;
+            svnSource.setRevision(logList.get(0).getRevision());
+        }catch (Exception e) {
+        	e.printStackTrace();
+        	throw new HaksvnException(e);
+        }finally{
+        	try{
+        		if(targetRepository!=null) targetRepository.closeSession();
+        	}catch(Exception e){
+        		e.printStackTrace();
+        	}
+        }
+		return svnSource;
+	}
+	
 	public SVNSource retrieveFileContentByRevision(Repository repository, SVNSource svnSource){
 		
 		SVNRepository targetRepository = null;
@@ -176,6 +208,7 @@ public class SVNRepositoryDao {
 		
 	}
 	
+	/*
 	@SuppressWarnings("unchecked")
 	public Collection<SVNLogEntry> retrieveSVNLogEntryList(Repository repository, String path){
 		SVNRepository targetRepository = null;
@@ -192,6 +225,32 @@ public class SVNRepositoryDao {
         }
         return logEntries;
     }
+    */
+	
+	public SVNSource retrieveSVNLogList(Repository repository, final SVNSource svnSource, long startRev, long endRev, long limit){
+		SVNRepository targetRepository = null;
+		//Collection<SVNLogEntry> logEntries = new ArrayList<SVNLogEntry>();
+        try {
+        	targetRepository = SVNRepositoryUtils.getUserAuthSVNRepository(repository);
+        	// path, null, startrevision, endrevision, include all paths, strict
+            //logEntries = targetRepository.log(new String[]{RepositoryUtils.getRelativeRepositoryPath(repository, path)}, null,0, -1, false, true);
+        	final List<SVNLogEntry> logList = new ArrayList<SVNLogEntry>();
+        	targetRepository.log(new String[]{RepositoryUtils.getRelativeRepositoryPath(repository, svnSource.getPath())}, startRev, endRev, false, true, limit, new ISVNLogEntryHandler() { 
+                public void handleLogEntry(SVNLogEntry entry) throws SVNException { 
+                	//if( entry.getRevision() == svnSource.getRevision() ) return;
+                	logList.add(entry); 
+                } 
+            });
+        	// older 가 아닌 newer 가 될 수 있으나, 편의상 older 로 이용함
+        	svnSource.setOlderLogs(SVNRepositoryUtils.transform(logList, new ArrayList<SVNSourceLog>(0),svnSource.getPath(), repository));
+        }catch (Exception e) {
+        	e.printStackTrace();
+        	throw new HaksvnException(e);
+        }finally{
+        	if(targetRepository!=null) targetRepository.closeSession();
+        }
+        return svnSource;
+    }
 	
 	//TODO
 	// log조회는 캐슁이 가능할듯
@@ -200,7 +259,7 @@ public class SVNRepositoryDao {
         try {
         	targetRepository = SVNRepositoryUtils.getUserAuthSVNRepository(repository);
         	
-        	final List<SVNLogEntry> newerLogList = new ArrayList<SVNLogEntry>();
+        	final List<SVNLogEntry> newerLogList = new ArrayList<SVNLogEntry>(0);
         	targetRepository.log(new String[]{RepositoryUtils.getRelativeRepositoryPath(repository, svnSource.getPath())}, svnSource.getRevision(), -1, false, true, 5, new ISVNLogEntryHandler() { 
                 public void handleLogEntry(SVNLogEntry entry) throws SVNException { 
                 	if( entry.getRevision() == svnSource.getRevision() ) return;
@@ -208,11 +267,11 @@ public class SVNRepositoryDao {
                 } 
             });
         	
-        	final List<SVNLogEntry> olderLogList = new ArrayList<SVNLogEntry>();
-        	targetRepository.log(new String[]{RepositoryUtils.getRelativeRepositoryPath(repository, svnSource.getPath())}, svnSource.getRevision(), 0, false, true, 5, new ISVNLogEntryHandler() { 
+        	final List<SVNLogEntry> olderLogList = new ArrayList<SVNLogEntry>(0);
+           	targetRepository.log(new String[]{RepositoryUtils.getRelativeRepositoryPath(repository, svnSource.getPath())}, svnSource.getRevision(), 0, false, true, 5, new ISVNLogEntryHandler() { 
                 public void handleLogEntry(SVNLogEntry entry) throws SVNException { 
                 	if( entry.getRevision() == svnSource.getRevision() ) return;
-                	olderLogList.add(entry); 
+                   	olderLogList.add(entry); 
                 } 
             });
         	

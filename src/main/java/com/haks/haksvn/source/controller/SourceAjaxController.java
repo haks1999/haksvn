@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.haks.haksvn.common.paging.model.NextPaging;
 import com.haks.haksvn.common.paging.model.Paging;
 import com.haks.haksvn.source.model.SVNSource;
 import com.haks.haksvn.source.model.SVNSourceDiff;
@@ -67,9 +68,9 @@ public class SourceAjaxController {
     */
 	
 	@RequestMapping(value="/changes/list")
-    public @ResponseBody Paging<List<SVNSourceLog>> listSVNSourceLog(@RequestParam(value = "repositorySeq", required = true) int repositorySeq,
+    public @ResponseBody NextPaging<List<SVNSourceLog>> listSVNSourceLog(@RequestParam(value = "repositorySeq", required = true) int repositorySeq,
     										@RequestParam(value = "path", required = true) String path,
-    										@ModelAttribute("paging") Paging<SVNSource> paging){
+    										@ModelAttribute("paging") NextPaging<SVNSource> paging){
 		
 		SVNSource svnSource = SVNSource.Builder.getBuilder(new SVNSource()).path(path).build();
 		paging.setModel(svnSource);
