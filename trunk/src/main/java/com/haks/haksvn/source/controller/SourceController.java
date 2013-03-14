@@ -164,7 +164,12 @@ public class SourceController {
 		}else{
 			svnSourceDiff = sourceService.retrieveDiffWithContentsByRevisions(repositorySeq, svnSourceSrc, svnSourceTrg);
 		}
-		svnSourceDiff.setDiffToHtml(SourceUtils.diffToSideBySideHtml(svnSourceDiff.getDiff(), svnSourceDiff.getSrc().getContent(), svnSourceDiff.getTrg().getContent()));
+		if( svnSourceDiff.getIsNewContent() ){
+			svnSourceDiff.setDiffToHtml(SourceUtils.diffToHtml(svnSourceDiff.getDiff()));
+		}else{
+			svnSourceDiff.setDiffToHtml(SourceUtils.diffToSideBySideHtml(svnSourceDiff.getDiff(), svnSourceDiff.getSrc().getContent(), svnSourceDiff.getTrg().getContent()));
+		}
+		
 		svnSourceDiff.setDiff("");
 		model.addAttribute("svnSourceDiff", svnSourceDiff);
 		model.addAttribute("svnSourceSrc", svnSourceDiff.getSrc() );

@@ -38,9 +38,13 @@ public class DoDiffTest {
 		//long rev1 = 104;
 		//long rev2 = 103;
 		
-		String path="/trunk/src/main/webapp/WEB-INF/resources/index.html";
-		long rev1 = 108;
-		long rev2 = 2;
+		//String path="/trunk/src/main/webapp/WEB-INF/resources/index.html";
+		//long rev1 = 108;
+		//long rev2 = 2;
+		
+		String path="/trunk/src/main/java/com/haks/haksvn/repository/service/SVNRepositoryService.java";
+		long rev1 = 111;
+		long rev2 = 107;
 
 		//SVNRepository repository = SVNRepositoryFactory.create(SVNURL.parseURIDecoded(url));
 		ISVNAuthenticationManager authManager = SVNWCUtil.createDefaultAuthenticationManager(name, password);

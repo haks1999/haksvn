@@ -67,10 +67,12 @@ public class SourceService {
 		Repository repository = repositoryService.retrieveAccesibleActiveRepositoryByRepositorySeq(repositorySeq);
 		svnSource = svnRepositoryService.checkIsTagAndChangeRevision(repository, svnSource);
 		SVNSourceDiff svnSourceDiff = svnRepositoryService.retrieveDiffByPrevious(repository, svnSource);
-		SVNSource svnSourceSrc = svnRepositoryService.retrieveSVNSourceContent(repository, svnSourceDiff.getSrc());
-		SVNSource svnSourceTrg = svnRepositoryService.retrieveSVNSourceContent(repository, svnSourceDiff.getTrg());
-		svnSourceDiff.getSrc().setContent(svnSourceSrc.getContent());
-		svnSourceDiff.getTrg().setContent(svnSourceTrg.getContent());
+		if( !svnSourceDiff.getIsNewContent() ){
+			SVNSource svnSourceSrc = svnRepositoryService.retrieveSVNSourceContent(repository, svnSourceDiff.getSrc());
+			SVNSource svnSourceTrg = svnRepositoryService.retrieveSVNSourceContent(repository, svnSourceDiff.getTrg());
+			svnSourceDiff.getSrc().setContent(svnSourceSrc.getContent());
+			svnSourceDiff.getTrg().setContent(svnSourceTrg.getContent());
+		}
 		return svnSourceDiff;
 	}
 	

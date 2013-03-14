@@ -9,6 +9,7 @@ public class SVNSourceDiff {
 	private String diffToHtml;
 	private SVNSource src;
 	private SVNSource trg;
+	private boolean isNewContent = false;
 	
 	public SVNSourceDiff(){
 		
@@ -51,8 +52,13 @@ public class SVNSourceDiff {
 		this.trg = trg;
 	}
 
+	public boolean getIsNewContent(){
+		return isNewContent;
+	}
 
-
+	public void setIsNewContent(boolean isNewContent){
+		this.isNewContent = isNewContent;
+	}
 
 
 
@@ -84,6 +90,11 @@ public class SVNSourceDiff {
 		
 		public Builder trg(SVNSource trg){
 			svnSourceDiff.setTrg(trg);
+			return this;
+		}
+		
+		public Builder isNewContent(boolean isNewContent){
+			svnSourceDiff.setIsNewContent(isNewContent);
 			return this;
 		}
 		
