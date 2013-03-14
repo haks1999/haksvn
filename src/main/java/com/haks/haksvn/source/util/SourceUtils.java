@@ -26,35 +26,42 @@ public class SourceUtils {
 		boolean befHasType = false;
 		DiffLine befDiffLine = null;
 		while (scanner.hasNextLine()) {
-		  String line = scanner.nextLine();
-		  if( line.startsWith("@@") ){
-			  befHasType = false;
-			  html.append("<tr><td>...</td><td></td><td></td><td></td></tr>");
-			  srcStartLineNum = Integer.parseInt(line.substring(line.indexOf(MARK_SRC)+1, line.indexOf(",")));
-			  targetStartLineNum = Integer.parseInt(line.substring(line.indexOf(MARK_TRG)+1, line.lastIndexOf(",")));
-			  continue;
-		  }
+			String line = scanner.nextLine();
+			if( line.startsWith("@@") ){
+				if( befDiffLine != null ){
+					html.append(befDiffLine.toTableTr());
+					befDiffLine = null;
+				}
+				befHasType = false;
+				html.append("<tr><td>...</td><td></td><td></td><td></td></tr>");
+				srcStartLineNum = Integer.parseInt(line.substring(line.indexOf(MARK_SRC)+1, line.indexOf(",")));
+				targetStartLineNum = Integer.parseInt(line.substring(line.indexOf(MARK_TRG)+1, line.lastIndexOf(",")));
+				continue;
+			}
 		  
-		  DiffLine diffLine = new SourceUtils().new DiffLine(line, srcStartLineNum, targetStartLineNum);
-		  if( diffLine.isTarget()){
-			  targetStartLineNum++;
-		  }else if( diffLine.isSource()){
-			  srcStartLineNum++;
-		  }else{
-			  srcStartLineNum++;targetStartLineNum++;
-		  }
-		  boolean curHasType = diffLine.isTarget()||diffLine.isSource();
-		  boolean isFirst = !befHasType && curHasType;
-		  boolean isLast = befHasType && !curHasType;
-		  diffLine.setIsFirst(isFirst);
-		  if(befDiffLine !=null ){
-			  befDiffLine.setIsLast(isLast);
-			  html.append(befDiffLine.toTableTr());
-		  }
-		  befHasType = curHasType;
-		  befDiffLine = diffLine;
+			DiffLine diffLine = new SourceUtils().new DiffLine(line, srcStartLineNum, targetStartLineNum);
+			if( diffLine.isTarget()){
+				targetStartLineNum++;
+			}else if( diffLine.isSource()){
+				srcStartLineNum++;
+			}else{
+				srcStartLineNum++;targetStartLineNum++;
+			}
+			boolean curHasType = diffLine.isTarget()||diffLine.isSource();
+			boolean isFirst = !befHasType && curHasType;
+			boolean isLast = befHasType && !curHasType;
+			diffLine.setIsFirst(isFirst);
+			if(befDiffLine !=null ){
+				befDiffLine.setIsLast(isLast);
+				html.append(befDiffLine.toTableTr());
+			}
+			befHasType = curHasType;
+			befDiffLine = diffLine;
 		}
-		 if(befDiffLine !=null ) html.append(befDiffLine.toTableTr());
+		if(befDiffLine !=null ){
+			if( befHasType ) befDiffLine.setIsLast(true);
+			html.append(befDiffLine.toTableTr());
+		}
 		html.append("<tr><td class=\"line\">...</td><td class=\"line\"></td><td class=\"mark\"></td><td></td></tr></table>");
 		scanner.close();
 		return html.toString();
@@ -123,38 +130,71 @@ public class SourceUtils {
 		List<DiffLineSideBySide> trgDiffLineSideBySideTotalList = new ArrayList<DiffLineSideBySide>(0);
 		List<DiffLineSideBySide> srcDiffLineSideBySideList = new ArrayList<DiffLineSideBySide>(0);
 		List<DiffLineSideBySide> trgDiffLineSideBySideList = new ArrayList<DiffLineSideBySide>(0);
-		int index = 0;
-		boolean currentBoundChanged = false;
+		int index = 0, changeInRow = 0, overLineCnt = 0;
+		boolean currentBoundChanged = false,needFixLineNum = false;
 		String befMark = "";
-		int srcChangedLastLineNum = -1;
-		int trgChangedLastLineNum = -1;
+		int srcChangedLastLineNum = -1,trgChangedLastLineNum = -1;
 		while (scanner.hasNextLine()) {
 			String line = scanner.nextLine();
 			if( line.startsWith("@@") ){
-				  int changedSrcStartLineNum = Integer.parseInt(line.substring(line.indexOf(MARK_SRC)+1, line.indexOf(",")));
-				  int changedTrgStartLineNum = Integer.parseInt(line.substring(line.indexOf(MARK_TRG)+1, line.lastIndexOf(",")));
-				  index = changedSrcStartLineNum > changedTrgStartLineNum ? changedSrcStartLineNum:changedTrgStartLineNum;
-				  currentBoundChanged = false;
-				  continue;
+				int changedSrcStartLineNum = Integer.parseInt(line.substring(line.indexOf(MARK_SRC)+1, line.indexOf(",")));
+				int changedTrgStartLineNum = Integer.parseInt(line.substring(line.indexOf(MARK_TRG)+1, line.lastIndexOf(",")));
+				
+				if( changedSrcStartLineNum > changedTrgStartLineNum ){
+					index = changedSrcStartLineNum;
+					if( changedSrcStartLineNum < changedTrgStartLineNum + overLineCnt - (changedSrcStartLineNum-changedTrgStartLineNum) ){
+						index = changedTrgStartLineNum + overLineCnt - (changedSrcStartLineNum-changedTrgStartLineNum);
+						//if( index > 173 ) index = index -5;//
+					}else{
+						overLineCnt = 0;
+					}
+				}else{
+					index = changedTrgStartLineNum;
+					if( changedTrgStartLineNum < changedSrcStartLineNum + overLineCnt - (changedTrgStartLineNum-changedSrcStartLineNum) ){
+						index = changedSrcStartLineNum + overLineCnt - (changedTrgStartLineNum-changedSrcStartLineNum);
+						//if( index > 173 ) index = index -5;//
+					}else{
+						overLineCnt = 0;
+					}
+				}
+				//index = changedSrcStartLineNum > changedTrgStartLineNum ? changedSrcStartLineNum:changedTrgStartLineNum;
+				currentBoundChanged = false;
+				needFixLineNum = false;
+				continue;
 			}
 		  
-		  
 			if( line.startsWith(MARK_SRC) ){
-				if( befMark.equals(MARK_SRC) || (currentBoundChanged && befMark.trim().equals(""))) index++;
+				if( befMark.equals(MARK_SRC) || (currentBoundChanged && befMark.trim().equals("") && needFixLineNum)) index++;
+				//if( befMark.equals(MARK_SRC) || (currentBoundChanged && befMark.trim().equals(""))) index++;
+				if( befMark.equals(MARK_TRG)){
+					index = index - changeInRow + 1;
+					changeInRow = 0;
+				}
 				DiffLineSideBySide diffLineSideBySide = sourceUtils.new DiffLineSideBySide();
 				diffLineSideBySide.index = index;
 				srcDiffLineSideBySideList.add(diffLineSideBySide);
 				srcChangedLastLineNum = index;
 				currentBoundChanged = true;
+				needFixLineNum = false;
+				changeInRow++;
 			}else if( line.startsWith(MARK_TRG) ){
-				if( befMark.equals(MARK_TRG) || (currentBoundChanged && befMark.trim().equals(""))) index++;
+				if( befMark.equals(MARK_TRG) || (currentBoundChanged && befMark.trim().equals("") && needFixLineNum)) index++;
+				//if( befMark.equals(MARK_TRG) || (currentBoundChanged && befMark.trim().equals(""))) index++;
+				if( befMark.equals(MARK_SRC)){
+					index = index - changeInRow + 1;
+					changeInRow = 0;
+				}
 				DiffLineSideBySide diffLineSideBySide = sourceUtils.new DiffLineSideBySide();
 				diffLineSideBySide.index = index;
 				trgDiffLineSideBySideList.add(diffLineSideBySide);
 				trgChangedLastLineNum = index;
 				currentBoundChanged = true;
+				needFixLineNum = false;
+				changeInRow++;
 			}else{
 				index++;
+				changeInRow = 0;
+				needFixLineNum = true;
 				if( srcDiffLineSideBySideList.size() > 0 || trgDiffLineSideBySideList.size() > 0){
 					int changedSrcLineCnt = srcDiffLineSideBySideList.size();
 					int changedTrgLineCnt = trgDiffLineSideBySideList.size();
@@ -166,6 +206,7 @@ public class SourceUtils {
 							DiffLineSideBySide diffLineSideBySide = sourceUtils.new DiffLineSideBySide();
 							diffLineSideBySide.index = ++trgChangedLastLineNum;
 							diffLineSideBySide.isEmpty = true;
+							overLineCnt++;
 							trgDiffLineSideBySideList.add(diffLineSideBySide);
 						}
 					}else if( changedSrcLineCnt < changedTrgLineCnt ){
@@ -176,9 +217,11 @@ public class SourceUtils {
 							DiffLineSideBySide diffLineSideBySide = sourceUtils.new DiffLineSideBySide();
 							diffLineSideBySide.index = ++srcChangedLastLineNum;
 							diffLineSideBySide.isEmpty = true;
+							overLineCnt++;
 							srcDiffLineSideBySideList.add(diffLineSideBySide);
 						}
 					}
+					//overLineCnt += changedSrcLineCnt > changedTrgLineCnt?(changedSrcLineCnt-changedTrgLineCnt):(changedTrgLineCnt-changedSrcLineCnt);
 					srcDiffLineSideBySideList.get(0).isFirst = true;
 					srcDiffLineSideBySideList.get(srcDiffLineSideBySideList.size()-1).isLast = true;
 					trgDiffLineSideBySideList.get(0).isFirst = true;
@@ -233,9 +276,20 @@ public class SourceUtils {
 		int trgContentIndex = 0;
 		while( lineIndex < maxLine ){
 			StringBuffer tr = new StringBuffer("<tr>");
+			
+			System.out.println( "lineIndex : " + lineIndex + " | maxLine : " + maxLine );
+			
 			if( diffLineSideBySideCombinedMap.containsKey(lineIndex)){
 				DiffLineSideBySideCombined diffLineSideBySideCombined = diffLineSideBySideCombinedMap.get(lineIndex);
 
+				
+				
+				//System.out.println( "diffLineSideBySideCombined.isEmpty : " + diffLineSideBySideCombined.isEmptySrc + " | " + diffLineSideBySideCombined.isEmptyTrg);
+				//System.out.println(" srcContentList[srcContentIndex]:"+ srcContentList[srcContentIndex]);
+				//System.out.println(" trgContentList[trgContentIndex]:"+ trgContentList[trgContentIndex]);
+				
+				
+				
 				String trCls = (diffLineSideBySideCombined.isFirst?" isFirst":"") + (diffLineSideBySideCombined.isLast?" isLast":"");
 				if(trCls.length() > 1 ) tr = new StringBuffer("<tr class=\"" + trCls + "\">");
 				if(diffLineSideBySideCombined.isEmptySrc){
@@ -279,5 +333,20 @@ public class SourceUtils {
 		boolean isEmptyTrg = false;
 		boolean isFirst = false;
 		boolean isLast = false;
+	}
+	
+	public static String contentToDiffFormat(String content){
+		String lineStr = System.getProperty("line.separator");
+		StringBuffer diff = new StringBuffer("Index:");
+		diff.append(lineStr + "=" + lineStr + "-" + lineStr + "+");
+		diff.append(lineStr + "@@ " + MARK_SRC + "1,0 " + MARK_TRG + "1,0");
+		Scanner scanner = new Scanner(content);
+		while (scanner.hasNextLine()) {
+			String line = scanner.nextLine();
+			diff.append(lineStr);
+			diff.append(MARK_TRG + line);
+		}
+		diff.append(lineStr);
+		return diff.toString();
 	}
 }

@@ -32,11 +32,11 @@
 	}
 	
 	function expandAllChanged(){
-		$('a.hasChange').not('.opened').trigger('click');
+		$('a.closed').trigger('click');
 	}
 	
 	function collapseAllChanged(){
-		$('a.hasChange').not('.closed').trigger('click');
+		$('a.opened').trigger('click');
 	}
 	
 </script>
@@ -118,8 +118,7 @@
 						
 						<c:forEach var="changed" items="${svnSource.log.changedList}">
 							<p>
-								<c:if test="${changed.typeName == 'Modified'}" var="isModified" />
-								<a class="pmOpener closed ${isModified ? 'hasChange':'visible-hidden'}" onclick="toggleChangedPath(this,'${changed.path}','${svnSource.log.revision}')">
+								<a class="pmOpener closed" onclick="toggleChangedPath(this,'${changed.path}','${svnSource.log.revision}')">
 									<img class="pClosed" src="<c:url value="/images/plus_small_white.png"/>"/><img class="mOpened" src="<c:url value="/images/minus_small_white.png"/>"/>
 								</a>
 								<span><c:out value="${changed.typeName}" />

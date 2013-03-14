@@ -23,6 +23,7 @@ import com.haks.haksvn.repository.model.Repository;
 import com.haks.haksvn.source.model.SVNSource;
 import com.haks.haksvn.source.model.SVNSourceDiff;
 import com.haks.haksvn.source.model.SVNSourceLog;
+import com.haks.haksvn.source.util.SourceUtils;
 import com.haks.haksvn.user.model.User;
 
 @Service
@@ -147,11 +148,20 @@ public class SVNRepositoryService {
 	}
 	
 	//TODO 
-	// 이전 버전이 없을때도 오류 안 나도록
+	// 이전 버전이 없을때도 오류 안 나도록 - previous 이므로 이전 버젼을 확인 못 하고 호출 가능함
 	public SVNSourceDiff retrieveDiffByPrevious(Repository repository, SVNSource svnSource){
 		SVNSource svnSourceTrg = svnRepositoryDao.retrieveOlderAndNewerAndCurSVNSourceLogList(repository, svnSource);
-		SVNSource svnSourceSrc = SVNSource.Builder.getBuilder(new SVNSource()).path(svnSourceTrg.getPath()).revision(svnSourceTrg.getOlderLogs().get(0).getRevision()).build();
-		SVNSourceDiff svnSourceDiff = svnRepositoryDao.retrieveDiff(repository, svnSourceSrc, svnSourceTrg);
+		SVNSource svnSourceSrc = SVNSource.Builder.getBuilder(new SVNSource()).path(svnSourceTrg.getPath()).build();
+		SVNSourceDiff svnSourceDiff = null;
+		if( svnSourceTrg.getOlderLogs().size() <1 ){
+			svnSourceSrc.setRevision(-1);
+			svnSourceDiff = new SVNSourceDiff();
+			svnSourceDiff.setIsNewContent(true);
+			svnSourceDiff.setDiff(SourceUtils.contentToDiffFormat(svnRepositoryDao.retrieveFileContentByRevision(repository, svnSourceTrg).getContent()));
+		}else{
+			svnSourceSrc.setRevision(svnSourceTrg.getOlderLogs().get(0).getRevision());
+			svnSourceDiff = svnRepositoryDao.retrieveDiff(repository, svnSourceSrc, svnSourceTrg);
+		}
 		svnSourceDiff.setSrc(svnSourceSrc);
 		svnSourceDiff.setTrg(svnSourceTrg);
 		return svnSourceDiff;

@@ -13,26 +13,28 @@
 		
 		
 			<div>
-				<div class="col w5">
-					<div class="content" style="padding-right:10px;">
-						<div class="box">
-							<div class="head"><div></div></div>
-							<div class="desc">
-								<c:set var="srcBrowsePath" value="/${repoBrowsePathLink}/${svnSourceTrg.path}"/>
-								<c:set var="srcBrowsePath" value="${fn:replace(srcBrowsePath,'//','/')}"/>
-								<c:set var="srcChangedPath" value="/${repoChangesPathLink}/${svnSourceTrg.path}"/>
-								<c:set var="srcChangedPath" value="${fn:replace(srcChangedPath,'//','/')}"/>
-								<p>
-									<font class="path"><a href="<c:out value="${srcBrowsePath}?rev=${svnSourceSrc.revision}" />"><c:out value="${svnSourceSrc.path}"/></a></font>
-								</p>
-								<p>
-									<font><a href="<c:out value="${srcChangedPath}?rev=${svnSourceTrg.revision}" />"><c:out value="r${svnSourceSrc.revision}"/></a></font>
-								</p>
+				<c:if test="${not svnSourceDiff.isNewContent}">
+					<div class="col w5">
+						<div class="content" style="padding-right:10px;">
+							<div class="box">
+								<div class="head"><div></div></div>
+								<div class="desc">
+									<c:set var="srcBrowsePath" value="/${repoBrowsePathLink}/${svnSourceTrg.path}"/>
+									<c:set var="srcBrowsePath" value="${fn:replace(srcBrowsePath,'//','/')}"/>
+									<c:set var="srcChangedPath" value="/${repoChangesPathLink}/${svnSourceTrg.path}"/>
+									<c:set var="srcChangedPath" value="${fn:replace(srcChangedPath,'//','/')}"/>
+									<p>
+										<font class="path"><a href="<c:out value="${srcBrowsePath}?rev=${svnSourceSrc.revision}" />"><c:out value="${svnSourceSrc.path}"/></a></font>
+									</p>
+									<p>
+										<font><a href="<c:out value="${srcChangedPath}?rev=${svnSourceTrg.revision}" />"><c:out value="r${svnSourceSrc.revision}"/></a></font>
+									</p>
+								</div>
+								<div class="bottom"><div></div></div>
 							</div>
-							<div class="bottom"><div></div></div>
 						</div>
 					</div>
-				</div>
+				</c:if>
 				<div class="col w5 last">
 					<div class="content" style="padding-left:10px;">
 						<div class="box">
