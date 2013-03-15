@@ -43,7 +43,7 @@ public class LoginController {
     		User user = userService.retrieveActiveUserByUserIdAndPasswd(User.Builder.getBuilder(new User()).userId(userId).userPasswd(userPasswd).build());
     		if( user != null ){
     			ContextHolder.addLoginUser(new LoginUser(user));
-    			String redirectUrl = "/transfer/request/retrieveRequestList";
+    			String redirectUrl = "/transfer/request/list";
     			try{
     				URI uri =  new URI(referer);
     				String refererPath = uri.getPath().substring(request.getContextPath().length());

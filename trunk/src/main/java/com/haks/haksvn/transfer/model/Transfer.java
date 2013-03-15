@@ -1,5 +1,7 @@
 package com.haks.haksvn.transfer.model;
 
+import java.util.List;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -8,6 +10,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 import com.haks.haksvn.common.code.model.Code;
@@ -50,6 +53,14 @@ public class Transfer {
 	
 	@Column(name = "transfer_date")
 	private long transferDate;
+	
+	// 연관 관계는 맺지 않는다. 불필요
+	@Column(name = "repository_seq")
+	private int repositorySeq;
+	
+	@OneToMany(mappedBy="transfer")
+	private List<TransferSource> sourceList;
+	
 
 	public int getTransferSeq() {
 		return transferSeq;
@@ -115,6 +126,21 @@ public class Transfer {
 		this.transferDate = transferDate;
 	}
 	
+	public int getRepositorySeq(){
+		return repositorySeq;
+	}
+	
+	public void setRepositorySeq(int repositorySeq){
+		this.repositorySeq = repositorySeq;
+	}
+
+	public List<TransferSource> getSourceList() {
+		return sourceList;
+	}
+
+	public void setSourceList(List<TransferSource> sourceList) {
+		this.sourceList = sourceList;
+	}
 	
 	
 	
