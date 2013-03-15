@@ -135,6 +135,7 @@ cursor:pointer;
 font.path{
 font-weight:normal;
 font-size:10pt;
+word-wrap: break-word;
 }
 font.path a{
 color:#483D8B;
@@ -200,7 +201,7 @@ white-space: pre-wrap;
 white-space: -moz-pre-wrap;
 white-space: -pre-wrap;
 white-space: -o-pre-wrap;
-word-wrap: break-word; 
+word-wrap: break-all; 
 }
 pre.diff table td.line{
 width:40px;
