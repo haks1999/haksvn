@@ -13,7 +13,7 @@ public class SourceUtils {
 
 	//TODO 여기 좀 이쁘게
 	public static String diffToHtml(String diff){
-		StringBuffer html = new StringBuffer("<table>");
+		StringBuffer html = new StringBuffer("<table cellspacing=\"0\">");
 		Scanner scanner = new Scanner(diff);
 		int srcStartLineNum = -1;
 		int targetStartLineNum = -1;
@@ -130,9 +130,9 @@ public class SourceUtils {
 		List<DiffLineSideBySide> trgDiffLineSideBySideTotalList = new ArrayList<DiffLineSideBySide>(0);
 		List<DiffLineSideBySide> srcDiffLineSideBySideList = new ArrayList<DiffLineSideBySide>(0);
 		List<DiffLineSideBySide> trgDiffLineSideBySideList = new ArrayList<DiffLineSideBySide>(0);
-		int index = 0, noneMarkInRow =0, changeInRow = 0;
+		int index = 0;
 		int srcEmptyLineCnt = 0, trgEmptyLineCnt = 0;
-		boolean currentBoundChanged = false,needFixLineNum = false;
+		boolean currentBoundChanged = false;
 		String befMark = "";
 		int srcChangedLastLineNum = -1,trgChangedLastLineNum = -1;
 		while (scanner.hasNextLine()) {
@@ -140,82 +140,34 @@ public class SourceUtils {
 			if( line.startsWith("@@") ){
 				int changedSrcStartLineNum = Integer.parseInt(line.substring(line.indexOf(MARK_SRC)+1, line.indexOf(",")));
 				int changedTrgStartLineNum = Integer.parseInt(line.substring(line.indexOf(MARK_TRG)+1, line.lastIndexOf(",")));
-				
 				changedSrcStartLineNum += srcEmptyLineCnt;
 				changedTrgStartLineNum += trgEmptyLineCnt;
-				/*
-				if( srcEmptyLineCnt == trgEmptyLineCnt ){
-					//changedSrcStartLineNum += srcEmptyLineCnt;
-					//changedTrgStartLineNum += trgEmptyLineCnt;
-				}else if(srcEmptyLineCnt > trgEmptyLineCnt){
-					changedSrcStartLineNum += (srcEmptyLineCnt-trgEmptyLineCnt);
-				}else{
-					changedTrgStartLineNum += (trgEmptyLineCnt-srcEmptyLineCnt);
-				}
-				*/
 				
 				if( changedSrcStartLineNum > changedTrgStartLineNum ){
 					index = changedSrcStartLineNum;
-					//if( changedSrcStartLineNum + srcEmptyLineCnt < changedTrgStartLineNum + trgEmptyLineCnt ){
-					//	index = changedTrgStartLineNum + trgEmptyLineCnt;
-					//}else{
-					//	trgEmptyLineCnt = 0;
-					//}
 				}else{
 					index = changedTrgStartLineNum;
-					//if( changedTrgStartLineNum < changedSrcStartLineNum + srcEmptyLineCnt ){
-					//	index = changedSrcStartLineNum + srcEmptyLineCnt;
-					//}else{
-					//	srcEmptyLineCnt = 0;
-					//}
 				}
-				//index = changedSrcStartLineNum > changedTrgStartLineNum ? changedSrcStartLineNum:changedTrgStartLineNum;
 				currentBoundChanged = false;
-				needFixLineNum = false;
 				continue;
 			}
-		  
-			
-			
 			
 			if( line.startsWith(MARK_SRC) ){
-				//if( befMark.equals(MARK_SRC) || (currentBoundChanged && befMark.trim().equals("") && needFixLineNum)) index++;
 				if( befMark.equals(MARK_SRC) || (currentBoundChanged && befMark.trim().length()<1)) index++;
-				//if( befMark.equals(MARK_TRG)){
-					//index = index - changeInRow + 1;
-				//	changeInRow = 0;
-				//}
 				DiffLineSideBySide diffLineSideBySide = sourceUtils.new DiffLineSideBySide();
 				diffLineSideBySide.index = index;
-				diffLineSideBySide.testIdx = index;
 				srcDiffLineSideBySideList.add(diffLineSideBySide);
 				srcChangedLastLineNum = index;
 				currentBoundChanged = true;
-				needFixLineNum = false;
-				//changeInRow++;
-				noneMarkInRow = 0;
 			}else if( line.startsWith(MARK_TRG) ){
-				//if( befMark.equals(MARK_TRG) || (currentBoundChanged && befMark.trim().equals("") && needFixLineNum)) index++;
 				if( befMark.equals(MARK_TRG) || (currentBoundChanged && befMark.trim().length()<1)) index++;
-				//if( befMark.equals(MARK_SRC)){
-					//index = index - changeInRow + 1;
-				//	changeInRow = 0;
-				//}
-				//if(currentBoundChanged && needFixLineNum) index--;
 				DiffLineSideBySide diffLineSideBySide = sourceUtils.new DiffLineSideBySide();
 				diffLineSideBySide.index = index;
-				diffLineSideBySide.testIdx = index;
 				trgDiffLineSideBySideList.add(diffLineSideBySide);
 				trgChangedLastLineNum = index;
 				currentBoundChanged = true;
-				needFixLineNum = false;
-				//changeInRow++;
-				noneMarkInRow = 0;
 			}else{
 				index++;
-				//changeInRow = 0;
-				noneMarkInRow++;
-				//needFixLineNum = true;
 				if( srcDiffLineSideBySideList.size() > 0 || trgDiffLineSideBySideList.size() > 0){
 					int changedSrcLineCnt = srcDiffLineSideBySideList.size();
 					int changedTrgLineCnt = trgDiffLineSideBySideList.size();
@@ -226,9 +178,7 @@ public class SourceUtils {
 						for( int inx = 0 ; inx < changedSrcLineCnt-changedTrgLineCnt ; inx++ ){
 							DiffLineSideBySide diffLineSideBySide = sourceUtils.new DiffLineSideBySide();
 							diffLineSideBySide.index = ++trgChangedLastLineNum;
-							diffLineSideBySide.testIdx = index;
 							diffLineSideBySide.isEmpty = true;
-							needFixLineNum = true;
 							trgEmptyLineCnt++;
 							trgDiffLineSideBySideList.add(diffLineSideBySide);
 						}
@@ -239,14 +189,11 @@ public class SourceUtils {
 						for( int inx = 0 ; inx < changedTrgLineCnt-changedSrcLineCnt ; inx++ ){
 							DiffLineSideBySide diffLineSideBySide = sourceUtils.new DiffLineSideBySide();
 							diffLineSideBySide.index = ++srcChangedLastLineNum;
-							diffLineSideBySide.testIdx = index;
 							diffLineSideBySide.isEmpty = true;
-							needFixLineNum = true;
 							srcEmptyLineCnt++;
 							srcDiffLineSideBySideList.add(diffLineSideBySide);
 						}
 					}
-					//overLineCnt += changedSrcLineCnt > changedTrgLineCnt?(changedSrcLineCnt-changedTrgLineCnt):(changedTrgLineCnt-changedSrcLineCnt);
 					srcDiffLineSideBySideList.get(0).isFirst = true;
 					srcDiffLineSideBySideList.get(srcDiffLineSideBySideList.size()-1).isLast = true;
 					trgDiffLineSideBySideList.get(0).isFirst = true;
@@ -284,7 +231,7 @@ public class SourceUtils {
 		for( int inx = 0 ; inx < srcDiffLineSideBySideTotalList.size() ; inx++){
 			DiffLineSideBySide srcDiffLineSideBySide = srcDiffLineSideBySideTotalList.get(inx);
 			DiffLineSideBySide trgDiffLineSideBySide = trgDiffLineSideBySideTotalList.get(inx);
-			System.out.println( srcDiffLineSideBySide.testIdx + " | " + srcDiffLineSideBySide.index + " | " +srcDiffLineSideBySide.isFirst + " | "+srcDiffLineSideBySide.isLast + " | " + trgDiffLineSideBySide.testIdx + " | " + trgDiffLineSideBySide.index + " | " + trgDiffLineSideBySide.isFirst + " | " + trgDiffLineSideBySide.isLast);
+			System.out.println( srcDiffLineSideBySide.index + " | " +srcDiffLineSideBySide.isFirst + " | "+srcDiffLineSideBySide.isLast + " | " + trgDiffLineSideBySide.index + " | " + trgDiffLineSideBySide.isFirst + " | " + trgDiffLineSideBySide.isLast);
 		}
 		//
 		
@@ -294,26 +241,14 @@ public class SourceUtils {
 		boolean isSrcContentLonger = srcContentList.length > trgContentList.length;
 		int maxLine =  isSrcContentLonger ? srcContentList.length:trgContentList.length;
 		
-		StringBuffer html = new StringBuffer("<table>");
+		StringBuffer html = new StringBuffer("<table cellspacing=\"0\">");
 		int lineIndex = 0;
 		int srcContentIndex = 0;
 		int trgContentIndex = 0;
 		while( lineIndex < maxLine ){
 			StringBuffer tr = new StringBuffer("<tr>");
-			
-			//System.out.println( "lineIndex : " + lineIndex + " | maxLine : " + maxLine );
-			
 			if( diffLineSideBySideCombinedMap.containsKey(lineIndex)){
 				DiffLineSideBySideCombined diffLineSideBySideCombined = diffLineSideBySideCombinedMap.get(lineIndex);
-
-				
-				
-				//System.out.println( "diffLineSideBySideCombined.isEmpty : " + diffLineSideBySideCombined.isEmptySrc + " | " + diffLineSideBySideCombined.isEmptyTrg);
-				//System.out.println(" srcContentList[srcContentIndex]:"+ srcContentList[srcContentIndex]);
-				//System.out.println(" trgContentList[trgContentIndex]:"+ trgContentList[trgContentIndex]);
-				
-				
-				
 				String trCls = (diffLineSideBySideCombined.isFirst?" isFirst":"") + (diffLineSideBySideCombined.isLast?" isLast":"");
 				if(trCls.length() > 1 ) tr = new StringBuffer("<tr class=\"" + trCls + "\">");
 				if(diffLineSideBySideCombined.isEmptySrc){
@@ -349,7 +284,6 @@ public class SourceUtils {
 		boolean isFirst = false;
 		boolean isLast = false;
 		boolean isEmpty = false;
-		int testIdx;
 	}
 	
 	class DiffLineSideBySideCombined{

@@ -10,6 +10,7 @@ public class SVNSourceDiff {
 	private SVNSource src;
 	private SVNSource trg;
 	private boolean isNewContent = false;
+	private boolean isValid = true;
 	
 	public SVNSourceDiff(){
 		
@@ -60,6 +61,13 @@ public class SVNSourceDiff {
 		this.isNewContent = isNewContent;
 	}
 
+	public boolean getIsValid(){
+		return isValid;
+	}
+	
+	public void setIsValid(boolean isValid){
+		this.isValid = isValid;
+	}
 
 
 	public static class Builder{
@@ -95,6 +103,11 @@ public class SVNSourceDiff {
 		
 		public Builder isNewContent(boolean isNewContent){
 			svnSourceDiff.setIsNewContent(isNewContent);
+			return this;
+		}
+		
+		public Builder isValid(boolean isValid){
+			svnSourceDiff.setIsValid(isValid);
 			return this;
 		}
 		

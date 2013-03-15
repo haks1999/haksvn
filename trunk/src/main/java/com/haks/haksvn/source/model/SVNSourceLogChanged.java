@@ -1,7 +1,6 @@
 package com.haks.haksvn.source.model;
 
 import org.springframework.stereotype.Component;
-import org.tmatesoft.svn.core.SVNLogEntryPath;
 
 @Component
 public class SVNSourceLogChanged {

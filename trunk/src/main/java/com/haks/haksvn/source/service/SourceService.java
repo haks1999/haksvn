@@ -6,7 +6,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.haks.haksvn.common.paging.model.NextPaging;
-import com.haks.haksvn.common.paging.model.Paging;
 import com.haks.haksvn.repository.model.Repository;
 import com.haks.haksvn.repository.service.RepositoryService;
 import com.haks.haksvn.repository.service.SVNRepositoryService;
@@ -58,6 +57,7 @@ public class SourceService {
 	public SVNSourceDiff retrieveDiffByPrevious(int repositorySeq, SVNSource svnSource){
 		Repository repository = repositoryService.retrieveAccesibleActiveRepositoryByRepositorySeq(repositorySeq);
 		svnSource = svnRepositoryService.checkIsTagAndChangeRevision(repository, svnSource);
+		//svnSource = retrieveSVNSourceWithoutContentAndLogs(repository.getRepositorySeq(), svnSource);
 		SVNSourceDiff svnSourceDiff = svnRepositoryService.retrieveDiffByPrevious(repository, svnSource);
 		
 		return svnSourceDiff;
