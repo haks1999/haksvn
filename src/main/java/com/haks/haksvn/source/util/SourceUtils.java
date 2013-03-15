@@ -130,7 +130,8 @@ public class SourceUtils {
 		List<DiffLineSideBySide> trgDiffLineSideBySideTotalList = new ArrayList<DiffLineSideBySide>(0);
 		List<DiffLineSideBySide> srcDiffLineSideBySideList = new ArrayList<DiffLineSideBySide>(0);
 		List<DiffLineSideBySide> trgDiffLineSideBySideList = new ArrayList<DiffLineSideBySide>(0);
-		int index = 0, changeInRow = 0, overLineCnt = 0;
+		int index = 0, noneMarkInRow =0, changeInRow = 0;
+		int srcEmptyLineCnt = 0, trgEmptyLineCnt = 0;
 		boolean currentBoundChanged = false,needFixLineNum = false;
 		String befMark = "";
 		int srcChangedLastLineNum = -1,trgChangedLastLineNum = -1;
@@ -140,22 +141,33 @@ public class SourceUtils {
 				int changedSrcStartLineNum = Integer.parseInt(line.substring(line.indexOf(MARK_SRC)+1, line.indexOf(",")));
 				int changedTrgStartLineNum = Integer.parseInt(line.substring(line.indexOf(MARK_TRG)+1, line.lastIndexOf(",")));
 				
+				changedSrcStartLineNum += srcEmptyLineCnt;
+				changedTrgStartLineNum += trgEmptyLineCnt;
+				/*
+				if( srcEmptyLineCnt == trgEmptyLineCnt ){
+					//changedSrcStartLineNum += srcEmptyLineCnt;
+					//changedTrgStartLineNum += trgEmptyLineCnt;
+				}else if(srcEmptyLineCnt > trgEmptyLineCnt){
+					changedSrcStartLineNum += (srcEmptyLineCnt-trgEmptyLineCnt);
+				}else{
+					changedTrgStartLineNum += (trgEmptyLineCnt-srcEmptyLineCnt);
+				}
+				*/
+				
 				if( changedSrcStartLineNum > changedTrgStartLineNum ){
 					index = changedSrcStartLineNum;
-					if( changedSrcStartLineNum < changedTrgStartLineNum + overLineCnt - (changedSrcStartLineNum-changedTrgStartLineNum) ){
-						index = changedTrgStartLineNum + overLineCnt - (changedSrcStartLineNum-changedTrgStartLineNum);
-						//if( index > 173 ) index = index -5;//
-					}else{
-						overLineCnt = 0;
-					}
+					//if( changedSrcStartLineNum + srcEmptyLineCnt < changedTrgStartLineNum + trgEmptyLineCnt ){
+					//	index = changedTrgStartLineNum + trgEmptyLineCnt;
+					//}else{
+					//	trgEmptyLineCnt = 0;
+					//}
 				}else{
 					index = changedTrgStartLineNum;
-					if( changedTrgStartLineNum < changedSrcStartLineNum + overLineCnt - (changedTrgStartLineNum-changedSrcStartLineNum) ){
-						index = changedSrcStartLineNum + overLineCnt - (changedTrgStartLineNum-changedSrcStartLineNum);
-						//if( index > 173 ) index = index -5;//
-					}else{
-						overLineCnt = 0;
-					}
+					//if( changedTrgStartLineNum < changedSrcStartLineNum + srcEmptyLineCnt ){
+					//	index = changedSrcStartLineNum + srcEmptyLineCnt;
+					//}else{
+					//	srcEmptyLineCnt = 0;
+					//}
 				}
 				//index = changedSrcStartLineNum > changedTrgStartLineNum ? changedSrcStartLineNum:changedTrgStartLineNum;
 				currentBoundChanged = false;
@@ -163,38 +175,47 @@ public class SourceUtils {
 				continue;
 			}
 		  
+			
+			
+			
 			if( line.startsWith(MARK_SRC) ){
-				if( befMark.equals(MARK_SRC) || (currentBoundChanged && befMark.trim().equals("") && needFixLineNum)) index++;
-				//if( befMark.equals(MARK_SRC) || (currentBoundChanged && befMark.trim().equals(""))) index++;
-				if( befMark.equals(MARK_TRG)){
-					index = index - changeInRow + 1;
-					changeInRow = 0;
-				}
+				//if( befMark.equals(MARK_SRC) || (currentBoundChanged && befMark.trim().equals("") && needFixLineNum)) index++;
+				if( befMark.equals(MARK_SRC) || (currentBoundChanged && befMark.trim().length()<1)) index++;
+				//if( befMark.equals(MARK_TRG)){
+					//index = index - changeInRow + 1;
+				//	changeInRow = 0;
+				//}
 				DiffLineSideBySide diffLineSideBySide = sourceUtils.new DiffLineSideBySide();
 				diffLineSideBySide.index = index;
+				diffLineSideBySide.testIdx = index;
 				srcDiffLineSideBySideList.add(diffLineSideBySide);
 				srcChangedLastLineNum = index;
 				currentBoundChanged = true;
 				needFixLineNum = false;
-				changeInRow++;
+				//changeInRow++;
+				noneMarkInRow = 0;
 			}else if( line.startsWith(MARK_TRG) ){
-				if( befMark.equals(MARK_TRG) || (currentBoundChanged && befMark.trim().equals("") && needFixLineNum)) index++;
-				//if( befMark.equals(MARK_TRG) || (currentBoundChanged && befMark.trim().equals(""))) index++;
-				if( befMark.equals(MARK_SRC)){
-					index = index - changeInRow + 1;
-					changeInRow = 0;
-				}
+				//if( befMark.equals(MARK_TRG) || (currentBoundChanged && befMark.trim().equals("") && needFixLineNum)) index++;
+				if( befMark.equals(MARK_TRG) || (currentBoundChanged && befMark.trim().length()<1)) index++;
+				//if( befMark.equals(MARK_SRC)){
+					//index = index - changeInRow + 1;
+				//	changeInRow = 0;
+				//}
+				//if(currentBoundChanged && needFixLineNum) index--;
 				DiffLineSideBySide diffLineSideBySide = sourceUtils.new DiffLineSideBySide();
 				diffLineSideBySide.index = index;
+				diffLineSideBySide.testIdx = index;
 				trgDiffLineSideBySideList.add(diffLineSideBySide);
 				trgChangedLastLineNum = index;
 				currentBoundChanged = true;
 				needFixLineNum = false;
-				changeInRow++;
+				//changeInRow++;
+				noneMarkInRow = 0;
 			}else{
 				index++;
-				changeInRow = 0;
-				needFixLineNum = true;
+				//changeInRow = 0;
+				noneMarkInRow++;
+				//needFixLineNum = true;
 				if( srcDiffLineSideBySideList.size() > 0 || trgDiffLineSideBySideList.size() > 0){
 					int changedSrcLineCnt = srcDiffLineSideBySideList.size();
 					int changedTrgLineCnt = trgDiffLineSideBySideList.size();
@@ -205,8 +226,10 @@ public class SourceUtils {
 						for( int inx = 0 ; inx < changedSrcLineCnt-changedTrgLineCnt ; inx++ ){
 							DiffLineSideBySide diffLineSideBySide = sourceUtils.new DiffLineSideBySide();
 							diffLineSideBySide.index = ++trgChangedLastLineNum;
+							diffLineSideBySide.testIdx = index;
 							diffLineSideBySide.isEmpty = true;
-							overLineCnt++;
+							needFixLineNum = true;
+							trgEmptyLineCnt++;
 							trgDiffLineSideBySideList.add(diffLineSideBySide);
 						}
 					}else if( changedSrcLineCnt < changedTrgLineCnt ){
@@ -216,8 +239,10 @@ public class SourceUtils {
 						for( int inx = 0 ; inx < changedTrgLineCnt-changedSrcLineCnt ; inx++ ){
 							DiffLineSideBySide diffLineSideBySide = sourceUtils.new DiffLineSideBySide();
 							diffLineSideBySide.index = ++srcChangedLastLineNum;
+							diffLineSideBySide.testIdx = index;
 							diffLineSideBySide.isEmpty = true;
-							overLineCnt++;
+							needFixLineNum = true;
+							srcEmptyLineCnt++;
 							srcDiffLineSideBySideList.add(diffLineSideBySide);
 						}
 					}
@@ -236,7 +261,6 @@ public class SourceUtils {
 				
 		  	}
 			befMark = line.length() < 1 ? "":line.substring(0,1);
-			
 		}
 		scanner.close();
 		
@@ -260,7 +284,7 @@ public class SourceUtils {
 		for( int inx = 0 ; inx < srcDiffLineSideBySideTotalList.size() ; inx++){
 			DiffLineSideBySide srcDiffLineSideBySide = srcDiffLineSideBySideTotalList.get(inx);
 			DiffLineSideBySide trgDiffLineSideBySide = trgDiffLineSideBySideTotalList.get(inx);
-			System.out.println( srcDiffLineSideBySide.index + " | " +srcDiffLineSideBySide.isFirst + " | "+srcDiffLineSideBySide.isLast + " | " + trgDiffLineSideBySide.index + " | " + trgDiffLineSideBySide.isFirst + " | " + trgDiffLineSideBySide.isLast);
+			System.out.println( srcDiffLineSideBySide.testIdx + " | " + srcDiffLineSideBySide.index + " | " +srcDiffLineSideBySide.isFirst + " | "+srcDiffLineSideBySide.isLast + " | " + trgDiffLineSideBySide.testIdx + " | " + trgDiffLineSideBySide.index + " | " + trgDiffLineSideBySide.isFirst + " | " + trgDiffLineSideBySide.isLast);
 		}
 		//
 		
@@ -277,7 +301,7 @@ public class SourceUtils {
 		while( lineIndex < maxLine ){
 			StringBuffer tr = new StringBuffer("<tr>");
 			
-			System.out.println( "lineIndex : " + lineIndex + " | maxLine : " + maxLine );
+			//System.out.println( "lineIndex : " + lineIndex + " | maxLine : " + maxLine );
 			
 			if( diffLineSideBySideCombinedMap.containsKey(lineIndex)){
 				DiffLineSideBySideCombined diffLineSideBySideCombined = diffLineSideBySideCombinedMap.get(lineIndex);
@@ -325,6 +349,7 @@ public class SourceUtils {
 		boolean isFirst = false;
 		boolean isLast = false;
 		boolean isEmpty = false;
+		int testIdx;
 	}
 	
 	class DiffLineSideBySideCombined{
