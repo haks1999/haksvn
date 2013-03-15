@@ -1,4 +1,4 @@
-package com.haks.haksvn.request.model;
+package com.haks.haksvn.transfer.model;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
