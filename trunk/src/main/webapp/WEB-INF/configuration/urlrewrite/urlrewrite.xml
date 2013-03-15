@@ -17,7 +17,7 @@
     </rule>
     <rule>
         <from>/source/(browse|changes)/([0-9]+)/(.+)/resources(/?)$</from>
-        <to>/source/$1/r/$3/$4/_resources_</to>
+        <to>/source/$1/r/$2/$3/_resources_</to>
     </rule>
     <rule>
         <from>/source/(browse|changes)/([0-9]+)/(.+)/resources/(.+)</from>
