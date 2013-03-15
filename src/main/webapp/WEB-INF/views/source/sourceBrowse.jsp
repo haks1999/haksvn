@@ -104,10 +104,11 @@
 				<div class="bottom"><div></div></div>
 			</div>
 			
-			<div class="box header" style="position:absolute;display:block;width:300px;float:left;margin-right:-370px;left:10px;">
+			<div class="box">
 				<div class="head"><div></div></div>
-				<h2>
-					<font class="path">Path:
+				<div class="desc">
+					<p>
+						<font class="path">Path:
 						<c:set var="pathLink" value="${repoBrowsePathLink}"/>
 						/<a href="${pathLink}">[SVN root]</a>
 						<c:forEach var="pathFrag" items="${fn:split(path, '/')}">
@@ -115,6 +116,17 @@
 							/<a href="${pathLink}"><c:out value="${pathFrag}" /></a>
 						</c:forEach>
 					</font>
+					</p>
+				</div>
+				<div class="bottom"><div></div></div>
+			</div>
+			
+			
+			
+			<div class="box header" style="position:absolute;display:block;width:300px;float:left;margin-right:-370px;left:10px;">
+				<div class="head"><div></div></div>
+				<h2>
+					Repository Tree
 				</h2>
 				<div class="desc">
 					<div id="div_sourceTree" style="height:300px;" ></div>

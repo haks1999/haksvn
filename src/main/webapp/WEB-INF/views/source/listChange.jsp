@@ -41,7 +41,7 @@
 		});
 	};
 	
-	var _paging = {start:-1,end:-1,limit:30,direction:0};
+	var _paging = {start:-1,end:-1,limit:50,direction:0};
 	function initPagingInfo(){
 		$('span.paging .start').text('');
 		$('span.paging .end').text('');

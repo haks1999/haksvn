@@ -4,10 +4,6 @@ import java.util.List;
 
 import org.springframework.stereotype.Component;
 
-import com.haks.haksvn.repository.model.Repository;
-import com.haks.haksvn.repository.model.Repository.Builder;
-import com.haks.haksvn.user.model.User;
-
 @Component
 public class SVNSource {
 
