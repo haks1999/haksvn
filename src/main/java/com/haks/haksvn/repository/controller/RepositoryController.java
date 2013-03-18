@@ -58,7 +58,7 @@ public class RepositoryController {
     */
     
     @RequestMapping(value="/add")
-    public String forwardRepositoryAddPage(ModelMap model, @ModelAttribute("repository") Repository repository, HttpServletRequest request) {
+    public String forwardRepositoryAddPage(ModelMap model, @ModelAttribute("repository") Repository repository) {
     	String authzTemplate = String.format(propertyService.retrievePropertyByPropertyKey("svn.authz.template.default").getPropertyValue());
     	repository.setAuthzTemplate(authzTemplate);
     	model.addAttribute("repository", repository );

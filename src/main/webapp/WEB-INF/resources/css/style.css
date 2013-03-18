@@ -607,6 +607,7 @@ font-size:12px;
 
 /* Input size */
 .w_1 {width:1em;}.w_2 {width:2em}.w_3 {width:3em}.w_4 {width:4em}.w_5 {width:5em}.w_6 {width:6em}.w_7 {width:7em}.w_8 {width:8em}.w_9 {width:9em}.w_10 {width:10em}.w_11 {width:11em}.w_12 {width:12em}.w_13 {width:13em}.w_14 {width:14em}.w_15 {width:15em}.w_16 {width:16em}.w_17 {width:17em}.w_18 {width:18em}.w_19 {width:19em}.w_20 {width:20em}.w_21 {width:21em}.w_22 {width:22em}.w_23 {width:23em}.w_24 {width:24em}.w_25 {width:25em}.w_26 {width:26em}.w_27 {width:27em}.w_28 {width:28em}.w_29 {width:29em}.w_30 {width:30em}.w_31 {width:31em}.w_32 {width:32em}.w_33 {width:33em}.w_34 {width:34em}.w_35 {width:35em}.w_36 {width:36em}.w_37 {width:37em}.w_38 {width:38em}.w_39 {width:39em}.w_40 {width:40em}
+.w_50 {width:50em}.w_60 {width:60em}
 
 form input.text:focus {
 background:#fff;
@@ -615,7 +616,6 @@ background:#fff;
 form select {
 border:1px solid #dbdbdb;
 color:#666;
-background:#f0f0f0;
 padding:5px;
 }
 
@@ -800,7 +800,7 @@ color:#dbdbdb;
 /*------------------------LIST----------------------------*/
 
 /*-------------------------ANCHOR-------------------------*/
-a {font-size:12px;color:#666;line-height:20px;}
+a {font-size:12px;color:#666;line-height:20px;cursor:pointer;}
 a:hover {color:#444;}
 a.logo {display:block;float:left;padding:4px 0 0 0;}
 .dropdown a {color:#fff;}

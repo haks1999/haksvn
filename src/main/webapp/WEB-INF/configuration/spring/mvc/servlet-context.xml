@@ -22,6 +22,7 @@
 	<mvc:resources mapping="**/*.jpg" location="/WEB-INF/resources/" />
 	<mvc:resources mapping="**/*.png" location="/WEB-INF/resources/" />
 	<mvc:resources mapping="**/*.ico" location="/WEB-INF/resources/" />
+	<mvc:resources mapping="**/*.html" location="/WEB-INF/resources/" />
 
 	<mvc:interceptors>
 		<mvc:interceptor>
