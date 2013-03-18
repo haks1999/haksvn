@@ -38,5 +38,12 @@
 		    	$('#loader-main').show();
 		    }
 		});
+		$(function() {
+			$('select.all').each(function(){
+				var o = new Option("All", "");
+				$(o).html("All");
+				$(this).prepend(o);
+			});
+		});
 	</script>
 </head>

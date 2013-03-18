@@ -13,24 +13,24 @@ insert into menu (menu_seq, menu_name, menu_url, parent_menu_seq, menu_order, me
 insert into menu (menu_seq, menu_name, menu_url, parent_menu_seq, menu_order, menu_level, view_type) values (13, 	'Browse'			, '/source/browse'							,12	,100, 2, 'menu.view.type.code.default');
 insert into menu (menu_seq, menu_name, menu_url, parent_menu_seq, menu_order, menu_level, view_type) values (14, 	'Changes'			, '/source/changes'							,12	,200, 2, 'menu.view.type.code.default');
 
-insert into code (code_id, code_group, code_name, code_value, code_order) values ('menu.view.type.code.default'			,'menu.view.type.code'			,'default'		,'00'	,10 );
+insert into code (code_id, code_group, code_name, code_value, code_order) values ('menu.view.type.code.default'		,'menu.view.type.code'			,'default'		,'00'	,10 );
 insert into code (code_id, code_group, code_name, code_value, code_order) values ('menu.view.type.code.leftmenu'		,'menu.view.type.code'			,'leftmenu'		,'01'	,20 );
 insert into code (code_id, code_group, code_name, code_value, code_order) values ('transfer.type.code.normal'			,'transfer.type.code'			,'normal'		,'00'	,10 );
 insert into code (code_id, code_group, code_name, code_value, code_order) values ('transfer.type.code.emergency'		,'transfer.type.code'			,'emergency'	,'01'	,20 );
-insert into code (code_id, code_group, code_name, code_value, code_order) values ('transfer.state.code.keep'			,'transfer.state.code'			,'Kepping'		,'00'	,10 );
-insert into code (code_id, code_group, code_name, code_value, code_order) values ('transfer.state.code.request'			,'transfer.state.code'			,'Request'		,'10'	,20 );
+insert into code (code_id, code_group, code_name, code_value, code_order) values ('transfer.state.code.keep'			,'transfer.state.code'			,'Keep'			,'00'	,10 );
+insert into code (code_id, code_group, code_name, code_value, code_order) values ('transfer.state.code.request'		,'transfer.state.code'			,'Request'		,'10'	,20 );
 insert into code (code_id, code_group, code_name, code_value, code_order) values ('transfer.state.code.complete'		,'transfer.state.code'			,'Complete'		,'20'	,30 );
-insert into code (code_id, code_group, code_name, code_value, code_order) values ('transfer.state.code.reject'			,'transfer.state.code'			,'Reject'		,'30'	,40 );
+insert into code (code_id, code_group, code_name, code_value, code_order) values ('transfer.state.code.reject'		,'transfer.state.code'			,'Reject'		,'30'	,40 );
 insert into code (code_id, code_group, code_name, code_value, code_order) values ('common.boolean.yn.code.y'			,'common.boolean.yn.code'		,'Y'			,'true'	,10 );
 insert into code (code_id, code_group, code_name, code_value, code_order) values ('common.boolean.yn.code.n'			,'common.boolean.yn.code'		,'N'			,'false',20 );
 insert into code (code_id, code_group, code_name, code_value, code_order) values ('user.auth.type.code.system-admin'	,'user.auth.type.code'			,'system-admin'	,'10'	,10 );
 insert into code (code_id, code_group, code_name, code_value, code_order) values ('user.auth.type.code.reviewer'		,'user.auth.type.code'			,'reviewer'		,'20'	,20 );
 insert into code (code_id, code_group, code_name, code_value, code_order) values ('user.auth.type.code.commiter'		,'user.auth.type.code'			,'commiter'		,'30'	,30 );
-insert into code (code_id, code_group, code_name, code_value, code_order) values ('server.connect.type.code.local'		,'server.connect.type.code'		,'local'		,'n/a'	,10 );
+insert into code (code_id, code_group, code_name, code_value, code_order) values ('server.connect.type.code.local'	,'server.connect.type.code'		,'local'		,'n/a'	,10 );
 --insert into code (code_id, code_group, code_name, code_value, code_order) values ('server.connect.type.code.ssh'		,'server.connect.type.code'		,'ssh'			,'22'	,20 );
 --insert into code (code_id, code_group, code_name, code_value, code_order) values ('server.connect.type.code.telnet'	,'server.connect.type.code'		,'telnet'		,'23'	,20 );
-insert into code (code_id, code_group, code_name, code_value, code_order) values ('svn.passwd.type.code.plain'			,'svn.passwd.type.code'			,'plain text'	,'10'	,10 );
-insert into code (code_id, code_group, code_name, code_value, code_order) values ('svn.passwd.type.code.md5-apache'		,'svn.passwd.type.code'			,'MD5(Apache)'	,'20'	,20 );
+insert into code (code_id, code_group, code_name, code_value, code_order) values ('svn.passwd.type.code.plain'		,'svn.passwd.type.code'			,'plain text'	,'10'	,10 );
+insert into code (code_id, code_group, code_name, code_value, code_order) values ('svn.passwd.type.code.md5-apache'	,'svn.passwd.type.code'			,'MD5(Apache)'	,'20'	,20 );
 
 insert into properties (property_key, property_value) values ('svn.authz.template.default'	,'[groups]%nsystem-admin=#system-admin#%ncommiter=#commiter#%nreviewer=#reviewer#%n%n[#svn_name#:/]%n@system-admin=rw%n%n[#svn_name#:#trunk_path#]%n@reviewer=rw%n@commiter=rw%n%n[#svn_name#:#branches_path#]%n@reviewer=r%n@commiter=r%n%n[#svn_name#:#tags_path#]%n@reviewer=rw%n@commiter=r');
 

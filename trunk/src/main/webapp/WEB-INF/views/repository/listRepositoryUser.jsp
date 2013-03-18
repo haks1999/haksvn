@@ -151,7 +151,7 @@
 </script>
 <div id="table" class="help">
 	<h1></h1>
-	<div class="col w10 last">
+	<div class="col w10">
 		<div class="content">
 			<div class="box">
 				<div class="head"><div></div></div>

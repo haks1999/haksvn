@@ -142,7 +142,73 @@ public class Transfer {
 		this.sourceList = sourceList;
 	}
 	
-	
+	public static class Builder{
+		
+		private Transfer transfer;
+		
+		private Builder(Transfer transfer){
+			this.transfer = transfer;
+		}
+		
+		public static Builder getBuilder(Transfer transfer){
+			return new Builder(transfer);
+		}
+		
+		public Transfer build(){
+			return transfer;
+		}
+		
+		public Builder transferSeq(int transferSeq){
+			transfer.setTransferSeq(transferSeq);
+			return this;
+		}
+		
+		public Builder transferTypeCode(Code code){
+			transfer.setTransferTypeCode( code );
+			return this;
+		}
+		
+		public Builder transferStateCode(Code code){
+			transfer.setTransferStateCode( code );
+			return this;
+		}
+		
+		public Builder description(String description){
+			transfer.setDescription(description);
+			return this;
+		}
+		
+		public Builder requestUser(User user){
+			transfer.setRequestUser(user);
+			return this;
+		}
+		
+		public Builder requestDate(long requestDate){
+			transfer.setRequestDate(requestDate);
+			return this;
+		}
+		
+		public Builder trasnferUser(User user){
+			transfer.setTransferUser(user);
+			return this;
+		}
+		
+		public Builder transferDate(long transferDate){
+			transfer.setTransferDate(transferDate);
+			return this;
+		}
+		
+		public Builder repositorySeq(int repositorySeq){
+			transfer.setRepositorySeq(repositorySeq);
+			return this;
+		}
+		
+		public Builder sourceList(List<TransferSource> sourceList){
+			transfer.setSourceList(sourceList);
+			return this;
+		}
+		
+	} 
 	
 	
 	

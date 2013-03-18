@@ -18,6 +18,7 @@ font-size:12px;
 border:1px solid #dbdbdb;
 color:#666;
 padding:5px;
+vertical-align: middle;
 }
 
 form input.plaincheckbox {
@@ -162,6 +163,14 @@ line-height:22px;
 vertical-align: middle;
 margin-right:3px;	
 }
+div.search p{
+margin-top:5px;
+}
+div.search p label{
+display:inline-block;
+text-align:right;
+margin-left:5px;
+}
 .desc span.menu-tr{
 float:right;
 margin-left:5px;
@@ -244,6 +253,10 @@ background: #eee;
 border: 1px solid #888;
 border-width: 0 1px 0 1px;
 }
+form input.text.readOnly{
+border: 1px solid #fff;
+background:none;
+}
 .font12{
 font-size:12pt;
 }
@@ -266,3 +279,5 @@ visibility:hidden;
 background-image:url(../images/ajax-loader_arrow.gif);
 background-repeat:no-repeat;
 }
+label.w_30{width:30px;} label.w_40{width:40px;} label.w_50{width:50px;} label.w_60{width:60px;} label.w_70{width:70px;} label.w_80{width:80px;} label.w_90{width:90px;} label.w_100{width:100px;}
+label.w_110{width:110px;} label.w_120{width:120px;} label.w_130{width:130px;} label.w_140{width:140px;} label.w_150{width:150px;}
