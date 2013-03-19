@@ -5,7 +5,6 @@ import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
 
 import org.apache.tiles.Attribute;
 import org.apache.tiles.AttributeContext;
@@ -31,58 +30,60 @@ public class MenuInterceptor extends HandlerInterceptorAdapter {
 	public void afterCompletion(HttpServletRequest request,
 			HttpServletResponse response, Object obj, Exception ex)
 			throws Exception {
-
 	}
 
 	@Override
 	public boolean preHandle(HttpServletRequest request,
 			HttpServletResponse response, Object handler) throws Exception {
-		String path = request.getRequestURI();
 		return true;
-		//return (!path.startsWith("/resources/") && (path.indexOf(".json") < 0)); 
 	}
-
-	//TODO 여기 로직 다 뜯어 고칠 것
-	private final String[] dynamicMenuRestPathList = {"/source/browse","/source/changes"};
-	@Override
-	public void postHandle(HttpServletRequest request,
-			HttpServletResponse response, Object handler, ModelAndView mv)
-			throws Exception {
-		
-		if(mv == null || mv.getViewName() == null || "".equals(mv.getViewName())) return;
-		
-		if(mv.getViewName().indexOf("forward:") > -1 || mv.getViewName().indexOf("redirect:") > -1) return;
-		
-		List<MenuNode> menuList = menuService.retrieveMenuList();
-        List<MenuNode> leftMenuList = new ArrayList<MenuNode>();
-		HttpSession session = request.getSession();
-		
-        
+	
+	private String[] splitUrlByLevel(HttpServletRequest request){
 		String path = request.getRequestURI().substring(request.getContextPath().length());
-		String level[] = path.split("/");
-		
+		return path.split("/");
+	}
+	
+	// dynamic list 는 rest 방식으로 뒤에 뭐가 많이 붙는 케이스
+	private final String[] dynamicMenuRestPathList = {"/source/browse","/source/changes"};
+	private String transUrlToMenuPath(HttpServletRequest request){
+		String level[] = splitUrlByLevel(request);
 		String viewPath = "/"+level[1]+"/"+level[2] + ((level.length > 3 ) ? ("/" + level[3]):"");
 		for( String dynamicMenuRestPath : dynamicMenuRestPathList ){
 			if( viewPath.startsWith(dynamicMenuRestPath)) viewPath = dynamicMenuRestPath;
 		}
-		String targetJsp = "/WEB-INF/views/" + mv.getViewName() + ".jsp";
-
-		ApplicationContext ac = ServletUtil.getApplicationContext(request
-				.getSession().getServletContext());
+		return viewPath;
+	}
+	
+	private void setTilesContent(String viewName, HttpServletRequest request, HttpServletResponse response){
+		String targetJsp = "/WEB-INF/views/" + viewName + ".jsp";
+		ApplicationContext ac = ServletUtil.getApplicationContext(request.getSession().getServletContext());
 		TilesContainer tilesContainer = TilesAccess.getContainer(ac);
-		Request tilesRequest = new ServletRequest(
-				tilesContainer.getApplicationContext(), request, response);
-		AttributeContext attrContext = tilesContainer
-				.getAttributeContext(tilesRequest);
+		Request tilesRequest = new ServletRequest(tilesContainer.getApplicationContext(), request, response);
+		AttributeContext attrContext = tilesContainer.getAttributeContext(tilesRequest);
 		attrContext.putAttribute("content", new Attribute(targetJsp), true);
+	}
 
+	//TODO 여기 로직 다 뜯어 고칠 것
+	@Override
+	public void postHandle(HttpServletRequest request,
+							HttpServletResponse response, Object handler, ModelAndView mv)
+											throws Exception {
+		
+		if(mv == null || mv.getViewName() == null || "".equals(mv.getViewName())) return;
+		
+		setTilesContent(mv.getViewName(), request, response);
+		
+		String viewPath = transUrlToMenuPath(request);
+		String[] level = splitUrlByLevel(request);
 
+		List<MenuNode> menuList = menuService.retrieveMenuList();
+        List<MenuNode> leftMenuList = new ArrayList<MenuNode>();
+        String viewName = "main";
         String selectedMenuNameLevel1 = "";
         String selectedMenuNameLevel2 = "";
         String selectedMenuNameLevel3 = "";
 		if("menu.view.type.code.default".equals(menuService.retireveViewType(viewPath))){
 			// ecache 로 변경할 것 menuList 포함
-			//String requestJspPath = "";
 			for( MenuNode menuLevel1 : menuList ){
 				for( MenuNode menuLevel2 : menuLevel1.getSubMenuList() ){
 					String[] splitedMenuNames = menuLevel2.getMenuUrl().split("/");
@@ -95,22 +96,14 @@ public class MenuInterceptor extends HandlerInterceptorAdapter {
 					}
 				}
 			}
-			
-			mv.setViewName("main");
-			
-			session.setAttribute("viewType", "main");
-			session.setAttribute("selectedMenuNameLevel1", selectedMenuNameLevel1);
-			session.setAttribute("selectedMenuNameLevel2", selectedMenuNameLevel2);
-			session.setAttribute("selectedMenuNameLevel3", selectedMenuNameLevel3);
 		}
 		else if("menu.view.type.code.leftmenu".equals(menuService.retireveViewType(viewPath))){
+			viewName = "mainleftmenu";
 			// ecache 로 변경할 것 menuList 포함
-			//String requestJspPath = "";
 			for( MenuNode menuLevel1 : menuList ){
 				for( MenuNode menuLevel2 : menuLevel1.getSubMenuList() ){
 					for( MenuNode menuLevel3 : menuLevel2.getSubMenuList() ){
 						if( ("/"+level[1]+"/"+level[2] + "/" + level[3]).equals(menuLevel3.getMenuUrl()) ){
-							//requestJspPath = menuLevel3.getMenuJspPath();
 							leftMenuList = menuLevel2.getSubMenuList();
 							selectedMenuNameLevel1 = menuLevel1.getMenuName();
 							selectedMenuNameLevel2 = menuLevel2.getMenuName();
@@ -120,22 +113,14 @@ public class MenuInterceptor extends HandlerInterceptorAdapter {
 					}
 				}
 			}
-			
-			mv.setViewName("mainleftmenu");
-			session.setAttribute("viewType", "mainleftmenu");
-			session.setAttribute("selectedMenuNameLevel1", selectedMenuNameLevel1);
-			session.setAttribute("selectedMenuNameLevel2", selectedMenuNameLevel2);
-			session.setAttribute("selectedMenuNameLevel3", selectedMenuNameLevel3);
-		}else{
-			mv.setViewName(session.getAttribute("viewType").toString());
 		}
-		
 
+		mv.setViewName(viewName);
 		mv.addObject("menuList", menuList);
 		mv.addObject("leftMenuList", leftMenuList);
-		mv.addObject("selectedMenuNameLevel1", session.getAttribute("selectedMenuNameLevel1").toString());
-		mv.addObject("selectedMenuNameLevel2", session.getAttribute("selectedMenuNameLevel2").toString());
-		mv.addObject("selectedMenuNameLevel3", session.getAttribute("selectedMenuNameLevel3").toString());
+		mv.addObject("selectedMenuNameLevel1", selectedMenuNameLevel1);
+		mv.addObject("selectedMenuNameLevel2", selectedMenuNameLevel2);
+		mv.addObject("selectedMenuNameLevel3", selectedMenuNameLevel3);
 	}
 
 }

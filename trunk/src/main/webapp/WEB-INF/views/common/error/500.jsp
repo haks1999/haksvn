@@ -1,4 +1,8 @@
 <%@ include file="/WEB-INF/views/common/include/taglib.jspf"%>
+<%@ page isErrorPage="true" %> 
+<%
+exception.printStackTrace();
+%>
 <div class="errorpage">
 	<div class="leftcolumn">
 		<h1>

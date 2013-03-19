@@ -39,4 +39,9 @@ public class CodeDao {
 		return result;
 	}
 	
+	public Code retrieveCode(String codeId){
+		Session session = sessionFactory.getCurrentSession();
+		return (Code)session.get(Code.class, codeId);
+	}
+	
 }

@@ -29,6 +29,10 @@ public class CodeService {
 		
 	}
 	
+	public Code retrieveCode(String codeId){
+		return codeDao.retrieveCode(codeId);
+	}
+	
 	public List<CodeGroup> retrieveCodeGroupList(){
 		List<Code> codeList = codeDao.retrieveCodeList();
 		Map<String,List<Code>> codeGroupMap = new HashMap<String,List<Code>>();

@@ -1,25 +1,13 @@
 package com.haks.haksvn.common.code.model;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
-import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 import org.hibernate.annotations.FilterDef;
 import org.hibernate.annotations.FilterDefs;
 import org.hibernate.annotations.ParamDef;
-
-import com.haks.haksvn.user.model.User;
 
 @Entity
 @Table(name="code")
@@ -118,4 +106,47 @@ public class Code {
 	*/
 	
 
+	public static class Builder{
+		
+		private Code code;
+		
+		private Builder(Code code){
+			this.code = code;
+		}
+		
+		public static Builder getBuilder(Code code){
+			return new Builder(code);
+		}
+		
+		public Code build(){
+			return code;
+		}
+		
+		public Builder codeId(String codeId){
+			code.setCodeId(codeId);
+			return this;
+		}
+		
+		public Builder codeGroup(String codeGroup){
+			code.setCodeGroup( codeGroup );
+			return this;
+		}
+		
+		public Builder codeName(String codeName){
+			code.setCodeName(codeName);
+			return this;
+		}
+		
+		public Builder codeValue(String codeValue){
+			code.setCodeValue(codeValue);
+			return this;
+		}
+		
+		public Builder codeOrder(int codeOrder){
+			code.setCodeOrder(codeOrder);
+			return this;
+		}
+		
+		
+	} 
 }

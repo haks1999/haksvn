@@ -2,9 +2,8 @@
 <script type="text/javascript">
 	$(function() {
 		//$('#repositoryForm').validate();
-		var pathname = window.location.pathname;
-		actionUrl = pathname.replace('/save','') + '/save';
-		$('#frm_repository').attr('action', actionUrl);
+		
+		$('#frm_transfer').attr('action', '<c:url value="/transfer/request/list" />' + '<c:out value="/${repositorySeq}/save"/>');
    	});
 	
 	
@@ -18,11 +17,11 @@
 				<p><span class="strong">Detail</span></p>
 				<p>
 					<form:label path="transferSeq" class="left">Transfer Seq</form:label>
-					<form:input class="text w_20 readOnly ${isNew?'visible-hidden':''}" path="transferSeq" readonly="true"/>
+					<form:input class="text w_20 readOnly ${mode_create?'visible-hidden':''}" path="transferSeq" readonly="true"/>
 				</p>
 				<p>
 					<form:label path="repositorySeq" class="left">Repository</form:label>
-					<form:select path="repositorySeq" disabled="${not isNew}" items="${repositoryList}" itemValue="repositorySeq" itemLabel="repositoryName"/>
+					<form:select path="repositorySeq" disabled="${not mode_create}" items="${repositoryList}" itemValue="repositorySeq" itemLabel="repositoryName"/>
 				</p>
 				<p>
 					<form:label path="transferTypeCode.codeId" class="left">Type</form:label>
@@ -43,15 +42,15 @@
 				</p>
 				<p>
 					<form:label path="requestDate" class="left">Request Date</form:label>
-					<form:input class="text w_30 readOnly ${isNew?'visible-hidden':''}" path="requestDate" readonly="true"/>
+					<form:input class="text w_30 readOnly ${mode_create?'visible-hidden':''}" path="requestDate" readonly="true"/>
 				</p>
 				<p>
 					<form:label path="transferUser.userId" class="left">Transfer User Id</form:label>
-					<form:input class="text w_30 readOnly ${isNew?'visible-hidden':''}" path="transferUser.userId" readonly="true"/>
+					<form:input class="text w_30 readOnly ${mode_create?'visible-hidden':''}" path="transferUser.userId" readonly="true"/>
 				</p>
 				<p>
 					<form:label path="transferDate" class="left">Transfer Date</form:label>
-					<form:input class="text w_30 readOnly ${isNew?'visible-hidden':''}" path="transferDate" readonly="true"/>
+					<form:input class="text w_30 readOnly ${mode_create?'visible-hidden':''}" path="transferDate" readonly="true"/>
 				</p>
 				<hr>
 				<p><span class="strong">Sources</span></p>

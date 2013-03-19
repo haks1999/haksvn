@@ -29,4 +29,9 @@ public class CodeUtils {
 	public static boolean isMD5ApacheEncrytion(String passwdType){
 		return "svn.passwd.type.code.md5-apache".equals(passwdType);
 	}
+	
+	// transfer
+	public static String getTransferKeepCodeId(){
+		return "transfer.state.code.keep";
+	}
 }
