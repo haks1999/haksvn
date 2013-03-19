@@ -1,8 +1,8 @@
 package com.haks.haksvn.user.model;
 
+import java.io.Serializable;
 import java.util.List;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -24,12 +24,13 @@ import org.hibernate.validator.constraints.NotEmpty;
 import com.haks.haksvn.common.code.model.Code;
 import com.haks.haksvn.repository.model.Repository;
 
+@SuppressWarnings("serial")
 @Entity
 @Table(name="users")
 @FilterDef(name="authAuthTypeCodeFilter", parameters = {
         @ParamDef(name = "codeGroup", type = "string")
         })
-public class User{
+public class User implements Serializable{
 
 	@Id
     @GeneratedValue(strategy=GenerationType.AUTO)

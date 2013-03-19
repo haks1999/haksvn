@@ -6,12 +6,14 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+
+import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.validator.constraints.NotEmpty;
 
 import com.haks.haksvn.common.code.model.Code;
 import com.haks.haksvn.user.model.User;
@@ -25,7 +27,9 @@ public class Transfer {
 	}
 	
 	@Id
-    @GeneratedValue(strategy=GenerationType.AUTO)
+    //@GeneratedValue(strategy=GenerationType.AUTO)
+	@GenericGenerator(name="transferSeqGen" , strategy="increment")
+	@GeneratedValue(generator="transferSeqGen")
 	@Column(name = "transfer_seq",unique = true, nullable = false)
 	private int transferSeq;
 	
@@ -38,6 +42,7 @@ public class Transfer {
 	private Code transferStateCode;
 	
 	@Column(name = "description", nullable = false, length=2000)
+	@NotEmpty(message="description : Mandantory Field")
 	private String description;
 	
 	@ManyToOne(fetch = FetchType.EAGER)
@@ -48,7 +53,7 @@ public class Transfer {
 	private long requestDate;
 	
 	@ManyToOne(fetch = FetchType.EAGER)
-	@JoinColumn(name="transfer_user_id", referencedColumnName="user_id")
+	@JoinColumn(name="transfer_user_id", referencedColumnName="user_id", nullable=true)
 	private User transferUser;
 	
 	@Column(name = "transfer_date")

@@ -28,16 +28,17 @@ public class TransferDao {
 				.createAlias("transferStateCode", "stcode")
 				.setFirstResult((int)paging.getStart())
 				.setMaxResults((int)paging.getLimit())
-				.add(Restrictions.eq("repository_seq", search.getRepositorySeq()))
-				.addOrder(Order.desc("request_date"));
+				.add(Restrictions.eq("repositorySeq", search.getRepositorySeq()))
+				.addOrder(Order.desc("requestDate"))
+				.addOrder(Order.desc("transferSeq"));
 		
 		if( search.getRequestUser() != null ){
 			String requestUserId = search.getRequestUser().getUserId();
-			if( requestUserId != null && requestUserId.length() > 0 ) crit.add(Restrictions.eq("requser.user_id", requestUserId));
+			if( requestUserId != null && requestUserId.length() > 0 ) crit.add(Restrictions.eq("requser.userId", requestUserId));
 		}
 		if( search.getTransferStateCode() != null ){
-			String transferStateCode = search.getRequestUser().getUserId();
-			if( transferStateCode != null && transferStateCode.length() > 0 ) crit.add(Restrictions.eq("stcode.code_id", transferStateCode));
+			String transferStateCode = search.getTransferStateCode().getCodeId();
+			if( transferStateCode != null && transferStateCode.length() > 0 ) crit.add(Restrictions.eq("stcode.codeId", transferStateCode));
 		}
 		
 		@SuppressWarnings("unchecked") List<Transfer> result = (List<Transfer>)crit.list();
@@ -46,6 +47,17 @@ public class TransferDao {
 		Paging.Builder.getBuilder(resultPaging).limit(paging.getLimit()).start(paging.getStart());
 		
 		return resultPaging;
+	}
+	
+	public Transfer addTransfer(Transfer transfer){
+		Session session = sessionFactory.getCurrentSession();
+		session.save(transfer);
+		return transfer;
+	}
+	
+	public Transfer retrieveTransferByTransferSeq( int transferSeq ){
+		Session session = sessionFactory.getCurrentSession();
+		return (Transfer)session.get(Transfer.class, transferSeq );
 	}
 	
 }
