@@ -79,9 +79,9 @@
 						<p>
 							<span>Date: <c:out value="${svnSource.log.date}"/></span>
 						</p>
-						<hr>
+						<hr/>
 						<p>
-							<span><c:out value="${svnSource.log.message}"/></span>
+							<span class="pre"><c:out value="${svnSource.log.message}"/></span>
 						</p>
 					</div>
 				</div>

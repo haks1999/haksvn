@@ -1,3 +1,6 @@
+hr{
+border-left:0;
+}
 tr.sample{
 	display:none;
 }
@@ -190,6 +193,13 @@ margin-bottom:10px;font-weight:bold;font-size:13pt;
 .box.align-tr{
 position:absolute;width:320px;z-index:10;right:10px;
 }
+.pre{
+white-space: pre-wrap;
+white-space: -moz-pre-wrap;
+white-space: -pre-wrap;
+white-space: -o-pre-wrap;
+word-wrap: break-word;
+}
 pre.diff{
 white-space: pre-wrap;
 white-space: -moz-pre-wrap;
@@ -279,7 +289,7 @@ display:none;
 visibility:hidden;
 }
 .loading{
-background-image:url(../images/ajax-loader_arrow.gif);
+background-image:url(../images/ajax-loader-s.gif);
 background-repeat:no-repeat;
 }
 td.w_30,label.w_30{width:30px;} td.w_40,label.w_40{width:40px;} td.w_50,label.w_50{width:50px;} td.w_60,label.w_60{width:60px;} td.w_70,label.w_70{width:70px;} td.w_80,label.w_80{width:80px;} td.w_90,label.w_90{width:90px;} td.w_100,label.w_100{width:100px;}
