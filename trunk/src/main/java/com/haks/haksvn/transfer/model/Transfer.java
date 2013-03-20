@@ -193,7 +193,7 @@ public class Transfer {
 			return this;
 		}
 		
-		public Builder trasnferUser(User user){
+		public Builder transferUser(User user){
 			transfer.setTransferUser(user);
 			return this;
 		}

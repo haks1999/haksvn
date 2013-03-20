@@ -2,6 +2,8 @@ package com.haks.haksvn.transfer.controller;
 
 import java.util.List;
 
+import javax.servlet.http.HttpServletResponse;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -46,11 +48,10 @@ public class TransferAjaxController {
     
     
     @ExceptionHandler(Exception.class)
-    public @ResponseBody ResultMessage exceptionHandler(Exception e) {
+    public void exceptionHandler(Exception e, HttpServletResponse response) throws Exception{
     	e.printStackTrace();
-    	ResultMessage message = new ResultMessage(e.getMessage());
-    	message.setSuccess(false);
-    	message.setType(DefaultMessage.TYPE.ERROR);
-        return message;
+        response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+        response.getWriter().write(e.getMessage());
+        response.flushBuffer();
     }
 }

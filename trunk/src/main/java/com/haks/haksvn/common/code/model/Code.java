@@ -114,6 +114,10 @@ public class Code {
 			this.code = code;
 		}
 		
+		public static Builder getBuilder(){
+			return getBuilder(new Code());
+		}
+		
 		public static Builder getBuilder(Code code){
 			return new Builder(code);
 		}

@@ -5,7 +5,7 @@
 		$("#sel_repository option[value='<c:out value="${repositorySeq}" />']").attr('selected', 'selected');
 		$("#frm_transfer select[name='rUser'] option[value='<c:out value="${requestUserId}" />']").attr('selected', 'selected');
 		$("#frm_transfer select[name='sCode'] option[value='<c:out value="${transferStateCodeId}" />']").attr('selected', 'selected');
-		retrieveTransferList();
+		if( '<c:out value="${repositorySeq}" />'.length > 0 ) retrieveTransferList();
 		
 		$("#sel_repository").change(changeRepository);
 	});
@@ -23,10 +23,10 @@
 		$.post( "<c:url value="/transfer/request/list"/>" + "/" + '<c:out value="${repositorySeq}" />',
 				_paging,
 				function(data) {
-					if( data.type && data.text ){
-						$().Message({type:data.type,text:data.text});
-						return;
-					}
+					//if( data.type && data.text ){
+						//$().Message({type:data.type,text:data.text});
+						//return;
+					//}
 					var transferList = data.model;
 					_paging.start = data.start + transferList.length;
 					for( var inx = 0 ; inx < transferList.length ; inx++ ){
@@ -36,8 +36,8 @@
 						$(row).children(".transferState").text(transferList[inx].transferStateCode.codeName);
 						$(row).children(".requestor").text(transferList[inx].requestUser.userName);
 						$(row).children(".description").text(transferList[inx].description);
-						$(row).children(".requestDate").text(transferList[inx].requestDate);
-						$(row).children(".transferDate").text(transferList[inx].transferDate);
+						if(transferList[inx].requestDate > 0) $(row).children(".requestDate").text(haksvn.date.convertToEasyFormat(new Date(transferList[inx].requestDate)));
+						if(transferList[inx].transferDate > 0) $(row).children(".transferDate").text(haksvn.date.convertToEasyFormat(new Date(transferList[inx].transferDate)));
 						$(row).attr('transferSeq',transferList[inx].transferSeq).attr('repositorySeq',transferList[inx].repositorySeq);
 						$(row).click(function(){
 							location.href = '<c:url value="/transfer/request/list"/>' + '/' + $(this).attr('repositorySeq') + '/' +  $(this).attr('transferSeq');
@@ -120,8 +120,8 @@
 						<td class="transferState w_70"></td>
 						<td class="requestor w_90"></td>
 						<td class="description"></td>
-						<td class="requestDate w_80"></td>
-						<td class="transferDate w_80"></td>
+						<td class="requestDate w_80" style="text-align:center;"></td>
+						<td class="transferDate w_80" style="text-align:center;"></td>
 					</tr>
 				</tbody>
 				<tfoot>

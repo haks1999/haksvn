@@ -12,6 +12,7 @@ public class LoginUser {
 	private String userName;
 	private String email;
 	private String userPasswd;
+	private String authTypeCodeId;
 	private String authType;
 	
 	public LoginUser(){
@@ -24,6 +25,7 @@ public class LoginUser {
 		userName = user.getUserName();
 		email = user.getEmail();
 		userPasswd = user.getUserPasswd();
+		authTypeCodeId = user.getAuthTypeCode().getCodeId();
 		authType = user.getAuthType();
 	}
 
@@ -71,6 +73,14 @@ public class LoginUser {
 
 	public void setUserPasswd(String userPasswd) {
 		this.userPasswd = userPasswd;
+	}
+	
+	public String getAuthTypeCodeId(){
+		return authTypeCodeId;
+	}
+	
+	public void setAuthTypeCodeId(String authTypeCodeId){
+		this.authTypeCodeId = authTypeCodeId;
 	}
 
 	public String getAuthType() {
