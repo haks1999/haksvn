@@ -55,9 +55,21 @@ public class TransferDao {
 		return transfer;
 	}
 	
+	public Transfer updateTransfer(Transfer transfer){
+		Session session = sessionFactory.getCurrentSession();
+		session.update(transfer);
+		return transfer;
+	}
+	
 	public Transfer retrieveTransferByTransferSeq( int transferSeq ){
 		Session session = sessionFactory.getCurrentSession();
 		return (Transfer)session.get(Transfer.class, transferSeq );
+	}
+	
+	public Transfer deleteTransfer(Transfer transfer){
+		Session session = sessionFactory.getCurrentSession();
+		session.delete(transfer);
+		return transfer;
 	}
 	
 }

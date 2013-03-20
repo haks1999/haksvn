@@ -34,4 +34,28 @@ public class CodeUtils {
 	public static String getTransferKeepCodeId(){
 		return "transfer.state.code.keep";
 	}
+	
+	public static String getTransferRequestCodeId(){
+		return "transfer.state.code.request";
+	}
+	
+	public static boolean isEditableState(String stateCode){
+		return stateCode ==null || stateCode.length() < 1 || "transfer.state.code.keep".equals(stateCode);
+	}
+	
+	public static boolean isRequestableState(String stateCode){	// isDeletableState
+		return "transfer.state.code.keep".equals(stateCode);
+	}
+	
+	public static boolean isApprovableState(String stateCode){	// isRejectableState
+		return "transfer.state.code.request".equals(stateCode);
+	}
+	
+	public static boolean isRequestCancelableState(String stateCode){
+		return "transfer.state.code.request".equals(stateCode);
+	}
+	
+	public static boolean isCompleteState(String stateCode){
+		return "transfer.state.code.complete".equals(stateCode) || "transfer.state.code.reject".equals(stateCode);
+	}
 }

@@ -21,6 +21,7 @@ import com.haks.haksvn.common.security.util.ContextHolder;
 import com.haks.haksvn.repository.model.Repository;
 import com.haks.haksvn.repository.service.RepositoryService;
 import com.haks.haksvn.transfer.model.Transfer;
+import com.haks.haksvn.transfer.model.TransferStateAuth;
 import com.haks.haksvn.transfer.service.TransferService;
 
 @Controller
@@ -66,29 +67,31 @@ public class TransferController {
 	
  
 	@RequestMapping(value="/request/list/{repositorySeq}/add")
-    public String forwardRepositoryAddPage(ModelMap model, 
+    public String forwardTransferAddPage(ModelMap model, 
     										@ModelAttribute("transfer") Transfer transfer,
     										@PathVariable int repositorySeq) {
 		List<Repository> repositoryList = repositoryService.retrieveAccesibleActiveRepositoryList();
 		model.addAttribute("repositoryList", repositoryList );
 		transfer.setRepositorySeq(repositorySeq);
     	model.addAttribute("tranfer", transfer );
+    	model.addAttribute("transferStateAuth", TransferStateAuth.Builder.getBuilder().transfer(transfer).build());
     	model.addAttribute("mode_create", true );
     	return "/transfer/modifyTransfer";
     }
 	
 	@RequestMapping(value="/request/list/{repositorySeq}/{transferSeq}")
-    public String forwardRepositoryDetailPage(ModelMap model, 
+    public String forwardTransferDetailPage(ModelMap model, 
     										@PathVariable int repositorySeq,
     										@PathVariable int transferSeq) {
+		Transfer transfer =transferService.retrieveTransferDetail(Transfer.Builder.getBuilder(new Transfer()).repositorySeq(repositorySeq).transferSeq(transferSeq).build());
 		model.addAttribute("repositoryList", repositoryService.retrieveAccesibleActiveRepositoryList() );
-		model.addAttribute("transfer", transferService.retrieveTransferDetail(Transfer.Builder.getBuilder(new Transfer()).repositorySeq(repositorySeq).transferSeq(transferSeq).build()));
-    	model.addAttribute("mode_update", true );
+		model.addAttribute("transfer", transfer);
+		model.addAttribute("transferStateAuth", TransferStateAuth.Builder.getBuilder().transfer(transfer).build());
     	return "/transfer/modifyTransfer";
     }
 	
 	@RequestMapping(value={"/request/list/{repositorySeq}/save"}, method=RequestMethod.POST)
-    public ModelAndView saveRepository(ModelMap model, 
+    public ModelAndView saveTransfer(ModelMap model, 
     									@ModelAttribute("transfer") @Valid Transfer transfer, 
     									BindingResult result,
     									@PathVariable int repositorySeq){
@@ -97,14 +100,32 @@ public class TransferController {
     		model.addAttribute("repositoryList", repositoryList );
     		transfer.setRepositorySeq(transfer.getRepositorySeq());
         	model.addAttribute("tranfer", transfer );
-        	model.addAttribute("mode_create", true );
+        	model.addAttribute("transferStateAuth", TransferStateAuth.Builder.getBuilder().transfer(transfer).build());
         	model.addAttribute("repositorySeq", repositorySeq );
     		return new ModelAndView("/transfer/modifyTransfer");
     	}else{
-    		transfer = transferService.addTransfer(transfer);
+    		transfer = transferService.saveTransfer(transfer);
     		String param = "?rUser=" + ContextHolder.getLoginUser().getUserId() + "&sCode=" + transfer.getTransferStateCode().getCodeId();
     		return new ModelAndView(new RedirectView("/transfer/request/list/" + transfer.getRepositorySeq() + param, true));
     		
     	}
+    }
+	
+	@RequestMapping(value={"/request/list/{repositorySeq}/delete"}, method=RequestMethod.POST)
+    public ModelAndView deleteTransfer(ModelMap model, 
+    									@ModelAttribute("transfer") Transfer transfer, 
+    									@PathVariable int repositorySeq){
+    	transfer = transferService.deleteTransfer(transfer);
+    	String param = "?rUser=" + ContextHolder.getLoginUser().getUserId() + "&sCode=" + transfer.getTransferStateCode().getCodeId();
+    	return new ModelAndView(new RedirectView("/transfer/request/list/" + transfer.getRepositorySeq() + param, true));
+    }
+	
+	@RequestMapping(value={"/request/list/{repositorySeq}/request"}, method=RequestMethod.POST)
+    public ModelAndView requestTransfer(ModelMap model, 
+    									@ModelAttribute("transfer") Transfer transfer, 
+    									@PathVariable int repositorySeq){
+    	transfer = transferService.requestTransfer(transfer);
+    	String param = "?rUser=" + ContextHolder.getLoginUser().getUserId() + "&sCode=" + transfer.getTransferStateCode().getCodeId();
+    	return new ModelAndView(new RedirectView("/transfer/request/list/" + transfer.getRepositorySeq() + param, true));
     }
 }
