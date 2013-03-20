@@ -128,4 +128,13 @@ public class TransferController {
     	String param = "?rUser=" + ContextHolder.getLoginUser().getUserId() + "&sCode=" + transfer.getTransferStateCode().getCodeId();
     	return new ModelAndView(new RedirectView("/transfer/request/list/" + transfer.getRepositorySeq() + param, true));
     }
+	
+	@RequestMapping(value={"/request/list/{repositorySeq}/requestCancel"}, method=RequestMethod.POST)
+    public ModelAndView requestCancelTransfer(ModelMap model, 
+    									@ModelAttribute("transfer") Transfer transfer, 
+    									@PathVariable int repositorySeq){
+    	transfer = transferService.requestCancelTransfer(transfer);
+    	String param = "?rUser=" + ContextHolder.getLoginUser().getUserId() + "&sCode=" + transfer.getTransferStateCode().getCodeId();
+    	return new ModelAndView(new RedirectView("/transfer/request/list/" + transfer.getRepositorySeq() + param, true));
+    }
 }
