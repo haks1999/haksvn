@@ -16,7 +16,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.view.RedirectView;
 
-import com.haks.haksvn.common.code.model.Code;
 import com.haks.haksvn.common.message.model.ResultMessage;
 import com.haks.haksvn.user.model.User;
 import com.haks.haksvn.user.service.UserService;
