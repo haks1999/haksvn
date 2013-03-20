@@ -118,23 +118,14 @@ public class SVNRepositoryService {
 	// 커넥션이 1-2 번 더 생기나 더 이득임
 	public NextPaging<List<SVNSourceLog>> retrieveSVNSourceLogList(Repository repository, NextPaging<SVNSource> paging ){
 		
-		SVNSource svnSource = svnRepositoryDao.retrieveSVNLogList(repository, paging.getModel(), paging.getStart(), paging.getDirection(), paging.getLimit());
+		SVNSource svnSource = svnRepositoryDao.retrieveSVNLogList(repository, paging.getModel(), paging.getStart(), 0, paging.getLimit()+1);
 		List<SVNSourceLog> logList = svnSource.getOlderLogs();
 		
-		SVNSource svnSourceCheckStartLog = SVNSource.Builder.getBuilder(new SVNSource()).path(svnSource.getPath()).revision(logList.get(0).getRevision()).build();
-		svnSourceCheckStartLog = svnRepositoryDao.retrieveOlderAndNewerAndCurSVNSourceLogList(repository, svnSourceCheckStartLog);
-		
-		SVNSource svnSourceCheckEndLog = null;
-		boolean isLastPage = logList.size() < paging.getLimit();
-		if( !isLastPage ){
-			svnSourceCheckEndLog = SVNSource.Builder.getBuilder(new SVNSource()).path(svnSource.getPath()).revision(logList.get(logList.size()-1).getRevision()).build();
-			svnSourceCheckEndLog = svnRepositoryDao.retrieveOlderAndNewerAndCurSVNSourceLogList(repository, svnSourceCheckEndLog);
-		}
-		boolean hasPrev = svnSourceCheckStartLog.getNewerLogs().size() > 0;
-		boolean hasNext = isLastPage?false:svnSourceCheckEndLog.getOlderLogs().size() > 0;
-		
+		boolean hasNext = logList.size() > paging.getLimit();
+		long end = hasNext?logList.get(paging.getLimit()).getRevision():0;
+		if( hasNext ) svnSource.getOlderLogs().remove(logList.size()-1);
 		NextPaging<List<SVNSourceLog>> resultPaging = new NextPaging<List<SVNSourceLog>>(svnSource.getOlderLogs());
-		NextPaging.Builder.getBuilder(resultPaging).limit(paging.getLimit()).start(logList.get(0).getRevision()).end(logList.get(logList.size()-1).getRevision()).hasNext(hasNext).hasPrev(hasPrev);
+		NextPaging.Builder.getBuilder(resultPaging).limit(paging.getLimit()).start(paging.getStart()).end(end).hasNext(hasNext);
 		
 		return resultPaging;
 	}
