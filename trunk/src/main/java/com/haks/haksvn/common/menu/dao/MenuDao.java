@@ -1,7 +1,6 @@
 package com.haks.haksvn.common.menu.dao;
 
 import java.util.List;
-import java.util.Set;
 
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
@@ -10,10 +9,8 @@ import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
-import org.springframework.transaction.annotation.Transactional;
 
 import com.haks.haksvn.common.menu.model.Menu;
-import com.haks.haksvn.common.menu.model.MenuNode;
 
 @Repository
 public class MenuDao {
