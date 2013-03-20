@@ -65,7 +65,7 @@
 					<label class="left">Transfer Date</label>
 					<input type="text" class="text w_30 readOnly transferDate" readonly/>
 				</p>
-				<hr>
+				<hr/>
 				<p><span class="strong">Sources</span></p>
 				<p>
 					<label class="left"></label>
@@ -103,7 +103,7 @@
 						<a class="button red mt ml" onclick="requestCancelTransfer()"><small class="icon minus"></small><span>Cancel Request</span></a>
 						<script type="text/javascript" >
 							function requestCancelTransfer(){
-								$('#frm_transfer').attr('action', '<c:url value="/transfer/request/list" />' + '<c:out value="/${repositorySeq}/cancelRequest"/>');
+								$('#frm_transfer').attr('action', '<c:url value="/transfer/request/list" />' + '<c:out value="/${repositorySeq}/requestCancel"/>');
 								$('#frm_transfer').submit();
 							};
 						</script>

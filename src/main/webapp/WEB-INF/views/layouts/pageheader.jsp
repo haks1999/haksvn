@@ -39,11 +39,8 @@
 		    }
 		});
 		$(function() {
-			$('select.all').each(function(){
-				var o = new Option("All", "");
-				$(o).html("All");
-				$(this).prepend(o);
-			});
+			// IE -- http://stackoverflow.com/questions/7109120/add-blank-option-to-top-of-select-and-make-it-the-selected-option-in-ie
+			$('select.all').prepend("<option value=''>All</option>").val('');
 		});
 	</script>
 </head>

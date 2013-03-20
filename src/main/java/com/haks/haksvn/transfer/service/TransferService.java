@@ -88,6 +88,17 @@ public class TransferService {
 		return transferDao.updateTransfer(transfer);
 	}
 	
+	public Transfer requestCancelTransfer(Transfer transfer){
+		transfer = transferDao.retrieveTransferByTransferSeq(transfer.getTransferSeq());
+		checkRepositoryAccessRight(transfer.getRepositorySeq());
+		if( !TransferStateAuth.Builder.getBuilder().transfer(transfer).build().getIsRequestCancelable() ){
+			throw new HaksvnException("Insufficient privileges.");
+		}
+		transfer.setTransferStateCode(Code.Builder.getBuilder().codeId(CodeUtils.getTransferKeepCodeId()).build());
+		transfer.setRequestDate(0);
+		return transferDao.updateTransfer(transfer);
+	}
+	
 	private boolean checkRepositoryAccessRight(int repositorySeq){
 		Repository repository = repositoryService.retrieveAccesibleActiveRepositoryByRepositorySeq(repositorySeq);
 		if( repository == null || repositorySeq != repository.getRepositorySeq()){

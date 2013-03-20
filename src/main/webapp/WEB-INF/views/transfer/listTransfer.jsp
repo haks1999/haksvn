@@ -72,7 +72,7 @@
 				<div class="desc search">
 					<form id="frm_transfer" method="get">
 						<p>
-							<label for="sel_repository" class="w_110">Repository Name</label> 
+							<label for="sel_repository" class="w_120">Repository Name</label> 
 							<select id="sel_repository">
 								<c:forEach items="${repositoryList}" var="repository">
 									<option value="<c:out value="${repository.repositorySeq}"/>">
@@ -92,7 +92,7 @@
 							<haksvn:select name="sCode" codeGroup="transfer.state.code" selectedValue="${transferStateCodeId}" cssClass="all"></haksvn:select>
 						</p>
 						<p>
-							<label for="path" class="w_110">Source path</label>
+							<label for="path" class="w_120">Source path</label>
 							<input name="path" type="text" class="text w_60"/>
 							<a class="button right form_submit"><small class="icon looking_glass"></small><span>Search</span></a>
 						</p>
@@ -120,8 +120,8 @@
 						<td class="transferState w_70"></td>
 						<td class="requestor w_90"></td>
 						<td class="description"></td>
-						<td class="requestDate w_80" style="text-align:center;"></td>
-						<td class="transferDate w_80" style="text-align:center;"></td>
+						<td class="requestDate w_90" style="text-align:center;"></td>
+						<td class="transferDate w_90" style="text-align:center;"></td>
 					</tr>
 				</tbody>
 				<tfoot>
