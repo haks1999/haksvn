@@ -5,7 +5,7 @@ public class NextPaging<T> {
 
 	private long start = 0;
 	private long end = 0;
-	private long limit = 20;
+	private int limit = 20;
 	private long direction = 0;	//0:after, -1:before
 	private boolean hasNext = false;
 	private boolean hasPrev = false;
@@ -35,11 +35,11 @@ public class NextPaging<T> {
 		this.end = end;
 	}
 
-	public long getLimit() {
+	public int getLimit() {
 		return limit;
 	}
 
-	public void setLimit(long limit) {
+	public void setLimit(int limit) {
 		this.limit = limit;
 	}
 	
@@ -103,7 +103,7 @@ public class NextPaging<T> {
 			return this;
 		}
 		
-		public Builder limit(long limit){
+		public Builder limit(int limit){
 			paging.setLimit(limit);
 			return this;
 		}

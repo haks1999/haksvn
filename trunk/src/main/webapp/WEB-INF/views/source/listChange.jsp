@@ -12,20 +12,16 @@
 	}
 	
 	function retrieveRepositoryChangeList(){
-		$("#tbl_changeList tbody tr:not(.sample)").remove();
-		initPagingInfo();
+		//$("#tbl_changeList tbody tr:not(.sample)").remove();
+		$("#tbl_changeList tfoot span:not(.loading)").removeClass('display-none').addClass('display-none');
+		$("#tbl_changeList tfoot span.loader").removeClass('display-none');
 		_paging.path = '<c:out value="${path}" />';
 		_paging.repositorySeq = $("#sel_repository > option:selected").val();
 		$.getJSON( "<c:url value="/source/changes/list"/>",
 				_paging,
 				function(data) {
 					var model = data.model;
-					//_paging.total = data.total;
-					_paging.start = data.start;
-					_paging.end = data.end;
-					_paging.hasNext = data.hasNext;
-					_paging.hasPrev = data.hasPrev;
-					changePagingInfo();
+					_paging.start = data.end;
 					var repositorySeq = '<c:out value="${repositorySeq}" />';
 					var hrefRoot = '<c:url value="/source/changes"/>';
 					var path = '<c:out value="${path}" />';
@@ -38,35 +34,20 @@
 						$(row).removeClass("sample");
 						$('#tbl_changeList > tbody').append(row);
 					}
+					
+					if( model.length < 1 ){
+						$("#tbl_changeList tfoot span:not(.nodata)").removeClass('display-none').addClass('display-none');
+						$("#tbl_changeList tfoot span.nodata").removeClass('display-none');
+					}else if( !data.hasNext ){
+						$("#tbl_changeList tfoot").removeClass('display-none').addClass('display-none');
+					}else{
+						$("#tbl_changeList tfoot span:not(.showmore)").removeClass('display-none').addClass('display-none');
+						$("#tbl_changeList tfoot span.showmore").removeClass('display-none');
+					}
 		});
 	};
 	
-	var _paging = {start:-1,end:-1,limit:50,direction:0};
-	function initPagingInfo(){
-		$('span.paging .start').text('');
-		$('span.paging .end').text('');
-		$('span.paging .older').css('display','none');
-		$('span.paging .newer').css('display','none');
-	}
-	function changePagingInfo(){
-		$('span.paging .start').text(_paging.start);
-		$('span.paging .end').text(_paging.end);
-		//$('span.paging .total').text(_paging.total);
-		$('span.paging .older').css('display',_paging.hasNext?'inline':'none');
-		$('span.paging .newer').css('display',_paging.hasPrev?'inline':'none');
-	}
-	function changePagingOlder(){
-		//_paging.start = _paging.start + _paging.limit;
-		_paging.start = _paging.end+1;
-		_paging.direction = 0;
-		retrieveRepositoryChangeList();
-	}
-	function changePagingNewer(){
-		//_paging.start = _paging.start - _paging.limit;
-		_paging.start = _paging.start-1;
-		_paging.direction = -1;
-		retrieveRepositoryChangeList();
-	}
+	var _paging = {start:-1,end:-1,limit:50};
 </script>
 <form id="frm_repository" action=""></form>
 <div id="table" class="help">
@@ -91,11 +72,6 @@
 			</div>
 			<div>
 				<p>
-					<span class="paging">
-						<span>r<a class="start"></a> - r<a class="end"></a></span>
-						<span class="underline italic link newer" onclick="changePagingNewer()">Newer</span>
-						<span class="underline italic link older" onclick="changePagingOlder()">Older</span>
-					</span>
 					<font class="path">Path:
 						<c:set var="pathLink" value="${pageContext.request.contextPath}/source/changes/${repositorySeq}"/>
 						<c:forEach var="pathFrag" items="${fn:split(path, '/')}" varStatus="loop">
@@ -126,6 +102,15 @@
 						<td class="author"></td>
 					</tr>
 				</tbody>
+				<tfoot>
+					<tr>
+						<td colspan="7" style="text-align:center;">
+							<span class="showmore display-none"><font class="path"><a onclick="retrieveRepositoryChangeList()">Show More</a></font></span>
+							<span class="loader display-none"><img src="/haksvn/images/ajax-loader.gif" /></span>
+							<span class="nodata">no data</span>
+						</td>
+					</tr>
+				</tfoot>
 			</table>
 			
 		</div>

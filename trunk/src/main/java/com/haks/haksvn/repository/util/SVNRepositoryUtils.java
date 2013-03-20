@@ -24,7 +24,6 @@ import com.haks.haksvn.common.crypto.util.CryptoUtils;
 import com.haks.haksvn.common.format.util.FormatUtils;
 import com.haks.haksvn.common.security.util.ContextHolder;
 import com.haks.haksvn.repository.model.Repository;
-import com.haks.haksvn.source.model.SVNSource;
 import com.haks.haksvn.source.model.SVNSourceLog;
 import com.haks.haksvn.source.model.SVNSourceLogChanged;
 
@@ -84,8 +83,11 @@ public class SVNRepositoryUtils {
 	   		    	 return src1.getPath().compareToIgnoreCase(src2.getPath());
 	   		     }
         	});
+        	
         	svnSourceLogList.add(SVNSourceLog.Builder.getBuilder(new SVNSourceLog())
-					.author(svnLogEntry.getAuthor()).date(FormatUtils.simpleDate(svnLogEntry.getDate())).message(svnLogEntry.getMessage().length() < 1 ? "[No log message]":svnLogEntry.getMessage())
+					.author(svnLogEntry.getAuthor())
+					.date(FormatUtils.simpleDate(svnLogEntry.getDate()))
+					.message(svnLogEntry.getMessage() == null || svnLogEntry.getMessage().length() < 1 ? "[No log message]":svnLogEntry.getMessage())
 					.revision(svnLogEntry.getRevision()).changedList(changedList).build());
 		}
 		Collections.sort(svnSourceLogList, new Comparator<SVNSourceLog>(){
