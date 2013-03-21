@@ -176,8 +176,6 @@ public class SourceUtils {
 					if( changedSrcLineCnt > changedTrgLineCnt ){
 						if( trgChangedLastLineNum < 1 ){
 							trgChangedLastLineNum = srcChangedLastLineNum - changedSrcLineCnt;
-						}else{
-							index += changedSrcLineCnt-changedTrgLineCnt;
 						}
 						for( int inx = 0 ; inx < changedSrcLineCnt-changedTrgLineCnt ; inx++ ){
 							DiffLineSideBySide diffLineSideBySide = sourceUtils.new DiffLineSideBySide();
@@ -186,11 +184,10 @@ public class SourceUtils {
 							trgEmptyLineCnt++;
 							trgDiffLineSideBySideList.add(diffLineSideBySide);
 						}
+						index = trgChangedLastLineNum+1;
 					}else if( changedSrcLineCnt < changedTrgLineCnt ){
 						if( srcChangedLastLineNum < 1 ){
 							srcChangedLastLineNum = trgChangedLastLineNum - changedTrgLineCnt;
-						}else{
-							index += changedTrgLineCnt-changedSrcLineCnt;
 						}
 						for( int inx = 0 ; inx < changedTrgLineCnt-changedSrcLineCnt ; inx++ ){
 							DiffLineSideBySide diffLineSideBySide = sourceUtils.new DiffLineSideBySide();
@@ -199,6 +196,7 @@ public class SourceUtils {
 							srcEmptyLineCnt++;
 							srcDiffLineSideBySideList.add(diffLineSideBySide);
 						}
+						index = srcChangedLastLineNum+1;
 					}
 					srcDiffLineSideBySideList.get(0).isFirst = true;
 					srcDiffLineSideBySideList.get(srcDiffLineSideBySideList.size()-1).isLast = true;
