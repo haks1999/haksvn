@@ -140,25 +140,47 @@ public class SVNRepositoryDao {
 		
 	}
 	
-	public SVNSource checkIsTagAndChangeRevision(Repository repository, SVNSource svnSource){
-		// tagging 은 해당 리비젼으로 찾을 수 없다... //TODO 공통으로 처리 가능하도록
+	public SVNSource checkIsCopiedOrDeletedAndChangeRevision(Repository repository, SVNSource svnSource){
+		// tagging 은 해당 리비젼으로 찾을 수 없다... //TODO 공통으로 처리 가능하도록	
+		//TODO copiedPath 를 사용하면 뭔가 될지도
     	SVNRepository targetRepository = null;
         try{
         	targetRepository = SVNRepositoryUtils.getUserAuthSVNRepository(repository);
         	
         	String relativePath = RepositoryUtils.getRelativeRepositoryPath(repository, svnSource.getPath());
         	//if( relativePath.startsWith(repository.getTagsPath()) || relativePath.startsWith(repository.getBranchesPath()) ) 
-        	SVNNodeKind nodeKind = targetRepository.checkPath(RepositoryUtils.getRelativeRepositoryPath(repository, svnSource.getPath()), svnSource.getRevision());
-        	if( nodeKind != SVNNodeKind.NONE ) return svnSource;
+        	SVNNodeKind curNodeKind = targetRepository.checkPath(RepositoryUtils.getRelativeRepositoryPath(repository, svnSource.getPath()), svnSource.getRevision());
+        	
+        	SVNNodeKind headNodeKind = targetRepository.checkPath(RepositoryUtils.getRelativeRepositoryPath(repository, svnSource.getPath()), -1);
+        	svnSource.setIsDeleted(headNodeKind == SVNNodeKind.NONE);
+        	
+        	if( curNodeKind != SVNNodeKind.NONE && !svnSource.getIsDeleted() ) return svnSource;
+        	
+        	long startRev = -1;	
+        	
+        	if( svnSource.getIsDeleted() ){
+        		long deletedRevision = targetRepository.getDeletedRevision(RepositoryUtils.getRelativeRepositoryPath(repository, svnSource.getPath()), svnSource.getRevision(), targetRepository.getLatestRevision());
+        		if( curNodeKind == SVNNodeKind.NONE ) deletedRevision = svnSource.getRevision();
+        		final List<SVNLogEntry> logListForLastest = new ArrayList<SVNLogEntry>(0);
+                targetRepository.log(new String[]{relativePath}, deletedRevision-1, 0, false, true, 1, new ISVNLogEntryHandler() { 
+                    public void handleLogEntry(SVNLogEntry entry) throws SVNException { 
+                    	logListForLastest.add(entry); 
+                    } 
+                });
+        		svnSource.setLastestRevision(logListForLastest.get(0).getRevision());
+        		startRev = curNodeKind == SVNNodeKind.NONE? svnSource.getLastestRevision():svnSource.getRevision();
+        	}
         	
         	final List<SVNLogEntry> logList = new ArrayList<SVNLogEntry>(0);
-            targetRepository.log(new String[]{relativePath}, -1, 0, true, true, 1, new ISVNLogEntryHandler() { 
+            targetRepository.log(new String[]{relativePath}, startRev, 0, false, true, 1, new ISVNLogEntryHandler() { 
                 public void handleLogEntry(SVNLogEntry entry) throws SVNException { 
                 	logList.add(entry); 
                 } 
             });
             if( logList.size() < 1 ) return svnSource;
+            if( !svnSource.getIsDeleted() ) svnSource.setIsCopied(true);
             svnSource.setRevision(logList.get(0).getRevision());
+            
         }catch (Exception e) {
         	e.printStackTrace();
         	throw new HaksvnException(e);
@@ -258,15 +280,14 @@ public class SVNRepositoryDao {
 		SVNRepository targetRepository = null;
         try {
         	targetRepository = SVNRepositoryUtils.getUserAuthSVNRepository(repository);
-        	
         	final List<SVNLogEntry> newerLogList = new ArrayList<SVNLogEntry>(0);
-        	targetRepository.log(new String[]{RepositoryUtils.getRelativeRepositoryPath(repository, svnSource.getPath())}, svnSource.getRevision(), -1, false, true, 5, new ISVNLogEntryHandler() { 
-                public void handleLogEntry(SVNLogEntry entry) throws SVNException { 
-                	if( entry.getRevision() == svnSource.getRevision() ) return;
-                	newerLogList.add(entry); 
-                } 
+       		targetRepository.log(new String[]{RepositoryUtils.getRelativeRepositoryPath(repository, svnSource.getPath())}, svnSource.getRevision(), svnSource.getLastestRevision(), false, true, 5, new ISVNLogEntryHandler() { 
+                   public void handleLogEntry(SVNLogEntry entry) throws SVNException { 
+                   	if( entry.getRevision() == svnSource.getRevision() ) return;
+                   	newerLogList.add(entry); 
+                   } 
             });
-        	
+       		
         	final List<SVNLogEntry> olderLogList = new ArrayList<SVNLogEntry>(0);
            	targetRepository.log(new String[]{RepositoryUtils.getRelativeRepositoryPath(repository, svnSource.getPath())}, svnSource.getRevision(), 0, false, true, 5, new ISVNLogEntryHandler() { 
                 public void handleLogEntry(SVNLogEntry entry) throws SVNException { 

@@ -164,7 +164,7 @@ public class SourceController {
 		}else{
 			svnSourceDiff = sourceService.retrieveDiffWithContentsByRevisions(repositorySeq, svnSourceSrc, svnSourceTrg);
 		}
-		if( svnSourceDiff.getIsNewContent() ){
+		if( svnSourceDiff.getIsNewContent() || svnSourceDiff.getIsDeletedContent() ){
 			svnSourceDiff.setDiffToHtml(SourceUtils.diffToHtml(svnSourceDiff.getDiff()));
 		}else{
 			svnSourceDiff.setDiffToHtml(SourceUtils.diffToSideBySideHtml(svnSourceDiff.getDiff(), svnSourceDiff.getSrc().getContent(), svnSourceDiff.getTrg().getContent()));

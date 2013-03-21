@@ -23,6 +23,9 @@ public class SVNSource {
 	private SVNSourceLog log;
 	private List<SVNSourceLog> olderLogs;
 	private List<SVNSourceLog> newerLogs;
+	private boolean isCopied;
+	private boolean isDeleted;
+	private long lastestRevision = -1;
 	
 	public SVNSource(){
 		
@@ -153,8 +156,30 @@ public class SVNSource {
 	public void setLog(SVNSourceLog log){
 		this.log = log;
 	}
-
-
+	
+	public boolean getIsCopied(){
+		return isCopied;
+	}
+	
+	public void setIsCopied(boolean isCopied){
+		this.isCopied = isCopied;
+	}
+	
+	public boolean getIsDeleted(){
+		return isDeleted;
+	}
+	
+	public void setIsDeleted(boolean isDeleted){
+		this.isDeleted = isDeleted;
+	}
+	
+	public long getLastestRevision(){
+		return lastestRevision;
+	}
+	
+	public void setLastestRevision(long lastestRevision){
+		this.lastestRevision = lastestRevision;
+	}
 
 	public static class Builder{
 		
