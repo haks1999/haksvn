@@ -1,7 +1,5 @@
 package com.haks.haksvn.common.format.util;
 
-import java.text.SimpleDateFormat;
-import java.util.Date;
 
 public class FormatUtils {
 	
@@ -36,9 +34,4 @@ public class FormatUtils {
 		    return formattedNumber.length()>4 ?  formattedNumber.replaceAll("\\.[0-9]+", "") : formattedNumber;  
 		}
 		*/
-	
-	private static final SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy/MM/dd hh:mm");
-	public static String simpleDate(Date date){
-		return simpleDateFormat.format(date);
-	}
 }

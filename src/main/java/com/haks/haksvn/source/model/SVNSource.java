@@ -13,7 +13,7 @@ public class SVNSource {
 	
 	private String name;
 	private String path;
-	private String date;
+	private long date;
 	private String author;
 	private long size;
 	private String formattedSize;
@@ -66,11 +66,11 @@ public class SVNSource {
 		this.name = name;
 	}
 	
-	public String getDate(){
+	public long getDate(){
 		return date;
 	}
 	
-	public void setDate(String date){
+	public void setDate(long date){
 		this.date = date;
 	}
 	
@@ -192,7 +192,7 @@ public class SVNSource {
 			return this;
 		}
 		
-		public Builder date(String date){
+		public Builder date(long date){
 			svnSource.setDate(date);
 			return this;
 		}

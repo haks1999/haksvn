@@ -71,7 +71,7 @@
 			$(row).find(".name a").text(sourceNodeList[inx].name).attr('href',(browseHrefRoot + "/" + repositorySeq + "/" + sourceNodeList[inx].path + "?rev=" + sourceNodeList[inx].revision).replace("//", "/"));
 			$(row).children(".size").text(sourceNodeList[inx].formattedSize);
 			$(row).find(".revision a").text('r'+sourceNodeList[inx].revision).attr('href',(changesHrefRoot + "/" + repositorySeq + "/" + path + "?rev=" + sourceNodeList[inx].revision).replace("//", "/").replace("/?","?"));
-			$(row).children(".date").text(sourceNodeList[inx].date);
+			$(row).children(".date").text(haksvn.date.convertToEasyFormat(new Date(sourceNodeList[inx].date)));
 			$(row).children(".author").text(sourceNodeList[inx].author);
 			$(row).removeClass("sample");
 			$(row).css('display','');
@@ -104,24 +104,18 @@
 				<div class="bottom"><div></div></div>
 			</div>
 			
-			<div class="box">
-				<div class="head"><div></div></div>
-				<div class="desc">
-					<p>
-						<font class="path">Path:
-						<c:set var="pathLink" value="${repoBrowsePathLink}"/>
-						/<a href="${pathLink}">[SVN root]</a>
-						<c:forEach var="pathFrag" items="${fn:split(path, '/')}">
-							<c:set var="pathLink" value="${pathLink}/${pathFrag}"/>
-							/<a href="${pathLink}"><c:out value="${pathFrag}" /></a>
-						</c:forEach>
-					</font>
-					</p>
-				</div>
-				<div class="bottom"><div></div></div>
+			<div>
+				<p>
+					<font class="path">Path:
+					<c:set var="pathLink" value="${repoBrowsePathLink}"/>
+					/<a href="${pathLink}">[SVN root]</a>
+					<c:forEach var="pathFrag" items="${fn:split(path, '/')}">
+						<c:set var="pathLink" value="${pathLink}/${pathFrag}"/>
+						/<a href="${pathLink}"><c:out value="${pathFrag}" /></a>
+					</c:forEach>
+				</font>
+				</p>
 			</div>
-			
-			
 			
 			<div class="box header" style="position:absolute;display:block;width:300px;float:left;margin-right:-370px;left:10px;">
 				<div class="head"><div></div></div>

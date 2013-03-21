@@ -29,7 +29,7 @@
 						var row = $("#tbl_changeList > tbody > .sample").clone();
 						$(row).find(".revision a").text('r'+model[inx].revision).attr('href',(hrefRoot + "/" + repositorySeq + (path.length<1?"":"/") + path + "?rev=" + model[inx].revision).replace("//", "/"));
 						$(row).children(".message").text(model[inx].message);
-						$(row).children(".date").text(model[inx].date);
+						$(row).children(".date").text(haksvn.date.convertToEasyFormat(new Date(model[inx].date)));
 						$(row).children(".author").text(model[inx].author);
 						$(row).removeClass("sample");
 						$('#tbl_changeList > tbody').append(row);
@@ -104,7 +104,7 @@
 				</tbody>
 				<tfoot>
 					<tr>
-						<td colspan="7" style="text-align:center;">
+						<td colspan="4" style="text-align:center;">
 							<span class="showmore display-none"><font class="path"><a onclick="retrieveRepositoryChangeList()">Show More</a></font></span>
 							<span class="loader display-none"><img src="/haksvn/images/ajax-loader.gif" /></span>
 							<span class="nodata">no data</span>
