@@ -66,7 +66,19 @@
 					<input type="text" class="text w_30 readOnly transferDate" readonly/>
 				</p>
 				<hr/>
-				<p><span class="strong">Sources</span></p>
+				<p>
+					<span class="strong">Sources</span>
+				</p>
+				<p>
+					<label class="left">Sources To Transfer</label>
+					<span><font class="path"><a onclick="expandAllChanged()" style="text-decoration:underline;cursor:pointer;">Add</a></font></span>
+					<input type="text" class="text visible-hidden"/>
+				</p>
+				<p>
+					<label class="left">Sources To Delete</label>
+					<span><font class="path"><a onclick="expandAllChanged()" style="text-decoration:underline;cursor:pointer;">Add</a></font></span>
+					<input type="text" class="text visible-hidden"/>
+				</p>
 				<p>
 					<label class="left"></label>
 					<c:if test="${transferStateAuth.isRequestable}">
