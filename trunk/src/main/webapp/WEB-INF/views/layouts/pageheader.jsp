@@ -3,6 +3,7 @@
 <%@ taglib uri="http://tiles.apache.org/tags-tiles" prefix="tiles" %>
 <%@ taglib uri="/WEB-INF/tlds/haksvn.tld" prefix="haksvn" %>
 <head>
+	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
 	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 	<meta http-equiv="Cache-Control" content="no-cache" />
 	<meta http-equiv="EXPIRES" content="-1">
