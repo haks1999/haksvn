@@ -42,16 +42,16 @@ haksvn.date = {
 	    var diff_day = Math.round(diff_ms/haksvn.constants.ONE_DAY_MS);
 	    if( diff_day < 2 ) return haksvn.constants.DIFF_DAY[diff_day];
 	    if( diff_day < 7 ) return diff_day + ' days ago';
-	    var month = String(date.getMonth()+1);
-	    var day = String(date.getDate());
-	    return date.getFullYear()+"/"+ (month.length < 1?'0':'') + month  + "/"+ (day.length < 1?'0':'') + day;
+	    var month = date.getMonth()+1;
+	    var day = date.getDate();
+	    return date.getFullYear()+"/"+ (month < 10?'0':'') + month  + "/"+ (day < 10?'0':'') + day;
 	},
 	convertToComplexFullFormat: function( date ){
-		var month = String(date.getMonth()+1);
-		var day = String(date.getDate());
-		var hour = String(date.getHours());
-		var minute = String(date.getMinutes());
-		var formatted = date.getFullYear()+"/"+(month.length < 1?'0':'') + month  + "/"+ (day.length < 1?'0':'') + day + " " + (hour.length < 1?'0':'') + hour + ":" + (minute.length < 1?'0':'') + minute;
+		var month = date.getMonth()+1;
+		var day = date.getDate();
+		var hour = date.getHours();
+		var minute = date.getMinutes();
+		var formatted = date.getFullYear()+"/"+(month < 10?'0':'') + month  + "/"+ (day < 10?'0':'') + day + " " + (hour < 10?'0':'') + hour + ":" + (minute < 10?'0':'') + minute;
 		var today_ms = new Date().getTime();
 	    var date_ms = date.getTime();
 	    var diff_ms = Math.abs(today_ms - date_ms);

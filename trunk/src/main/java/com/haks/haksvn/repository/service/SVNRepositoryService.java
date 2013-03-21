@@ -100,7 +100,7 @@ public class SVNRepositoryService {
 		for( SVNDirEntry svnDirEntry : entries ){
 			SVNSource svnSource = SVNSource.Builder.getBuilder(new SVNSource())
 					.title(svnDirEntry.getName()).name(svnDirEntry.getName()).path(path+"/"+svnDirEntry.getName()).author(svnDirEntry.getAuthor()).size(svnDirEntry.getSize())
-					.formattedSize(FormatUtils.fileSize(svnDirEntry.getSize())).revision(svnDirEntry.getRevision()).date(FormatUtils.simpleDate(svnDirEntry.getDate())).build();
+					.formattedSize(FormatUtils.fileSize(svnDirEntry.getSize())).revision(svnDirEntry.getRevision()).date(svnDirEntry.getDate().getTime()).build();
 			svnSource.setIsFolder(svnDirEntry.getKind() == SVNNodeKind.DIR);
 			svnSource.setIsLazy(svnSource.getIsFolder());
 			svnSourceList.add(svnSource);

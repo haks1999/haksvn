@@ -7,6 +7,9 @@
         brush.init({ toolbar: false });
         $('#pre_fileContent').html(brush.getHtml(data.content));
         */
+        $('.logDate').text(haksvn.date.convertToComplexFullFormat(new Date(Number('<c:out value="${svnSource.log.date}"/>'))));
+        
+        
 		$('#pre_fileContent').addClass('brush:'+getShBrush('<c:out value="${svnSource.path}" />'));
 		SyntaxHighlighter.defaults['auto-links'] = false;
 		SyntaxHighlighter.defaults['toolbar'] = false;
@@ -37,6 +40,7 @@
 <c:set var="repoBrowsePathLink" value="${pageContext.request.contextPath}/source/browse/${repositorySeq}"/>
 <c:set var="repoChangesPathLink" value="${pageContext.request.contextPath}/source/changes/${repositorySeq}"/>
 <c:set var="repoDiffPathLink" value="${pageContext.request.contextPath}/source/changes/diff"/>
+<jsp:useBean id="dateValue" class="java.util.Date" />
 <div id="table" class="help">
 	<h1></h1>
 	<div class="col w10 last">
@@ -76,11 +80,11 @@
 								<span>
 									<font class="path"><a href="${repoChangesPathLink}/${svnSource.path}?rev=${svnSource.revision}">r<c:out value="${svnSource.revision}"/></a></font>
 									&nbsp;by&nbsp;<c:out value="${svnSource.log.author}"/>
-									,&nbsp;<c:out value="${svnSource.log.date}"/>
+									<span class="logDate"></span>
 								</span>
 							</p>
 							<p>
-								<span><c:out value="${svnSource.log.message}"/></span>
+								<span class="pre"><c:out value="${svnSource.log.message}"/></span>
 							</p>
 						</div>
 						<div class="division">
@@ -96,7 +100,9 @@
 										<font class="path">
 										<a href="${repoChangesPathLink}/${svnSource.path}?rev=${newerLog.revision}">r<c:out value="${newerLog.revision}"/></a></font>
 										&nbsp;by&nbsp;<c:out value="${newerLog.author}"/>
-										,&nbsp;<c:out value="${newerLog.date}"/>,Diff
+										,&nbsp;
+										<jsp:setProperty name="dateValue" property="time" value="${newerLog.date}" />
+										<fmt:formatDate value="${dateValue}" pattern="yyyy/MM/dd HH:mm" />
 									</span>
 								</p>
 								<p class="display-none">
@@ -122,7 +128,9 @@
 									<span>
 										<font class="path"><a href="${repoChangesPathLink}/${svnSource.path}?rev=${olderLog.revision}">r<c:out value="${olderLog.revision}"/></a></font>
 										&nbsp;by&nbsp;<c:out value="${olderLog.author}"/>
-										,&nbsp;<c:out value="${olderLog.date}"/>
+										,&nbsp;
+										<jsp:setProperty name="dateValue" property="time" value="${olderLog.date}" />
+										<fmt:formatDate value="${dateValue}" pattern="yyyy/MM/dd HH:mm" />
 									</span>
 								</p>
 								<p class="display-none">

@@ -1,9 +1,8 @@
 <%@ include file="/WEB-INF/views/common/include/taglib.jspf"%>
 <script type="text/javascript">
 	$(function() {
+		$('.logDate').text('Date: ' + haksvn.date.convertToComplexFullFormat(new Date(Number('<c:out value="${svnSource.log.date}"/>'))));
 	});
-	
-	
 	
 	function retrieveDiffWithPrevious(pmOpener, path, rev){
 		$.getJSON( "<c:url value="/source/changes/diff"/>",
@@ -14,7 +13,7 @@
 					$(pmOpener).parent().next('pre').removeClass('loading').addClass('loaded');
 					$(pmOpener).parent().next('pre').html(data.diffToHtml);
 		});
-	}
+	};
 	
 	function toggleChangedPath(pmOpener, path, rev){
 		var pre = $(pmOpener).parent().next('pre');
@@ -29,15 +28,15 @@
 				retrieveDiffWithPrevious(pmOpener, path,rev);
 			}
 		}
-	}
+	};
 	
 	function expandAllChanged(){
 		$('a.closed').trigger('click');
-	}
+	};
 	
 	function collapseAllChanged(){
 		$('a.opened').trigger('click');
-	}
+	};
 	
 </script>
 <c:set var="repoBrowsePathLink" value="${pageContext.request.contextPath}/source/browse/${repositorySeq}"/>
@@ -77,7 +76,7 @@
 							<span>Author: <c:out value="${svnSource.log.author}"/></span>
 						</p>
 						<p>
-							<span>Date: <c:out value="${svnSource.log.date}"/></span>
+							<span class="logDate"></span>
 						</p>
 						<hr/>
 						<p>

@@ -9,7 +9,7 @@ public class SVNSourceLog {
 
 	private String author;
 	private long revision;
-	private String date;
+	private long date;
 	private String message;
 	private List<SVNSourceLogChanged> changedList;
 	
@@ -40,11 +40,11 @@ public class SVNSourceLog {
 		this.revision = revision;
 	}
 
-	public String getDate() {
+	public long getDate() {
 		return date;
 	}
 
-	public void setDate(String date) {
+	public void setDate(long date) {
 		this.date = date;
 	}
 
@@ -90,7 +90,7 @@ public class SVNSourceLog {
 			return this;
 		}
 		
-		public Builder date(String date){
+		public Builder date(long date){
 			svnSourceLog.setDate(date);
 			return this;
 		}

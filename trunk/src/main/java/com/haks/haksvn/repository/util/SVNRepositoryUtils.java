@@ -21,7 +21,6 @@ import org.tmatesoft.svn.core.wc.SVNWCUtil;
 
 import com.haks.haksvn.common.code.util.CodeUtils;
 import com.haks.haksvn.common.crypto.util.CryptoUtils;
-import com.haks.haksvn.common.format.util.FormatUtils;
 import com.haks.haksvn.common.security.util.ContextHolder;
 import com.haks.haksvn.repository.model.Repository;
 import com.haks.haksvn.source.model.SVNSourceLog;
@@ -86,7 +85,7 @@ public class SVNRepositoryUtils {
         	
         	svnSourceLogList.add(SVNSourceLog.Builder.getBuilder(new SVNSourceLog())
 					.author(svnLogEntry.getAuthor())
-					.date(FormatUtils.simpleDate(svnLogEntry.getDate()))
+					.date(svnLogEntry.getDate().getTime())
 					.message(svnLogEntry.getMessage() == null || svnLogEntry.getMessage().length() < 1 ? "[No log message]":svnLogEntry.getMessage())
 					.revision(svnLogEntry.getRevision()).changedList(changedList).build());
 		}
