@@ -10,6 +10,7 @@ public class SVNSourceDiff {
 	private SVNSource src;
 	private SVNSource trg;
 	private boolean isNewContent = false;
+	private boolean isDeletedContent = false;
 	private boolean isValid = true;
 	
 	public SVNSourceDiff(){
@@ -60,6 +61,14 @@ public class SVNSourceDiff {
 	public void setIsNewContent(boolean isNewContent){
 		this.isNewContent = isNewContent;
 	}
+	
+	public boolean getIsDeletedContent(){
+		return isDeletedContent;
+	}
+	
+	public void setIsDeletedContent(boolean isDeletedContent){
+		this.isDeletedContent = isDeletedContent;
+	}
 
 	public boolean getIsValid(){
 		return isValid;
@@ -103,6 +112,11 @@ public class SVNSourceDiff {
 		
 		public Builder isNewContent(boolean isNewContent){
 			svnSourceDiff.setIsNewContent(isNewContent);
+			return this;
+		}
+		
+		public Builder isDeletedContent(boolean isDeletedContent){
+			svnSourceDiff.setIsDeletedContent(isDeletedContent);
 			return this;
 		}
 		

@@ -153,6 +153,7 @@ public class SourceUtils {
 			}
 			
 			if( line.startsWith(MARK_SRC) ){
+				if( befMark.equals(MARK_TRG) ) index -= (trgDiffLineSideBySideList.size()-1);
 				if( befMark.equals(MARK_SRC) || (currentBoundChanged && befMark.trim().length()<1)) index++;
 				DiffLineSideBySide diffLineSideBySide = sourceUtils.new DiffLineSideBySide();
 				diffLineSideBySide.index = index;
@@ -160,6 +161,7 @@ public class SourceUtils {
 				srcChangedLastLineNum = index;
 				currentBoundChanged = true;
 			}else if( line.startsWith(MARK_TRG) ){
+				if( befMark.equals(MARK_SRC) ) index -= (srcDiffLineSideBySideList.size()-1);
 				if( befMark.equals(MARK_TRG) || (currentBoundChanged && befMark.trim().length()<1)) index++;
 				DiffLineSideBySide diffLineSideBySide = sourceUtils.new DiffLineSideBySide();
 				diffLineSideBySide.index = index;
@@ -174,6 +176,8 @@ public class SourceUtils {
 					if( changedSrcLineCnt > changedTrgLineCnt ){
 						if( trgChangedLastLineNum < 1 ){
 							trgChangedLastLineNum = srcChangedLastLineNum - changedSrcLineCnt;
+						}else{
+							index += changedSrcLineCnt-changedTrgLineCnt;
 						}
 						for( int inx = 0 ; inx < changedSrcLineCnt-changedTrgLineCnt ; inx++ ){
 							DiffLineSideBySide diffLineSideBySide = sourceUtils.new DiffLineSideBySide();
@@ -185,6 +189,8 @@ public class SourceUtils {
 					}else if( changedSrcLineCnt < changedTrgLineCnt ){
 						if( srcChangedLastLineNum < 1 ){
 							srcChangedLastLineNum = trgChangedLastLineNum - changedTrgLineCnt;
+						}else{
+							index += changedTrgLineCnt-changedSrcLineCnt;
 						}
 						for( int inx = 0 ; inx < changedTrgLineCnt-changedSrcLineCnt ; inx++ ){
 							DiffLineSideBySide diffLineSideBySide = sourceUtils.new DiffLineSideBySide();
@@ -241,7 +247,7 @@ public class SourceUtils {
 		boolean isSrcContentLonger = srcContentList.length > trgContentList.length;
 		int maxLine =  isSrcContentLonger ? srcContentList.length:trgContentList.length;
 		
-		StringBuffer html = new StringBuffer("<table cellspacing=\"0\">");
+		StringBuffer html = new StringBuffer("<table cellspacing=\"0\"><thead><tr><td colspan=\"4\"></td></tr><tr><td class=\"header-src\" colspan=\"2\"></td><td class=\"header-trg\"  colspan=\"2\"></td></tr><tr><td colspan=\"4\"></td></tr></thead><tbody>");
 		int lineIndex = 0;
 		int srcContentIndex = 0;
 		int trgContentIndex = 0;
@@ -254,18 +260,18 @@ public class SourceUtils {
 				if(diffLineSideBySideCombined.isEmptySrc){
 					if( isSrcContentLonger ) maxLine++;
 					tr.append("<td></td><td class=\"empty\"></td>");
-					tr.append("<td>"+(trgContentIndex+1)+"</td><td class=\"target\">" + trgContentList[trgContentIndex++].replaceAll("&","&amp;").replaceAll("<", "&lt;").replaceAll(">", "&gt;") + "</td>");
+					tr.append("<td>"+(trgContentIndex+1)+"</td><td class=\"target\">" + replaceHttpEntity(trgContentList[trgContentIndex++]) + "</td>");
 				}else if( diffLineSideBySideCombined.isEmptyTrg ){
 					if( !isSrcContentLonger ) maxLine++;
-					tr.append("<td>"+(srcContentIndex+1)+"</td><td class=\"source\">" + srcContentList[srcContentIndex++].replaceAll("&","&amp;").replaceAll("<", "&lt;").replaceAll(">", "&gt;") + "</td>");
+					tr.append("<td>"+(srcContentIndex+1)+"</td><td class=\"source\">" + replaceHttpEntity(srcContentList[srcContentIndex++]) + "</td>");
 					tr.append("<td></td><td class=\"empty\"></td>");
 				}else{
-					tr.append("<td>"+(srcContentIndex+1)+"</td><td class=\"source\">" + srcContentList[srcContentIndex++].replaceAll("&","&amp;").replaceAll("<", "&lt;").replaceAll(">", "&gt;") + "</td>");
-					tr.append("<td>"+(trgContentIndex+1)+"</td><td class=\"target\">" + trgContentList[trgContentIndex++].replaceAll("&","&amp;").replaceAll("<", "&lt;").replaceAll(">", "&gt;") + "</td>");
+					tr.append("<td>"+(srcContentIndex+1)+"</td><td class=\"source\">" + replaceHttpEntity(srcContentList[srcContentIndex++]) + "</td>");
+					tr.append("<td>"+(trgContentIndex+1)+"</td><td class=\"target\">" + replaceHttpEntity(trgContentList[trgContentIndex++]) + "</td>");
 				}
 			}else{
-				tr.append("<td>"+(srcContentIndex+1)+"</td><td>" + srcContentList[srcContentIndex++].replaceAll("&","&amp;").replaceAll("<", "&lt;").replaceAll(">", "&gt;") + "</td>");
-				tr.append("<td>"+(trgContentIndex+1)+"</td><td>" + trgContentList[trgContentIndex++].replaceAll("&","&amp;").replaceAll("<", "&lt;").replaceAll(">", "&gt;") + "</td>");
+				tr.append("<td>"+(srcContentIndex+1)+"</td><td>" + replaceHttpEntity(srcContentList[srcContentIndex++]) + "</td>");
+				tr.append("<td>"+(trgContentIndex+1)+"</td><td>" + replaceHttpEntity(trgContentList[trgContentIndex++]) + "</td>");
 			}
 			lineIndex++;
 			tr.append("</tr>");
@@ -274,7 +280,7 @@ public class SourceUtils {
 		
 		
 		  
-		html.append("<tr><td class=\"line\"></td><td></td><td class=\"line\"></td><td></td></tr></table>");
+		html.append("<tr><td class=\"line\"></td><td></td><td class=\"line\"></td><td></td></tr></tbody><tfoot><tr><td colspan=\"4\"></td></tr><tr><td class=\"footer-src\" colspan=\"2\"></td><td class=\"footer-trg\" colspan=\"2\"></td></tr><tr><td colspan=\"4\"></td></tr></tfoot></table>");
 		
 		return html.toString();
 	}
@@ -294,7 +300,15 @@ public class SourceUtils {
 		boolean isLast = false;
 	}
 	
-	public static String contentToDiffFormat(String content){
+	public static String newContentToDiffFormat(String content){
+		return contentToDiffFormat(content, MARK_TRG);
+	}
+	
+	public static String deletedContentToDiffFormat(String content){
+		return contentToDiffFormat(content, MARK_SRC);
+	}
+	
+	private static String contentToDiffFormat(String content, String mark){
 		String lineStr = System.getProperty("line.separator");
 		StringBuffer diff = new StringBuffer("Index:");
 		diff.append(lineStr + "=" + lineStr + "-" + lineStr + "+");
@@ -303,9 +317,28 @@ public class SourceUtils {
 		while (scanner.hasNextLine()) {
 			String line = scanner.nextLine();
 			diff.append(lineStr);
-			diff.append(MARK_TRG + line);
+			diff.append(mark + line);
 		}
 		diff.append(lineStr);
 		return diff.toString();
+	}
+	
+	private static String replaceHttpEntity(String line){
+		if( line.trim().length() > 0 && line.trim().indexOf(" ") < 0 ) return appendZeroWidthSpace(line).replaceAll("<", "&lt;").replaceAll(">", "&gt;");
+		return line.replaceAll("&","&amp;").replaceAll("<", "&lt;").replaceAll(">", "&gt;");
+	}
+	
+	/*
+	 * html 에서 그려질때 빈칸이 없는 긴 줄은 break-word 가 먹지 않는다.
+	 * diff 페이지에서 테이블이 깨지므로 임의로 zero width space 를 중간에 삽입한다. 
+	 */
+	private static String appendZeroWidthSpace(String line){
+		StringBuilder sb = new StringBuilder(line);
+		int idx = sb.length() - 8;
+		while (idx > 0){
+			sb.insert(idx, "&#8203;");
+		    idx = idx - 8;
+		}
+		return sb.toString();
 	}
 }

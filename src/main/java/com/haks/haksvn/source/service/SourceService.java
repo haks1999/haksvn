@@ -28,7 +28,7 @@ public class SourceService {
 	
 	public SVNSource retrieveSVNSource(int repositorySeq, SVNSource svnSource){
 		Repository repository = repositoryService.retrieveAccesibleActiveRepositoryByRepositorySeq(repositorySeq);
-		svnSource = svnRepositoryService.checkIsTagAndChangeRevision(repository, svnSource);
+		svnSource = svnRepositoryService.checkIsCopiedOrDeletedAndChangeRevision(repository, svnSource);
 		svnSource = svnRepositoryService.retrieveSVNSourceContent(repository, svnSource);
 		svnSource = svnRepositoryService.retrieveOlderAndNewerAndCurSVNSourceLogList(repository, svnSource);
 		//svnSource.setLogs(svnRepositoryService.retrieveSVNSourceLogs(repository, svnSource.getPath(), Paging.Builder.getBuilder(new Paging()).limit(5).build()));
@@ -37,7 +37,7 @@ public class SourceService {
 	
 	public SVNSource retrieveSVNSourceWithoutContent(int repositorySeq, SVNSource svnSource){
 		Repository repository = repositoryService.retrieveAccesibleActiveRepositoryByRepositorySeq(repositorySeq);
-		svnSource = svnRepositoryService.checkIsTagAndChangeRevision(repository, svnSource);
+		svnSource = svnRepositoryService.checkIsCopiedOrDeletedAndChangeRevision(repository, svnSource);
 		svnSource = svnRepositoryService.retrieveOlderAndNewerAndCurSVNSourceLogList(repository, svnSource);
 		return svnSource;
 	}
@@ -50,13 +50,13 @@ public class SourceService {
 	
 	public NextPaging<List<SVNSourceLog>> retrieveSVNSourceLogList(int repositorySeq, NextPaging<SVNSource> paging){
 		Repository repository = repositoryService.retrieveAccesibleActiveRepositoryByRepositorySeq(repositorySeq);
-		paging.setModel(svnRepositoryService.checkIsTagAndChangeRevision(repository, paging.getModel()));
+		paging.setModel(svnRepositoryService.checkIsCopiedOrDeletedAndChangeRevision(repository, paging.getModel()));
 		return svnRepositoryService.retrieveSVNSourceLogList(repository, paging );
 	}
 	
 	public SVNSourceDiff retrieveDiffByPrevious(int repositorySeq, SVNSource svnSource){
 		Repository repository = repositoryService.retrieveAccesibleActiveRepositoryByRepositorySeq(repositorySeq);
-		svnSource = svnRepositoryService.checkIsTagAndChangeRevision(repository, svnSource);
+		svnSource = svnRepositoryService.checkIsCopiedOrDeletedAndChangeRevision(repository, svnSource);
 		//svnSource = retrieveSVNSourceWithoutContentAndLogs(repository.getRepositorySeq(), svnSource);
 		SVNSourceDiff svnSourceDiff = svnRepositoryService.retrieveDiffByPrevious(repository, svnSource);
 		
@@ -65,7 +65,7 @@ public class SourceService {
 	
 	public SVNSourceDiff retrieveDiffWithContentsByPrevious(int repositorySeq, SVNSource svnSource){
 		Repository repository = repositoryService.retrieveAccesibleActiveRepositoryByRepositorySeq(repositorySeq);
-		svnSource = svnRepositoryService.checkIsTagAndChangeRevision(repository, svnSource);
+		svnSource = svnRepositoryService.checkIsCopiedOrDeletedAndChangeRevision(repository, svnSource);
 		SVNSourceDiff svnSourceDiff = svnRepositoryService.retrieveDiffByPrevious(repository, svnSource);
 		if( !svnSourceDiff.getIsNewContent() ){
 			SVNSource svnSourceSrc = svnRepositoryService.retrieveSVNSourceContent(repository, svnSourceDiff.getSrc());
@@ -78,8 +78,8 @@ public class SourceService {
 	
 	public SVNSourceDiff retrieveDiffWithContentsByRevisions(int repositorySeq, SVNSource svnSourceSrc, SVNSource svnSourceTrg){
 		Repository repository = repositoryService.retrieveAccesibleActiveRepositoryByRepositorySeq(repositorySeq);
-		svnSourceSrc = svnRepositoryService.checkIsTagAndChangeRevision(repository, svnSourceSrc);
-		svnSourceTrg = svnRepositoryService.checkIsTagAndChangeRevision(repository, svnSourceTrg);
+		svnSourceSrc = svnRepositoryService.checkIsCopiedOrDeletedAndChangeRevision(repository, svnSourceSrc);
+		svnSourceTrg = svnRepositoryService.checkIsCopiedOrDeletedAndChangeRevision(repository, svnSourceTrg);
 		SVNSourceDiff svnSourceDiff = svnRepositoryService.retrieveDiffByRevisions(repository, svnSourceSrc, svnSourceTrg);
 		svnSourceSrc = svnRepositoryService.retrieveSVNSourceContent(repository, svnSourceSrc);
 		svnSourceTrg = svnRepositoryService.retrieveSVNSourceContent(repository, svnSourceTrg);

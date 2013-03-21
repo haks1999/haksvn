@@ -211,6 +211,13 @@ margin-left:25px;
 pre.diff table{
 border-collapse:separate;
 }
+pre.diff table thead td,pre.diff table tfoot td{
+text-align:center;
+}
+pre.diff table thead td.header-src,pre.diff table thead td.header-trg{
+width:50%;
+white-space:nowrap;
+}
 pre.diff table td{
 line-height:14px;
 padding-top:0px;
