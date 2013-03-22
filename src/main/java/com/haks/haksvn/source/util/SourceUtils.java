@@ -17,12 +17,10 @@ public class SourceUtils {
 		Scanner scanner = new Scanner(diff);
 		int srcStartLineNum = -1;
 		int targetStartLineNum = -1;
-		
 		scanner.nextLine();	//Index: sourceDetail.jsp
 		scanner.nextLine();	//===================================================================
 		scanner.nextLine();	//--- sourceDetail.jsp	(revision 96)
 		scanner.nextLine();	//+++ sourceDetail.jsp	(revision 97)
-		
 		boolean befHasType = false;
 		DiffLine befDiffLine = null;
 		while (scanner.hasNextLine()) {
@@ -268,8 +266,10 @@ public class SourceUtils {
 					tr.append("<td>"+(trgContentIndex+1)+"</td><td class=\"target\">" + replaceHttpEntity(trgContentList[trgContentIndex++]) + "</td>");
 				}
 			}else{
-				tr.append("<td>"+(srcContentIndex+1)+"</td><td>" + replaceHttpEntity(srcContentList[srcContentIndex++]) + "</td>");
-				tr.append("<td>"+(trgContentIndex+1)+"</td><td>" + replaceHttpEntity(trgContentList[trgContentIndex++]) + "</td>");
+				// 아래 if 조건문은 정상적인 경우에는 필요치 않으나, 한글 깨짐 등의 문제로 line 이 구분되지 않는 경우, 
+				// indexout exception 이 발생한다. 오류를 씹어먹자
+				if( srcContentIndex < srcContentList.length ) tr.append("<td>"+(srcContentIndex+1)+"</td><td>" + replaceHttpEntity(srcContentList[srcContentIndex++]) + "</td>");
+				if( trgContentIndex < trgContentList.length ) tr.append("<td>"+(trgContentIndex+1)+"</td><td>" + replaceHttpEntity(trgContentList[trgContentIndex++]) + "</td>");
 			}
 			lineIndex++;
 			tr.append("</tr>");
