@@ -273,6 +273,22 @@ background: #eee;
 border: 1px solid #888;
 border-width: 0 1px 0 1px;
 }
+table.light td{
+line-height:14px;
+padding-top:0px;
+padding-bottom:0px;
+padding-left:2px;
+padding-right:2px;
+background-color:transparent;
+font-family:Lucida Grande, Verdana, Arial, sans-serif;
+white-space: pre-wrap;
+white-space: -moz-pre-wrap;
+white-space: -pre-wrap;
+white-space: -o-pre-wrap;
+word-wrap: break-all; 
+}
+table.light tr:hover td{
+}
 form input.text.readOnly{
 border: 1px solid #fff;
 background:none;
