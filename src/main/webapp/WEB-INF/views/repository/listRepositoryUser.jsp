@@ -130,7 +130,6 @@
 		$("#div_searchUser").dialog({
 			resizable: false,
 			height: 260,
-		    witdh: 600,
 		    modal: true,
 		    buttons: {
 		          "Confirm": function() {
