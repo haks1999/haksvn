@@ -148,18 +148,22 @@ public class SVNRepositoryDao {
         	targetRepository = SVNRepositoryUtils.getUserAuthSVNRepository(repository);
         	
         	String relativePath = RepositoryUtils.getRelativeRepositoryPath(repository, svnSource.getPath());
-        	//if( relativePath.startsWith(repository.getTagsPath()) || relativePath.startsWith(repository.getBranchesPath()) ) 
-        	SVNNodeKind curNodeKind = targetRepository.checkPath(RepositoryUtils.getRelativeRepositoryPath(repository, svnSource.getPath()), svnSource.getRevision());
-        	
-        	SVNNodeKind headNodeKind = targetRepository.checkPath(RepositoryUtils.getRelativeRepositoryPath(repository, svnSource.getPath()), -1);
+        	SVNNodeKind curNodeKind = targetRepository.checkPath(relativePath, svnSource.getRevision());
+        	SVNNodeKind headNodeKind = targetRepository.checkPath(relativePath, -1);
         	svnSource.setIsDeleted(headNodeKind == SVNNodeKind.NONE);
-        	
         	if( curNodeKind != SVNNodeKind.NONE && !svnSource.getIsDeleted() ) return svnSource;
         	
         	long startRev = -1;	
+        	long repositorylastestRevision = targetRepository.getLatestRevision();
         	
         	if( svnSource.getIsDeleted() ){
-        		long deletedRevision = targetRepository.getDeletedRevision(RepositoryUtils.getRelativeRepositoryPath(repository, svnSource.getPath()), svnSource.getRevision(), targetRepository.getLatestRevision());
+        		long deletedRevision = targetRepository.getDeletedRevision(relativePath, svnSource.getRevision()<0?0:svnSource.getRevision(), repositorylastestRevision);
+        		//TODO deleted lastest revision 을 꼭 구해야 하나. 오류로 처리해 버리면 안 되나... 
+        		// 0 ~ -1 로 찾는 경우는 list change 에서만 쓰이며, diff 등에서는 실제 존재하는 revision을 넘겨준다. ㅅㅂ
+        		if( deletedRevision < 0 ){
+        			// for loop 로 존재하는 node 를 검색해봤으나 미친짓임. 걍 오류뱉자
+        			deletedRevision = repositorylastestRevision-1;
+        		}
         		if( curNodeKind == SVNNodeKind.NONE ) deletedRevision = svnSource.getRevision();
         		final List<SVNLogEntry> logListForLastest = new ArrayList<SVNLogEntry>(0);
                 targetRepository.log(new String[]{relativePath}, deletedRevision-1, 0, false, true, 1, new ISVNLogEntryHandler() { 
@@ -251,11 +255,10 @@ public class SVNRepositoryDao {
 	
 	public SVNSource retrieveSVNLogList(Repository repository, final SVNSource svnSource, long startRev, long endRev, long limit){
 		SVNRepository targetRepository = null;
-		//Collection<SVNLogEntry> logEntries = new ArrayList<SVNLogEntry>();
         try {
         	targetRepository = SVNRepositoryUtils.getUserAuthSVNRepository(repository);
+        	if( startRev < 0 ) startRev = svnSource.getLastestRevision();	// deleted 경우, -1 검색 불가
         	// path, null, startrevision, endrevision, include all paths, strict
-            //logEntries = targetRepository.log(new String[]{RepositoryUtils.getRelativeRepositoryPath(repository, path)}, null,0, -1, false, true);
         	final List<SVNLogEntry> logList = new ArrayList<SVNLogEntry>();
         	targetRepository.log(new String[]{RepositoryUtils.getRelativeRepositoryPath(repository, svnSource.getPath())}, startRev, endRev, false, true, limit, new ISVNLogEntryHandler() { 
                 public void handleLogEntry(SVNLogEntry entry) throws SVNException { 
@@ -318,14 +321,14 @@ public class SVNRepositoryDao {
 		SVNSourceDiff svnSourceDiff = new SVNSourceDiff();
         try {
         	targetRepository = SVNRepositoryUtils.getUserAuthSVNRepository(repository);
-        	SVNDiffClient diffClient = SVNClientManager.newInstance(SVNWCUtil.createDefaultOptions(true), targetRepository.getAuthenticationManager()).getDiffClient();
+        	SVNDiffClient diffClient = SVNClientManager.newInstance(SVNWCUtil.createDefaultOptions(false), targetRepository.getAuthenticationManager()).getDiffClient();
         	
         	baos = new ByteArrayOutputStream();
         	diffClient.doDiff(SVNURL.parseURIDecoded(RepositoryUtils.getAbsoluteRepositoryPath(repository, svnSourceSrc.getPath())), 
         						SVNRevision.create(svnSourceSrc.getRevision()), 
         						SVNURL.parseURIDecoded(RepositoryUtils.getAbsoluteRepositoryPath(repository, svnSourceTrg.getPath())),
         						SVNRevision.create(svnSourceTrg.getRevision()), SVNDepth.FILES, true, baos);
-        	svnSourceDiff.setDiff(baos.toString("utf-8"));
+        	svnSourceDiff.setDiff(baos.toString());
         }catch(Exception e){
         	e.printStackTrace();
         	throw new HaksvnException(e);

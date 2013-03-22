@@ -1,8 +1,8 @@
 package svnkit;
 import java.io.ByteArrayOutputStream;
+import java.io.OutputStreamWriter;
+import java.nio.charset.Charset;
 import java.util.Scanner;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import org.tmatesoft.svn.core.SVNDepth;
 import org.tmatesoft.svn.core.SVNURL;
@@ -12,10 +12,6 @@ import org.tmatesoft.svn.core.wc.SVNDiffClient;
 import org.tmatesoft.svn.core.wc.SVNRevision;
 import org.tmatesoft.svn.core.wc.SVNWCUtil;
 
-import com.haks.haksvn.source.model.SVNSource;
-import com.haks.haksvn.source.util.SourceUtils;
-import com.haks.haksvn.source.util.SourceUtils.DiffLine;
-
 public class DoDiffTest {
 
 	public static void main(String[] args) throws Exception {
@@ -24,9 +20,13 @@ public class DoDiffTest {
 		DAVRepositoryFactory.setup();
 		
 		
-		String url = "https://haksvn.googlecode.com/svn";
+		//String url = "https://haksvn.googlecode.com/svn";
+		//String name = "haks1999";
+		//String password = "aW9fj8bm9Rt5--";
+		String url = "http://165.243.31.35:81/svn/Embedded/Advanced_Analytics_Repository";
 		String name = "haks1999";
-		String password = "aW9fj8bm9Rt5--";
+		String password = "haks1999";
+		;
 		//String path = "/trunk/src/main/java/com/haks/haksvn/source/controller/SourceController.java";
 		//String path="/trunk/src/main/java/com/haks/haksvn/repository/dao/SVNRepositoryDao.java";
 		
@@ -42,9 +42,9 @@ public class DoDiffTest {
 		//long rev1 = 108;
 		//long rev2 = 2;
 		
-		String path="/trunk/src/main/java/com/haks/haksvn/repository/service/SVNRepositoryService.java";
-		long rev1 = 111;
-		long rev2 = 107;
+		String path="/trunk/com.lgcns.aa.root/com.lgcns.aa.ui/com.lgcns.aa.sra/src/main/webapp/pages/workflow/app/controller/Common.js";
+		long rev1 = 4602;
+		long rev2 = 4532;
 
 		//SVNRepository repository = SVNRepositoryFactory.create(SVNURL.parseURIDecoded(url));
 		ISVNAuthenticationManager authManager = SVNWCUtil.createDefaultAuthenticationManager(name, password);
@@ -81,9 +81,12 @@ public class DoDiffTest {
 		diffClient.doDiff(repositorySVNURL, SVNRevision.create(rev2), repositorySVNURL, SVNRevision.create(rev1), SVNDepth.FILES, true, baos);
 		
 		
-		String str = baos.toString();
+		String str = baos.toString("utf-8");
 		
 		System.out.println(str);
+		System.out.println("Default Charset=" + Charset.defaultCharset());
+    	System.out.println("file.encoding=" + System.getProperty("file.encoding"));
+    	System.out.println("Default Charset in Use=" + getDefaultCharSet());
 		//diffToHtml(str);
 		
 		
@@ -118,6 +121,11 @@ public class DoDiffTest {
 		*/
 	}
 	
+	private static String getDefaultCharSet() {
+    	OutputStreamWriter writer = new OutputStreamWriter(new ByteArrayOutputStream());
+    	String enc = writer.getEncoding();
+    	return enc;
+    }
 	
 	
 	public static String diffToHtml(String diff){
