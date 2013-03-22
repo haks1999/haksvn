@@ -44,6 +44,7 @@ public class SourceService {
 	
 	public SVNSource retrieveSVNSourceWithoutContentAndLogs(int repositorySeq, SVNSource svnSource){
 		Repository repository = repositoryService.retrieveAccesibleActiveRepositoryByRepositorySeq(repositorySeq);
+		svnSource = svnRepositoryService.checkIsCopiedOrDeletedAndChangeRevision(repository, svnSource);
 		svnSource = svnRepositoryService.retrieveSVNSourceWithoutContentAndLogs(repository, svnSource);
 		return svnSource;
 	}

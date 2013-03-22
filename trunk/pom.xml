@@ -301,6 +301,9 @@
 							<path>/haksvn</path>
 							<enableNaming>true</enableNaming>
 							<charset>utf-8</charset>
+							<systemProperties>
+    							<JAVA_OPTS>-Xms256m -Xmx512m -XX:MaxPermSize=256m -Dfile.encoding=utf-8</JAVA_OPTS>
+  							</systemProperties>
 						</configuration>
 					</execution>
 				</executions>
