@@ -5,6 +5,19 @@
 		
 		$('#frm_transfer').attr('action', '<c:url value="/transfer/request/list" />' + '<c:out value="/${repositorySeq}/save"/>');
 		transformDateField();
+		
+		
+		
+		
+		$( "#accordion" ).accordion({
+		      heightStyle: "content",
+		      collapsible: true ,
+		      active:false
+		    });
+		
+		
+		
+		listRepositorySource();
    	});
 	
 	function transformDateField(){
@@ -12,8 +25,68 @@
 		var transferDate = '<c:out value="${transfer.transferDate}"/>';
 		if( requestDate > 0 ) $('#frm_transfer input.requestDate').val(haksvn.date.convertToComplexFullFormat(new Date(requestDate)));
 		if( transferDate > 0 ) $('#frm_transfer input.transferDate').val(haksvn.date.convertToComplexFullFormat(new Date(transferDate)));
-		
-		
+	};
+	
+	function openSearchSourceDialog(){
+		$("#div_searchSource").dialog({
+			height: 550,
+		    width: 800,
+		    modal: true,
+		    buttons: {
+		          "Confirm": function() {
+		            $( this ).dialog( "close" );
+		          },
+		          Cancel: function() {
+		            $( this ).dialog( "close" );
+		          }
+		        }
+	    });
+	};
+	
+	function listRepositorySource(){
+		$("#div_sourceTree").dynatree({
+			onClick: function(node, event) {
+				if(node.data.isFolder) node.expand();
+				//retrieveSourceList(node.data.fileChildren);
+				return true;
+		      },
+            clickFolderMode: 1,
+            selectMode: 1,
+	        children:[{title:'[SVN]',path:'/trunk',isLazy:true,isFolder:true, expand:true}],
+			onLazyRead: function(node){
+				$.getJSON(
+					"<c:url value="/source/browse/list"/>",
+					{repositorySeq: '<c:out value="${repositorySeq}" />', path:node.data.path},
+		            function(result){
+		            	if( !node.data.fileChildren ) node.data.fileChildren = [];
+	                    res = [];
+	                    for(var inx=0, len=result.length; inx<len; inx++){
+	                        var source = result[inx];
+	                        if(source.isFolder){
+	                        	res.push({title: source.title, path: source.path, isFolder:source.isFolder, isLazy: source.isLazy
+     								,fileChildren:[]});
+	                        }else{
+	                        	node.data.fileChildren.push(source);
+	                        }
+	                    }
+	                    if(res.length < 1 ){
+	                    	var expandObj = $('#div_sourceTree li[dtnode="'+node.toString()+'"] span.dynatree-expanded');
+	                    	expandObj.removeClass('dynatree-expanded').removeClass('dynatree-has-children');
+	                    	$(expandObj).find('span.dynatree-expander').removeClass('dynatree-expanded').addClass('dynatree-connector');
+	                    	node.data.isLazy = false;
+	                    }
+	                    node.setLazyNodeStatus(DTNodeStatus_Ok);
+	                    node.addChild(res);
+	 		        	//retrieveSourceList(node.data.fileChildren);
+		            }
+		        );
+	 		}
+        });
+		$("#div_sourceTree").dynatree("getTree").reload();
+		//retrieveSourceList([]);
+		$("#div_sourceTree").dynatree("getRoot").visit(function(node){
+			node.reloadChildren();
+		});
 	};
 	
 </script>
@@ -71,12 +144,12 @@
 				</p>
 				<p>
 					<label class="left">Sources To Transfer</label>
-					<span><font class="path"><a onclick="expandAllChanged()" style="text-decoration:underline;cursor:pointer;">Add</a></font></span>
+					<span><font class="path"><a onclick="openSearchSourceDialog()" style="text-decoration:underline;cursor:pointer;">Add</a></font></span>
 					<input type="text" class="text visible-hidden"/>
 				</p>
 				<p>
 					<label class="left">Sources To Delete</label>
-					<span><font class="path"><a onclick="expandAllChanged()" style="text-decoration:underline;cursor:pointer;">Add</a></font></span>
+					<span><font class="path"><a onclick="openSearchSourceDialog()" style="text-decoration:underline;cursor:pointer;">Add</a></font></span>
 					<input type="text" class="text visible-hidden"/>
 				</p>
 				<p>
@@ -129,4 +202,113 @@
 		</div>
 	</div>
 	<div class="clear"></div>
+</div>
+
+<div id="div_searchSource" title="Search Source" style="display:none;">
+	<div class="module text">
+	
+		<div>
+			<input type="text" class="text"/>
+		</div>
+		
+		
+		<div>
+	
+	
+	  		<div style="float:left;width:300px;">
+	  			<div id="div_sourceTree" style="height:100%;"></div>
+	  		</div>
+	  		
+	  		
+	  		
+	  		
+	  		
+	  		<div id="div_sourceListPanel" style="float:left;margin-left:5px;width:400px;">
+	  		
+	  		
+							  <div id="accordion">
+							    <h3>Section 1</h3>
+							    <div>
+							      <p>Mauris mauris ante, blandit et, ultrices a, suscipit eget, quam. Integer ut neque. Vivamus nisi metus, molestie vel, gravida in, condimentum sit amet, nunc. Nam a nibh. Donec suscipit eros. Nam mi. Proin viverra leo ut odio. Curabitur malesuada. Vestibulum a velit eu ante scelerisque vulputate.</p>
+							    </div>
+							    <h3>Section 2</h3>
+							    <div>
+							      <p>Sed non urna. Donec et ante. Phasellus eu ligula. Vestibulum sit amet purus. Vivamus hendrerit, dolor at aliquet laoreet, mauris turpis porttitor velit, faucibus interdum tellus libero ac justo. Vivamus non quam. In suscipit faucibus urna. </p>
+							    </div>
+							    <h3>Section 3</h3>
+							    <div>
+							      <p>Nam enim risus, molestie et, porta ac, aliquam ac, risus. Quisque lobortis. Phasellus pellentesque purus in massa. Aenean in pede. Phasellus ac libero ac tellus pellentesque semper. Sed ac felis. Sed commodo, magna quis lacinia ornare, quam ante aliquam nisi, eu iaculis leo purus venenatis dui. </p>
+							      <ul>
+							        <li>List item one</li>
+							        <li>List item two</li>
+							        <li>List item three</li>
+							      </ul>
+							    </div>
+							    <h3>Section 4</h3>
+							    <div>
+							      <p>Cras dictum. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia Curae; Aenean lacinia mauris vel est. </p><p>Suspendisse eu nisl. Nullam ut libero. Integer dignissim consequat lectus. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. </p>
+							    </div>
+							     <h3>Section 5</h3>
+							    <div>
+							      <p>Cras dictum. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia Curae; Aenean lacinia mauris vel est. </p><p>Suspendisse eu nisl. Nullam ut libero. Integer dignissim consequat lectus. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. </p>
+							    </div>
+							    <h3>Section 6</h3>
+							    <div>
+							      <p>Cras dictum. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia Curae; Aenean lacinia mauris vel est. </p><p>Suspendisse eu nisl. Nullam ut libero. Integer dignissim consequat lectus. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. </p>
+							    </div>
+							     <h3>Section 6</h3>
+							    <div>
+							      <p>Cras dictum. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia Curae; Aenean lacinia mauris vel est. </p><p>Suspendisse eu nisl. Nullam ut libero. Integer dignissim consequat lectus. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. </p>
+							    </div>
+							     <h3>Section 6</h3>
+							    <div>
+							      <p>Cras dictum. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia Curae; Aenean lacinia mauris vel est. </p><p>Suspendisse eu nisl. Nullam ut libero. Integer dignissim consequat lectus. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. </p>
+							    </div>
+							     <h3>Section 6</h3>
+							    <div>
+							      <p>Cras dictum. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia Curae; Aenean lacinia mauris vel est. </p><p>Suspendisse eu nisl. Nullam ut libero. Integer dignissim consequat lectus. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. </p>
+							    </div>
+							     <h3>Section 6</h3>
+							    <div>
+							      <p>Cras dictum. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia Curae; Aenean lacinia mauris vel est. </p><p>Suspendisse eu nisl. Nullam ut libero. Integer dignissim consequat lectus. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. </p>
+							    </div>
+							     <h3>Section 6</h3>
+							    <div>
+							      <p>Cras dictum. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia Curae; Aenean lacinia mauris vel est. </p><p>Suspendisse eu nisl. Nullam ut libero. Integer dignissim consequat lectus. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. </p>
+							    </div>
+							     <h3>Section 6</h3>
+							    <div>
+							      <p>Cras dictum. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia Curae; Aenean lacinia mauris vel est. </p><p>Suspendisse eu nisl. Nullam ut libero. Integer dignissim consequat lectus. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. </p>
+							    </div>
+							     <h3>Section 6</h3>
+							    <div>
+							      <p>Cras dictum. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia Curae; Aenean lacinia mauris vel est. </p><p>Suspendisse eu nisl. Nullam ut libero. Integer dignissim consequat lectus. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. </p>
+							    </div>
+							  </div>
+	  			<!-- 
+	  			<table id="tbl_sourceList">
+	  				<thead>
+	  					<tr>
+	  						<td style="width:30px;">rev</td>
+	  						<td>name</td>
+	  					</tr>
+	  				</thead>
+							<tbody>
+								<tr class="sample">
+									<td class="name"><font class="path font12"><a href=""></a></font></td>
+									<td class="revision"><font class="path font12"><a href=""></a></font></td>
+								</tr>
+								<tr>
+									<td class="name">1<font class="path font12"><a href=""></a></font></td>
+									<td class="revision">3<font class="path font12"><a href=""></a></font></td>
+								</tr>
+							</tbody>
+						</table>
+	  		-->
+	  		
+	  		
+	  		</div>
+  		
+		</div>
+	</div>
 </div>
