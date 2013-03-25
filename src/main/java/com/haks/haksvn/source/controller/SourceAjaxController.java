@@ -1,5 +1,6 @@
 package com.haks.haksvn.source.controller;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.servlet.http.HttpServletResponse;
@@ -13,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.haks.haksvn.common.exception.HaksvnException;
 import com.haks.haksvn.common.paging.model.NextPaging;
 import com.haks.haksvn.source.model.SVNSource;
 import com.haks.haksvn.source.model.SVNSourceDiff;
@@ -34,6 +36,21 @@ public class SourceAjaxController {
     	
 		return sourceService.retrieveSVNSourceList(repositorySeq, path);
     }
+	
+	// request source 검색 시 자동 완성을 위한 dir 검색
+	@RequestMapping(value="/browse/search/dir", method=RequestMethod.POST ,params ={"repositorySeq","path"})
+    public @ResponseBody List<SVNSource> searchSVNSourceDir(@RequestParam(value = "repositorySeq", required = true) int repositorySeq
+    												,@RequestParam(value = "path", required = true) String path){
+    	try{
+    		return sourceService.retrieveSVNSourceDirList(repositorySeq, path);
+    	}catch(HaksvnException e){
+    		//TODO warn 처리?
+    		// 입력 조건을 받아서 검색하므로 svn not found 오류가 많이 생길듯
+    		return new ArrayList<SVNSource>(0);
+    	}
+		
+    }
+	
 	/*
 	@RequestMapping(value="/list", method=RequestMethod.GET ,params ={"repositorySeq","path"})
     public @ResponseBody Map<String,List<SVNSource>> listSVNSource(@RequestParam(value = "repositorySeq", required = true) String repositorySeq,

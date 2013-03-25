@@ -105,7 +105,7 @@ public class SVNRepositoryDao {
 			targetRepository = SVNRepositoryUtils.getUserAuthSVNRepository(repository);
 			entries = targetRepository.getDir( RepositoryUtils.getRelativeRepositoryPath(repository, path), -1 , null , (Collection<SVNDirEntry>) null );
         }catch(Exception e){
-        	e.printStackTrace();
+        	//e.printStackTrace();
         	throw new HaksvnException(e);
         }finally{
         	if(targetRepository!=null) targetRepository.closeSession();

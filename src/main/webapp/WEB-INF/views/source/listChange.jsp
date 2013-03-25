@@ -106,7 +106,7 @@
 					<tr>
 						<td colspan="4" style="text-align:center;">
 							<span class="showmore display-none"><font class="path"><a onclick="retrieveRepositoryChangeList()">Show More</a></font></span>
-							<span class="loader display-none"><img src="/haksvn/images/ajax-loader.gif" /></span>
+							<span class="loader display-none"><img src="<c:url value="/images/ajax-loader.gif"/>" /></span>
 							<span class="nodata">no data</span>
 						</td>
 					</tr>

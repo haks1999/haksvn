@@ -72,6 +72,7 @@ public class TransferController {
     										@PathVariable int repositorySeq) {
 		List<Repository> repositoryList = repositoryService.retrieveAccesibleActiveRepositoryList();
 		model.addAttribute("repositoryList", repositoryList );
+		model.addAttribute("repository", repositoryService.retrieveRepositoryByRepositorySeq(repositorySeq));
 		transfer.setRepositorySeq(repositorySeq);
     	model.addAttribute("tranfer", transfer );
     	model.addAttribute("transferStateAuth", TransferStateAuth.Builder.getBuilder().transfer(transfer).build());
@@ -83,8 +84,9 @@ public class TransferController {
     public String forwardTransferDetailPage(ModelMap model, 
     										@PathVariable int repositorySeq,
     										@PathVariable int transferSeq) {
-		Transfer transfer =transferService.retrieveTransferDetail(Transfer.Builder.getBuilder(new Transfer()).repositorySeq(repositorySeq).transferSeq(transferSeq).build());
+		Transfer transfer = transferService.retrieveTransferDetail(Transfer.Builder.getBuilder(new Transfer()).repositorySeq(repositorySeq).transferSeq(transferSeq).build());
 		model.addAttribute("repositoryList", repositoryService.retrieveAccesibleActiveRepositoryList() );
+		model.addAttribute("repository", repositoryService.retrieveRepositoryByRepositorySeq(repositorySeq));
 		model.addAttribute("transfer", transfer);
 		model.addAttribute("transferStateAuth", TransferStateAuth.Builder.getBuilder().transfer(transfer).build());
     	return "/transfer/modifyTransfer";
@@ -98,6 +100,7 @@ public class TransferController {
     	if( result.hasErrors() ){
     		List<Repository> repositoryList = repositoryService.retrieveAccesibleActiveRepositoryList();
     		model.addAttribute("repositoryList", repositoryList );
+    		model.addAttribute("repository", repositoryService.retrieveRepositoryByRepositorySeq(repositorySeq));
     		transfer.setRepositorySeq(transfer.getRepositorySeq());
         	model.addAttribute("tranfer", transfer );
         	model.addAttribute("transferStateAuth", TransferStateAuth.Builder.getBuilder().transfer(transfer).build());

@@ -273,21 +273,24 @@ background: #eee;
 border: 1px solid #888;
 border-width: 0 1px 0 1px;
 }
-table.light td{
-line-height:14px;
-padding-top:0px;
-padding-bottom:0px;
-padding-left:2px;
-padding-right:2px;
-background-color:transparent;
-font-family:Lucida Grande, Verdana, Arial, sans-serif;
-white-space: pre-wrap;
-white-space: -moz-pre-wrap;
-white-space: -pre-wrap;
-white-space: -o-pre-wrap;
-word-wrap: break-all; 
+table.compact{
+table-layout: fixed;
 }
-table.light tr:hover td{
+table.compact th{
+line-height:12px;
+font-size:12px;
+padding:8px;
+text-align:center;
+}
+table.compact td{
+font-size:11px;
+font-weight:normal;
+padding-top:2px;
+padding-bottom:2px;
+padding-right:8px;
+padding-left:8px;
+overflow: hidden;
+text-overflow: ellipsis;
 }
 form input.text.readOnly{
 border: 1px solid #fff;
@@ -315,5 +318,8 @@ visibility:hidden;
 background-image:url(../images/ajax-loader-s.gif);
 background-repeat:no-repeat;
 }
-td.w_30,label.w_30{width:30px;} td.w_40,label.w_40{width:40px;} td.w_50,label.w_50{width:50px;} td.w_60,label.w_60{width:60px;} td.w_70,label.w_70{width:70px;} td.w_80,label.w_80{width:80px;} td.w_90,label.w_90{width:90px;} td.w_100,label.w_100{width:100px;}
-td.w_110,label.w_110{width:110px;} td.w_120,label.w_120{width:120px;} td.w_130,label.w_130{width:130px;} td.w_140,label.w_140{width:140px;} td.w_150,label.w_150{width:150px;}
+.ui-autocomplete-loading {
+    background: white url('../images/ajax-loader-s.gif') right center no-repeat;
+}
+td.w_20,th.w_20,label.w_20{width:20px;} td.w_30,th.w_30,label.w_30{width:30px;} td.w_40,th.w_40,label.w_40{width:40px;} td.w_50,th.w_50,label.w_50{width:50px;} td.w_60,th.w_60,label.w_60{width:60px;} td.w_70,th.w_70,label.w_70{width:70px;} td.w_80,th.w_80,label.w_80{width:80px;} td.w_90,th.w_90,label.w_90{width:90px;} td.w_100,th.w_100,label.w_100{width:100px;}
+td.w_110,th.w_110,label.w_110{width:110px;} td.w_120,th.w_120,label.w_120{width:120px;} td.w_130,th.w_130,label.w_130{width:130px;} td.w_140,th.w_140,label.w_140{width:140px;} td.w_150,th.w_150,label.w_150{width:150px;}
