@@ -34,6 +34,15 @@ haksvn.constants = {
 	DIFF_DAY : ['Today','Yesterday']
 };
 
+haksvn.block = {
+	on: function(){
+		$('body').addClass('blocking');
+	},
+	off: function(){
+		$('body').removeClass('blocking');
+	}
+};
+
 haksvn.date = {
 	convertToEasyFormat: function( date ){
 		var today_ms = new Date().getTime();
