@@ -21,6 +21,9 @@ insert into code (code_id, code_group, code_name, code_value, code_order) values
 insert into code (code_id, code_group, code_name, code_value, code_order) values ('transfer.state.code.request'		,'transfer.state.code'			,'Request'		,'10'	,20 );
 insert into code (code_id, code_group, code_name, code_value, code_order) values ('transfer.state.code.complete'		,'transfer.state.code'			,'Complete'		,'20'	,30 );
 insert into code (code_id, code_group, code_name, code_value, code_order) values ('transfer.state.code.reject'		,'transfer.state.code'			,'Reject'		,'30'	,40 );
+insert into code (code_id, code_group, code_name, code_value, code_order) values ('transfer.source.type.code.add'			,'transfer.source.type.code'			,'Add'		,'00'	,10 );
+insert into code (code_id, code_group, code_name, code_value, code_order) values ('transfer.source.type.code.modify'			,'transfer.source.type.code'			,'Modify'		,'10'	,20 );
+insert into code (code_id, code_group, code_name, code_value, code_order) values ('transfer.source.type.code.delete'			,'transfer.source.type.code'			,'Delete'		,'20'	,30 );
 insert into code (code_id, code_group, code_name, code_value, code_order) values ('common.boolean.yn.code.y'			,'common.boolean.yn.code'		,'Y'			,'true'	,10 );
 insert into code (code_id, code_group, code_name, code_value, code_order) values ('common.boolean.yn.code.n'			,'common.boolean.yn.code'		,'N'			,'false',20 );
 insert into code (code_id, code_group, code_name, code_value, code_order) values ('user.auth.type.code.system-admin'	,'user.auth.type.code'			,'system-admin'	,'10'	,10 );

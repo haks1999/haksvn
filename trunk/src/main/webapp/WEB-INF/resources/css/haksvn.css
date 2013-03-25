@@ -318,6 +318,22 @@ visibility:hidden;
 background-image:url(../images/ajax-loader-s.gif);
 background-repeat:no-repeat;
 }
+#_global_block{
+display:    none;
+position:   fixed;
+z-index:    5000;
+top:        0;
+left:       0;
+height:     100%;
+width:      100%;
+background: rgba( 255, 255, 255, .5 ) url(../images/ajax-loader-block.gif) 50% 50% no-repeat;
+}
+body.blocking {
+    overflow: hidden;   
+}
+body.blocking #_global_block {
+    display: block;
+}
 .ui-autocomplete-loading {
     background: white url('../images/ajax-loader-s.gif') right center no-repeat;
 }

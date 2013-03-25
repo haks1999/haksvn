@@ -2,12 +2,15 @@ package com.haks.haksvn.transfer.model;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+
+import com.haks.haksvn.common.code.model.Code;
 
 @Entity
 @Table(name="transfer_source")
@@ -27,6 +30,10 @@ public class TransferSource {
 	@ManyToOne
 	@JoinColumn(name="transfer_seq")
 	private Transfer transfer;
+	
+	@ManyToOne(fetch = FetchType.EAGER)
+	@JoinColumn(name="transfer_source_type", referencedColumnName="code_id")
+	private Code transferSourceTypeCode;
 	
 	public TransferSource(){
 		
@@ -64,5 +71,12 @@ public class TransferSource {
 		this.transfer = transfer;
 	}
 	
+	public Code getTransferSourceTypeCode(){
+		return transferSourceTypeCode;
+	}
+	
+	public void setTransferSourceTypeCode(Code code){
+		transferSourceTypeCode = code;
+	}
 	
 }

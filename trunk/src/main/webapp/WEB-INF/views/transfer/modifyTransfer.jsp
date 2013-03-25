@@ -35,6 +35,13 @@ float:left;width:440px;height:250px;overflow:auto;margin-left:5px;
 	};
 	
 	function enableSearchSourceAutocomplete(){
+		$("#txt_searchSource").keypress(function(event) {
+		    if (event.which == 13) {
+		        event.preventDefault();
+		        searchSource();
+		    }
+		});
+		
 		$( "#txt_searchSource" ).autocomplete({
 			source: function( request, response ) {
 						//if( autocompleteExtractLast(request.term).trim().length < 2 ) return;
@@ -53,7 +60,8 @@ float:left;width:440px;height:250px;overflow:auto;margin-left:5px;
 		          
 		        	},
 			select: function( event, ui ) {
-				        this.value = ui.item.path;
+						if(ui.item.noresultmsg) return false;
+				        this.value = ui.item.path.substr(_gRootPath.length);
 				        return false;
 					},
 			minLength: 1,
@@ -75,7 +83,7 @@ float:left;width:440px;height:250px;overflow:auto;margin-left:5px;
 		        .appendTo( ul ); 
 			}else{
 				return $( "<li>" )
-		        .append( "<a>" + item.path + "</a>" )
+		        .append( "<a>" + item.path.substr(_gRootPath.length) + "</a>" )
 		        .appendTo( ul );
 			}
 		     
@@ -93,6 +101,7 @@ float:left;width:440px;height:250px;overflow:auto;margin-left:5px;
 		    modal: true,
 		    buttons: {
 		    	"Close": function() {
+		    		$( "#txt_searchSource" ).val('');
 		        	destroySourceTree();
 		            $( this ).dialog( "close" );
 		        }
@@ -171,6 +180,7 @@ float:left;width:440px;height:250px;overflow:auto;margin-left:5px;
 			$(row).css('display','');
 			$('#tbl_sourceList > tbody').append(row);
 		}
+		$( "#txt_searchSource" ).focus();
 	};
 	
 	function createSourceListActionButton( row ){
@@ -186,6 +196,7 @@ float:left;width:440px;height:250px;overflow:auto;margin-left:5px;
 		});
 		$(row).find("td button.action").button().click(function() {
 	        	alert( "Add to request" );
+	        	haksvn.block.on();
 	    	}).next().button({
 				text: false,
 	          	icons: {
