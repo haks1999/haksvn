@@ -113,6 +113,28 @@ public class SVNRepositoryService {
 		return svnSourceList;
     }
 	
+	public List<SVNSource> retrieveSVNSourceListByNodeKind( Repository repository, String path , SVNNodeKind nodeKind ){
+		List<SVNSource> svnSourceList = new ArrayList<SVNSource>();
+		String searchPath = path.indexOf("/") < 0 ? "/":path.substring(0, path.lastIndexOf("/"));
+		Collection<SVNDirEntry> entries = svnRepositoryDao.retrieveSVNDirEntryList(repository, searchPath);
+		for( SVNDirEntry svnDirEntry : entries ){
+			if( nodeKind != svnDirEntry.getKind()) continue;
+			if( !(searchPath+"/"+svnDirEntry.getName()).startsWith(path)) continue;
+			SVNSource svnSource = SVNSource.Builder.getBuilder(new SVNSource())
+					.title(svnDirEntry.getName()).name(svnDirEntry.getName()).path(searchPath+"/"+svnDirEntry.getName()).author(svnDirEntry.getAuthor()).size(svnDirEntry.getSize())
+					.formattedSize(FormatUtils.fileSize(svnDirEntry.getSize())).revision(svnDirEntry.getRevision()).date(svnDirEntry.getDate().getTime()).build();
+			svnSource.setIsFolder(svnDirEntry.getKind() == SVNNodeKind.DIR);
+			svnSource.setIsLazy(svnSource.getIsFolder());
+			svnSourceList.add(svnSource);
+		}
+		Collections.sort(svnSourceList, new Comparator<SVNSource>(){
+		     public int compare(SVNSource src1, SVNSource src2){
+		    	 return src1.getName().compareToIgnoreCase(src2.getName());
+		     }
+		});
+		return svnSourceList;
+    }
+	
 	// 한 번에 svnentrylog 를 조회해 온 후, 페이징 하는 방식이었으나
 	// svnentrylog 를 아예 조금씩 가져오도록 수정. log 가 많아지면 기존 방식으로는 감당하기 어려움.
 	// 커넥션이 1-2 번 더 생기나 더 이득임

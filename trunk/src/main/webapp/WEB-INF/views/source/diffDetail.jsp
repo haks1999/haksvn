@@ -61,7 +61,7 @@
 									<font class="path">
 										<a href="<c:out value="${trgBrowsePath}?rev=${svnSourceTrg.revision}" />">
 											<c:forEach var="pathFrag" items="${fn:split(svnSourceTrg.path, '/')}" varStatus="loop">
-												/<c:out value="${pathFrag}" />&#8203;
+												/<c:out value="${pathFrag}" />
 											</c:forEach>
 										</a>
 									</font>

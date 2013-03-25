@@ -94,7 +94,7 @@
 						<p>
 							<label for="path" class="w_120">Source path</label>
 							<input name="path" type="text" class="text w_60"/>
-							<a class="button right form_submit"><small class="icon looking_glass"></small><span>Search</span></a>
+							<a class="button right form_submit yellow"><small class="icon looking_glass"></small><span>Search</span></a>
 						</p>
 					</form>
 				</div>
@@ -128,7 +128,7 @@
 					<tr>
 						<td colspan="7" style="text-align:center;">
 							<span class="showmore display-none"><font class="path"><a onclick="retrieveTransferList()">Show More</a></font></span>
-							<span class="loader display-none"><img src="/haksvn/images/ajax-loader.gif" /></span>
+							<span class="loader display-none"><img src="<c:url value="/images/ajax-loader.gif"/>"/></span>
 							<span class="nodata">no data</span>
 						</td>
 					</tr>

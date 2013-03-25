@@ -1,23 +1,30 @@
 <%@ include file="/WEB-INF/views/common/include/taglib.jspf"%>
+<style>
+.sourceTreePanel{
+float:left;border:#999a9b 1px solid;height:250px;
+}
+.sourceTreePanel > div{
+height:242px;width:250px;
+}
+.sourceListPanel{
+float:left;width:440px;height:250px;overflow:auto;margin-left:5px;
+}
+
+.sourceListPanel .ui-menu { position: absolute; width: 100px; }
+.sourceListPanel .ui-button .ui-button-text{font-family:Verdana,Arial,sans-serif;font-size:10px;}
+.sourceListPanel .ui-button-text-only .ui-button-text{padding:.4em .4em}
+.sourceListPanel .ui-button-icon-only .ui-button-text{padding:.4em .4em}
+.sourceListPanel .ui-menu {z-index:1;}
+.sourceListPanel .ui-menu .ui-menu-item A{font-size:10px;}
+</style>
 <script type="text/javascript">
 	$(function() {
 		//$('#repositoryForm').validate();
-		
-		$('#frm_transfer').attr('action', '<c:url value="/transfer/request/list" />' + '<c:out value="/${repositorySeq}/save"/>');
+		$('#frm_transfer').attr('action', '<c:url value="/transfer/request/list/${repositorySeq}/save" />');
 		transformDateField();
+		enableSearchSourceAutocomplete();
+		$('#btn_searchSource').button().click(searchSource);
 		
-		
-		
-		
-		$( "#accordion" ).accordion({
-		      heightStyle: "content",
-		      collapsible: true ,
-		      active:false
-		    });
-		
-		
-		
-		listRepositorySource();
    	});
 	
 	function transformDateField(){
@@ -27,32 +34,93 @@
 		if( transferDate > 0 ) $('#frm_transfer input.transferDate').val(haksvn.date.convertToComplexFullFormat(new Date(transferDate)));
 	};
 	
-	function openSearchSourceDialog(){
-		$("#div_searchSource").dialog({
-			height: 550,
-		    width: 800,
-		    modal: true,
-		    buttons: {
-		          "Confirm": function() {
-		            $( this ).dialog( "close" );
-		          },
-		          Cancel: function() {
-		            $( this ).dialog( "close" );
-		          }
-		        }
-	    });
+	function enableSearchSourceAutocomplete(){
+		$( "#txt_searchSource" ).autocomplete({
+			source: function( request, response ) {
+						//if( autocompleteExtractLast(request.term).trim().length < 2 ) return;
+		          		$.postJSON( "<c:url value="/source/browse/search/dir"/>",
+		          					{repositorySeq:'<c:out value="${repository.repositorySeq}"/>',
+		          						path:(function(){
+		          							var searchVal = $( "#txt_searchSource" ).val();
+		          							return (_gRootPath + '/' + searchVal).replace('//','/');
+		          						})()}, 
+		          					function(data){
+			            				if (!data.length || data.length < 1) {
+			            					data = [{ noresult: true, noresultmsg: "No Result!"}];
+			            				}
+			            				response(data);
+		        	  	});
+		          
+		        	},
+			select: function( event, ui ) {
+				        this.value = ui.item.path;
+				        return false;
+					},
+			minLength: 1,
+			focus: 	function( event, ui ) {
+						// prevent value inserted on focus
+						return false;
+		      		},
+			open: 	function() {
+						$( this ).removeClass( "ui-corner-all" ).addClass( "ui-corner-top" );
+					},
+			close: 	function() {
+						$( this ).removeClass( "ui-corner-top" ).addClass( "ui-corner-all" );
+					}
+		})
+		.data( "autocomplete" )._renderItem = function( ul, item ) {
+			if( item.noresult ){
+				return $( "<li>" )
+		        .append( "<a class=\"italic\">" + item.noresultmsg + "</a>" )
+		        .appendTo( ul ); 
+			}else{
+				return $( "<li>" )
+		        .append( "<a>" + item.path + "</a>" )
+		        .appendTo( ul );
+			}
+		     
+		};
 	};
 	
-	function listRepositorySource(){
+	var _gRootPath = '';
+	function openSearchSourceDialog( rootPath ){
+		_gRootPath = rootPath;
+		listRepositorySource('');
+		$("#div_searchSource").dialog({
+			resizable:false,
+			height: 470,
+		    width: 750,
+		    modal: true,
+		    buttons: {
+		    	"Close": function() {
+		        	destroySourceTree();
+		            $( this ).dialog( "close" );
+		        }
+		    }
+	    });
+		$( "#txt_searchSource" ).focus();
+	};
+	
+	function destroySourceTree(){
+		$("#div_sourceTree").dynatree("destroy");
+		$("#div_sourceTree").children().remove();
+	};
+	
+	function searchSource(){
+		destroySourceTree();
+		listRepositorySource($('#txt_searchSource').val());
+	};
+	
+	function listRepositorySource( searchPath ){
 		$("#div_sourceTree").dynatree({
 			onClick: function(node, event) {
 				if(node.data.isFolder) node.expand();
-				//retrieveSourceList(node.data.fileChildren);
+				retrieveSourceList(node.data.fileChildren);
 				return true;
 		      },
             clickFolderMode: 1,
             selectMode: 1,
-	        children:[{title:'[SVN]',path:'/trunk',isLazy:true,isFolder:true, expand:true}],
+	        children:[{title:'[SVN]',path:_gRootPath+searchPath,isLazy:true,isFolder:true, expand:true}],
 			onLazyRead: function(node){
 				$.getJSON(
 					"<c:url value="/source/browse/list"/>",
@@ -77,16 +145,63 @@
 	                    }
 	                    node.setLazyNodeStatus(DTNodeStatus_Ok);
 	                    node.addChild(res);
-	 		        	//retrieveSourceList(node.data.fileChildren);
+	 		        	retrieveSourceList(node.data.fileChildren);
 		            }
 		        );
 	 		}
         });
 		$("#div_sourceTree").dynatree("getTree").reload();
-		//retrieveSourceList([]);
+		retrieveSourceList([]);
 		$("#div_sourceTree").dynatree("getRoot").visit(function(node){
 			node.reloadChildren();
 		});
+	};
+	
+	
+	function retrieveSourceList(sourceNodeList){
+		$("#tbl_sourceList tbody tr").not(".nodata").not(".sample").remove();
+		if( !sourceNodeList || sourceNodeList == null ) return;
+		$("#tbl_sourceList tbody tr[class~=nodata]").css('display',sourceNodeList.length < 1?'table-row':'none');
+		for( var inx = 0 ; inx < sourceNodeList.length ; inx++ ){
+			var row = $("#tbl_sourceList > tbody > .sample").clone();
+			$(row).attr('path',sourceNodeList[inx].path).attr('rev',sourceNodeList[inx].revision);
+			createSourceListActionButton(row);
+			$(row).find(".name").text(sourceNodeList[inx].name);
+			$(row).removeClass("sample");
+			$(row).css('display','');
+			$('#tbl_sourceList > tbody').append(row);
+		}
+	};
+	
+	function createSourceListActionButton( row ){
+		var path = $(row).attr('path');
+		var rev = $(row).attr('rev');
+		$(row).find('ul li a.browse').click(function(){
+			var win = window.open(('<c:url value="/source/browse/${repositorySeq}" />' + '/' + path + '?rev=' + rev).replace("//", "/"), '_blank');
+			win.focus();
+		});
+		$(row).find('ul li a.changes').click(function(){
+			var win = window.open(('<c:url value="/source/changes/${repositorySeq}" />' + '/' + path).replace("//", "/"), '_blank');
+			win.focus();
+		});
+		$(row).find("td button.action").button().click(function() {
+	        	alert( "Add to request" );
+	    	}).next().button({
+				text: false,
+	          	icons: {
+	            	primary: "ui-icon-triangle-1-s"
+	          	}
+	        }).click(function() {
+	        	var menu = $( this ).parent().next().show().position({
+	            	my: "left top",
+	            	at: "left bottom",
+	            	of: this
+	          	});
+	          	$( document ).one( "click", function() {
+	            	menu.hide();
+	          	});
+	          	return false;
+	        }).parent().buttonset().next().hide().menu();
 	};
 	
 </script>
@@ -103,7 +218,7 @@
 				</p>
 				<p>
 					<form:label path="repositorySeq" class="left">Repository</form:label>
-					<form:select path="repositorySeq" disabled="${((transferStateAuth.isEditable) && (not transferStateAuth.isRequestable))?'false':'true'}" items="${repositoryList}" itemValue="repositorySeq" itemLabel="repositoryName"/>
+					<form:select path="repositorySeq" disabled="true" items="${repositoryList}" itemValue="repositorySeq" itemLabel="repositoryName"/>
 				</p>
 				<p>
 					<form:label path="transferTypeCode.codeId" class="left">Type</form:label>
@@ -144,12 +259,12 @@
 				</p>
 				<p>
 					<label class="left">Sources To Transfer</label>
-					<span><font class="path"><a onclick="openSearchSourceDialog()" style="text-decoration:underline;cursor:pointer;">Add</a></font></span>
+					<span><font class="path"><a onclick="openSearchSourceDialog('<c:out value="${repository.trunkPath}" />')" style="text-decoration:underline;cursor:pointer;">Add</a></font></span>
 					<input type="text" class="text visible-hidden"/>
 				</p>
 				<p>
 					<label class="left">Sources To Delete</label>
-					<span><font class="path"><a onclick="openSearchSourceDialog()" style="text-decoration:underline;cursor:pointer;">Add</a></font></span>
+					<span><font class="path"><a onclick="openSearchSourceDialog('<c:out value="${repository.branchesPath}" />')" style="text-decoration:underline;cursor:pointer;">Add</a></font></span>
 					<input type="text" class="text visible-hidden"/>
 				</p>
 				<p>
@@ -208,105 +323,55 @@
 	<div class="module text">
 	
 		<div>
-			<input type="text" class="text"/>
+			<div class="box">
+				<div class="head"><div></div></div>
+				<div class="desc">
+					<p>
+						<label>Path</label> 
+						<input id="txt_searchSource" class="text w_40" type="text" />
+						<button id="btn_searchSource">Search</button>
+					</p>
+				</div>
+				<div class="bottom"><div></div></div>
+			</div>
 		</div>
-		
 		
 		<div>
 	
-	
-	  		<div style="float:left;width:300px;">
-	  			<div id="div_sourceTree" style="height:100%;"></div>
+	  		<div class="sourceTreePanel">
+	  			<div id="div_sourceTree"></div>
 	  		</div>
 	  		
-	  		
-	  		
-	  		
-	  		
-	  		<div id="div_sourceListPanel" style="float:left;margin-left:5px;width:400px;">
-	  		
-	  		
-							  <div id="accordion">
-							    <h3>Section 1</h3>
-							    <div>
-							      <p>Mauris mauris ante, blandit et, ultrices a, suscipit eget, quam. Integer ut neque. Vivamus nisi metus, molestie vel, gravida in, condimentum sit amet, nunc. Nam a nibh. Donec suscipit eros. Nam mi. Proin viverra leo ut odio. Curabitur malesuada. Vestibulum a velit eu ante scelerisque vulputate.</p>
-							    </div>
-							    <h3>Section 2</h3>
-							    <div>
-							      <p>Sed non urna. Donec et ante. Phasellus eu ligula. Vestibulum sit amet purus. Vivamus hendrerit, dolor at aliquet laoreet, mauris turpis porttitor velit, faucibus interdum tellus libero ac justo. Vivamus non quam. In suscipit faucibus urna. </p>
-							    </div>
-							    <h3>Section 3</h3>
-							    <div>
-							      <p>Nam enim risus, molestie et, porta ac, aliquam ac, risus. Quisque lobortis. Phasellus pellentesque purus in massa. Aenean in pede. Phasellus ac libero ac tellus pellentesque semper. Sed ac felis. Sed commodo, magna quis lacinia ornare, quam ante aliquam nisi, eu iaculis leo purus venenatis dui. </p>
-							      <ul>
-							        <li>List item one</li>
-							        <li>List item two</li>
-							        <li>List item three</li>
-							      </ul>
-							    </div>
-							    <h3>Section 4</h3>
-							    <div>
-							      <p>Cras dictum. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia Curae; Aenean lacinia mauris vel est. </p><p>Suspendisse eu nisl. Nullam ut libero. Integer dignissim consequat lectus. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. </p>
-							    </div>
-							     <h3>Section 5</h3>
-							    <div>
-							      <p>Cras dictum. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia Curae; Aenean lacinia mauris vel est. </p><p>Suspendisse eu nisl. Nullam ut libero. Integer dignissim consequat lectus. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. </p>
-							    </div>
-							    <h3>Section 6</h3>
-							    <div>
-							      <p>Cras dictum. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia Curae; Aenean lacinia mauris vel est. </p><p>Suspendisse eu nisl. Nullam ut libero. Integer dignissim consequat lectus. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. </p>
-							    </div>
-							     <h3>Section 6</h3>
-							    <div>
-							      <p>Cras dictum. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia Curae; Aenean lacinia mauris vel est. </p><p>Suspendisse eu nisl. Nullam ut libero. Integer dignissim consequat lectus. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. </p>
-							    </div>
-							     <h3>Section 6</h3>
-							    <div>
-							      <p>Cras dictum. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia Curae; Aenean lacinia mauris vel est. </p><p>Suspendisse eu nisl. Nullam ut libero. Integer dignissim consequat lectus. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. </p>
-							    </div>
-							     <h3>Section 6</h3>
-							    <div>
-							      <p>Cras dictum. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia Curae; Aenean lacinia mauris vel est. </p><p>Suspendisse eu nisl. Nullam ut libero. Integer dignissim consequat lectus. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. </p>
-							    </div>
-							     <h3>Section 6</h3>
-							    <div>
-							      <p>Cras dictum. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia Curae; Aenean lacinia mauris vel est. </p><p>Suspendisse eu nisl. Nullam ut libero. Integer dignissim consequat lectus. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. </p>
-							    </div>
-							     <h3>Section 6</h3>
-							    <div>
-							      <p>Cras dictum. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia Curae; Aenean lacinia mauris vel est. </p><p>Suspendisse eu nisl. Nullam ut libero. Integer dignissim consequat lectus. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. </p>
-							    </div>
-							     <h3>Section 6</h3>
-							    <div>
-							      <p>Cras dictum. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia Curae; Aenean lacinia mauris vel est. </p><p>Suspendisse eu nisl. Nullam ut libero. Integer dignissim consequat lectus. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. </p>
-							    </div>
-							     <h3>Section 6</h3>
-							    <div>
-							      <p>Cras dictum. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia Curae; Aenean lacinia mauris vel est. </p><p>Suspendisse eu nisl. Nullam ut libero. Integer dignissim consequat lectus. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. </p>
-							    </div>
-							  </div>
-	  			<!-- 
-	  			<table id="tbl_sourceList">
+	  		<div class="sourceListPanel">
+	  			<table id="tbl_sourceList" class="compact">
 	  				<thead>
 	  					<tr>
-	  						<td style="width:30px;">rev</td>
-	  						<td>name</td>
+	  						<th class="w_130">Action</th>
+	  						<th>File Name</th>
 	  					</tr>
 	  				</thead>
-							<tbody>
-								<tr class="sample">
-									<td class="name"><font class="path font12"><a href=""></a></font></td>
-									<td class="revision"><font class="path font12"><a href=""></a></font></td>
-								</tr>
-								<tr>
-									<td class="name">1<font class="path font12"><a href=""></a></font></td>
-									<td class="revision">3<font class="path font12"><a href=""></a></font></td>
-								</tr>
-							</tbody>
-						</table>
-	  		-->
-	  		
-	  		
+					<tbody>
+						<tr class="sample">
+							<td>
+								<div>
+								  	<div>
+								    	<button class="action">Add To Req</button>
+								    	<button>Select an action</button>
+								  	</div>
+								  	<ul>
+								    	<li><a class="browse">View Source</a></li>
+								    	<li><a class="changes">View Revisions</a></li>
+								    	<li><a class="diff">Diff with Prod</a></li>
+								  	</ul>
+								</div>
+							</td>
+							<td class="name"></td>
+						</tr>
+						<tr class="nodata">
+							<td colspan="2" style="display:table-cell;">No files in the selected directory.</td>
+						</tr>
+					</tbody>
+				</table>
 	  		</div>
   		
 		</div>

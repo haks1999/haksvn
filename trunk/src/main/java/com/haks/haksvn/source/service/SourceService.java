@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.tmatesoft.svn.core.SVNNodeKind;
 
 import com.haks.haksvn.common.paging.model.NextPaging;
 import com.haks.haksvn.repository.model.Repository;
@@ -24,6 +25,11 @@ public class SourceService {
 	public List<SVNSource> retrieveSVNSourceList(int repositorySeq, String path ){
 		Repository repository = repositoryService.retrieveAccesibleActiveRepositoryByRepositorySeq(repositorySeq);
 		return svnRepositoryService.retrieveSVNSourceList(repository, path);
+	}
+	
+	public List<SVNSource> retrieveSVNSourceDirList(int repositorySeq, String path ){
+		Repository repository = repositoryService.retrieveAccesibleActiveRepositoryByRepositorySeq(repositorySeq);
+		return svnRepositoryService.retrieveSVNSourceListByNodeKind(repository, path, SVNNodeKind.DIR);
 	}
 	
 	public SVNSource retrieveSVNSource(int repositorySeq, SVNSource svnSource){

@@ -61,7 +61,7 @@
 	function retrieveSourceList(sourceNodeList){
 		$("#tbl_sourceList tbody tr").not(".nodata").not(".sample").remove();
 		if( !sourceNodeList || sourceNodeList == null ) return;
-		$("#tbl_sourceList tbody tr[class~=nodata]").css('display',sourceNodeList.length < 1?'inline':'none');
+		$("#tbl_sourceList tbody tr[class~=nodata]").css('display',sourceNodeList.length < 1?'table-row':'none');
 		var repositorySeq = '<c:out value="${repositorySeq}" />';
 		var path = '<c:out value="${path}" />';
 		var browseHrefRoot = '<c:url value="/source/browse"/>';
