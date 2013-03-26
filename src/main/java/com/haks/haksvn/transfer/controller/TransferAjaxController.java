@@ -18,6 +18,7 @@ import com.haks.haksvn.common.code.model.Code;
 import com.haks.haksvn.common.exception.HaksvnException;
 import com.haks.haksvn.common.paging.model.Paging;
 import com.haks.haksvn.transfer.model.Transfer;
+import com.haks.haksvn.transfer.model.TransferSource;
 import com.haks.haksvn.transfer.service.TransferService;
 import com.haks.haksvn.user.model.User;
 
@@ -42,6 +43,25 @@ public class TransferAjaxController {
     		resultTransfer.setSourceList(null);
     	}
     	return transferListPaging;
+    }
+    
+    @RequestMapping(value="/request/lock/{repositorySeq}", method=RequestMethod.GET, params ={"path"})
+    public @ResponseBody Transfer retrieveLockedTransferBySource(@RequestParam(value = "path", required = true) String path,
+													@PathVariable int repositorySeq){
+    	Transfer transfer = transferService.retrieveLockedTransferBySource(path);
+    	if(transfer != null ) transfer.setSourceList(null);
+    	return transfer;
+    }
+    
+    @RequestMapping(value="/request/list/{repositorySeq}/{transferSeq}/sources")
+    public @ResponseBody List<TransferSource> retrieveTranasferSourceList(@PathVariable int repositorySeq,
+													@PathVariable int transferSeq){
+    	Transfer transfer = transferService.retrieveTransferDetail(Transfer.Builder.getBuilder().repositorySeq(repositorySeq).transferSeq(transferSeq).build());
+    	List<TransferSource> transferSourceList = transferService.retrieveTransferSourceList(transfer);
+    	for( TransferSource transferSource : transferSourceList ){
+    		transferSource.setTransfer(null);	// lazy loading
+    	}
+    	return transferSourceList;
     }
     
     

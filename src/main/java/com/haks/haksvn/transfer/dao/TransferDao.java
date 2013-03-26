@@ -12,6 +12,7 @@ import org.springframework.stereotype.Repository;
 
 import com.haks.haksvn.common.paging.model.Paging;
 import com.haks.haksvn.transfer.model.Transfer;
+import com.haks.haksvn.transfer.model.TransferSource;
 
 @Repository
 public class TransferDao {
@@ -51,7 +52,7 @@ public class TransferDao {
 	
 	public Transfer addTransfer(Transfer transfer){
 		Session session = sessionFactory.getCurrentSession();
-		session.save(transfer);
+		session.saveOrUpdate(transfer);
 		return transfer;
 	}
 	
@@ -72,7 +73,7 @@ public class TransferDao {
 		return transfer;
 	}
 	
-	public Transfer retrieveLockedTransferBySource(String path){
+	public Transfer retrieveLockedTransferBySourcePath(String path){
 		Session session = sessionFactory.getCurrentSession();
 		
 		Criteria crit = session.createCriteria(Transfer.class)
@@ -83,6 +84,21 @@ public class TransferDao {
 				.add(Restrictions.eq("src.path", path));
 		
 		return (Transfer)crit.uniqueResult();
+	}
+	
+	public List<TransferSource> retrieveTransferSourceList(int transferSeq){
+		Session session = sessionFactory.getCurrentSession();
+		
+		Criteria crit = session.createCriteria(Transfer.class)
+				.add(Restrictions.eq("transferSeq", transferSeq))
+				.createAlias("sourceList", "src")
+				.addOrder(Order.asc("src.path"));
+		Transfer transfer = (Transfer)crit.uniqueResult();		
+		List<TransferSource> result = transfer.getSourceList();
+		for( @SuppressWarnings("unused") TransferSource transferSource : result ){
+			// do nothing; // fetching
+		}
+		return result;
 	}
 	
 }

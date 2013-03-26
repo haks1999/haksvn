@@ -326,6 +326,17 @@ top:        0;
 left:       0;
 height:     100%;
 width:      100%;
+background: rgb( 255, 255, 255 ) url(../images/ajax-loader-block.gif) 50% 50% no-repeat;
+/* works for IE 5+. */
+filter:alpha(opacity=50); 
+/* works for IE 8. */
+-ms-filter:"progid:DXImageTransform.Microsoft.Alpha(Opacity=50)";
+/* works for old school versions of the Mozilla browsers like Netscape Navigator. */
+-moz-opacity:0.5; 
+/* This is for old versions of Safari (1.x) with KHTML rendering engine */
+-khtml-opacity: 0.5; 
+/* This is the "most important" one because it's the current standard in CSS. This will work in most versions of Firefox, Safari, and Opera. */  
+opacity: 0.5; 
 background: rgba( 255, 255, 255, .5 ) url(../images/ajax-loader-block.gif) 50% 50% no-repeat;
 }
 body.blocking {
