@@ -23,8 +23,8 @@ float:left;width:440px;height:250px;overflow:auto;margin-left:5px;
 		$('#frm_transfer').attr('action', '<c:url value="/transfer/request/list/${repositorySeq}/save" />');
 		transformDateField();
 		enableSearchSourceAutocomplete();
+		if( Number('<c:out value="${transfer.transferSeq}"/>') > 0) retrieveTransferSourceList();
 		$('#btn_searchSource').button().click(searchSource);
-		
    	});
 	
 	function transformDateField(){
@@ -183,6 +183,30 @@ float:left;width:440px;height:250px;overflow:auto;margin-left:5px;
 		$( "#txt_searchSource" ).focus();
 	};
 	
+	var _gSourceList = [];
+	function retrieveTransferSourceList(){
+		$.getJSON(
+				"<c:url value="/transfer/request/list/${repositorySeq}/${transfer.transferSeq}/sources"/>",
+				{},
+	            function(result){
+					for( var inx = 0 ; inx < result.length ; inx++){
+						addToSourceList({transferSourceSeq:result[inx].transferSourceSeq,path:result[inx].path,revision:result[inx].path});
+					}
+				});
+	};
+	
+	function addToSourceList( nSrc ){
+		for( var inx = 0 ; inx < _gSourceList.length ; inx++){
+			if( _gSourceList[inx].path == nSrc.path ) return;
+		}
+		var srcDetail = $('#div_sourceDetail').clone();
+		$(srcDetail).find('.path a').text(nSrc.path.substr(_gRootPath.length));
+		$('#spn_sourcesToTran').append(srcDetail);
+		$(srcDetail).css('display','');
+		_gSourceList.push(nSrc);
+		$('#frm_transfer input[name=transferSourceList]').val(haksvn.json.stringfy(_gSourceList));
+	}
+	
 	function createSourceListActionButton( row ){
 		var path = $(row).attr('path');
 		var rev = $(row).attr('rev');
@@ -195,8 +219,30 @@ float:left;width:440px;height:250px;overflow:auto;margin-left:5px;
 			win.focus();
 		});
 		$(row).find("td button.action").button().click(function() {
-	        	alert( "Add to request" );
 	        	haksvn.block.on();
+	        	$.getJSON( "<c:url value="/transfer/request/lock/${repository.repositorySeq}"/>",
+      						{path:path}, 
+      						function(data){
+      							haksvn.block.off();
+      							if( data == null || !data ){
+      								addToSourceList({path:path,revision:rev});
+      								return;
+      							}
+      							$('#div_lockMessage .transferSeq').text('req-'+data.transferSeq);
+      							$('#div_lockMessage .reuqestUserId').text(data.requestUser.userName+'('+data.requestUser.userId+')');
+            					$( "#div_lockMessage" ).dialog({
+            				      	modal: true,
+            				      	title:'Locking Infomation',
+            				      	resizable:false,
+            				      	buttons: {
+            				        	Ok: function() {
+            				          		$( this ).dialog( "close" );
+            				        	}
+            				      	}
+            				    });
+    	  		});
+	        	
+	        	
 	    	}).next().button({
 				text: false,
 	          	icons: {
@@ -265,6 +311,7 @@ float:left;width:440px;height:250px;overflow:auto;margin-left:5px;
 					<input type="text" class="text w_30 readOnly transferDate" readonly/>
 				</p>
 				<hr/>
+				<input type="hidden" name="transferSourceList" />
 				<p>
 					<span class="strong">Sources</span>
 				</p>
@@ -272,6 +319,7 @@ float:left;width:440px;height:250px;overflow:auto;margin-left:5px;
 					<label class="left">Sources To Transfer</label>
 					<span><font class="path"><a onclick="openSearchSourceDialog('<c:out value="${repository.trunkPath}" />')" style="text-decoration:underline;cursor:pointer;">Add</a></font></span>
 					<input type="text" class="text visible-hidden"/>
+					<span id="spn_sourcesToTran" style="display:block;margin-left:220px;"></span>
 				</p>
 				<p>
 					<label class="left">Sources To Delete</label>
@@ -328,6 +376,19 @@ float:left;width:440px;height:250px;overflow:auto;margin-left:5px;
 		</div>
 	</div>
 	<div class="clear"></div>
+</div>
+
+
+
+<div id="div_sourceDetail" style="display:none;">
+	<a class="pmOpener closed">
+		<img class="pClosed" src="<c:url value="/images/plus_small_white.png"/>"/><img class="mOpened" src="<c:url value="/images/minus_small_white.png"/>"/>
+	</a>
+	<span>
+		<font class="path font12">
+			<a></a>
+		</font>
+	</span>
 </div>
 
 <div id="div_searchSource" title="Search Source" style="display:none;">
@@ -387,4 +448,14 @@ float:left;width:440px;height:250px;overflow:auto;margin-left:5px;
   		
 		</div>
 	</div>
+</div>
+
+<div id="div_lockMessage" style="display:none;">
+	<p>
+    	<span class="ui-icon ui-icon-circle-check" style="float: left; margin: 0 7px 50px 0;"></span>
+    	<span>This File is Locked By <b class="transferSeq"></b></span>
+  	</p>
+ 	<p>
+  		<span>Request user: </span><b class="reuqestUserId"></b>
+  	</p>
 </div>

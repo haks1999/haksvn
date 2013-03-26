@@ -2,6 +2,7 @@ package com.haks.haksvn.transfer.model;
 
 import java.util.List;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -63,7 +64,7 @@ public class Transfer {
 	@Column(name = "repository_seq")
 	private int repositorySeq;
 	
-	@OneToMany(mappedBy="transfer")
+	@OneToMany(cascade = { CascadeType.ALL,CascadeType.PERSIST,CascadeType.MERGE }, mappedBy = "transfer")
 	private List<TransferSource> sourceList;
 	
 
@@ -153,6 +154,10 @@ public class Transfer {
 		
 		private Builder(Transfer transfer){
 			this.transfer = transfer;
+		}
+		
+		public static Builder getBuilder(){
+			return getBuilder(new Transfer());
 		}
 		
 		public static Builder getBuilder(Transfer transfer){

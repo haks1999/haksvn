@@ -27,7 +27,7 @@ public class TransferSource {
 	@Column(name = "revision", nullable = false)
 	private long revision;
 	
-	@ManyToOne
+	@ManyToOne( fetch = FetchType.EAGER )
 	@JoinColumn(name="transfer_seq")
 	private Transfer transfer;
 	

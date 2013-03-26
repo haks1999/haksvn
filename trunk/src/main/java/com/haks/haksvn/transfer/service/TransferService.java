@@ -17,6 +17,7 @@ import com.haks.haksvn.repository.model.Repository;
 import com.haks.haksvn.repository.service.RepositoryService;
 import com.haks.haksvn.transfer.dao.TransferDao;
 import com.haks.haksvn.transfer.model.Transfer;
+import com.haks.haksvn.transfer.model.TransferSource;
 import com.haks.haksvn.transfer.model.TransferStateAuth;
 import com.haks.haksvn.user.service.UserService;
 
@@ -38,6 +39,10 @@ public class TransferService {
 		return transferDao.retrieveTransferList(paging);
 	}
 	
+	public Transfer retrieveLockedTransferBySource(String path){
+		return transferDao.retrieveLockedTransferBySourcePath(path);
+	}
+	
 	public Transfer saveTransfer(Transfer transfer){
 		checkRepositoryAccessRight(transfer.getRepositorySeq());
 		Transfer currentTransfer = transferDao.retrieveTransferByTransferSeq(transfer.getTransferSeq());
@@ -50,6 +55,10 @@ public class TransferService {
 	}
 	
 	private Transfer addTransfer(Transfer transfer){
+		for( TransferSource transferSource: transfer.getSourceList() ){
+			transferSource.setTransferSourceSeq(0);
+			transferSource.setTransfer(transfer);
+		}
 		Transfer.Builder.getBuilder(transfer).requestUser(userService.retrieveUserByUserId(ContextHolder.getLoginUser().getUserId()))
 			.transferStateCode(codeService.retrieveCode(CodeUtils.getTransferKeepCodeId()))
 			.requestDate(0).transferUser(null).transferDate(0).transferSeq(0);
@@ -66,6 +75,11 @@ public class TransferService {
 	public Transfer retrieveTransferDetail(Transfer transfer){
 		checkRepositoryAccessRight(transfer.getRepositorySeq());
 		return transferDao.retrieveTransferByTransferSeq(transfer.getTransferSeq());
+	}
+	
+	public List<TransferSource> retrieveTransferSourceList(Transfer transfer){
+		checkRepositoryAccessRight(transfer.getRepositorySeq());
+		return transferDao.retrieveTransferSourceList(transfer.getTransferSeq());
 	}
 	
 	public Transfer deleteTransfer(Transfer transfer){
