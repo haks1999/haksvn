@@ -51,11 +51,11 @@ public class TransferService {
 		String transferSourceTypeCode = transferSource.getTransferSourceTypeCode().getCodeId();
 		boolean toDelete = CodeUtils.isTransferSourceTypeDelete(transferSourceTypeCode);
 		if(!toDelete){
-			String fullPath = (toDelete?repository.getBranchesPath():repository.getTrunkPath()) + transferSource.getPath();
-			boolean isExistSource = svnRepositoryService.isExistingSource(repository, fullPath, -1);
+			boolean isExistSource = svnRepositoryService.isExistingSource(repository, transferSource.getPath(), -1);
 			transferSourceTypeCode = isExistSource?CodeUtils.getTransferSourceTypeModifyCodeId():CodeUtils.getTransferSourceTypeAddCodeId();
 		}
 		transferSource.setTransferSourceTypeCode(codeService.retrieveCode(transferSourceTypeCode));
+		transferSource.setTransfer(null);
 		return transferSource;
 	}
 	
