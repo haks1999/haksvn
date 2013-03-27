@@ -16,6 +16,13 @@ float:left;width:440px;height:250px;overflow:auto;margin-left:5px;
 .sourceListPanel .ui-button-icon-only .ui-button-text{padding:.4em .4em}
 .sourceListPanel .ui-menu {z-index:1;}
 .sourceListPanel .ui-menu .ui-menu-item A{font-size:10px;}
+
+.transferSourceDetail .ui-menu { width: 120px; }
+.transferSourceDetail .ui-button .ui-button-text{font-family:Verdana,Arial,sans-serif;font-size:12px;}
+.transferSourceDetail .ui-button-text-only .ui-button-text{padding:.4em .4em}
+.transferSourceDetail .ui-button-icon-only .ui-button-text{padding:.4em .4em}
+.transferSourceDetail .ui-menu {z-index:1;}
+.transferSourceDetail .ui-menu .ui-menu-item A{font-size:12px;}
 </style>
 <script type="text/javascript">
 	$(function() {
@@ -201,13 +208,40 @@ float:left;width:440px;height:250px;overflow:auto;margin-left:5px;
 		for( var inx = 0 ; inx < _gSourceList.length ; inx++){
 			if( _gSourceList[inx].path == nSrc.path ) return;
 		}
-		var srcDetail = $('#div_sourceDetail').clone();
+		var srcDetail = $('#div_sourceDetail').clone().removeAttr('id');
 		$(srcDetail).find('.path a').text(nSrc.path);
 		$('#spn_sourcesToTran').append(srcDetail);
+		createTransferSourceDetailActionButton($(srcDetail).find('.transferSourceDetail'), srcDetail);
 		$(srcDetail).css('display','');
 		_gSourceList.push(nSrc);
 		$('#frm_transfer input[name=transferSourceList]').val(haksvn.json.stringfy(_gSourceList));
-	}
+	};
+	
+	function createTransferSourceDetailActionButton( elem, srcDetail ){
+		$(elem).find('ul li a.changes').click(function(){
+			var win = window.open(('<c:url value="/source/changes/${repositorySeq}" />' + '/' + srcDetail.path).replace("//", "/"), '_blank');
+			win.focus();
+		});
+		$(elem).find("button.action").button().click(function() {
+	        	var win = window.open(('<c:url value="/source/browse/${repositorySeq}" />' + '/' + srcDetail.path + '?rev=' + srcDetail.rev).replace("//", "/"), '_blank');
+				win.focus();
+	    	}).next().button({
+				text: false,
+	          	icons: {
+	            	primary: "ui-icon-triangle-1-s"
+	          	}
+	        }).click(function() {
+	        	var menu = $( this ).parent().next().show().position({
+	            	my: "left top",
+	            	at: "left bottom",
+	            	of: this
+	          	});
+	          	$( document ).one( "click", function() {
+	            	menu.hide();
+	          	});
+	          	return false;
+	        }).parent().buttonset().next().hide().menu();
+	};
 	
 	function createSourceListActionButton( row ){
 		var path = $(row).attr('path');
@@ -225,13 +259,13 @@ float:left;width:440px;height:250px;overflow:auto;margin-left:5px;
 	        	$.getJSON( "<c:url value="/transfer/request/check/${repository.repositorySeq}"/>",
       						{path:path,del:_gToDelete}, 
       						function(data){
-      							haksvn.block.off();
-      							if( data == null || !data ){
-      								addToSourceList({path:path.substr(_gRootPath.length),revision:rev});
+      							if( !data.transfer || data.transfer == null ){
+      								addToSourceList({path:path,revision:rev});
       								return;
       							}
+      							haksvn.block.off();
       							$('#div_lockMessage .transferSeq').text('req-'+data.transfer.transferSeq);
-      							$('#div_lockMessage .reuqestUserId').text(data.requestUser.userName+'('+data.requestUser.userId+')');
+      							$('#div_lockMessage .reuqestUserId').text(data.transfer.requestUser.userName+'('+data.transfer.requestUser.userId+')');
             					$( "#div_lockMessage" ).dialog({
             				      	modal: true,
             				      	title:'Locking Infomation',
@@ -261,6 +295,23 @@ float:left;width:440px;height:250px;overflow:auto;margin-left:5px;
 	          	});
 	          	return false;
 	        }).parent().buttonset().next().hide().menu();
+	};
+	
+	
+	function toggleTransferSourceDetail(pmOpenerParent){
+		var pmOpener = $(pmOpenerParent).children('a.pmOpener');
+		var div = $(pmOpener).parent().next('div');
+		if($(pmOpener).hasClass('opened')){
+			$(pmOpener).removeClass('opened').addClass('closed');
+			$(div).addClass('display-none');
+		}else{
+			$(pmOpener).removeClass('closed').addClass('opened');
+			$(div).removeClass('display-none');
+			//if( !$(div).hasClass('loaded')){
+			//	$(div).addClass('loading');
+				//retrieveDiffWithPrevious(pmOpener, path,rev);
+			//}
+		}
 	};
 	
 </script>
@@ -383,14 +434,37 @@ float:left;width:440px;height:250px;overflow:auto;margin-left:5px;
 
 
 <div id="div_sourceDetail" style="display:none;">
-	<a class="pmOpener closed">
-		<img class="pClosed" src="<c:url value="/images/plus_small_white.png"/>"/><img class="mOpened" src="<c:url value="/images/minus_small_white.png"/>"/>
-	</a>
-	<span>
-		<font class="path font12">
-			<a></a>
-		</font>
+	<span onclick="toggleTransferSourceDetail(this)">
+		<a class="pmOpener closed">
+			<img class="pClosed" src="<c:url value="/images/plus_small_white.png"/>"/><img class="mOpened" src="<c:url value="/images/minus_small_white.png"/>"/>
+		</a>
+		<span>
+			<font class="path font12">
+				<a></a>
+			</font>
+		</span>
 	</span>
+	<div class="transferSourceDetail display-none">
+		<table style="margin-left:25px;">
+			<tr>
+				<td style="padding-top:0px;padding-bottom:5px;">
+					<div class="action" style="width:150px;height:30px;">
+					  	<div>
+					    	<button class="action">View Source</button>
+					    	<button>Select an action</button>
+					  	</div>
+					  	<ul>
+					    	<li><a class="changes">View Revisions</a></li>
+					    	<li><a class="diff">Diff with Prod</a></li>
+					  	</ul>
+					</div>
+				</td>
+				<td>
+					modify
+				</td>
+			</tr>
+		</table>
+	</div>
 </div>
 
 <div id="div_searchSource" title="Search Source" style="display:none;">

@@ -55,7 +55,7 @@ public class TransferAjaxController {
     				.transferSourceTypeCode(Code.Builder.getBuilder().codeId(toDelete?CodeUtils.getTransferSourceTypeDeleteCodeId():"").build())
     				.transfer(Transfer.Builder.getBuilder().repositorySeq(repositorySeq).build()).build();
     	transferSource = transferService.checkRequestableTransferSource(transferSource);
-    	if(transferSource != null ) transferSource.getTransfer().setSourceList(null);
+    	if(transferSource.getTransfer() != null ) transferSource.getTransfer().setSourceList(null);
     	return transferSource;
     }
     
