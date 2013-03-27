@@ -214,6 +214,10 @@ public class User implements Serializable{
 			this.user = user;
 		}
 		
+		public static Builder getBuilder(){
+			return getBuilder(new User());
+		}
+		
 		public static Builder getBuilder(User user){
 			return new Builder(user);
 		}

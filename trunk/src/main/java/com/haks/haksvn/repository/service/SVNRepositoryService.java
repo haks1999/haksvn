@@ -61,6 +61,10 @@ public class SVNRepositoryService {
     	
 	}
 	
+	public boolean isExistingSource(Repository repository, String path, long revision){
+		return svnRepositoryDao.isExistingSource(repository, path, revision);
+	}
+	
 	// 초기화 시 passwd 에 대해서는 어떤 작업도 일어나지 않는다
 	public void initRepositoryUser( Repository repository){
 		if( !CodeUtils.isTrue(repository.getSyncUser()) ) return;

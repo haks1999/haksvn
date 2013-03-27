@@ -73,17 +73,17 @@ public class TransferDao {
 		return transfer;
 	}
 	
-	public Transfer retrieveLockedTransferBySourcePath(String path){
+	public TransferSource retrieveLockedTransferSource(String path){
 		Session session = sessionFactory.getCurrentSession();
 		
-		Criteria crit = session.createCriteria(Transfer.class)
-				.createAlias("sourceList", "src")
-				.createAlias("transferStateCode", "stcode")
-				.add(Restrictions.ne("stcode.codeId", "transfer.state.code.complete"))
-				.add(Restrictions.ne("stcode.codeId", "transfer.state.code.reject"))
-				.add(Restrictions.eq("src.path", path));
+		Criteria crit = session.createCriteria(TransferSource.class)
+				.createAlias("transfer", "tr")
+				.createAlias("tr.transferStateCode", "trc")
+				.add(Restrictions.ne("trc.codeId", "transfer.state.code.complete"))
+				.add(Restrictions.ne("trc.codeId", "transfer.state.code.reject"))
+				.add(Restrictions.eq("path", path));
 		
-		return (Transfer)crit.uniqueResult();
+		return (TransferSource)crit.uniqueResult();
 	}
 	
 	public List<TransferSource> retrieveTransferSourceList(int transferSeq){

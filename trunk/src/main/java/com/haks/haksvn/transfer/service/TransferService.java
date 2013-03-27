@@ -15,6 +15,7 @@ import com.haks.haksvn.common.paging.model.Paging;
 import com.haks.haksvn.common.security.util.ContextHolder;
 import com.haks.haksvn.repository.model.Repository;
 import com.haks.haksvn.repository.service.RepositoryService;
+import com.haks.haksvn.repository.service.SVNRepositoryService;
 import com.haks.haksvn.transfer.dao.TransferDao;
 import com.haks.haksvn.transfer.model.Transfer;
 import com.haks.haksvn.transfer.model.TransferSource;
@@ -33,14 +34,29 @@ public class TransferService {
 	private CodeService codeService;
 	@Autowired
 	private RepositoryService repositoryService;
+	@Autowired
+	private SVNRepositoryService svnRepositoryService;
 	
 	public Paging<List<Transfer>> retrieveTransferList(Paging<Transfer> paging){
 		checkRepositoryAccessRight(paging.getModel().getRepositorySeq());
 		return transferDao.retrieveTransferList(paging);
 	}
 	
-	public Transfer retrieveLockedTransferBySource(String path){
-		return transferDao.retrieveLockedTransferBySourcePath(path);
+	public TransferSource checkRequestableTransferSource(TransferSource transferSource){
+		Repository repository = checkRepositoryAccessRight(transferSource.getTransfer().getRepositorySeq());
+		
+		TransferSource transferSourceLocked = transferDao.retrieveLockedTransferSource(transferSource.getPath());
+		if( transferSourceLocked != null ) return transferSourceLocked;
+		
+		String transferSourceTypeCode = transferSource.getTransferSourceTypeCode().getCodeId();
+		boolean toDelete = CodeUtils.isTransferSourceTypeDelete(transferSourceTypeCode);
+		if(!toDelete){
+			String fullPath = (toDelete?repository.getBranchesPath():repository.getTrunkPath()) + transferSource.getPath();
+			boolean isExistSource = svnRepositoryService.isExistingSource(repository, fullPath, -1);
+			transferSourceTypeCode = isExistSource?CodeUtils.getTransferSourceTypeModifyCodeId():CodeUtils.getTransferSourceTypeAddCodeId();
+		}
+		transferSource.setTransferSourceTypeCode(codeService.retrieveCode(transferSourceTypeCode));
+		return transferSource;
 	}
 	
 	public Transfer saveTransfer(Transfer transfer){
@@ -113,11 +129,11 @@ public class TransferService {
 		return transferDao.updateTransfer(transfer);
 	}
 	
-	private boolean checkRepositoryAccessRight(int repositorySeq){
+	private Repository checkRepositoryAccessRight(int repositorySeq){
 		Repository repository = repositoryService.retrieveAccesibleActiveRepositoryByRepositorySeq(repositorySeq);
 		if( repository == null || repositorySeq != repository.getRepositorySeq()){
 			throw new HaksvnException("do not have the repository access right");
 		}
-		return true;
+		return repository;
 	}
 }

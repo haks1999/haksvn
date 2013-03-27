@@ -91,8 +91,10 @@ float:left;width:440px;height:250px;overflow:auto;margin-left:5px;
 	};
 	
 	var _gRootPath = '';
-	function openSearchSourceDialog( rootPath ){
+	var _gToDelete = false;
+	function openSearchSourceDialog( rootPath, toDelete ){
 		_gRootPath = rootPath;
+		_gToDelete = toDelete;
 		listRepositorySource('');
 		$("#div_searchSource").dialog({
 			resizable:false,
@@ -200,7 +202,7 @@ float:left;width:440px;height:250px;overflow:auto;margin-left:5px;
 			if( _gSourceList[inx].path == nSrc.path ) return;
 		}
 		var srcDetail = $('#div_sourceDetail').clone();
-		$(srcDetail).find('.path a').text(nSrc.path.substr(_gRootPath.length));
+		$(srcDetail).find('.path a').text(nSrc.path);
 		$('#spn_sourcesToTran').append(srcDetail);
 		$(srcDetail).css('display','');
 		_gSourceList.push(nSrc);
@@ -220,15 +222,15 @@ float:left;width:440px;height:250px;overflow:auto;margin-left:5px;
 		});
 		$(row).find("td button.action").button().click(function() {
 	        	haksvn.block.on();
-	        	$.getJSON( "<c:url value="/transfer/request/lock/${repository.repositorySeq}"/>",
-      						{path:path}, 
+	        	$.getJSON( "<c:url value="/transfer/request/check/${repository.repositorySeq}"/>",
+      						{path:path,del:_gToDelete}, 
       						function(data){
       							haksvn.block.off();
       							if( data == null || !data ){
-      								addToSourceList({path:path,revision:rev});
+      								addToSourceList({path:path.substr(_gRootPath.length),revision:rev});
       								return;
       							}
-      							$('#div_lockMessage .transferSeq').text('req-'+data.transferSeq);
+      							$('#div_lockMessage .transferSeq').text('req-'+data.transfer.transferSeq);
       							$('#div_lockMessage .reuqestUserId').text(data.requestUser.userName+'('+data.requestUser.userId+')');
             					$( "#div_lockMessage" ).dialog({
             				      	modal: true,
@@ -317,13 +319,13 @@ float:left;width:440px;height:250px;overflow:auto;margin-left:5px;
 				</p>
 				<p>
 					<label class="left">Sources To Transfer</label>
-					<span><font class="path"><a onclick="openSearchSourceDialog('<c:out value="${repository.trunkPath}" />')" style="text-decoration:underline;cursor:pointer;">Add</a></font></span>
+					<span><font class="path"><a onclick="openSearchSourceDialog('<c:out value="${repository.trunkPath}" />',false)" style="text-decoration:underline;cursor:pointer;">Add</a></font></span>
 					<input type="text" class="text visible-hidden"/>
 					<span id="spn_sourcesToTran" style="display:block;margin-left:220px;"></span>
 				</p>
 				<p>
 					<label class="left">Sources To Delete</label>
-					<span><font class="path"><a onclick="openSearchSourceDialog('<c:out value="${repository.branchesPath}" />')" style="text-decoration:underline;cursor:pointer;">Add</a></font></span>
+					<span><font class="path"><a onclick="openSearchSourceDialog('<c:out value="${repository.branchesPath}" />',true)" style="text-decoration:underline;cursor:pointer;">Add</a></font></span>
 					<input type="text" class="text visible-hidden"/>
 				</p>
 				<p>
