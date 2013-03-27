@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.haks.haksvn.common.code.model.Code;
+import com.haks.haksvn.common.code.util.CodeUtils;
 import com.haks.haksvn.common.exception.HaksvnException;
 import com.haks.haksvn.common.paging.model.Paging;
 import com.haks.haksvn.transfer.model.Transfer;
@@ -34,9 +35,9 @@ public class TransferAjaxController {
 										    		@RequestParam(value = "rUser", required = false, defaultValue="") String requestUserId,
 													@RequestParam(value = "sCode", required = false, defaultValue="") String transferStateCodeId,
 													@PathVariable int repositorySeq) throws HaksvnException {
-    	Transfer transfer = Transfer.Builder.getBuilder(new Transfer()).repositorySeq(repositorySeq)
-    		.transferStateCode(Code.Builder.getBuilder(new Code()).codeId(transferStateCodeId).build())
-    		.requestUser(User.Builder.getBuilder(new User()).userId(requestUserId).build()).build();
+    	Transfer transfer = Transfer.Builder.getBuilder().repositorySeq(repositorySeq)
+    		.transferStateCode(Code.Builder.getBuilder().codeId(transferStateCodeId).build())
+    		.requestUser(User.Builder.getBuilder().userId(requestUserId).build()).build();
     	paging.setModel(transfer);
     	Paging<List<Transfer>> transferListPaging = transferService.retrieveTransferList(paging);
     	for( Transfer resultTransfer : transferListPaging.getModel() ){
@@ -45,12 +46,17 @@ public class TransferAjaxController {
     	return transferListPaging;
     }
     
-    @RequestMapping(value="/request/lock/{repositorySeq}", method=RequestMethod.GET, params ={"path"})
-    public @ResponseBody Transfer retrieveLockedTransferBySource(@RequestParam(value = "path", required = true) String path,
+    @RequestMapping(value="/request/check/{repositorySeq}", method=RequestMethod.GET, params ={"path","del"})
+    public @ResponseBody TransferSource checkRequestableTransferSource(
+    												@RequestParam(value = "path", required = true) String path,
+    												@RequestParam(value = "del", required = true) boolean toDelete,
 													@PathVariable int repositorySeq){
-    	Transfer transfer = transferService.retrieveLockedTransferBySource(path);
-    	if(transfer != null ) transfer.setSourceList(null);
-    	return transfer;
+    	TransferSource transferSource = TransferSource.Builder.getBuilder().path(path)
+    				.transferSourceTypeCode(Code.Builder.getBuilder().codeId(toDelete?CodeUtils.getTransferSourceTypeDeleteCodeId():"").build())
+    				.transfer(Transfer.Builder.getBuilder().repositorySeq(repositorySeq).build()).build();
+    	transferSource = transferService.checkRequestableTransferSource(transferSource);
+    	if(transferSource != null ) transferSource.getTransfer().setSourceList(null);
+    	return transferSource;
     }
     
     @RequestMapping(value="/request/list/{repositorySeq}/{transferSeq}/sources")

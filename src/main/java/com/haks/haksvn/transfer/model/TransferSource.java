@@ -78,5 +78,51 @@ public class TransferSource {
 	public void setTransferSourceTypeCode(Code code){
 		transferSourceTypeCode = code;
 	}
-	
+
+	public static class Builder{
+		
+		private TransferSource transferSource;
+		
+		private Builder(TransferSource transferSource){
+			this.transferSource = transferSource;
+		}
+		
+		public static Builder getBuilder(){
+			return getBuilder(new TransferSource());
+		}
+		
+		public static Builder getBuilder(TransferSource transferSource){
+			return new Builder(transferSource);
+		}
+		
+		public TransferSource build(){
+			return transferSource;
+		}
+		
+		public Builder transferSourceSeq(int transferSourceSeq){
+			transferSource.setTransferSourceSeq(transferSourceSeq);
+			return this;
+		}
+		
+		public Builder path(String path){
+			transferSource.setPath(path);
+			return this;
+		}
+		
+		public Builder revision(long revision){
+			transferSource.setRevision(revision);
+			return this;
+		}
+		
+		public Builder transfer(Transfer transfer){
+			transferSource.setTransfer(transfer);
+			return this;
+		}
+		
+		public Builder transferSourceTypeCode(Code code){
+			transferSource.setTransferSourceTypeCode(code);
+			return this;
+		}
+		
+	} 
 }

@@ -58,4 +58,21 @@ public class CodeUtils {
 	public static boolean isCompleteState(String stateCode){
 		return "transfer.state.code.complete".equals(stateCode) || "transfer.state.code.reject".equals(stateCode);
 	}
+	
+	// transfer source
+	public static String getTransferSourceTypeDeleteCodeId(){
+		return "transfer.source.type.code.delete";
+	}
+	
+	public static String getTransferSourceTypeAddCodeId(){
+		return "transfer.source.type.code.add";
+	}
+	
+	public static String getTransferSourceTypeModifyCodeId(){
+		return "transfer.source.type.code.add";
+	}
+	
+	public static boolean isTransferSourceTypeDelete( String code ){
+		return getTransferSourceTypeDeleteCodeId().equals(code);
+	}
 }

@@ -140,6 +140,25 @@ public class SVNRepositoryDao {
 		
 	}
 	
+	public boolean isExistingSource(Repository repository, String path, long revision ){
+		SVNRepository targetRepository = null;
+        try{
+        	targetRepository = SVNRepositoryUtils.getUserAuthSVNRepository(repository);
+        	SVNNodeKind nodeKind = targetRepository.checkPath(RepositoryUtils.getRelativeRepositoryPath(repository, path), revision);
+        	return nodeKind != SVNNodeKind.NONE;
+            
+        }catch (Exception e) {
+        	e.printStackTrace();
+        	throw new HaksvnException(e);
+        }finally{
+        	try{
+        		if(targetRepository!=null) targetRepository.closeSession();
+        	}catch(Exception e){
+        		e.printStackTrace();
+        	}
+        }
+	}
+	
 	public SVNSource checkIsCopiedOrDeletedAndChangeRevision(Repository repository, SVNSource svnSource){
 		// tagging 은 해당 리비젼으로 찾을 수 없다... //TODO 공통으로 처리 가능하도록	
 		//TODO copiedPath 를 사용하면 뭔가 될지도
