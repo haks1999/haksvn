@@ -103,6 +103,12 @@ public class TransferController {
     									@RequestParam(value = "transferSourceList") String sourceListJson,
     									BindingResult result,
     									@PathVariable int repositorySeq) throws Exception{
+		
+		
+		
+		System.out.println("sourceListJson: " + sourceListJson);
+		
+		
     	if( result.hasErrors() ){
     		List<Repository> repositoryList = repositoryService.retrieveAccesibleActiveRepositoryList();
     		model.addAttribute("repositoryList", repositoryList );
@@ -114,10 +120,9 @@ public class TransferController {
     		return new ModelAndView("/transfer/modifyTransfer");
     	}else{
     		ObjectMapper mapper = new ObjectMapper();
-    		mapper.configure(DeserializationConfig.Feature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-    		List<TransferSource> transferSourceList = mapper.readValue(sourceListJson, new TypeReference<List<TransferSource>>(){});
-    		
-    		transfer.setSourceList(transferSourceList);
+   			mapper.configure(DeserializationConfig.Feature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+       		List<TransferSource> transferSourceList = mapper.readValue(sourceListJson, new TypeReference<List<TransferSource>>(){});
+       		transfer.setSourceList(transferSourceList);
     		
     		transfer = transferService.saveTransfer(transfer);
     		String param = "?rUser=" + ContextHolder.getLoginUser().getUserId() + "&sCode=" + transfer.getTransferStateCode().getCodeId();

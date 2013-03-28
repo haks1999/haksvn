@@ -26,6 +26,7 @@ public class SVNSource {
 	private boolean isCopied;
 	private boolean isDeleted;
 	private long lastestRevision = -1;
+	private long copiedRevision;
 	
 	public SVNSource(){
 		
@@ -179,6 +180,14 @@ public class SVNSource {
 	
 	public void setLastestRevision(long lastestRevision){
 		this.lastestRevision = lastestRevision;
+	}
+	
+	public long getCopiedRevision(){
+		return copiedRevision;
+	}
+	
+	public void setCopiedRevision(long copiedRevision){
+		this.copiedRevision = copiedRevision;
 	}
 
 	public static class Builder{

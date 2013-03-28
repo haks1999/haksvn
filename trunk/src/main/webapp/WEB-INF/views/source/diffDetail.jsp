@@ -31,9 +31,10 @@
 								<c:set var="srcBrowsePath" value="${fn:replace(srcBrowsePath,'//','/')}"/>
 								<c:set var="srcChangedPath" value="/${repoChangesPathLink}/${svnSourceSrc.path}"/>
 								<c:set var="srcChangedPath" value="${fn:replace(srcChangedPath,'//','/')}"/>
+								<c:set var="srcRevision" value="${svnSourceSrc.isCopied ? svnSourceSrc.copiedRevision:svnSourceSrc.revision}" />
 								<p style="width:500px;">
 									<font class="path">
-										<a href="<c:out value="${srcBrowsePath}?rev=${svnSourceSrc.revision}" />">
+										<a href="<c:out value="${srcBrowsePath}?rev=${srcRevision}" />">
 											<c:forEach var="pathFrag" items="${fn:split(svnSourceSrc.path, '/')}" varStatus="loop">
 												/<c:out value="${pathFrag}" />&#8203;
 											</c:forEach>
@@ -41,7 +42,7 @@
 									</font>
 								</p>
 								<p>
-									<font><a href="<c:out value="${srcChangedPath}?rev=${svnSourceTrg.revision}" />"><c:out value="r${svnSourceSrc.revision}"/></a></font>
+									<font><a href="<c:out value="${srcChangedPath}?rev=${srcRevision}" />"><c:out value="r${srcRevision}"/></a></font>
 								</p>
 							</div>
 							<div class="bottom"><div></div></div>
@@ -57,9 +58,10 @@
 								<c:set var="trgBrowsePath" value="${fn:replace(trgBrowsePath,'//','/')}"/>
 								<c:set var="trgChangedPath" value="/${repoChangesPathLink}/${svnSourceTrg.path}"/>
 								<c:set var="trgChangedPath" value="${fn:replace(trgChangedPath,'//','/')}"/>
+								<c:set var="trgRevision" value="${svnSourceTrg.isCopied ? svnSourceTrg.copiedRevision:svnSourceTrg.revision}" />
 								<p style="width:500px;">
 									<font class="path">
-										<a href="<c:out value="${trgBrowsePath}?rev=${svnSourceTrg.revision}" />">
+										<a href="<c:out value="${trgBrowsePath}?rev=${trgRevision}" />">
 											<c:forEach var="pathFrag" items="${fn:split(svnSourceTrg.path, '/')}" varStatus="loop">
 												/<c:out value="${pathFrag}" />
 											</c:forEach>
@@ -67,7 +69,7 @@
 									</font>
 								</p>
 								<p>
-									<font><a href="<c:out value="${trgChangedPath}?rev=${svnSourceTrg.revision}" />"><c:out value="r${svnSourceTrg.revision}"/></a></font>
+									<font><a href="<c:out value="${trgChangedPath}?rev=${trgRevision}" />"><c:out value="r${trgRevision}"/></a></font>
 								</p>
 							</div>
 							<div class="bottom"><div></div></div>

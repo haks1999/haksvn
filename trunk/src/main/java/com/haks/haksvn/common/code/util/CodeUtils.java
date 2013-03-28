@@ -69,7 +69,7 @@ public class CodeUtils {
 	}
 	
 	public static String getTransferSourceTypeModifyCodeId(){
-		return "transfer.source.type.code.add";
+		return "transfer.source.type.code.modify";
 	}
 	
 	public static boolean isTransferSourceTypeDelete( String code ){

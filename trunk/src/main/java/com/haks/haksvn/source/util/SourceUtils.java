@@ -118,6 +118,12 @@ public class SourceUtils {
 		Scanner scanner = new Scanner(diff);
 		SourceUtils sourceUtils = new SourceUtils();
 		
+		if( !scanner.hasNextLine() ){
+			StringBuffer html = new StringBuffer("<table cellspacing=\"0\"><thead><tr><td colspan=\"4\"></td></tr><tr><td class=\"header-src\" colspan=\"2\"></td><td class=\"header-trg\"  colspan=\"2\"></td></tr><tr><td colspan=\"4\"></td></tr></thead><tbody>");
+			html.append("<tr><td></td><td>No Differences</td><td></td><td>No Differences</td></tr>");
+			html.append("<tr><td class=\"line\"></td><td></td><td class=\"line\"></td><td></td></tr></tbody><tfoot><tr><td colspan=\"4\"></td></tr><tr><td class=\"footer-src\" colspan=\"2\"></td><td class=\"footer-trg\" colspan=\"2\"></td></tr><tr><td colspan=\"4\"></td></tr></tfoot></table>");
+			return html.toString();
+		}
 		scanner.nextLine();	//Index: sourceDetail.jsp
 		scanner.nextLine();	//===================================================================
 		scanner.nextLine();	//--- sourceDetail.jsp	(revision 96)
