@@ -18,13 +18,31 @@ float:left;width:440px;height:250px;overflow:auto;margin-left:5px;
 .sourceListPanel .ui-menu .ui-menu-item A{font-size:10px;}
 
 .transferSourceDetail .ui-menu { width: 120px; }
-.transferSourceDetail .ui-button .ui-button-text{font-family:Verdana,Arial,sans-serif;font-size:12px;}
+.transferSourceDetail .ui-button .ui-button-text{font-family:Verdana,Arial,sans-serif;font-size:11px;}
 .transferSourceDetail .ui-button-text-only .ui-button-text{padding:.4em .4em}
+.transferSourceDetail .ui-button-icon-only{width:2em;}
 .transferSourceDetail .ui-button-icon-only .ui-button-text{padding:.4em .4em}
 .transferSourceDetail .ui-menu {z-index:1;}
-.transferSourceDetail .ui-menu .ui-menu-item A{font-size:12px;}
+.transferSourceDetail .ui-menu .ui-menu-item A{font-size:11px;}
+.transferSourceDetail table{width:auto;margin-left:25px;margin-bottom:10px;margin-top:5px;}
+.transferSourceDetail table td{
+border:none;
+line-height:14px;
+padding-top:0px;
+padding-bottom:0px;
+padding-left:2px;
+padding-right:2px;
+background-color:transparent;}
+.transferSourceDetail table tr:hover td{background-color:transparent;}
+.transferSourceDetail table td div.action{width:150px;height:27px;}
+ul.Add li.diff{display:none;}
+ul.Delete li.diff{display:none;}
+ul.Delete li.revision{display:none;}
 </style>
 <script type="text/javascript">
+	var _gRepoTrunk = '<c:out value="${repository.trunkPath}"/>';
+	var _gRepoBranches = '<c:out value="${repository.branchesPath}"/>';
+	
 	$(function() {
 		//$('#repositoryForm').validate();
 		$('#frm_transfer').attr('action', '<c:url value="/transfer/request/list/${repositorySeq}/save" />');
@@ -192,39 +210,75 @@ float:left;width:440px;height:250px;overflow:auto;margin-left:5px;
 		$( "#txt_searchSource" ).focus();
 	};
 	
-	var _gSourceList = [];
+	
 	function retrieveTransferSourceList(){
 		$.getJSON(
 				"<c:url value="/transfer/request/list/${repositorySeq}/${transfer.transferSeq}/sources"/>",
 				{},
 	            function(result){
 					for( var inx = 0 ; inx < result.length ; inx++){
-						addToSourceList({transferSourceSeq:result[inx].transferSourceSeq,path:result[inx].path,revision:result[inx].path});
+						addToTransferSourceList({index:inx, transferSourceSeq:result[inx].transferSourceSeq,path:result[inx].path,revision:result[inx].revision,type:result[inx].transferSourceTypeCode.codeName,inserted:false});
 					}
 				});
 	};
 	
-	function addToSourceList( nSrc ){
+	var _gSourceList = [];
+	function addToTransferSourceList( nSrc ){
 		for( var inx = 0 ; inx < _gSourceList.length ; inx++){
-			if( _gSourceList[inx].path == nSrc.path ) return;
+			if( !_gSourceList[inx].inserted && !_gSourceList[inx].deleted && _gSourceList[inx].path == nSrc.path ) return;
 		}
-		var srcDetail = $('#div_sourceDetail').clone().removeAttr('id');
+		if( !nSrc.index ) nSrc.index = _gSourceList.length;
+		var srcDetail = $('#div_transferSourceDetail').clone().attr('id','div_transferSourceDetail_'+nSrc.index).attr('_h_index',nSrc.index);
 		$(srcDetail).find('.path a').text(nSrc.path);
+		$(srcDetail).find('ul').addClass(nSrc.type);
 		$('#spn_sourcesToTran').append(srcDetail);
-		createTransferSourceDetailActionButton($(srcDetail).find('.transferSourceDetail'), srcDetail);
+		createTransferSourceDetailActionButton($(srcDetail).find('.transferSourceDetail'));
+		$(srcDetail).find('td.type').text(nSrc.type);
+		$(srcDetail).find('td.revision').text(nSrc.revision);
 		$(srcDetail).css('display','');
 		_gSourceList.push(nSrc);
-		$('#frm_transfer input[name=transferSourceList]').val(haksvn.json.stringfy(_gSourceList));
+		transferSourceListToValue();
 	};
 	
-	function createTransferSourceDetailActionButton( elem, srcDetail ){
-		$(elem).find('ul li a.changes').click(function(){
-			var win = window.open(('<c:url value="/source/changes/${repositorySeq}" />' + '/' + srcDetail.path).replace("//", "/"), '_blank');
+	function removeFromTransferSourceList( oSrc ){
+		oSrc.deleted = true;
+		if(oSrc.inserted ){
+			$('#div_transferSourceDetail_' + oSrc.index).remove();	
+		}else{
+			$('#div_transferSourceDetail_' + oSrc.index).find('.path .a').css('text-decoration','line-through');
+		}
+		transferSourceListToValue();
+	};
+	
+	function transferSourceListToValue(){
+		var listToVal = [];
+		for( var inx = 0 ; inx < _gSourceList.length ; inx++ ){
+			if( !_gSourceList[inx].deleted ) listToVal.push(_gSourceList[inx]);
+		}
+		$('#frm_transfer input[name=transferSourceList]').val(haksvn.json.stringfy(listToVal));
+	}
+	
+	function createTransferSourceDetailActionButton( elem ){
+		$(elem).find('ul li.changes').click(function(){
+			var win = window.open(('<c:url value="/source/changes/${repositorySeq}" />' + '/' + _gSourceList[$(elem).parent().attr('_h_index')].path).replace("//", "/"), '_blank');
 			win.focus();
 		});
+		$(elem).find('ul li.diff').click(function(){
+			var srcD = _gSourceList[$(elem).parent().attr('_h_index')];
+			var param='?repositorySeq=' + '<c:out value="${repositorySeq}"/>'
+						+'&srcPath=' + _gRepoBranches+srcD.path.substr(_gRepoTrunk.length)
+						+'&path=' + srcD.path
+						+'&srcRev=-1&trgRev=' + srcD.revision;
+			var win = window.open('<c:url value="/source/changes/diff" />' + param, '_blank');
+			win.focus();
+		});
+		$(elem).find('ul li.remove').click(function(){
+			removeFromTransferSourceList(_gSourceList[$(elem).parent().attr('_h_index')]);
+		});
 		$(elem).find("button.action").button().click(function() {
-	        	var win = window.open(('<c:url value="/source/browse/${repositorySeq}" />' + '/' + srcDetail.path + '?rev=' + srcDetail.rev).replace("//", "/"), '_blank');
+	        	var win = window.open(('<c:url value="/source/browse/${repositorySeq}" />' + '/' + _gSourceList[$(elem).parent().attr('_h_index')].path + '?rev=' + _gSourceList[$(elem).parent().attr('_h_index')].revision).replace("//", "/"), '_blank');
 				win.focus();
+				return false;
 	    	}).next().button({
 				text: false,
 	          	icons: {
@@ -246,11 +300,11 @@ float:left;width:440px;height:250px;overflow:auto;margin-left:5px;
 	function createSourceListActionButton( row ){
 		var path = $(row).attr('path');
 		var rev = $(row).attr('rev');
-		$(row).find('ul li a.browse').click(function(){
+		$(row).find('ul li.browse').click(function(){
 			var win = window.open(('<c:url value="/source/browse/${repositorySeq}" />' + '/' + path + '?rev=' + rev).replace("//", "/"), '_blank');
 			win.focus();
 		});
-		$(row).find('ul li a.changes').click(function(){
+		$(row).find('ul li.changes').click(function(){
 			var win = window.open(('<c:url value="/source/changes/${repositorySeq}" />' + '/' + path).replace("//", "/"), '_blank');
 			win.focus();
 		});
@@ -260,7 +314,8 @@ float:left;width:440px;height:250px;overflow:auto;margin-left:5px;
       						{path:path,del:_gToDelete}, 
       						function(data){
       							if( !data.transfer || data.transfer == null ){
-      								addToSourceList({path:path,revision:rev});
+      								addToTransferSourceList({transferSourceSeq:0,path:path,revision:rev,type:data.transferSourceTypeCode.codeName,inserted:true});
+      								haksvn.block.off();
       								return;
       							}
       							haksvn.block.off();
@@ -320,7 +375,7 @@ float:left;width:440px;height:250px;overflow:auto;margin-left:5px;
 	<div class="col w10 last">
 		<div class="content">
 		
-			<form:form commandName="transfer" class="w200" id="frm_transfer" method="post">
+			<form:form commandName="transfer" class="w200" id="frm_transfer" method="post" onsubmit="javascript:haksvn.block.on();">
 				<p><span class="strong">Detail</span></p>
 				<p>
 					<form:label path="transferSeq" class="left">Transfer Seq</form:label>
@@ -433,7 +488,7 @@ float:left;width:440px;height:250px;overflow:auto;margin-left:5px;
 
 
 
-<div id="div_sourceDetail" style="display:none;">
+<div id="div_transferSourceDetail" style="display:none;">
 	<span onclick="toggleTransferSourceDetail(this)">
 		<a class="pmOpener closed">
 			<img class="pClosed" src="<c:url value="/images/plus_small_white.png"/>"/><img class="mOpened" src="<c:url value="/images/minus_small_white.png"/>"/>
@@ -445,22 +500,27 @@ float:left;width:440px;height:250px;overflow:auto;margin-left:5px;
 		</span>
 	</span>
 	<div class="transferSourceDetail display-none">
-		<table style="margin-left:25px;">
+		<table>
 			<tr>
-				<td style="padding-top:0px;padding-bottom:5px;">
-					<div class="action" style="width:150px;height:30px;">
+				<td>
+					<div class="action">
 					  	<div>
 					    	<button class="action">View Source</button>
 					    	<button>Select an action</button>
 					  	</div>
 					  	<ul>
-					    	<li><a class="changes">View Revisions</a></li>
-					    	<li><a class="diff">Diff with Prod</a></li>
+					  		<li class="revision"><a>Change Revision</a></li>
+					    	<li class="changes"><a>View Revisions</a></li>
+					    	<li class="diff"><a>Diff with Prod</a></li>
+					    	<li class="remove"><a>Remove</a></li>
 					  	</ul>
 					</div>
 				</td>
-				<td>
-					modify
+				<td class="type">
+				</td>
+				<td class="revision">
+				</td>
+				<td class="log">
 				</td>
 			</tr>
 		</table>
@@ -507,9 +567,8 @@ float:left;width:440px;height:250px;overflow:auto;margin-left:5px;
 								    	<button>Select an action</button>
 								  	</div>
 								  	<ul>
-								    	<li><a class="browse">View Source</a></li>
-								    	<li><a class="changes">View Revisions</a></li>
-								    	<li><a class="diff">Diff with Prod</a></li>
+								    	<li class="browse"><a>View Source</a></li>
+								    	<li class="changes"><a>View Revisions</a></li>
 								  	</ul>
 								</div>
 							</td>

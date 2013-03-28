@@ -16,6 +16,7 @@ import com.haks.haksvn.common.security.util.ContextHolder;
 import com.haks.haksvn.repository.model.Repository;
 import com.haks.haksvn.repository.service.RepositoryService;
 import com.haks.haksvn.repository.service.SVNRepositoryService;
+import com.haks.haksvn.repository.util.RepositoryUtils;
 import com.haks.haksvn.transfer.dao.TransferDao;
 import com.haks.haksvn.transfer.model.Transfer;
 import com.haks.haksvn.transfer.model.TransferSource;
@@ -51,7 +52,7 @@ public class TransferService {
 		String transferSourceTypeCode = transferSource.getTransferSourceTypeCode().getCodeId();
 		boolean toDelete = CodeUtils.isTransferSourceTypeDelete(transferSourceTypeCode);
 		if(!toDelete){
-			boolean isExistSource = svnRepositoryService.isExistingSource(repository, transferSource.getPath(), -1);
+			boolean isExistSource = svnRepositoryService.isExistingSource(repository, RepositoryUtils.getBranchesPath(repository,transferSource.getPath()), -1);
 			transferSourceTypeCode = isExistSource?CodeUtils.getTransferSourceTypeModifyCodeId():CodeUtils.getTransferSourceTypeAddCodeId();
 		}
 		transferSource.setTransferSourceTypeCode(codeService.retrieveCode(transferSourceTypeCode));
@@ -72,8 +73,10 @@ public class TransferService {
 	
 	private Transfer addTransfer(Transfer transfer){
 		for( TransferSource transferSource: transfer.getSourceList() ){
-			transferSource.setTransferSourceSeq(0);
 			transferSource.setTransfer(transfer);
+			transferSource = checkRequestableTransferSource(transferSource);
+			transferSource.setTransfer(transfer);
+			transferSource.setTransferSourceSeq(0);
 		}
 		Transfer.Builder.getBuilder(transfer).requestUser(userService.retrieveUserByUserId(ContextHolder.getLoginUser().getUserId()))
 			.transferStateCode(codeService.retrieveCode(CodeUtils.getTransferKeepCodeId()))

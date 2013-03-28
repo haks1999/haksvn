@@ -113,6 +113,7 @@ public class SVNRepositoryDao {
 		return entries;
     }
 	
+	
 	public SVNSource retrieveSVNSourceWithoutContentAndLogs(Repository repository, SVNSource svnSource){
 		
 		SVNRepository targetRepository = null;
@@ -162,17 +163,23 @@ public class SVNRepositoryDao {
 	public SVNSource checkIsCopiedOrDeletedAndChangeRevision(Repository repository, SVNSource svnSource){
 		// tagging 은 해당 리비젼으로 찾을 수 없다... //TODO 공통으로 처리 가능하도록	
 		//TODO copiedPath 를 사용하면 뭔가 될지도
+		//TODO 여기 로직 걸레 됐음. 조만간 손 볼 것.
     	SVNRepository targetRepository = null;
         try{
         	targetRepository = SVNRepositoryUtils.getUserAuthSVNRepository(repository);
-        	
         	String relativePath = RepositoryUtils.getRelativeRepositoryPath(repository, svnSource.getPath());
-        	SVNNodeKind curNodeKind = targetRepository.checkPath(relativePath, svnSource.getRevision());
         	SVNNodeKind headNodeKind = targetRepository.checkPath(relativePath, -1);
         	svnSource.setIsDeleted(headNodeKind == SVNNodeKind.NONE);
+        	// revision이 -1 로 들어오는경우 revision을 명시하도록 바꾼다. diff 시 -1 로는 비교가 안 됨
+        	if( !svnSource.getIsDeleted() && svnSource.getRevision() < 0 ){
+        		SVNProperties fileProperties = new SVNProperties();
+                targetRepository.getFile(RepositoryUtils.getRelativeRepositoryPath(repository, svnSource.getPath()), -1, fileProperties, null);
+                svnSource.setRevision(Long.parseLong(fileProperties.getStringValue(SVNProperty.COMMITTED_REVISION)));
+        	}
+        	SVNNodeKind curNodeKind = targetRepository.checkPath(relativePath, svnSource.getRevision());
         	if( curNodeKind != SVNNodeKind.NONE && !svnSource.getIsDeleted() ) return svnSource;
         	
-        	long startRev = -1;	
+        	long startRev = -1;
         	long repositorylastestRevision = targetRepository.getLatestRevision();
         	
         	if( svnSource.getIsDeleted() ){
@@ -200,8 +207,12 @@ public class SVNRepositoryDao {
                 	logList.add(entry); 
                 } 
             });
+            
             if( logList.size() < 1 ) return svnSource;
-            if( !svnSource.getIsDeleted() ) svnSource.setIsCopied(true);
+            if( !svnSource.getIsDeleted() ){
+            	svnSource.setIsCopied(true);
+            	svnSource.setCopiedRevision(svnSource.getRevision());
+            }
             svnSource.setRevision(logList.get(0).getRevision());
             
         }catch (Exception e) {

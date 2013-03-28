@@ -152,14 +152,17 @@ public class SourceController {
 	@RequestMapping(value="/changes/diff")
     public String forwardDiffDetailPage(ModelMap model,
     										@RequestParam(value = "repositorySeq", required = true) int repositorySeq,
+    										@RequestParam(value = "srcPath", required = false, defaultValue="") String srcPath,
     										@RequestParam(value = "path", required = true) String path,
     										@RequestParam(value = "srcRev", required = true) long srcRev,
     										@RequestParam(value = "trgRev", required = true) long trgRev){
 		
+		srcPath = srcPath.length() > 0 ? srcPath:path;
 		SVNSource svnSourceSrc = SVNSource.Builder.getBuilder(new SVNSource()).path(path).revision(srcRev).build();
-		SVNSource svnSourceTrg = SVNSource.Builder.getBuilder(new SVNSource()).path(path).revision(trgRev).build();
+		SVNSource svnSourceTrg = SVNSource.Builder.getBuilder(new SVNSource()).path(srcPath).revision(trgRev).build();
 		SVNSourceDiff svnSourceDiff = new SVNSourceDiff();
-		if( srcRev < 0 ){
+		boolean diffWithPrevious = srcPath.length() < 1 && srcRev < 0;
+		if( diffWithPrevious ){
 			svnSourceDiff = sourceService.retrieveDiffWithContentsByPrevious(repositorySeq, svnSourceTrg);
 		}else{
 			svnSourceDiff = sourceService.retrieveDiffWithContentsByRevisions(repositorySeq, svnSourceSrc, svnSourceTrg);

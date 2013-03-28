@@ -2,6 +2,7 @@ package com.haks.haksvn.repository.util;
 
 import com.haks.haksvn.common.code.util.CodeUtils;
 import com.haks.haksvn.common.crypto.util.CryptoUtils;
+import com.haks.haksvn.common.exception.HaksvnException;
 import com.haks.haksvn.repository.model.Repository;
 
 public class RepositoryUtils {
@@ -35,5 +36,12 @@ public class RepositoryUtils {
 		String svnRoot = repository.getSvnRoot();
 		if( !svnRoot.endsWith("/")) svnRoot = svnRoot + "/";
 		return svnRoot + relativePath;
+	}
+	
+	public static String getBranchesPath(Repository repository, String trunkPath){
+		String branchesPrefix = repository.getBranchesPath();
+		String trunkPrefix = repository.getTrunkPath();
+		if( !trunkPath.startsWith(trunkPrefix) ) throw new HaksvnException("invalid trunk path");
+		return branchesPrefix + trunkPath.substring(trunkPrefix.length());
 	}
 }
