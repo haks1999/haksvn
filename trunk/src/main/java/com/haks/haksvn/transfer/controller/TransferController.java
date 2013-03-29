@@ -103,12 +103,6 @@ public class TransferController {
     									@RequestParam(value = "transferSourceList") String sourceListJson,
     									BindingResult result,
     									@PathVariable int repositorySeq) throws Exception{
-		
-		
-		
-		System.out.println("sourceListJson: " + sourceListJson);
-		
-		
     	if( result.hasErrors() ){
     		List<Repository> repositoryList = repositoryService.retrieveAccesibleActiveRepositoryList();
     		model.addAttribute("repositoryList", repositoryList );
