@@ -3,6 +3,7 @@ package com.haks.haksvn.transfer.dao;
 import java.util.List;
 
 import org.hibernate.Criteria;
+import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.criterion.Order;
@@ -71,6 +72,14 @@ public class TransferDao {
 		Session session = sessionFactory.getCurrentSession();
 		session.delete(transfer);
 		return transfer;
+	}
+	
+	public TransferSource deleteTransferSource(TransferSource transferSource){
+		Session session = sessionFactory.getCurrentSession();
+		Query query = session.createSQLQuery("DELETE FROM transfer_source WHERE transfer_source_seq = :transferSourceSeq");
+		query.setParameter("transferSourceSeq", transferSource.getTransferSourceSeq());
+		query.executeUpdate();
+		return transferSource;
 	}
 	
 	public TransferSource retrieveLockedTransferSource(String path){

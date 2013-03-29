@@ -296,6 +296,9 @@ form input.text.readOnly{
 border: 1px solid #fff;
 background:none;
 }
+.italic{
+font-style:italic;
+}
 .font12{
 font-size:12pt;
 }

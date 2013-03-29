@@ -1,5 +1,6 @@
 package com.haks.haksvn.transfer.service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -47,7 +48,10 @@ public class TransferService {
 		Repository repository = checkRepositoryAccessRight(transferSource.getTransfer().getRepositorySeq());
 		
 		TransferSource transferSourceLocked = transferDao.retrieveLockedTransferSource(transferSource.getPath());
-		if( transferSourceLocked != null ) return transferSourceLocked;
+		if( transferSourceLocked != null ){
+			transferSourceLocked.setIsLocked(true);
+			return transferSourceLocked;
+		}
 		
 		String transferSourceTypeCode = transferSource.getTransferSourceTypeCode().getCodeId();
 		boolean toDelete = CodeUtils.isTransferSourceTypeDelete(transferSourceTypeCode);
@@ -56,7 +60,6 @@ public class TransferService {
 			transferSourceTypeCode = isExistSource?CodeUtils.getTransferSourceTypeModifyCodeId():CodeUtils.getTransferSourceTypeAddCodeId();
 		}
 		transferSource.setTransferSourceTypeCode(codeService.retrieveCode(transferSourceTypeCode));
-		transferSource.setTransfer(null);
 		return transferSource;
 	}
 	
@@ -66,7 +69,27 @@ public class TransferService {
 		if( currentTransfer == null ){
 			return addTransfer(transfer);
 		}else{
-			Transfer.Builder.getBuilder(currentTransfer).description(transfer.getDescription());
+			List<TransferSource> transferSourceToDeleteList = new ArrayList<TransferSource>(0);
+			for( TransferSource transferSource : transfer.getSourceList()){
+				if( transferSource.getTransferSourceSeq() < 1 ){
+					transferSource.setTransfer(transfer);
+					currentTransfer.getSourceList().add(transferSource);
+					continue;
+				}
+				for( TransferSource curTransferSource : currentTransfer.getSourceList()){
+					if( transferSource.getTransferSourceSeq() == curTransferSource.getTransferSourceSeq() ){
+						if( transferSource.getDeleted() ){
+							transferSourceToDeleteList.add(curTransferSource);
+							curTransferSource.setTransfer(null);
+						}else{
+							curTransferSource.setRevision(transferSource.getRevision());
+						}
+					}
+				}
+			}
+			for( TransferSource transferSource : transferSourceToDeleteList ){
+				currentTransfer.getSourceList().remove(transferSource);
+			}
 			return updateTransfer(currentTransfer);
 		}
 	}
@@ -75,7 +98,7 @@ public class TransferService {
 		for( TransferSource transferSource: transfer.getSourceList() ){
 			transferSource.setTransfer(transfer);
 			transferSource = checkRequestableTransferSource(transferSource);
-			transferSource.setTransfer(transfer);
+			if( transferSource.getIsLocked() ) throw new HaksvnException("[" + transferSource.getPath() + "] is locked by [" + transferSource.getTransfer().getTransferSeq() + "]");
 			transferSource.setTransferSourceSeq(0);
 		}
 		Transfer.Builder.getBuilder(transfer).requestUser(userService.retrieveUserByUserId(ContextHolder.getLoginUser().getUserId()))
@@ -88,7 +111,19 @@ public class TransferService {
 		if( !TransferStateAuth.Builder.getBuilder().transfer(transfer).build().getIsEditable()){
 			throw new HaksvnException("Insufficient privileges.");
 		}
-		return transferDao.updateTransfer(transfer);
+		for( TransferSource transferSource: transfer.getSourceList() ){
+			if( transferSource.getTransferSourceSeq() < 1 ){	// 추가인 경우 
+				// 신규 Transfer 가 아닌 연관된 Transfer를 세팅하면 다른 Service method 호출 시 insert, update 가 일어난다.
+				// 이유를 알 수 없음. 단순 select method 임에도 불구하고...
+				TransferSource transferSourceLocked = transferDao.retrieveLockedTransferSource(transferSource.getPath());
+				if( transferSourceLocked != null && transferSourceLocked.getTransfer().getTransferSeq() != transfer.getTransferSeq()){
+					throw new HaksvnException("[" + transferSource.getPath() + "] is locked by [" + transferSource.getTransfer().getTransferSeq() + "]");
+				}
+			}
+			if(!transferSource.getDeleted()) transferSource.setTransfer(transfer);
+		}
+		transfer = transferDao.updateTransfer(transfer);
+		return transfer;
 	}
 	
 	public Transfer retrieveTransferDetail(Transfer transfer){
@@ -132,6 +167,7 @@ public class TransferService {
 		return transferDao.updateTransfer(transfer);
 	}
 	
+	@Transactional(readOnly=true)
 	private Repository checkRepositoryAccessRight(int repositorySeq){
 		Repository repository = repositoryService.retrieveAccesibleActiveRepositoryByRepositorySeq(repositorySeq);
 		if( repository == null || repositorySeq != repository.getRepositorySeq()){

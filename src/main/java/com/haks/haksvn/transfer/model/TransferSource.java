@@ -9,6 +9,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 
 import com.haks.haksvn.common.code.model.Code;
 
@@ -34,6 +35,12 @@ public class TransferSource {
 	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name="transfer_source_type", referencedColumnName="code_id")
 	private Code transferSourceTypeCode;
+	
+	@Transient
+	private boolean isLocked;
+	
+	@Transient
+	private boolean deleted;
 	
 	public TransferSource(){
 		
@@ -78,6 +85,22 @@ public class TransferSource {
 	public void setTransferSourceTypeCode(Code code){
 		transferSourceTypeCode = code;
 	}
+	
+	public boolean getIsLocked(){
+		return isLocked;
+	}
+	
+	public void setIsLocked(boolean isLocked){
+		this.isLocked = isLocked;
+	}
+	
+	public boolean getDeleted(){
+		return deleted;
+	}
+	
+	public void setDeleted(boolean deleted){
+		this.deleted = deleted;
+	}
 
 	public static class Builder{
 		
@@ -121,6 +144,16 @@ public class TransferSource {
 		
 		public Builder transferSourceTypeCode(Code code){
 			transferSource.setTransferSourceTypeCode(code);
+			return this;
+		}
+		
+		public Builder isLocked(boolean isLocked){
+			transferSource.setIsLocked(isLocked);
+			return this;
+		}
+		
+		public Builder deleted(boolean deleted){
+			transferSource.setDeleted(deleted);
 			return this;
 		}
 		

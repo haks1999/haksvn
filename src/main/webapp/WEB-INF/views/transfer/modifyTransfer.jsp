@@ -10,6 +10,8 @@ height:242px;width:250px;
 float:left;width:440px;height:250px;overflow:auto;margin-left:5px;
 }
 
+form p span font a{text-decoration:underline;cursor:pointer;}
+
 .sourceListPanel .ui-menu { position: absolute; width: 100px; }
 .sourceListPanel .ui-button .ui-button-text{font-family:Verdana,Arial,sans-serif;font-size:10px;}
 .sourceListPanel .ui-button-text-only .ui-button-text{padding:.4em .4em}
@@ -48,7 +50,7 @@ ul.Delete li.revision{display:none;}
 		$('#frm_transfer').attr('action', '<c:url value="/transfer/request/list/${repositorySeq}/save" />');
 		transformDateField();
 		enableSearchSourceAutocomplete();
-		if( Number('<c:out value="${transfer.transferSeq}"/>') > 0) retrieveTransferSourceList();
+		if( Number('<c:out value="${transfer.transferSeq}"/>') > 0) initTransferSourceList();
 		$('#btn_searchSource').button().click(searchSource);
    	});
 	
@@ -210,6 +212,12 @@ ul.Delete li.revision{display:none;}
 		$( "#txt_searchSource" ).focus();
 	};
 	
+	function initTransferSourceList(){
+		_gSourceList = [];
+		$("[id^='div_transferSourceDetail_']").remove();	
+		retrieveTransferSourceList();
+	}
+	
 	
 	function retrieveTransferSourceList(){
 		$.getJSON(
@@ -217,7 +225,7 @@ ul.Delete li.revision{display:none;}
 				{},
 	            function(result){
 					for( var inx = 0 ; inx < result.length ; inx++){
-						addToTransferSourceList({index:inx, transferSourceSeq:result[inx].transferSourceSeq,path:result[inx].path,revision:result[inx].revision,type:result[inx].transferSourceTypeCode.codeName,inserted:false});
+						addToTransferSourceList({index:inx, transferSourceSeq:result[inx].transferSourceSeq,path:result[inx].path,revision:result[inx].revision,transferSourceTypeCode:result[inx].transferSourceTypeCode,inserted:false});
 					}
 				});
 	};
@@ -230,10 +238,10 @@ ul.Delete li.revision{display:none;}
 		if( !nSrc.index ) nSrc.index = _gSourceList.length;
 		var srcDetail = $('#div_transferSourceDetail').clone().attr('id','div_transferSourceDetail_'+nSrc.index).attr('_h_index',nSrc.index);
 		$(srcDetail).find('.path a').text(nSrc.path);
-		$(srcDetail).find('ul').addClass(nSrc.type);
+		$(srcDetail).find('ul').addClass(nSrc.transferSourceTypeCode.codeName);
 		$('#spn_sourcesToTran').append(srcDetail);
 		createTransferSourceDetailActionButton($(srcDetail).find('.transferSourceDetail'));
-		$(srcDetail).find('td.type').text(nSrc.type);
+		$(srcDetail).find('td.type').text(nSrc.transferSourceTypeCode.codeName);
 		$(srcDetail).find('td.revision').text(nSrc.revision);
 		$(srcDetail).css('display','');
 		_gSourceList.push(nSrc);
@@ -245,7 +253,7 @@ ul.Delete li.revision{display:none;}
 		if(oSrc.inserted ){
 			$('#div_transferSourceDetail_' + oSrc.index).remove();	
 		}else{
-			$('#div_transferSourceDetail_' + oSrc.index).find('.path .a').css('text-decoration','line-through');
+			$('#div_transferSourceDetail_' + oSrc.index).find('.path a').css('text-decoration','line-through');
 		}
 		transferSourceListToValue();
 	};
@@ -253,7 +261,8 @@ ul.Delete li.revision{display:none;}
 	function transferSourceListToValue(){
 		var listToVal = [];
 		for( var inx = 0 ; inx < _gSourceList.length ; inx++ ){
-			if( !_gSourceList[inx].deleted ) listToVal.push(_gSourceList[inx]);
+			if( _gSourceList[inx].deleted && _gSourceList[inx].inserted ) continue; 
+			listToVal.push(_gSourceList[inx]);
 		}
 		$('#frm_transfer input[name=transferSourceList]').val(haksvn.json.stringfy(listToVal));
 	}
@@ -313,8 +322,8 @@ ul.Delete li.revision{display:none;}
 	        	$.getJSON( "<c:url value="/transfer/request/check/${repository.repositorySeq}"/>",
       						{path:path,del:_gToDelete}, 
       						function(data){
-      							if( !data.transfer || data.transfer == null ){
-      								addToTransferSourceList({transferSourceSeq:0,path:path,revision:rev,type:data.transferSourceTypeCode.codeName,inserted:true});
+      							if( !data.isLocked){
+      								addToTransferSourceList({transferSourceSeq:0,path:path,revision:rev,transferSourceTypeCode:data.transferSourceTypeCode,inserted:true});
       								haksvn.block.off();
       								return;
       							}
@@ -422,16 +431,17 @@ ul.Delete li.revision{display:none;}
 				<input type="hidden" name="transferSourceList" />
 				<p>
 					<span class="strong">Sources</span>
+					<span class="italic"><font class="path"><a onclick="initTransferSourceList()">(Reload)</a></font></span>
 				</p>
 				<p>
 					<label class="left">Sources To Transfer</label>
-					<span><font class="path"><a onclick="openSearchSourceDialog('<c:out value="${repository.trunkPath}" />',false)" style="text-decoration:underline;cursor:pointer;">Add</a></font></span>
+					<span class="italic"><font class="path"><a onclick="openSearchSourceDialog('<c:out value="${repository.trunkPath}" />',false)">Add</a></font></span>
 					<input type="text" class="text visible-hidden"/>
 					<span id="spn_sourcesToTran" style="display:block;margin-left:220px;"></span>
 				</p>
 				<p>
 					<label class="left">Sources To Delete</label>
-					<span><font class="path"><a onclick="openSearchSourceDialog('<c:out value="${repository.branchesPath}" />',true)" style="text-decoration:underline;cursor:pointer;">Add</a></font></span>
+					<span class="italic"><font class="path"><a onclick="openSearchSourceDialog('<c:out value="${repository.branchesPath}" />',true)" style="text-decoration:underline;cursor:pointer;">Add</a></font></span>
 					<input type="text" class="text visible-hidden"/>
 				</p>
 				<p>

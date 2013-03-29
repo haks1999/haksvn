@@ -64,7 +64,7 @@ public class Transfer {
 	@Column(name = "repository_seq")
 	private int repositorySeq;
 	
-	@OneToMany(cascade = { CascadeType.ALL,CascadeType.PERSIST,CascadeType.MERGE }, mappedBy = "transfer")
+	@OneToMany(cascade = { CascadeType.ALL }, mappedBy = "transfer", orphanRemoval=true)
 	private List<TransferSource> sourceList;
 	
 
