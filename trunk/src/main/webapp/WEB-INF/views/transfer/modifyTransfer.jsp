@@ -9,6 +9,9 @@ height:242px;width:250px;
 .sourceListPanel{
 float:left;width:440px;height:250px;overflow:auto;margin-left:5px;
 }
+.changeListPanel{
+height:300px;overflow-x:hidden;overflow-y:auto;
+}
 
 form p span font a{text-decoration:underline;cursor:pointer;}
 
@@ -18,6 +21,13 @@ form p span font a{text-decoration:underline;cursor:pointer;}
 .sourceListPanel .ui-button-icon-only .ui-button-text{padding:.4em .4em}
 .sourceListPanel .ui-menu {z-index:1;}
 .sourceListPanel .ui-menu .ui-menu-item A{font-size:10px;}
+
+.changeListPanel .ui-menu { position: absolute; width: 100px; }
+.changeListPanel .ui-button .ui-button-text{font-family:Verdana,Arial,sans-serif;font-size:10px;}
+.changeListPanel .ui-button-text-only .ui-button-text{padding:.4em .4em}
+.changeListPanel .ui-button-icon-only .ui-button-text{padding:.4em .4em}
+.changeListPanel .ui-menu {z-index:1;}
+.changeListPanel .ui-menu .ui-menu-item A{font-size:10px;}
 
 .transferSourceDetail .ui-menu { width: 120px; }
 .transferSourceDetail .ui-button .ui-button-text{font-family:Verdana,Arial,sans-serif;font-size:11px;}
@@ -37,10 +47,15 @@ padding-right:2px;
 background-color:transparent;}
 .transferSourceDetail table tr:hover td{background-color:transparent;}
 .transferSourceDetail table td div.action{width:150px;height:27px;}
-.transferSourceDetail table td.type{width:70px;}
+.transferSourceDetail table td.type{width:40px;}
+.transferSourceDetail table td.revision{color:#1E1A52;font-size:13px;}
+.transferSourceDetail table td img{height:18px;vertical-align:text-bottom;}
 ul.Add li.diff{display:none;}
 ul.Delete li.diff{display:none;}
 ul.Delete li.revision{display:none;}
+#tbl_changeList{height:100%;}
+#tbl_changeList .revision{color:#800000;font-size:12px;text-align:center;}
+#tbl_changeList .message{font-family:"Malgun Gothic";font-size:10px;}
 </style>
 <script type="text/javascript">
 	var _gRepoTrunk = '<c:out value="${repository.trunkPath}"/>';
@@ -242,6 +257,15 @@ ul.Delete li.revision{display:none;}
 		$(srcDetail).find('ul').addClass(nSrc.transferSourceTypeCode.codeName);
 		$('#spn_sourcesToTran').append(srcDetail);
 		createTransferSourceDetailActionButton($(srcDetail).find('.transferSourceDetail'));
+		$(srcDetail).find('td.tag img').attr('src',(function(){
+			if( nSrc.transferSourceTypeCode.codeName == 'Add' ){
+				return '<c:url value="/images/tag_Add.png" />';
+			}else if(nSrc.transferSourceTypeCode.codeName == 'Delete'){
+				return '<c:url value="/images/tag_Delete.png" />';
+			}else{
+				return '<c:url value="/images/tag_Modify.png" />';
+			}
+		})());
 		$(srcDetail).find('td.type').text(nSrc.transferSourceTypeCode.codeName);
 		$(srcDetail).find('td.revision').text('r' + nSrc.revision);
 		$(srcDetail).css('display','');
@@ -256,6 +280,13 @@ ul.Delete li.revision{display:none;}
 		}else{
 			$('#div_transferSourceDetail_' + oSrc.index).find('.path a').css('text-decoration','line-through');
 		}
+		transferSourceListToValue();
+	};
+	
+	function changeRevisionAtTransferSourceList( _h_index, rev ){
+		_gSourceList[_h_index].revision = rev;
+		var srcDetail = $('#div_transferSourceDetail_' + _h_index);
+		$(srcDetail).find('td.revision').text('r' + rev);
 		transferSourceListToValue();
 	};
 	
@@ -283,7 +314,8 @@ ul.Delete li.revision{display:none;}
 			win.focus();
 		});
 		$(elem).find('ul li.revision').click(function(){
-			openRevisionSourceDialog();
+			_gChangePaging.path = _gSourceList[$(elem).parent().attr('_h_index')].path;
+			openRevisionSourceDialog($(elem).parent().attr('_h_index'));
 		});
 		$(elem).find('ul li.remove').click(function(){
 			removeFromTransferSourceList(_gSourceList[$(elem).parent().attr('_h_index')]);
@@ -382,11 +414,12 @@ ul.Delete li.revision{display:none;}
 		}
 	};
 	
-	function openRevisionSourceDialog(){
+	function openRevisionSourceDialog( _h_index ){
+		initRepositoryChangeList();
 		$("#div_searchRevision").dialog({
 			resizable:false,
-			height: 470,
-		    width: 750,
+			height: 450,
+		    width: 600,
 		    modal: true,
 		    buttons: {
 		    	"Close": function() {
@@ -394,29 +427,34 @@ ul.Delete li.revision{display:none;}
 		        }
 		    }
 	    });
+		retrieveRepositoryChangeList( _h_index );
 	};
 	
-	var _gChangePaging = {start:-1,end:-1,limit:50};
-	function retrieveRepositoryChangeList(){
-		$("#tbl_changeList tfoot span:not(.loading)").removeClass('display-none').addClass('display-none');
+	function initRepositoryChangeList(){
+		_gChangePaging.start=-1;
+		_gChangePaging.end=-1;
+		$("#tbl_changeList tbody tr:not(.sample)").remove();
+		$("#tbl_changeList tfoot").removeClass('display-none');
+	};
+	
+	var _gChangePaging = {start:-1,end:-1,limit:50,repositorySeq:'<c:out value="${repositorySeq}"/>'};
+	function retrieveRepositoryChangeList( _h_index ){
+		$("#tbl_changeList tfoot span:not(.loader)").removeClass('display-none').addClass('display-none');
 		$("#tbl_changeList tfoot span.loader").removeClass('display-none');
-		_gChangePaging.path = '<c:out value="${path}" />';
-		_gChangePaging.repositorySeq = $("#sel_repository > option:selected").val();
 		$.getJSON( "<c:url value="/source/changes/list"/>",
-				_paging,
+				_gChangePaging,
 				function(data) {
 					var model = data.model;
 					_gChangePaging.start = data.end;
-					var repositorySeq = '<c:out value="${repositorySeq}" />';
-					var hrefRoot = '<c:url value="/source/changes"/>';
-					var path = '<c:out value="${path}" />';
 					for( var inx = 0 ; inx < model.length ; inx++ ){
 						var row = $("#tbl_changeList > tbody > .sample").clone();
-						$(row).find(".revision a").text('r'+model[inx].revision).attr('href',(hrefRoot + "/" + repositorySeq + (path.length<1?"":"/") + path + "?rev=" + model[inx].revision).replace("//", "/"));
+						$(row).attr('rev',model[inx].revision);
+						$(row).find(".revision").text('r'+model[inx].revision);
 						$(row).children(".message").text(model[inx].message);
 						$(row).children(".date").text(haksvn.date.convertToEasyFormat(new Date(model[inx].date)));
 						$(row).children(".author").text(model[inx].author);
 						$(row).removeClass("sample");
+						createRepositoryChangeListActionButton(row,_h_index);
 						$('#tbl_changeList > tbody').append(row);
 					}
 					
@@ -430,6 +468,41 @@ ul.Delete li.revision{display:none;}
 						$("#tbl_changeList tfoot span.showmore").removeClass('display-none');
 					}
 		});
+	};
+	
+	function createRepositoryChangeListActionButton( row, _h_index ){
+		var rev = $(row).attr('rev');
+		$(row).find('ul li.browse').click(function(){
+			var win = window.open(('<c:url value="/source/browse/${repositorySeq}" />' + '/' + _gChangePaging.path + '?rev=' + rev).replace("//", "/"), '_blank');
+			win.focus();
+		});
+		$(row).find("td button.action").button().click(function() {
+			changeRevisionAtTransferSourceList( _h_index, rev );
+			$('#div_searchRevision').dialog("close");
+	    	}).next().button({
+				text: false,
+	          	icons: {
+	            	primary: "ui-icon-triangle-1-s"
+	          	}
+	        }).click(function() {
+	        	var menu = $( this ).parent().next().show().position({
+	            	my: "left top",
+	            	at: "left bottom",
+	            	of: this
+	          	});
+	          	$( document ).one( "click", function() {
+	            	menu.hide();
+	          	});
+	          	return false;
+	        }).parent().buttonset().next().hide().menu();
+	};
+	
+	function expandAllTransferDetail(){
+		$('.pmOpener.closed').trigger('click');
+	};
+	
+	function collapseAllTransferDetail(){
+		$('.pmOpener.opened').trigger('click');
 	};
 	
 </script>
@@ -490,10 +563,11 @@ ul.Delete li.revision{display:none;}
 				<p>
 					<label class="left">Sources To Transfer</label>
 					<c:if test="${transferStateAuth.isEditable}">
-						<span class="italic"><font class="path"><a onclick="openSearchSourceDialog('<c:out value="${repository.trunkPath}" />',false)">Add</a></font></span>
-						<span class="italic"><font class="path"><a onclick="openSearchSourceDialog('<c:out value="${repository.trunkPath}" />',false)">Modify</a></font></span>
+						<span class="italic"><font class="path"><a onclick="openSearchSourceDialog('<c:out value="${repository.trunkPath}" />',false)">Add/Modify</a></font></span>
 						<span class="italic"><font class="path"><a onclick="openSearchSourceDialog('<c:out value="${repository.branchesPath}" />',true)">Delete</a></font></span>
 					</c:if>
+					<span class="italic" style="margin-left:20px;"><font class="path"><a onclick="expandAllTransferDetail()">expand all</a></font></span>
+					<span class="italic"><font class="path"><a onclick="collapseAllTransferDetail()">collapse all</a></font></span>
 					<input type="text" class="text visible-hidden"/>
 					<span id="spn_sourcesToTran" style="display:block;margin-left:220px;"></span>
 				</p>
@@ -583,7 +657,13 @@ ul.Delete li.revision{display:none;}
 					  	</ul>
 					</div>
 				</td>
+				<td class="tag">
+					<img src="<c:url value="/images/tag_Modify.png" />"/>
+				</td>
 				<td class="type">
+				</td>
+				<td>
+					<img src="<c:url value="/images/transfer_right_left.png" />"/>
 				</td>
 				<td class="revision">
 				</td>
@@ -653,47 +733,47 @@ ul.Delete li.revision{display:none;}
 
 <div id="div_searchRevision" title="Search Revision" style="display:none;">
 	<div class="module text">
-		<div class="sourceListPanel">
-	  			<table id="tbl_changeList" class="compact">
-	  				<thead>
-	  					<tr>
-	  						<th class="w_130">Action</th>
-	  						<th>Revision</th>
-	  						<th>Commit Log</th>
-	  						<th>Date</th>
-	  						<th>Author</th>
-	  					</tr>
-	  				</thead>
-					<tbody>
-						<tr class="sample">
-							<td>
-								<div>
-								  	<div>
-								    	<button class="action">Select Rev</button>
-								    	<button>Select an action</button>
-								  	</div>
-								  	<ul>
-								    	<li class="browse"><a>View Source</a></li>
-								  	</ul>
-								</div>
-							</td>
-							<td class="revision"><font class="path font12"><a href=""></a></font></td>
-							<td class="message"></td>
-							<td class="date"></td>
-							<td class="author"></td>
-						</tr>
-					</tbody>
-					<tfoot>
-						<tr>
-							<td colspan="5" style="text-align:center;">
-								<span class="showmore display-none"><font class="path"><a onclick="retrieveRepositoryChangeList()">Show More</a></font></span>
-								<span class="loader display-none"><img src="<c:url value="/images/ajax-loader.gif"/>" /></span>
-								<span class="nodata">no data</span>
-							</td>
-						</tr>
-					</tfoot>
-				</table>
-	  		</div>
+		<div class="changeListPanel">
+			<table id="tbl_changeList" class="compact">
+				<thead>
+					<tr>
+						<th class="w_100">Action</th>
+						<th class="w_60">Revision</th>
+						<th class="w_170">Commit Log</th>
+						<th class="w_70">Date</th>
+						<th class="w_80">Author</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr class="sample">
+						<td>
+							<div>
+							  	<div>
+							    	<button class="action">Select Rev</button>
+							    	<button>Select an action</button>
+							  	</div>
+							  	<ul>
+							    	<li class="browse"><a>View Source</a></li>
+							  	</ul>
+							</div>
+						</td>
+						<td class="revision"></td>
+						<td class="message"></td>
+						<td class="date"></td>
+						<td class="author"></td>
+					</tr>
+				</tbody>
+				<tfoot>
+					<tr>
+						<td colspan="5" style="text-align:center;">
+							<span class="showmore display-none"><font class="path"><a onclick="retrieveRepositoryChangeList()">Show More</a></font></span>
+							<span class="loader display-none"><img src="<c:url value="/images/ajax-loader.gif"/>" /></span>
+							<span class="nodata">no data</span>
+						</td>
+					</tr>
+				</tfoot>
+			</table>
+	  	</div>
 	</div>
 </div>
 

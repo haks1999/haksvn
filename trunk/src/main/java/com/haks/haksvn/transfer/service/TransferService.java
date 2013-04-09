@@ -90,6 +90,8 @@ public class TransferService {
 			for( TransferSource transferSource : transferSourceToDeleteList ){
 				currentTransfer.getSourceList().remove(transferSource);
 			}
+			currentTransfer.setDescription(transfer.getDescription());
+			currentTransfer.setTransferTypeCode(transfer.getTransferTypeCode());
 			return updateTransfer(currentTransfer);
 		}
 	}

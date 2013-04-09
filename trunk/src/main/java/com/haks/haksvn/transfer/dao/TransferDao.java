@@ -1,5 +1,7 @@
 package com.haks.haksvn.transfer.dao;
 
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 import org.hibernate.Criteria;
@@ -104,9 +106,12 @@ public class TransferDao {
 				.addOrder(Order.asc("src.path"));
 		Transfer transfer = (Transfer)crit.uniqueResult();		
 		List<TransferSource> result = transfer.getSourceList();
-		for( @SuppressWarnings("unused") TransferSource transferSource : result ){
-			// do nothing; // fetching
-		}
+		
+		Collections.sort(result, new Comparator<TransferSource>(){
+		     public int compare(TransferSource src1, TransferSource src2){
+		    	 return src1.getPath().compareToIgnoreCase(src2.getPath());
+		     }
+		});
 		return result;
 	}
 	
