@@ -39,6 +39,14 @@ public class CodeUtils {
 		return "transfer.state.code.request";
 	}
 	
+	public static String getTransferCompleteCodeId(){
+		return "transfer.state.code.complete";
+	}
+	
+	public static String getTransferRejectCodeId(){
+		return "transfer.state.code.reject";
+	}
+	
 	public static boolean isEditableState(String stateCode){
 		return stateCode ==null || stateCode.length() < 1 || "transfer.state.code.keep".equals(stateCode);
 	}
