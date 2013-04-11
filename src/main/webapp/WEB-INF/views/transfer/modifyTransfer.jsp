@@ -72,7 +72,7 @@ ul.Delete li.revision{display:none;}
 	
 	function transformDateField(){
 		var requestDate = Number('<c:out value="${transfer.requestDate}"/>');
-		var transferDate = '<c:out value="${transfer.transferDate}"/>';
+		var transferDate = Number('<c:out value="${transfer.transferDate}"/>');
 		if( requestDate > 0 ) $('#frm_transfer input.requestDate').val(haksvn.date.convertToComplexFullFormat(new Date(requestDate)));
 		if( transferDate > 0 ) $('#frm_transfer input.transferDate').val(haksvn.date.convertToComplexFullFormat(new Date(transferDate)));
 	};

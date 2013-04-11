@@ -151,4 +151,22 @@ public class TransferController {
     	String param = "?rUser=" + ContextHolder.getLoginUser().getUserId() + "&sCode=" + transfer.getTransferStateCode().getCodeId();
     	return new ModelAndView(new RedirectView("/transfer/request/list/" + transfer.getRepositorySeq() + param, true));
     }
+	
+	@RequestMapping(value={"/request/list/{repositorySeq}/approve"}, method=RequestMethod.POST)
+    public ModelAndView completeTransfer(ModelMap model, 
+    									@ModelAttribute("transfer") Transfer transfer, 
+    									@PathVariable int repositorySeq){
+    	transfer = transferService.completeTransfer(transfer);
+    	String param = "?rUser=" + ContextHolder.getLoginUser().getUserId() + "&sCode=" + transfer.getTransferStateCode().getCodeId();
+    	return new ModelAndView(new RedirectView("/transfer/request/list/" + transfer.getRepositorySeq() + param, true));
+    }
+	
+	@RequestMapping(value={"/request/list/{repositorySeq}/reject"}, method=RequestMethod.POST)
+    public ModelAndView rejectTransfer(ModelMap model, 
+    									@ModelAttribute("transfer") Transfer transfer, 
+    									@PathVariable int repositorySeq){
+    	transfer = transferService.rejectTransfer(transfer);
+    	String param = "?rUser=" + ContextHolder.getLoginUser().getUserId() + "&sCode=" + transfer.getTransferStateCode().getCodeId();
+    	return new ModelAndView(new RedirectView("/transfer/request/list/" + transfer.getRepositorySeq() + param, true));
+    }
 }

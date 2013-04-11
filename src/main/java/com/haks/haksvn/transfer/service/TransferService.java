@@ -169,6 +169,30 @@ public class TransferService {
 		return transferDao.updateTransfer(transfer);
 	}
 	
+	public Transfer completeTransfer(Transfer transfer){
+		transfer = transferDao.retrieveTransferByTransferSeq(transfer.getTransferSeq());
+		checkRepositoryAccessRight(transfer.getRepositorySeq());
+		if( !TransferStateAuth.Builder.getBuilder().transfer(transfer).build().getIsApprovable() ){
+			throw new HaksvnException("Insufficient privileges.");
+		}
+		transfer.setTransferStateCode(Code.Builder.getBuilder().codeId(CodeUtils.getTransferCompleteCodeId()).build());
+		transfer.setTransferDate(System.currentTimeMillis());
+		transfer.setTransferUser(userService.retrieveUserByUserId(ContextHolder.getLoginUser().getUserId()));
+		return transferDao.updateTransfer(transfer);
+	}
+	
+	public Transfer rejectTransfer(Transfer transfer){
+		transfer = transferDao.retrieveTransferByTransferSeq(transfer.getTransferSeq());
+		checkRepositoryAccessRight(transfer.getRepositorySeq());
+		if( !TransferStateAuth.Builder.getBuilder().transfer(transfer).build().getIsRejectable() ){
+			throw new HaksvnException("Insufficient privileges.");
+		}
+		transfer.setTransferStateCode(Code.Builder.getBuilder().codeId(CodeUtils.getTransferRejectCodeId()).build());
+		transfer.setTransferDate(System.currentTimeMillis());
+		transfer.setTransferUser(userService.retrieveUserByUserId(ContextHolder.getLoginUser().getUserId()));
+		return transferDao.updateTransfer(transfer);
+	}
+	
 	@Transactional(readOnly=true)
 	private Repository checkRepositoryAccessRight(int repositorySeq){
 		Repository repository = repositoryService.retrieveAccesibleActiveRepositoryByRepositorySeq(repositorySeq);

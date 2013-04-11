@@ -373,20 +373,35 @@ public class SVNRepositoryDao {
         }
         return svnSourceDiff;
 	}
+	
 	/*
-	@SuppressWarnings("unchecked")
-	public Collection<SVNLogEntry> retrieveSVNLogEntryList(Repository repository, String path){
-		
-		new SVNLogClient(ISVNAuthenticationManager)
-		
-		 final List entries = new LinkedList(); 
-  svnClient.doList(mrepositoryURL, SVNRevision.HEAD, SVNRevision.HEAD, 
-false, 
-  false, new ISVNDirEntryHandler() { 
-      public void handleDirEntry(SVNDirEntry entry) throws SVNException { 
-          entries.add(entry); 
-      } 
-  }); 
-    }
-    */
+	public SVNSourceDiff copyFile(Repository repository, String path, String fromRootDir, String toRootDir){
+		SVNRepository targetRepository = null;
+		ByteArrayOutputStream baos = null;
+		SVNSourceDiff svnSourceDiff = new SVNSourceDiff();
+        try {
+        	targetRepository = SVNRepositoryUtils.getUserAuthSVNRepository(repository);
+        	SVNDiffClient diffClient = SVNClientManager.newInstance(SVNWCUtil.createDefaultOptions(false), targetRepository.getAuthenticationManager()).getDiffClient();
+        	
+        	baos = new ByteArrayOutputStream();
+        	diffClient.doDiff(SVNURL.parseURIDecoded(RepositoryUtils.getAbsoluteRepositoryPath(repository, svnSourceSrc.getPath())), 
+        						SVNRevision.create(svnSourceSrc.getRevision()), 
+        						SVNURL.parseURIDecoded(RepositoryUtils.getAbsoluteRepositoryPath(repository, svnSourceTrg.getPath())),
+        						SVNRevision.create(svnSourceTrg.getRevision()), SVNDepth.FILES, true, baos);
+        	svnSourceDiff.setDiff(baos.toString());
+        }catch(Exception e){
+        	e.printStackTrace();
+        	throw new HaksvnException(e);
+        }finally{
+        	try{
+	        	if(baos!=null)baos.flush();baos.close();
+	        	if(targetRepository!=null) targetRepository.closeSession();
+        	}catch(Exception e){
+        		e.printStackTrace();
+            	throw new HaksvnException(e);
+        	}
+        }
+        return svnSourceDiff;
+	}
+	*/
 }
