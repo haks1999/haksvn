@@ -56,6 +56,14 @@ public class SVNRepositoryUtils {
 		return targetRepository;
 	}
 	
+	public static String extractDir(String path){
+		return path.substring(0,path.lastIndexOf("/"));
+	}
+	
+	public static String extractFileName(String path){
+		return path.substring(path.lastIndexOf("/")+1);
+	}
+	
 	@SuppressWarnings("unchecked")
 	public static List<SVNSourceLog> transform(List<SVNLogEntry> svnLogEntryList, List<SVNSourceLog> svnSourceLogList, String path, Repository repository){
 		ListIterator<SVNLogEntry> reverseEntries = svnLogEntryList.listIterator(svnLogEntryList.size());

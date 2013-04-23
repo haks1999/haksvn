@@ -18,6 +18,7 @@ import com.haks.haksvn.repository.model.Repository;
 import com.haks.haksvn.repository.service.RepositoryService;
 import com.haks.haksvn.repository.service.SVNRepositoryService;
 import com.haks.haksvn.repository.util.RepositoryUtils;
+import com.haks.haksvn.source.model.SVNSourceTransfer;
 import com.haks.haksvn.transfer.dao.TransferDao;
 import com.haks.haksvn.transfer.model.Transfer;
 import com.haks.haksvn.transfer.model.TransferSource;
@@ -47,7 +48,7 @@ public class TransferService {
 	public TransferSource checkRequestableTransferSource(TransferSource transferSource){
 		Repository repository = checkRepositoryAccessRight(transferSource.getTransfer().getRepositorySeq());
 		
-		TransferSource transferSourceLocked = transferDao.retrieveLockedTransferSource(transferSource.getPath());
+		TransferSource transferSourceLocked = transferDao.retrieveLockedTransferSource(transferSource.getPath(), repository.getRepositorySeq());
 		if( transferSourceLocked != null ){
 			transferSourceLocked.setIsLocked(true);
 			return transferSourceLocked;
@@ -117,7 +118,7 @@ public class TransferService {
 			if( transferSource.getTransferSourceSeq() < 1 ){	// 추가인 경우 
 				// 신규 Transfer 가 아닌 연관된 Transfer를 세팅하면 다른 Service method 호출 시 insert, update 가 일어난다.
 				// 이유를 알 수 없음. 단순 select method 임에도 불구하고...
-				TransferSource transferSourceLocked = transferDao.retrieveLockedTransferSource(transferSource.getPath());
+				TransferSource transferSourceLocked = transferDao.retrieveLockedTransferSource(transferSource.getPath(), transfer.getRepositorySeq());
 				if( transferSourceLocked != null && transferSourceLocked.getTransfer().getTransferSeq() != transfer.getTransferSeq()){
 					throw new HaksvnException("[" + transferSource.getPath() + "] is locked by [" + transferSource.getTransfer().getTransferSeq() + "]");
 				}
@@ -171,14 +172,23 @@ public class TransferService {
 	
 	public Transfer completeTransfer(Transfer transfer){
 		transfer = transferDao.retrieveTransferByTransferSeq(transfer.getTransferSeq());
-		checkRepositoryAccessRight(transfer.getRepositorySeq());
+		Repository repository = checkRepositoryAccessRight(transfer.getRepositorySeq());
 		if( !TransferStateAuth.Builder.getBuilder().transfer(transfer).build().getIsApprovable() ){
 			throw new HaksvnException("Insufficient privileges.");
 		}
 		transfer.setTransferStateCode(Code.Builder.getBuilder().codeId(CodeUtils.getTransferCompleteCodeId()).build());
 		transfer.setTransferDate(System.currentTimeMillis());
 		transfer.setTransferUser(userService.retrieveUserByUserId(ContextHolder.getLoginUser().getUserId()));
-		return transferDao.updateTransfer(transfer);
+		transfer = transferDao.updateTransfer(transfer);
+		List<SVNSourceTransfer> svnSourceTransferList = new ArrayList<SVNSourceTransfer>(0);
+		for( TransferSource transferSource : transfer.getSourceList() ){
+			boolean isToDeleted = CodeUtils.isTransferSourceTypeDelete(transferSource.getTransferSourceTypeCode().getCodeId());
+			String relPath = transferSource.getPath().replaceFirst(isToDeleted?repository.getBranchesPath():repository.getTrunkPath(), "");
+			svnSourceTransferList.add(SVNSourceTransfer.Builder.getBuilder(new SVNSourceTransfer()).revision(transferSource.getRevision())
+					.isToDelete(isToDeleted).relativePath(relPath).build());
+		}
+		svnRepositoryService.transfer(repository, svnSourceTransferList, transfer.getDescription());
+		return transfer;
 	}
 	
 	public Transfer rejectTransfer(Transfer transfer){

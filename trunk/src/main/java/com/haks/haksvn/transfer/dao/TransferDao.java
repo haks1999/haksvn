@@ -84,7 +84,7 @@ public class TransferDao {
 		return transferSource;
 	}
 	
-	public TransferSource retrieveLockedTransferSource(String path){
+	public TransferSource retrieveLockedTransferSource(String path, int repositorySeq){
 		Session session = sessionFactory.getCurrentSession();
 		
 		Criteria crit = session.createCriteria(TransferSource.class)
@@ -92,6 +92,7 @@ public class TransferDao {
 				.createAlias("tr.transferStateCode", "trc")
 				.add(Restrictions.ne("trc.codeId", "transfer.state.code.complete"))
 				.add(Restrictions.ne("trc.codeId", "transfer.state.code.reject"))
+				.add(Restrictions.eq("tr.repositorySeq", repositorySeq))
 				.add(Restrictions.eq("path", path));
 		
 		return (TransferSource)crit.uniqueResult();
