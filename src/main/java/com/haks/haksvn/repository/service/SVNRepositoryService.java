@@ -23,6 +23,7 @@ import com.haks.haksvn.repository.model.Repository;
 import com.haks.haksvn.source.model.SVNSource;
 import com.haks.haksvn.source.model.SVNSourceDiff;
 import com.haks.haksvn.source.model.SVNSourceLog;
+import com.haks.haksvn.source.model.SVNSourceTransfer;
 import com.haks.haksvn.source.util.SourceUtils;
 import com.haks.haksvn.user.model.User;
 
@@ -197,6 +198,10 @@ public class SVNRepositoryService {
 	
 	public SVNSource checkIsCopiedOrDeletedAndChangeRevision(Repository repository, SVNSource svnSource){
 		return svnRepositoryDao.checkIsCopiedOrDeletedAndChangeRevision(repository, svnSource);
+	}
+	
+	public void transfer(Repository repository, List<SVNSourceTransfer> svnSourceTransferList, String log){
+		svnRepositoryDao.transferSourceList(repository, svnSourceTransferList, log);
 	}
 	
 }

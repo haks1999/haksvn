@@ -3,7 +3,11 @@ package com.haks.haksvn.repository.dao;
 import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import org.springframework.stereotype.Component;
 import org.tmatesoft.svn.core.ISVNLogEntryHandler;
@@ -30,6 +34,7 @@ import com.haks.haksvn.repository.util.SVNRepositoryUtils;
 import com.haks.haksvn.source.model.SVNSource;
 import com.haks.haksvn.source.model.SVNSourceDiff;
 import com.haks.haksvn.source.model.SVNSourceLog;
+import com.haks.haksvn.source.model.SVNSourceTransfer;
 
 @Component
 public class SVNRepositoryDao {
@@ -374,34 +379,104 @@ public class SVNRepositoryDao {
         return svnSourceDiff;
 	}
 	
-	/*
-	public SVNSourceDiff copyFile(Repository repository, String path, String fromRootDir, String toRootDir){
+	// argument의 path 는 trunk, branches 등의 경로는 제외한 순수 파일 경로
+	public void transferSourceList(Repository repository, List<SVNSourceTransfer> transferList, String log){
 		SVNRepository targetRepository = null;
-		ByteArrayOutputStream baos = null;
-		SVNSourceDiff svnSourceDiff = new SVNSourceDiff();
-        try {
+		ISVNEditor editor = null;
+        try{
         	targetRepository = SVNRepositoryUtils.getUserAuthSVNRepository(repository);
-        	SVNDiffClient diffClient = SVNClientManager.newInstance(SVNWCUtil.createDefaultOptions(false), targetRepository.getAuthenticationManager()).getDiffClient();
         	
-        	baos = new ByteArrayOutputStream();
-        	diffClient.doDiff(SVNURL.parseURIDecoded(RepositoryUtils.getAbsoluteRepositoryPath(repository, svnSourceSrc.getPath())), 
-        						SVNRevision.create(svnSourceSrc.getRevision()), 
-        						SVNURL.parseURIDecoded(RepositoryUtils.getAbsoluteRepositoryPath(repository, svnSourceTrg.getPath())),
-        						SVNRevision.create(svnSourceTrg.getRevision()), SVNDepth.FILES, true, baos);
-        	svnSourceDiff.setDiff(baos.toString());
-        }catch(Exception e){
+        	// copyclient 는 commit 을 묶어서 처리할 수 없음
+        	/*
+    		final SVNCopyClient copyClient = SVNClientManager.newInstance(SVNWCUtil.createDefaultOptions(false), targetRepository.getAuthenticationManager()).getCopyClient();
+    		final SVNURL location = targetRepository.getLocation();
+    		final SVNURL srcURL = SVNURL.parseURIEncoded(location + fromRootDir + path);
+    		final SVNURL dstURL = SVNURL.parseURIEncoded(location + toRootDir + path);
+    		final SVNCopySource source = new SVNCopySource(SVNRevision.HEAD, SVNRevision.HEAD, srcURL);
+    		copyClient.doCopy(new SVNCopySource[] { source }, dstURL, false, true,false, "copy 222", null);
+    		*/
+        	
+        	
+        	List<String> dirListToAdd = new ArrayList<String>(0);
+    		Map<String, SVNSourceTransfer> transferMap = new HashMap<String,SVNSourceTransfer>();
+    		Set<String> addedDirs = new HashSet<String>(0);
+    		
+    		for( SVNSourceTransfer svnSourceTransfer : transferList ){
+    			String destFullPath = repository.getBranchesPath() + svnSourceTransfer.getRelativePath();
+    			String destDir = SVNRepositoryUtils.extractDir(destFullPath);
+    			transferMap.put(SVNRepositoryUtils.extractDir(svnSourceTransfer.getRelativePath()), svnSourceTransfer);
+    			
+    			boolean destExist = targetRepository.checkPath(RepositoryUtils.getRelativeRepositoryPath(repository, destDir), -1) != SVNNodeKind.NONE;
+    			//if( nodeKind == SVNNodeKind.NONE){
+    				String currentDir = "";
+    				String[] dirFrags = destDir.split("/");
+    				System.out.println( "transferSouce path : " + svnSourceTransfer.getRelativePath());
+    				for( String dirFrag : dirFrags ){
+    					currentDir += ("/" + dirFrag);
+    					currentDir = currentDir.replaceAll("//", "/");
+    					System.out.println( "currentDir: " + currentDir);
+    					dirListToAdd.add(currentDir);
+    					System.out.println( "test: " + destExist + " / " + ( targetRepository.checkPath(RepositoryUtils.getRelativeRepositoryPath(repository, currentDir), -1) == SVNNodeKind.NONE));
+    					if( !destExist && targetRepository.checkPath(RepositoryUtils.getRelativeRepositoryPath(repository, currentDir), -1) == SVNNodeKind.NONE ){
+    						
+    					}else{
+    						addedDirs.add(currentDir);
+    					}
+    				}
+    			//}
+    		}
+    		
+    		editor = targetRepository.getCommitEditor( log , null, true, null );
+    		editor.openRoot( -1 );
+    		String befParent = "!@#$";
+    		int depth = 0;
+    		for( String parent : dirListToAdd ){
+    			if( !parent.startsWith(befParent)){
+    				for( int inx = 0 ; inx < depth ; inx++ ) editor.closeDir();
+    				if( depth < 1 ) editor.openDir(SVNRepositoryUtils.extractDir(parent),-1);
+    				System.out.println("opened: " + parent.substring(0, parent.lastIndexOf("/")) );
+    				depth = 0;
+    			}
+    			
+    			if( !addedDirs.contains(parent) ){
+    				System.out.println( "add new dir: " + parent.substring(parent.lastIndexOf("/")));
+    				editor.addDir(parent.substring(parent.lastIndexOf("/")), null, -1);
+    				addedDirs.add(parent);
+    			}else{
+    				System.out.println( "open added dir: " + parent.substring(parent.lastIndexOf("/")));
+    				editor.openDir(parent.substring(parent.lastIndexOf("/")),-1);
+    			}
+    			
+    			String relPath = parent.replaceFirst(repository.getBranchesPath(), "");
+    			System.out.println( "-relPath: " + relPath + " -contains: "+ transferMap.containsKey(relPath) );
+    			if( transferMap.containsKey(relPath)){
+    				SVNSourceTransfer svnSourceTransfer = transferMap.get(relPath);
+    				//System.out.println( "-fileName: " + SVNRepositoryUtils.extractFileName(svnSourceTransfer.getRelativePath()));
+    				if( svnSourceTransfer.getIsToDelete()){
+    					editor.deleteEntry(SVNRepositoryUtils.extractFileName(svnSourceTransfer.getRelativePath()), svnSourceTransfer.getRevision());
+    				}else{
+    					editor.addFile(SVNRepositoryUtils.extractFileName(svnSourceTransfer.getRelativePath()), 
+    							RepositoryUtils.getRelativeRepositoryPath(repository, repository.getTrunkPath() + svnSourceTransfer.getRelativePath()) ,svnSourceTransfer.getRevision());
+    				}
+    			}
+    			depth++;
+    			befParent = parent;
+    		}
+    		editor.closeEdit();
+            
+        }catch (Exception e) {
+        	if( editor != null ){
+        		try{ editor.abortEdit(); }catch(Exception ex){}
+        	}
         	e.printStackTrace();
         	throw new HaksvnException(e);
         }finally{
         	try{
-	        	if(baos!=null)baos.flush();baos.close();
-	        	if(targetRepository!=null) targetRepository.closeSession();
+        		if(targetRepository!=null) targetRepository.closeSession();
         	}catch(Exception e){
         		e.printStackTrace();
-            	throw new HaksvnException(e);
         	}
         }
-        return svnSourceDiff;
 	}
-	*/
+	
 }

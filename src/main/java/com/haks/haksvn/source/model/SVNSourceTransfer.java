@@ -6,9 +6,7 @@ import org.springframework.stereotype.Component;
 public class SVNSourceTransfer {
 
 	private String relativePath;
-	private String fromRootPath;
-	private String toRootPath;
-	private String log;
+	private long revision;
 	private boolean isToDelete;
 	
 	public String getRelativePath() {
@@ -19,35 +17,19 @@ public class SVNSourceTransfer {
 		this.relativePath = relativePath;
 	}
 
-	public String getFromRootPath() {
-		return fromRootPath;
+	public long getRevision(){
+		return revision;
+	}
+	
+	public void setRevision(long revision){
+		this.revision = revision;
 	}
 
-	public void setFromRootPath(String fromRootPath) {
-		this.fromRootPath = fromRootPath;
-	}
-
-	public String getToRootPath() {
-		return toRootPath;
-	}
-
-	public void setToRootPath(String toRootPath) {
-		this.toRootPath = toRootPath;
-	}
-
-	public String getLog() {
-		return log;
-	}
-
-	public void setLog(String log) {
-		this.log = log;
-	}
-
-	public boolean isToDelete() {
+	public boolean getIsToDelete() {
 		return isToDelete;
 	}
 
-	public void getIsToDelete(boolean isToDelete) {
+	public void setIsToDelete(boolean isToDelete) {
 		this.isToDelete = isToDelete;
 	}
 
@@ -73,12 +55,15 @@ public class SVNSourceTransfer {
 			return this;
 		}
 		
-		public Builder fromRootPath(String fromRootPath){
-			svnSourceTransfer.setFromRootPath(fromRootPath);
+		public Builder revision(long revision){
+			svnSourceTransfer.setRevision(revision);
 			return this;
 		}
 		
-		
+		public Builder isToDelete(boolean isToDelete){
+			svnSourceTransfer.setIsToDelete(isToDelete);
+			return this;
+		}
 		
 	}
 }
