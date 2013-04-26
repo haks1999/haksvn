@@ -5,6 +5,7 @@
 		$("#sel_repository option[value='<c:out value="${repositorySeq}" />']").attr('selected', 'selected');
 		$("#frm_transfer select[name='rUser'] option[value='<c:out value="${requestUserId}" />']").attr('selected', 'selected');
 		$("#frm_transfer select[name='sCode'] option[value='<c:out value="${transferStateCodeId}" />']").attr('selected', 'selected');
+		$("#ipt_path").val('<c:out value="${path}" />');
 		if( '<c:out value="${repositorySeq}" />'.length > 0 ) retrieveTransferList();
 		
 		$("#sel_repository").change(changeRepository);
@@ -20,6 +21,7 @@
 		$("#tbl_transferList tfoot span.loader").removeClass('display-none');
 		_paging.rUser = $("#frm_transfer select[name='rUser'] option:selected").val();
 		_paging.sCode = $("#frm_transfer select[name='sCode'] option:selected").val();
+		_paging.path = $("#ipt_path").val();
 		$.post( "<c:url value="/transfer/request/list"/>" + "/" + '<c:out value="${repositorySeq}" />',
 				_paging,
 				function(data) {
@@ -93,7 +95,7 @@
 						</p>
 						<p>
 							<label for="path" class="w_120">Source path</label>
-							<input name="path" type="text" class="text w_60"/>
+							<input id="ipt_path" name="path" type="text" class="text w_60"/>
 							<a class="button right form_submit yellow"><small class="icon looking_glass"></small><span>Search</span></a>
 						</p>
 					</form>

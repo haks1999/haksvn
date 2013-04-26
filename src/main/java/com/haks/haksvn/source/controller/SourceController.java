@@ -156,12 +156,11 @@ public class SourceController {
     										@RequestParam(value = "path", required = true) String path,
     										@RequestParam(value = "srcRev", required = true) long srcRev,
     										@RequestParam(value = "trgRev", required = true) long trgRev){
-		
+		boolean diffWithPrevious = srcPath.length() < 1 && srcRev < 0;
 		srcPath = srcPath.length() > 0 ? srcPath:path;
 		SVNSource svnSourceSrc = SVNSource.Builder.getBuilder(new SVNSource()).path(path).revision(srcRev).build();
 		SVNSource svnSourceTrg = SVNSource.Builder.getBuilder(new SVNSource()).path(srcPath).revision(trgRev).build();
 		SVNSourceDiff svnSourceDiff = new SVNSourceDiff();
-		boolean diffWithPrevious = srcPath.length() < 1 && srcRev < 0;
 		if( diffWithPrevious ){
 			svnSourceDiff = sourceService.retrieveDiffWithContentsByPrevious(repositorySeq, svnSourceTrg);
 		}else{

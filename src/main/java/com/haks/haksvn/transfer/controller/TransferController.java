@@ -54,6 +54,7 @@ public class TransferController {
     public String forwardTransferListPage( ModelMap model,
     							@RequestParam(value = "rUser", required = false, defaultValue="") String requestUserId,
     							@RequestParam(value = "sCode", required = false, defaultValue="") String transferStateCodeId,
+    							@RequestParam(value = "path", required = false, defaultValue="") String path,
     							RedirectAttributes redirectAttributes,
     							@PathVariable int repositorySeq) {
         List<Repository> repositoryList = repositoryService.retrieveAccesibleActiveRepositoryList();
@@ -66,6 +67,7 @@ public class TransferController {
     	model.addAttribute("repositoryList", repositoryList );
     	model.addAttribute("requestUserId", requestUserId);
     	model.addAttribute("transferStateCodeId", transferStateCodeId);
+    	model.addAttribute("path", path);
         return "/transfer/listTransfer";
     }
 	

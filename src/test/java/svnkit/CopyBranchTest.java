@@ -15,6 +15,9 @@ import org.tmatesoft.svn.core.io.SVNRepository;
 import org.tmatesoft.svn.core.io.SVNRepositoryFactory;
 import org.tmatesoft.svn.core.wc.SVNWCUtil;
 
+import com.haks.haksvn.repository.util.RepositoryUtils;
+import com.haks.haksvn.repository.util.SVNRepositoryUtils;
+
 public class CopyBranchTest {
 
 	public static void main(String[] args) throws Exception {
@@ -24,8 +27,8 @@ public class CopyBranchTest {
 		//String password = "aW9fj8bm9Rt5";
 		
 		String url = "https://localhost/svn/main/haksvn";
-		String name = "haks";
-		String password = "haks";
+		String name = "admin";
+		String password = "admin";
 		
 		SVNRepository repository = SVNRepositoryFactory.create(SVNURL
 				.parseURIDecoded(url));
@@ -49,18 +52,20 @@ public class CopyBranchTest {
 		
 		
 		
-		transfer(repository,  paths);
+		//transfer(repository,  paths);
 		
-		//ISVNEditor editor = repository.getCommitEditor( "test test" , null /*locks*/ , true /*keepLocks*/ , null /*mediator*/ );
-		//editor.openRoot(-1);
-		//editor.openDir("branches/production", -1);
-		//editor.addDir( "nodeA" , null , -1 );
-		//editor.addDir( "nodeAA" , null , -1 );
-		//editor.closeDir();
-		//editor.closeDir();
-		//editor.openDir( "nodeA" , -1 );
-		//editor.addDir( "nodeAB" , null , -1 );
-		//editor.closeEdit();
+		ISVNEditor editor = repository.getCommitEditor( "test test" , null /*locks*/ , true /*keepLocks*/ , null /*mediator*/ );
+		editor.openRoot(-1);
+		editor.openDir("branches/production", -1);
+		editor.addDir( "nodeA" , null , -1 );
+		editor.addDir( "nodeAA" , null , -1 );
+		editor.addFile(".project", "/haksvn/trunk/.project",5);
+		editor.closeDir();
+		editor.closeDir();
+		editor.openDir( "nodeA" , -1 );
+		editor.openDir( "nodeAA" ,  -1 );
+		editor.addFile("pom.xml", "/haksvn/trunk/pom.xml",17);
+		editor.closeEdit();
 		
 		
 		/*

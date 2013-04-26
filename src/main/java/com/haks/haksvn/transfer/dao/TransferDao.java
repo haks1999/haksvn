@@ -30,11 +30,14 @@ public class TransferDao {
 		Criteria crit = session.createCriteria(Transfer.class)
 				.createAlias("requestUser", "requser")
 				.createAlias("transferStateCode", "stcode")
+				.createAlias("sourceList", "trsrc")
 				.setFirstResult((int)paging.getStart())
 				.setMaxResults((int)paging.getLimit())
 				.add(Restrictions.eq("repositorySeq", search.getRepositorySeq()))
 				.addOrder(Order.desc("requestDate"))
-				.addOrder(Order.desc("transferSeq"));
+				.addOrder(Order.desc("transferSeq"))
+				.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
+		
 		
 		if( search.getRequestUser() != null ){
 			String requestUserId = search.getRequestUser().getUserId();
@@ -43,6 +46,9 @@ public class TransferDao {
 		if( search.getTransferStateCode() != null ){
 			String transferStateCode = search.getTransferStateCode().getCodeId();
 			if( transferStateCode != null && transferStateCode.length() > 0 ) crit.add(Restrictions.eq("stcode.codeId", transferStateCode));
+		}
+		if( search.getPath() != null && search.getPath().length() > 0 ){
+			crit.add(Restrictions.like("trsrc.path","%" + search.getPath() + "%"));
 		}
 		
 		@SuppressWarnings("unchecked") List<Transfer> result = (List<Transfer>)crit.list();

@@ -396,27 +396,31 @@ public class SVNRepositoryDao {
     		copyClient.doCopy(new SVNCopySource[] { source }, dstURL, false, true,false, "copy 222", null);
     		*/
         	
-        	
         	List<String> dirListToAdd = new ArrayList<String>(0);
-    		Map<String, SVNSourceTransfer> transferMap = new HashMap<String,SVNSourceTransfer>();
+    		Map<String, List<SVNSourceTransfer>> transferMap = new HashMap<String,List<SVNSourceTransfer>>();
     		Set<String> addedDirs = new HashSet<String>(0);
     		
     		for( SVNSourceTransfer svnSourceTransfer : transferList ){
     			String destFullPath = repository.getBranchesPath() + svnSourceTransfer.getRelativePath();
     			String destDir = SVNRepositoryUtils.extractDir(destFullPath);
-    			transferMap.put(SVNRepositoryUtils.extractDir(svnSourceTransfer.getRelativePath()), svnSourceTransfer);
+    			List<SVNSourceTransfer> svnSourceTrasnferToAddList =
+    					transferMap.containsKey(SVNRepositoryUtils.extractDir(svnSourceTransfer.getRelativePath()))?
+    							transferMap.get(SVNRepositoryUtils.extractDir(svnSourceTransfer.getRelativePath())):new ArrayList<SVNSourceTransfer>(0);
+    			svnSourceTrasnferToAddList.add(svnSourceTransfer);
+    			transferMap.put(SVNRepositoryUtils.extractDir(svnSourceTransfer.getRelativePath()), svnSourceTrasnferToAddList);
+    			
     			
     			boolean destExist = targetRepository.checkPath(RepositoryUtils.getRelativeRepositoryPath(repository, destDir), -1) != SVNNodeKind.NONE;
     			//if( nodeKind == SVNNodeKind.NONE){
     				String currentDir = "";
     				String[] dirFrags = destDir.split("/");
-    				System.out.println( "transferSouce path : " + svnSourceTransfer.getRelativePath());
+    				//System.out.println( "transferSouce path : " + svnSourceTransfer.getRelativePath());
     				for( String dirFrag : dirFrags ){
     					currentDir += ("/" + dirFrag);
     					currentDir = currentDir.replaceAll("//", "/");
-    					System.out.println( "currentDir: " + currentDir);
+    					//System.out.println( "currentDir: " + currentDir);
     					dirListToAdd.add(currentDir);
-    					System.out.println( "test: " + destExist + " / " + ( targetRepository.checkPath(RepositoryUtils.getRelativeRepositoryPath(repository, currentDir), -1) == SVNNodeKind.NONE));
+    					//System.out.println( "test: " + destExist + " / " + ( targetRepository.checkPath(RepositoryUtils.getRelativeRepositoryPath(repository, currentDir), -1) == SVNNodeKind.NONE));
     					if( !destExist && targetRepository.checkPath(RepositoryUtils.getRelativeRepositoryPath(repository, currentDir), -1) == SVNNodeKind.NONE ){
     						
     					}else{
@@ -434,30 +438,32 @@ public class SVNRepositoryDao {
     			if( !parent.startsWith(befParent)){
     				for( int inx = 0 ; inx < depth ; inx++ ) editor.closeDir();
     				if( depth < 1 ) editor.openDir(SVNRepositoryUtils.extractDir(parent),-1);
-    				System.out.println("opened: " + parent.substring(0, parent.lastIndexOf("/")) );
+    				//System.out.println("opened: " + parent.substring(0, parent.lastIndexOf("/")) );
     				depth = 0;
     			}
     			
     			if( !addedDirs.contains(parent) ){
-    				System.out.println( "add new dir: " + parent.substring(parent.lastIndexOf("/")));
+    				//System.out.println( "add new dir: " + parent.substring(parent.lastIndexOf("/")));
     				editor.addDir(parent.substring(parent.lastIndexOf("/")), null, -1);
     				addedDirs.add(parent);
     			}else{
-    				System.out.println( "open added dir: " + parent.substring(parent.lastIndexOf("/")));
+    				//System.out.println( "open added dir: " + parent.substring(parent.lastIndexOf("/")));
     				editor.openDir(parent.substring(parent.lastIndexOf("/")),-1);
     			}
     			
     			String relPath = parent.replaceFirst(repository.getBranchesPath(), "");
-    			System.out.println( "-relPath: " + relPath + " -contains: "+ transferMap.containsKey(relPath) );
+    			//System.out.println( "-relPath: " + relPath + " -contains: "+ transferMap.containsKey(relPath) );
     			if( transferMap.containsKey(relPath)){
-    				SVNSourceTransfer svnSourceTransfer = transferMap.get(relPath);
-    				//System.out.println( "-fileName: " + SVNRepositoryUtils.extractFileName(svnSourceTransfer.getRelativePath()));
-    				if( svnSourceTransfer.getIsToDelete()){
-    					editor.deleteEntry(SVNRepositoryUtils.extractFileName(svnSourceTransfer.getRelativePath()), svnSourceTransfer.getRevision());
-    				}else{
-    					editor.addFile(SVNRepositoryUtils.extractFileName(svnSourceTransfer.getRelativePath()), 
-    							RepositoryUtils.getRelativeRepositoryPath(repository, repository.getTrunkPath() + svnSourceTransfer.getRelativePath()) ,svnSourceTransfer.getRevision());
+    				List<SVNSourceTransfer> svnSourceTransferList = transferMap.get(relPath);
+    				for( SVNSourceTransfer svnSourceTransfer : svnSourceTransferList ){
+    					if( svnSourceTransfer.getIsToDelete()){
+        					editor.deleteEntry(SVNRepositoryUtils.extractFileName(svnSourceTransfer.getRelativePath()), svnSourceTransfer.getRevision());
+        				}else{
+        					editor.addFile(SVNRepositoryUtils.extractFileName(svnSourceTransfer.getRelativePath()), 
+        							RepositoryUtils.getRelativeRepositoryPath(repository, repository.getTrunkPath() + svnSourceTransfer.getRelativePath()) ,svnSourceTransfer.getRevision());
+        				}
     				}
+    				transferMap.remove(relPath);
     			}
     			depth++;
     			befParent = parent;
