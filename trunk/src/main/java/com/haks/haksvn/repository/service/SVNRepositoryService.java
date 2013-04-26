@@ -171,6 +171,7 @@ public class SVNRepositoryService {
 		SVNSource svnSourceTrg = svnRepositoryDao.retrieveOlderAndNewerAndCurSVNSourceLogList(repository, svnSource);
 		SVNSource svnSourceSrc = SVNSource.Builder.getBuilder(new SVNSource()).path(svnSourceTrg.getPath()).build();
 		SVNSourceDiff svnSourceDiff = null;
+		System.out.println( "svnSourceTrg.getOlderLogs().size() : " + svnSourceTrg.getOlderLogs().size());
 		if( svnSourceTrg.getOlderLogs().size() < 1 ){
 			svnSourceSrc.setRevision(-1);
 			svnSourceDiff = new SVNSourceDiff();
@@ -181,6 +182,8 @@ public class SVNRepositoryService {
 			svnSourceDiff.setIsDeletedContent(true);
 			svnSourceDiff.setDiff(SourceUtils.deletedContentToDiffFormat(svnRepositoryDao.retrieveFileContentByRevision(repository, svnSourceTrg).getContent()));
 		}else{
+			
+			System.out.println( "svnSourceTrg.getOlderLogs().get(0).getRevision() : " + svnSourceTrg.getOlderLogs().get(0).getRevision());
 			svnSourceSrc.setRevision(svnSourceTrg.getOlderLogs().get(0).getRevision());
 			svnSourceDiff = svnRepositoryDao.retrieveDiff(repository, svnSourceSrc, svnSourceTrg);
 		}

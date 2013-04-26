@@ -12,6 +12,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.validator.constraints.NotEmpty;
@@ -67,7 +68,10 @@ public class Transfer {
 	@OneToMany(cascade = { CascadeType.ALL }, mappedBy = "transfer", orphanRemoval=true)
 	private List<TransferSource> sourceList;
 	
-
+	// 검색을 위한 transient attr
+	@Transient
+	private String path;
+	
 	public int getTransferSeq() {
 		return transferSeq;
 	}
@@ -148,6 +152,14 @@ public class Transfer {
 		this.sourceList = sourceList;
 	}
 	
+	public String getPath(){
+		return path;
+	}
+	
+	public void setPath(String path){
+		this.path = path;
+	}
+	
 	public static class Builder{
 		
 		private Transfer transfer;
@@ -215,6 +227,11 @@ public class Transfer {
 		
 		public Builder sourceList(List<TransferSource> sourceList){
 			transfer.setSourceList(sourceList);
+			return this;
+		}
+		
+		public Builder path(String path){
+			transfer.setPath(path);
 			return this;
 		}
 		

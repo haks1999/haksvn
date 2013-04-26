@@ -1,17 +1,21 @@
-insert into menu (menu_seq, menu_name, menu_url, parent_menu_seq, menu_order, menu_level, view_type) values (1, 	'Transfer'			, '/transfer'								,1	,100, 1, 'menu.view.type.code.default');
-insert into menu (menu_seq, menu_name, menu_url, parent_menu_seq, menu_order, menu_level, view_type) values (2, 	'Request'			, '/transfer/request/list'					,1	,100, 2, 'menu.view.type.code.default');
-insert into menu (menu_seq, menu_name, menu_url, parent_menu_seq, menu_order, menu_level, view_type) values (3, 	'Approval'			, '/transfer/approval'						,1	,200, 2, 'menu.view.type.code.default');
-insert into menu (menu_seq, menu_name, menu_url, parent_menu_seq, menu_order, menu_level, view_type) values (4, 	'Configuration'		, '/configuration'							,4	,200, 1, 'menu.view.type.code.default');
-insert into menu (menu_seq, menu_name, menu_url, parent_menu_seq, menu_order, menu_level, view_type) values (5, 	'Users'				, '/configuration/users/list'				,4	,100, 2, 'menu.view.type.code.leftmenu');
-insert into menu (menu_seq, menu_name, menu_url, parent_menu_seq, menu_order, menu_level, view_type) values (6, 	'List'				, '/configuration/users/list'				,5	,100, 3, 'menu.view.type.code.leftmenu');
-insert into menu (menu_seq, menu_name, menu_url, parent_menu_seq, menu_order, menu_level, view_type) values (7, 	'Add'				, '/configuration/users/add'				,5	,200, 3, 'menu.view.type.code.leftmenu');
-insert into menu (menu_seq, menu_name, menu_url, parent_menu_seq, menu_order, menu_level, view_type) values (8, 	'Repositories'		, '/configuration/repositories/list'		,4	,200, 2, 'menu.view.type.code.leftmenu');
-insert into menu (menu_seq, menu_name, menu_url, parent_menu_seq, menu_order, menu_level, view_type) values (9, 	'List'				, '/configuration/repositories/list'		,8	,100, 3, 'menu.view.type.code.leftmenu');
-insert into menu (menu_seq, menu_name, menu_url, parent_menu_seq, menu_order, menu_level, view_type) values (10,	'Add'				, '/configuration/repositories/add'			,8	,200, 3, 'menu.view.type.code.leftmenu');
-insert into menu (menu_seq, menu_name, menu_url, parent_menu_seq, menu_order, menu_level, view_type) values (11,	'Repository_User'	, '/configuration/repositories/listUser'	,8	,300, 3, 'menu.view.type.code.leftmenu');
-insert into menu (menu_seq, menu_name, menu_url, parent_menu_seq, menu_order, menu_level, view_type) values (12, 	'Source'			, '/source'									,12	,300, 1, 'menu.view.type.code.default');
-insert into menu (menu_seq, menu_name, menu_url, parent_menu_seq, menu_order, menu_level, view_type) values (13, 	'Browse'			, '/source/browse'							,12	,100, 2, 'menu.view.type.code.default');
-insert into menu (menu_seq, menu_name, menu_url, parent_menu_seq, menu_order, menu_level, view_type) values (14, 	'Changes'			, '/source/changes'							,12	,200, 2, 'menu.view.type.code.default');
+insert into menu (menu_seq, menu_name, menu_url, parent_menu_seq, menu_order, menu_level, view_type) values (100, 	'Transfer'			, '/transfer'								,100	,100, 1, 'menu.view.type.code.default');
+insert into menu (menu_seq, menu_name, menu_url, parent_menu_seq, menu_order, menu_level, view_type) values (110, 	'Request'			, '/transfer/request/list'					,100	,100, 2, 'menu.view.type.code.default');
+insert into menu (menu_seq, menu_name, menu_url, parent_menu_seq, menu_order, menu_level, view_type) values (120, 	'Tagging'			, '/transfer/tagging'						,100	,200, 2, 'menu.view.type.code.default');
+insert into menu (menu_seq, menu_name, menu_url, parent_menu_seq, menu_order, menu_level, view_type) values (200, 	'Source'			, '/source'									,200	,200, 1, 'menu.view.type.code.default');
+insert into menu (menu_seq, menu_name, menu_url, parent_menu_seq, menu_order, menu_level, view_type) values (210, 	'Browse'			, '/source/browse'							,200	,100, 2, 'menu.view.type.code.default');
+insert into menu (menu_seq, menu_name, menu_url, parent_menu_seq, menu_order, menu_level, view_type) values (220, 	'Changes'			, '/source/changes'							,200	,200, 2, 'menu.view.type.code.default');
+insert into menu (menu_seq, menu_name, menu_url, parent_menu_seq, menu_order, menu_level, view_type) values (300, 	'Configuration'		, '/configuration'							,300	,300, 1, 'menu.view.type.code.default');
+insert into menu (menu_seq, menu_name, menu_url, parent_menu_seq, menu_order, menu_level, view_type) values (310, 	'General'			, '/configuration/general'					,300	,100, 2, 'menu.view.type.code.leftmenu');
+insert into menu (menu_seq, menu_name, menu_url, parent_menu_seq, menu_order, menu_level, view_type) values (311, 	'Commit_Log'		, '/configuration/general/commitLog'		,310	,100, 3, 'menu.view.type.code.leftmenu');
+insert into menu (menu_seq, menu_name, menu_url, parent_menu_seq, menu_order, menu_level, view_type) values (312, 	'Data_Management'	, '/configuration/general/dataManagement'	,310	,200, 3, 'menu.view.type.code.leftmenu');
+insert into menu (menu_seq, menu_name, menu_url, parent_menu_seq, menu_order, menu_level, view_type) values (320, 	'Users'				, '/configuration/users/list'				,300	,200, 2, 'menu.view.type.code.leftmenu');
+insert into menu (menu_seq, menu_name, menu_url, parent_menu_seq, menu_order, menu_level, view_type) values (321, 	'List'				, '/configuration/users/list'				,320	,100, 3, 'menu.view.type.code.leftmenu');
+insert into menu (menu_seq, menu_name, menu_url, parent_menu_seq, menu_order, menu_level, view_type) values (322, 	'Add'				, '/configuration/users/add'				,320	,200, 3, 'menu.view.type.code.leftmenu');
+insert into menu (menu_seq, menu_name, menu_url, parent_menu_seq, menu_order, menu_level, view_type) values (330, 	'Repositories'		, '/configuration/repositories/list'		,300	,300, 2, 'menu.view.type.code.leftmenu');
+insert into menu (menu_seq, menu_name, menu_url, parent_menu_seq, menu_order, menu_level, view_type) values (331, 	'List'				, '/configuration/repositories/list'		,330	,100, 3, 'menu.view.type.code.leftmenu');
+insert into menu (menu_seq, menu_name, menu_url, parent_menu_seq, menu_order, menu_level, view_type) values (332,		'Add'				, '/configuration/repositories/add'			,330	,200, 3, 'menu.view.type.code.leftmenu');
+insert into menu (menu_seq, menu_name, menu_url, parent_menu_seq, menu_order, menu_level, view_type) values (333,		'Repository_User'	, '/configuration/repositories/listUser'	,330	,300, 3, 'menu.view.type.code.leftmenu');
+
 
 insert into code (code_id, code_group, code_name, code_value, code_order) values ('menu.view.type.code.default'		,'menu.view.type.code'			,'default'		,'00'	,10 );
 insert into code (code_id, code_group, code_name, code_value, code_order) values ('menu.view.type.code.leftmenu'		,'menu.view.type.code'			,'leftmenu'		,'01'	,20 );

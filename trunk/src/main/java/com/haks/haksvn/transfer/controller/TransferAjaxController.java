@@ -34,8 +34,9 @@ public class TransferAjaxController {
     public @ResponseBody Paging<List<Transfer>> retrieveTransferList(@ModelAttribute("paging") Paging<Transfer> paging,
 										    		@RequestParam(value = "rUser", required = false, defaultValue="") String requestUserId,
 													@RequestParam(value = "sCode", required = false, defaultValue="") String transferStateCodeId,
+													@RequestParam(value = "path", required = false, defaultValue="") String path,
 													@PathVariable int repositorySeq) throws HaksvnException {
-    	Transfer transfer = Transfer.Builder.getBuilder().repositorySeq(repositorySeq)
+    	Transfer transfer = Transfer.Builder.getBuilder().repositorySeq(repositorySeq).path(path)
     		.transferStateCode(Code.Builder.getBuilder().codeId(transferStateCodeId).build())
     		.requestUser(User.Builder.getBuilder().userId(requestUserId).build()).build();
     	paging.setModel(transfer);
