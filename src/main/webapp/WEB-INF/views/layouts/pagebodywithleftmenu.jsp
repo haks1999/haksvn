@@ -3,6 +3,7 @@
 <%@ taglib uri="http://tiles.apache.org/tags-tiles" prefix="tiles"%>
 <body>
 	<tiles:insertAttribute name="header" />
+	<div id="_global_block"></div>
 	<div id="wrapper">
 		<div id="minwidth">
 			<div id="holder">

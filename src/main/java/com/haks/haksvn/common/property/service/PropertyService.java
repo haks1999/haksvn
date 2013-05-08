@@ -18,6 +18,12 @@ public class PropertyService {
 	public Property retrievePropertyByPropertyKey(String propertyKey){
 		Property result = propertyDao.retrievePropertyByPropertyKey(propertyKey);
 		return result;
-		
+	}
+	
+	public Property saveProperty(String propertyKey, String propertyValue){
+		Property property = new Property();
+		property.setPropertyKey(propertyKey);
+		property.setPropertyValue(propertyValue);
+		return propertyDao.saveProperty(property);
 	}
 }
