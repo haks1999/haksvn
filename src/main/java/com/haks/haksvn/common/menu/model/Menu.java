@@ -1,11 +1,21 @@
 package com.haks.haksvn.common.menu.model;
 
+import java.util.List;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
 import javax.persistence.Table;
+import javax.persistence.UniqueConstraint;
+
+import org.codehaus.jackson.annotate.JsonIgnore;
+
+import com.haks.haksvn.common.code.model.Code;
 
 @Entity
 @Table(name="menu")
@@ -49,6 +59,19 @@ public class Menu{
 	
 	@Column(name = "view_type",nullable = false, unique = false)
 	protected String viewType;
+	
+	/*
+	@ManyToOne
+	@JoinColumn(name="menu_seq", referencedColumnName="menu_seq", insertable=false, updatable=false)
+	private MenuAuthority menuAuthority;
+	*/
+	
+	@ManyToMany(targetEntity = Code.class)
+	@JoinTable(name = "menu_authority", 
+			joinColumns = { @JoinColumn(name = "menu_seq", nullable = false, updatable = false) }, 
+			inverseJoinColumns = { @JoinColumn(name = "code_id",nullable = false, updatable = false) },
+			uniqueConstraints = { @UniqueConstraint(columnNames = {"menu_seq","code_id"})})
+	private List<Code> menuAuthorityList;
 	
 	//@OneToMany(mappedBy = "menu", fetch=FetchType.EAGER)
 	/*
@@ -150,6 +173,15 @@ public class Menu{
 	
 	public void setParentMenuId(int parentMenuSeq){
 		this.parentMenuSeq = parentMenuSeq;
+	}
+	
+	@JsonIgnore
+	public List<Code> getMenuAuthorityList(){
+		return menuAuthorityList;
+	}
+	
+	public void setMenuAuthortyList(List<Code> menuAuthorityList){
+		this.menuAuthorityList = menuAuthorityList;
 	}
 	
 }
