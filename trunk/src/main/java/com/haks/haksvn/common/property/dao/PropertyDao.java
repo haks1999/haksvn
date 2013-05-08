@@ -9,7 +9,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import com.haks.haksvn.common.property.model.Property;
-import com.haks.haksvn.transfer.model.Transfer;
 
 @Repository
 public class PropertyDao {

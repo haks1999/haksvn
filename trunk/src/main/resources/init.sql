@@ -58,3 +58,35 @@ insert into users(user_seq, user_id, user_name, active, email, user_passwd, auth
 insert into repositories_users(repository_seq, user_seq) values (1,1);
 insert into repositories_users(repository_seq, user_seq) values (1,2);
 insert into repositories_users(repository_seq, user_seq) values (1,3);
+
+insert into menu_authority(menu_seq, code_id) values ( 100, 'user.auth.type.code.system-admin');
+insert into menu_authority(menu_seq, code_id) values ( 110, 'user.auth.type.code.system-admin');
+insert into menu_authority(menu_seq, code_id) values ( 120, 'user.auth.type.code.system-admin');
+insert into menu_authority(menu_seq, code_id) values ( 200, 'user.auth.type.code.system-admin');
+insert into menu_authority(menu_seq, code_id) values ( 210, 'user.auth.type.code.system-admin');
+insert into menu_authority(menu_seq, code_id) values ( 220, 'user.auth.type.code.system-admin');
+insert into menu_authority(menu_seq, code_id) values ( 300, 'user.auth.type.code.system-admin');
+insert into menu_authority(menu_seq, code_id) values ( 310, 'user.auth.type.code.system-admin');
+insert into menu_authority(menu_seq, code_id) values ( 311, 'user.auth.type.code.system-admin');
+insert into menu_authority(menu_seq, code_id) values ( 312, 'user.auth.type.code.system-admin');
+insert into menu_authority(menu_seq, code_id) values ( 320, 'user.auth.type.code.system-admin');
+insert into menu_authority(menu_seq, code_id) values ( 321, 'user.auth.type.code.system-admin');
+insert into menu_authority(menu_seq, code_id) values ( 322, 'user.auth.type.code.system-admin');
+insert into menu_authority(menu_seq, code_id) values ( 330, 'user.auth.type.code.system-admin');
+insert into menu_authority(menu_seq, code_id) values ( 331, 'user.auth.type.code.system-admin');
+insert into menu_authority(menu_seq, code_id) values ( 332, 'user.auth.type.code.system-admin');
+insert into menu_authority(menu_seq, code_id) values ( 333, 'user.auth.type.code.system-admin');
+
+insert into menu_authority(menu_seq, code_id) values ( 100, 'user.auth.type.code.reviewer');
+insert into menu_authority(menu_seq, code_id) values ( 110, 'user.auth.type.code.reviewer');
+insert into menu_authority(menu_seq, code_id) values ( 120, 'user.auth.type.code.reviewer');
+insert into menu_authority(menu_seq, code_id) values ( 200, 'user.auth.type.code.reviewer');
+insert into menu_authority(menu_seq, code_id) values ( 210, 'user.auth.type.code.reviewer');
+insert into menu_authority(menu_seq, code_id) values ( 220, 'user.auth.type.code.reviewer');
+
+insert into menu_authority(menu_seq, code_id) values ( 100, 'user.auth.type.code.commiter');
+insert into menu_authority(menu_seq, code_id) values ( 110, 'user.auth.type.code.commiter');
+insert into menu_authority(menu_seq, code_id) values ( 200, 'user.auth.type.code.commiter');
+insert into menu_authority(menu_seq, code_id) values ( 210, 'user.auth.type.code.commiter');
+insert into menu_authority(menu_seq, code_id) values ( 220, 'user.auth.type.code.commiter');
+

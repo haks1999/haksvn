@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import com.haks.haksvn.common.menu.model.Menu;
+import com.haks.haksvn.common.security.util.ContextHolder;
 
 @Repository
 public class MenuDao {
@@ -18,45 +19,12 @@ public class MenuDao {
 	@Autowired
 	private SessionFactory sessionFactory;
 	
-	/*
-	public MenuDao(){}
-	
-	public MenuDao( Session session ){
-		this.session = session;
-	}
-	*/
-	
-	public List<Menu> retrieveMenuList() {
-		/*
-		 * Query selectClause1 = session.createQuery("select emp.name from Employee emp where emp.id = 2");
-List<String> empList1 = selectClause1.list();
-
-Criterion salary = Restrictions.gt("salary", 2000);
-Criterion name = Restrictions.ilike("firstNname","zara%");
-cr.setProjection(Projections.avg("salary"));
-		 */
-		//session.cre
-		//List<Menu> result = session.createQuery( "from Menu" ).list();
-		//Session session = sessionFactory.openSession();
-		Session session = sessionFactory.getCurrentSession();
-		
-		@SuppressWarnings("unchecked") List<Menu> result = session.createCriteria(Menu.class)
-				//.add(Restrictions.eq("menuLevel", 1))
-				//.add(Restrictions.eqProperty("menuSeq", "parentMenuSeq"))
-				.addOrder(Order.asc("menuLevel"))
-				.addOrder(Order.asc("parentMenuSeq"))
-				.addOrder(Order.asc("menuOrder"))
-				.list();
-		//session.update(result);
-		//session.i
-		return result;
-	}
-	
-	
 	public List<Menu> retrieveSubMenuList(Menu menu){
 		Session session = sessionFactory.getCurrentSession();
 		
 		@SuppressWarnings("unchecked") List<Menu> result = session.createCriteria(Menu.class)
+				.createAlias("menuAuthorityList", "code")
+				.add(Restrictions.eq("code.codeId", ContextHolder.getLoginUser().getAuthTypeCodeId()))
 				.add(Restrictions.eq("parentMenuSeq", menu.getMenuSeq()))
 				.add(Restrictions.neProperty("parentMenuSeq", "menuSeq"))
 				.addOrder(Order.asc("menuOrder"))
@@ -79,6 +47,8 @@ cr.setProjection(Projections.avg("salary"));
 		Session session = sessionFactory.getCurrentSession();
 		
 		@SuppressWarnings("unchecked") List<Menu> result = session.createCriteria(Menu.class)
+				.createAlias("menuAuthorityList", "code")
+				.add(Restrictions.eq("code.codeId", ContextHolder.getLoginUser().getAuthTypeCodeId()))
 				.add(Restrictions.eq("menuLevel", 1))
 				.addOrder(Order.asc("menuOrder"))
 				.list();

@@ -505,6 +505,35 @@ ul.Delete li.revision{display:none;}
 		$('.pmOpener.opened').trigger('click');
 	};
 	
+	function validateTransferInput(){
+		var showInvalidDialog = function(){
+			
+			$( "#div_invalidateMessage" ).dialog({
+		      	modal: true,
+		      	title:'Invalida Input',
+		      	resizable:false,
+		      	buttons: {
+		        	Ok: function() {
+		          		$( this ).dialog( "close" );
+		        	}
+		      	}
+		    });
+		};
+		if( $('#description').text().length < 1 ){
+			$("#div_invalidateMessage .input").text('Description Field');
+			showInvalidDialog();
+			$('#description').each(function(){focus();});
+			return false;
+		}
+		if($('#frm_transfer input[name=transferSourceList]').val().length < 1){
+			$("#div_invalidateMessage .input").text('Transfer Source List');
+			showInvalidDialog();
+			$('#spn_sourcesToTran').focus();
+			return false;
+		}
+		return true;
+	};
+	
 </script>
 <div id="table" class="help">
 	<h1>Transfer Information</h1>
@@ -578,6 +607,7 @@ ul.Delete li.revision{display:none;}
 						<a class="button red mt ml" onclick="deleteTransfer()"><small class="icon cross"></small><span>Delete</span></a>
 						<script type="text/javascript" >
 							function requestTransfer(){
+								if( !validateTransferInput() ) return;
 								$('#frm_transfer').attr('action', '<c:url value="/transfer/request/list" />' + '<c:out value="/${repositorySeq}/request"/>');
 								$('#frm_transfer').submit();
 							};
@@ -593,6 +623,7 @@ ul.Delete li.revision{display:none;}
 						<a class="button red mt ml" onclick="rejectTransfer()"><small class="icon cross"></small><span>Reject</span></a>
 						<script type="text/javascript" >
 							function approveTransfer(){
+								if( !validateTransferInput() ) return;
 								$('#frm_transfer').attr('action', '<c:url value="/transfer/request/list" />' + '<c:out value="/${repositorySeq}/approve"/>');
 								$('#frm_transfer').submit();
 							};
@@ -613,7 +644,14 @@ ul.Delete li.revision{display:none;}
 						</script>
 					</c:if>
 					<c:if test="${transferStateAuth.isEditable}">
-						<a class="button green mt ml form_submit"><small class="icon save"></small><span>Save</span></a>
+						<a class="button green mt ml" onclick="saveTransfer()"><small class="icon save"></small><span>Save</span></a>
+						<script type="text/javascript" >
+							function saveTransfer(){
+								if( !validateTransferInput() ) return;
+								$('#frm_transfer').attr('action', '<c:url value="/transfer/request/list" />' + '<c:out value="/${repositorySeq}/save"/>');
+								$('#frm_transfer').submit();
+							};
+						</script>
 					</c:if>
 					<a class="button yellow mt ml" onclick="history.back()"><small class="icon play"></small><span>Back to List</span></a>
 				</p>
@@ -784,5 +822,12 @@ ul.Delete li.revision{display:none;}
   	</p>
  	<p>
   		<span>Request user: </span><b class="reuqestUserId"></b>
+  	</p>
+</div>
+
+<div id="div_invalidateMessage" style="display:none;">
+	<p>
+    	<span class="ui-icon ui-icon-alert" style="float: left; margin: 0 7px 50px 0;"></span>
+    	<span><b class="input"></b> can not be empty!</span>
   	</p>
 </div>
