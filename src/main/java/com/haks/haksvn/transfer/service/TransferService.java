@@ -14,6 +14,7 @@ import com.haks.haksvn.common.code.util.CodeUtils;
 import com.haks.haksvn.common.exception.HaksvnException;
 import com.haks.haksvn.common.paging.model.Paging;
 import com.haks.haksvn.common.security.util.ContextHolder;
+import com.haks.haksvn.general.service.GeneralService;
 import com.haks.haksvn.repository.model.Repository;
 import com.haks.haksvn.repository.service.RepositoryService;
 import com.haks.haksvn.repository.service.SVNRepositoryService;
@@ -23,6 +24,7 @@ import com.haks.haksvn.transfer.dao.TransferDao;
 import com.haks.haksvn.transfer.model.Transfer;
 import com.haks.haksvn.transfer.model.TransferSource;
 import com.haks.haksvn.transfer.model.TransferStateAuth;
+import com.haks.haksvn.transfer.util.TransferUtils;
 import com.haks.haksvn.user.service.UserService;
 
 @Service
@@ -35,6 +37,8 @@ public class TransferService {
 	private UserService userService;
 	@Autowired
 	private CodeService codeService;
+	@Autowired
+	private GeneralService generalService;
 	@Autowired
 	private RepositoryService repositoryService;
 	@Autowired
@@ -187,7 +191,8 @@ public class TransferService {
 			svnSourceTransferList.add(SVNSourceTransfer.Builder.getBuilder(new SVNSourceTransfer()).revision(transferSource.getRevision())
 					.isToDelete(isToDeleted).relativePath(relPath).build());
 		}
-		svnRepositoryService.transfer(repository, svnSourceTransferList, transfer.getDescription());
+		svnRepositoryService.transfer(repository, svnSourceTransferList, TransferUtils.createTransferCommitLog(transfer, generalService.retrieveCommitLogTemplate(transfer.getRepositorySeq()).getTemplate()));
+		//svnRepositoryService.transfer(repository, svnSourceTransferList, transfer.getDescription());
 		return transfer;
 	}
 	
