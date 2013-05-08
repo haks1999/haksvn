@@ -40,7 +40,7 @@ insert into code (code_id, code_group, code_name, code_value, code_order) values
 insert into code (code_id, code_group, code_name, code_value, code_order) values ('svn.passwd.type.code.md5-apache'	,'svn.passwd.type.code'			,'MD5(Apache)'	,'20'	,20 );
 
 insert into properties (property_key, property_value) values ('svn.authz.template.default'	,'[groups]%nsystem-admin=#system-admin#%ncommiter=#commiter#%nreviewer=#reviewer#%n%n[#svn_name#:/]%n@system-admin=rw%n%n[#svn_name#:#trunk_path#]%n@reviewer=rw%n@commiter=rw%n%n[#svn_name#:#branches_path#]%n@reviewer=r%n@commiter=r%n%n[#svn_name#:#tags_path#]%n@reviewer=rw%n@commiter=r');
-insert into properties (property_key, property_value) values ('commit.log.template.default'	,'[Request User]: #request-user-name#(#request-user-id#)%n[Approve User]: #approve-user-name#(#approve-user-id#)%n[Description]:%n#description#');
+insert into properties (property_key, property_value) values ('commit.log.template.default'	,'[Request ID]: #request-id#%n[Request User]: #request-user-name#(#request-user-id#)%n[Approve User]: #approve-user-name#(#approve-user-id#)%n[Description]:%n#description#');
 
 -- haks1999 // aW9fj8bm9Rt5
 insert into repositories (repository_seq, repository_location, active, repository_name, svn_root, svn_name, trunk_path, tags_path, branches_path, auth_user_id, auth_user_passwd, sync_user ) values (1,'https://haksvn.googlecode.com/svn', 'common.boolean.yn.code.y', 'haksvn google repository', 'https://haksvn.googlecode.com/svn', 'svn', '/trunk', '/tags', '/branches/production', 'haks1999', 'nijy14K6p4n1oleemgofSw==','common.boolean.yn.code.n' );

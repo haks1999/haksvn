@@ -429,7 +429,6 @@ public class SVNRepositoryDao {
     				}
     			//}
     		}
-    		
     		editor = targetRepository.getCommitEditor( log , null, true, null );
     		editor.openRoot( -1 );
     		String befParent = "!@#$";

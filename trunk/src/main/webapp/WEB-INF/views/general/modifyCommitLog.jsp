@@ -63,6 +63,10 @@
 				<div class="bottom"><div></div></div>
 			</div>
 			
+			<div style="font-size:11px;padding-bottom:10px;">
+				variables: #request-id#, #request-user-id#, #request-user-name#, #approve-user-id#, #approve-user-name#, #description#
+			</div>
+			
 			<form>
 				<p>
 					<label for="commitLogTemplate" class="left">Log Template</label>
