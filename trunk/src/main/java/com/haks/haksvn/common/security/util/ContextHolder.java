@@ -26,4 +26,8 @@ public class ContextHolder {
 	public static void deleteLoginUser(){
 		RequestContextHolder.currentRequestAttributes().removeAttribute(SESSION_KEY_LOGIN_USER, RequestAttributes.SCOPE_SESSION);
 	}
+	
+	public static boolean isLoggedIn(){
+		return getLoginUser() != null;
+	}
 }

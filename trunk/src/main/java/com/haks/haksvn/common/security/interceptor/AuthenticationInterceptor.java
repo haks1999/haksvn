@@ -22,7 +22,7 @@ public class AuthenticationInterceptor extends HandlerInterceptorAdapter {
 	public boolean preHandle(HttpServletRequest request,
 			HttpServletResponse response, Object handler) throws Exception {
 
-		if( ContextHolder.getLoginUser() == null ){
+		if( !ContextHolder.isLoggedIn() ){
 			throw new HaksvnAuthenticationException("need login");
 		}
 		return true;
