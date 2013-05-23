@@ -11,7 +11,7 @@
 		destroy-method="dispose">
 		<constructor-arg>
 			<bean class="org.h2.jdbcx.JdbcDataSource">
-				<property name="URL" value="jdbc:h2:test" />
+				<property name="URL" value="jdbc:h2:~/.haksvn/haksvn" />
 				<property name="user" value="sa" />
 				<property name="password" value="sa" />
 			</bean>
@@ -26,7 +26,7 @@
 		<property name="hibernateProperties">
 			<props>
 				<prop key="hibernate.dialect">${jdbc.hibernate.dialect}</prop>
-				<prop key="hibernate.hbm2ddl.auto">create</prop>
+				<prop key="hibernate.hbm2ddl.auto">update</prop>
 				<prop key="hibernate.show_sql">false</prop>
 				<prop key="hibernate.format_sql">true</prop>
 				<prop key="hibernate.hbm2ddl.import_files">init.sql</prop>

@@ -9,16 +9,28 @@ public class CodeUtils {
 	}
 	
 	// user
+	public static String getSystemAdminCodeId(){
+		return "user.auth.type.code.system-admin";
+	}
+	
+	public static String getReviewerCodeId(){
+		return "user.auth.type.code.reviewer";
+	}
+	
+	public static String getCommiterCodeId(){
+		return "user.auth.type.code.commiter";
+	}
+	
 	public static boolean isSystemAdmin(String authType){
-		return "user.auth.type.code.system-admin".equals(authType);
+		return getSystemAdminCodeId().equals(authType);
 	}
 	
 	public static boolean isReviewer(String authType){
-		return "user.auth.type.code.reviewer".equals(authType);
+		return getReviewerCodeId().equals(authType);
 	}
 	
 	public static boolean isCommiter(String authType){
-		return "user.auth.type.code.commiter".equals(authType);
+		return getCommiterCodeId().equals(authType);
 	}
 	
 	// repository
@@ -48,23 +60,23 @@ public class CodeUtils {
 	}
 	
 	public static boolean isEditableState(String stateCode){
-		return stateCode ==null || stateCode.length() < 1 || "transfer.state.code.keep".equals(stateCode);
+		return stateCode ==null || stateCode.length() < 1 || getTransferKeepCodeId().equals(stateCode);
 	}
 	
 	public static boolean isRequestableState(String stateCode){	// isDeletableState
-		return "transfer.state.code.keep".equals(stateCode);
+		return getTransferKeepCodeId().equals(stateCode);
 	}
 	
 	public static boolean isApprovableState(String stateCode){	// isRejectableState
-		return "transfer.state.code.request".equals(stateCode);
+		return getTransferRequestCodeId().equals(stateCode);
 	}
 	
 	public static boolean isRequestCancelableState(String stateCode){
-		return "transfer.state.code.request".equals(stateCode);
+		return getTransferRequestCodeId().equals(stateCode);
 	}
 	
 	public static boolean isCompleteState(String stateCode){
-		return "transfer.state.code.complete".equals(stateCode) || "transfer.state.code.reject".equals(stateCode);
+		return getTransferCompleteCodeId().equals(stateCode) || getTransferRejectCodeId().equals(stateCode);
 	}
 	
 	// transfer source

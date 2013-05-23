@@ -76,14 +76,13 @@ public class MenuInterceptor extends HandlerInterceptorAdapter {
 		String viewPath = transUrlToMenuPath(request);
 		String[] level = splitUrlByLevel(request);
 
-		List<MenuNode> menuList = menuService.retrieveMenuList();
+		List<MenuNode> menuList = menuService.retrieveMenuNodeList();
         List<MenuNode> leftMenuList = new ArrayList<MenuNode>();
         String viewName = "main";
         String selectedMenuNameLevel1 = "";
         String selectedMenuNameLevel2 = "";
         String selectedMenuNameLevel3 = "";
 		if("menu.view.type.code.default".equals(menuService.retireveViewType(viewPath))){
-			// ecache 로 변경할 것 menuList 포함
 			for( MenuNode menuLevel1 : menuList ){
 				for( MenuNode menuLevel2 : menuLevel1.getSubMenuList() ){
 					String[] splitedMenuNames = menuLevel2.getMenuUrl().split("/");
@@ -99,7 +98,6 @@ public class MenuInterceptor extends HandlerInterceptorAdapter {
 		}
 		else if("menu.view.type.code.leftmenu".equals(menuService.retireveViewType(viewPath))){
 			viewName = "mainleftmenu";
-			// ecache 로 변경할 것 menuList 포함
 			for( MenuNode menuLevel1 : menuList ){
 				for( MenuNode menuLevel2 : menuLevel1.getSubMenuList() ){
 					for( MenuNode menuLevel3 : menuLevel2.getSubMenuList() ){
