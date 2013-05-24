@@ -10,7 +10,7 @@
 	function testConnection(){
 		ajaxProcessing();
 		var queryString = $('#frm_repository').serialize();
-		$.post("<c:url value="/configuration/repositories/testConnection"/>",
+		$.post("<c:url value="/configuration/repositories/list/testConnection"/>",
 			queryString,
             function(data){
 				$().Message({type:data.type,text:data.text});

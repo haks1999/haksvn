@@ -30,7 +30,7 @@ public class RepositoryAjaxController {
     @Autowired
     private SVNRepositoryService svnRepositoryService;
     
-    @RequestMapping(value="/testConnection", method=RequestMethod.POST, produces="application/json")
+    @RequestMapping(value="/list/testConnection", method=RequestMethod.POST, produces="application/json")
     public @ResponseBody DefaultMessage testConnection(@ModelAttribute("repository") Repository repository) throws HaksvnException {
     	ResultMessage message = new ResultMessage("connection test success");
 		svnRepositoryService.testInitalConnection(repository);
@@ -43,7 +43,7 @@ public class RepositoryAjaxController {
     	return userList;
     }
     
-    @RequestMapping(value="/addUser/{repositorySeq}", method=RequestMethod.POST)
+    @RequestMapping(value="/listUser/addUser/{repositorySeq}", method=RequestMethod.POST)
     public @ResponseBody ResultMessage addRepositoryUser(@PathVariable int repositorySeq,
     												@RequestParam(value = "userId", required = true) String[] userIdList,
     												@RequestParam(value = "overwrite", required = false) boolean overwrite){
@@ -53,7 +53,7 @@ public class RepositoryAjaxController {
     	return message;
     }
     
-    @RequestMapping(value="/delUser/{repositorySeq}", method=RequestMethod.POST)
+    @RequestMapping(value="/listUser/delUser/{repositorySeq}", method=RequestMethod.POST)
     public @ResponseBody ResultMessage delRepositoryUser(@PathVariable int repositorySeq,
     													@RequestParam(value = "userId", required = true) String[] userIdList){
     	

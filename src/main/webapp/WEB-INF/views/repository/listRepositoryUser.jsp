@@ -31,7 +31,7 @@
 	
 	function delRepositoryUser(){
 		var repositorySeq = $("#sel_repository > option:selected").val();
-		$.post("<c:url value="/configuration/repositories/delUser"/>" + "/" + repositorySeq,
+		$.post("<c:url value="/configuration/repositories/listUser/delUser"/>" + "/" + repositorySeq,
 				$('#tbl_userList input[name="userId"]:checked').serialize(),
 	            function(data){
 					$().Message({type:data.type,text:data.text});
@@ -43,7 +43,7 @@
 	function addRepositoryUser(){
 		var repositorySeq = $("#sel_repository > option:selected").val();
 		var userIds = {userId: selectedUsers, overwrite: $('#ckb_overwrite').is(':checked')};
-		$.post("<c:url value="/configuration/repositories/addUser"/>" + "/" + repositorySeq,
+		$.post("<c:url value="/configuration/repositories/listUser/addUser"/>" + "/" + repositorySeq,
 				$.param(userIds,true),
 	            function(data){
 					$().Message({type:data.type,text:data.text});
