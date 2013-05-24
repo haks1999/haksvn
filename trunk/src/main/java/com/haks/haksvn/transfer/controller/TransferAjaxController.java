@@ -47,7 +47,7 @@ public class TransferAjaxController {
     	return transferListPaging;
     }
     
-    @RequestMapping(value="/request/check/{repositorySeq}", method=RequestMethod.GET, params ={"path","del"})
+    @RequestMapping(value="/request/list/check/{repositorySeq}", method=RequestMethod.GET, params ={"path","del"})
     public @ResponseBody TransferSource checkRequestableTransferSource(
     												@RequestParam(value = "path", required = true) String path,
     												@RequestParam(value = "del", required = true) boolean toDelete,

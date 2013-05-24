@@ -18,6 +18,7 @@ import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 
 import com.haks.haksvn.common.code.model.Code;
+import com.haks.haksvn.common.exception.HaksvnException;
 import com.haks.haksvn.common.menu.model.Menu;
 import com.haks.haksvn.common.menu.service.MenuService;
 import com.haks.haksvn.common.security.util.ContextHolder;
@@ -49,6 +50,7 @@ public class MenuAuthorityInterceptor extends HandlerInterceptorAdapter implemen
 	
 	private boolean hasAuth(String url, String authCode ){
 		if( !MENU_URL_AUTH_MAPPING.containsKey(url)) addAuthMapping(url);
+		if( !MENU_URL_AUTH_MAPPING.containsKey(url)) throw new HaksvnException("do not have permission to access this url - " + url);
 		return MENU_URL_AUTH_MAPPING.get(url).contains(authCode);
 	}
 	

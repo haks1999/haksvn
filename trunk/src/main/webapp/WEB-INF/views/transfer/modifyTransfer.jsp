@@ -355,7 +355,7 @@ ul.Delete li.revision{display:none;}
 		});
 		$(row).find("td button.action").button().click(function() {
 	        	haksvn.block.on();
-	        	$.getJSON( "<c:url value="/transfer/request/check/${repository.repositorySeq}"/>",
+	        	$.getJSON( "<c:url value="/transfer/request/list/check/${repository.repositorySeq}"/>",
       						{path:path,del:_gToDelete}, 
       						function(data){
       							if( !data.isLocked){
