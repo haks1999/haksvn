@@ -95,4 +95,23 @@ public class CodeUtils {
 	public static boolean isTransferSourceTypeDelete( String code ){
 		return getTransferSourceTypeDeleteCodeId().equals(code);
 	}
+	
+	
+	// tagging
+	public static String getTaggingCreateCodeId(){
+		return "tagging.type.code.create";
+	}
+		
+	public static String getTaggingRestoreCodeId(){
+		return "tagging.type.code.restore";
+	}
+	
+	public static boolean isTaggingCreateType(String code ){
+		return getTaggingCreateCodeId().equals(code);
+	}
+	
+	public static boolean isTaggingRestoreType(String code){
+		return getTaggingRestoreCodeId().equals(code);
+	}
+		
 }

@@ -1,6 +1,6 @@
 insert into menu (menu_seq, menu_name, menu_url, parent_menu_seq, menu_order, menu_level, view_type) values (100, 	'Transfer'			, '/transfer'								,100	,100, 1, 'menu.view.type.code.default');
 insert into menu (menu_seq, menu_name, menu_url, parent_menu_seq, menu_order, menu_level, view_type) values (110, 	'Request'			, '/transfer/request/list'					,100	,100, 2, 'menu.view.type.code.default');
-insert into menu (menu_seq, menu_name, menu_url, parent_menu_seq, menu_order, menu_level, view_type) values (120, 	'Tagging'			, '/transfer/tagging'						,100	,200, 2, 'menu.view.type.code.default');
+insert into menu (menu_seq, menu_name, menu_url, parent_menu_seq, menu_order, menu_level, view_type) values (120, 	'Tagging'			, '/transfer/tagging/list'					,100	,200, 2, 'menu.view.type.code.default');
 insert into menu (menu_seq, menu_name, menu_url, parent_menu_seq, menu_order, menu_level, view_type) values (200, 	'Source'			, '/source'									,200	,200, 1, 'menu.view.type.code.default');
 insert into menu (menu_seq, menu_name, menu_url, parent_menu_seq, menu_order, menu_level, view_type) values (210, 	'Browse'			, '/source/browse'							,200	,100, 2, 'menu.view.type.code.default');
 insert into menu (menu_seq, menu_name, menu_url, parent_menu_seq, menu_order, menu_level, view_type) values (220, 	'Changes'			, '/source/changes'							,200	,200, 2, 'menu.view.type.code.default');
@@ -25,9 +25,11 @@ insert into code (code_id, code_group, code_name, code_value, code_order) values
 insert into code (code_id, code_group, code_name, code_value, code_order) values ('transfer.state.code.request'		,'transfer.state.code'			,'Request'		,'10'	,20 );
 insert into code (code_id, code_group, code_name, code_value, code_order) values ('transfer.state.code.complete'		,'transfer.state.code'			,'Complete'		,'20'	,30 );
 insert into code (code_id, code_group, code_name, code_value, code_order) values ('transfer.state.code.reject'		,'transfer.state.code'			,'Reject'		,'30'	,40 );
-insert into code (code_id, code_group, code_name, code_value, code_order) values ('transfer.source.type.code.add'			,'transfer.source.type.code'			,'Add'		,'00'	,10 );
-insert into code (code_id, code_group, code_name, code_value, code_order) values ('transfer.source.type.code.modify'			,'transfer.source.type.code'			,'Modify'		,'10'	,20 );
-insert into code (code_id, code_group, code_name, code_value, code_order) values ('transfer.source.type.code.delete'			,'transfer.source.type.code'			,'Delete'		,'20'	,30 );
+insert into code (code_id, code_group, code_name, code_value, code_order) values ('transfer.source.type.code.add'		,'transfer.source.type.code'	,'Add'			,'00'	,10 );
+insert into code (code_id, code_group, code_name, code_value, code_order) values ('transfer.source.type.code.modify'	,'transfer.source.type.code'	,'Modify'		,'10'	,20 );
+insert into code (code_id, code_group, code_name, code_value, code_order) values ('transfer.source.type.code.delete'	,'transfer.source.type.code'	,'Delete'		,'20'	,30 );
+insert into code (code_id, code_group, code_name, code_value, code_order) values ('tagging.type.code.create'			,'tagging.type.code'			,'Create'		,'00'	,10 );
+insert into code (code_id, code_group, code_name, code_value, code_order) values ('tagging.type.code.restore'			,'tagging.type.code'			,'Restore'		,'10'	,20 );
 insert into code (code_id, code_group, code_name, code_value, code_order) values ('common.boolean.yn.code.y'			,'common.boolean.yn.code'		,'Y'			,'true'	,10 );
 insert into code (code_id, code_group, code_name, code_value, code_order) values ('common.boolean.yn.code.n'			,'common.boolean.yn.code'		,'N'			,'false',20 );
 insert into code (code_id, code_group, code_name, code_value, code_order) values ('user.auth.type.code.system-admin'	,'user.auth.type.code'			,'system-admin'	,'10'	,10 );
@@ -86,6 +88,7 @@ insert into menu_authority(menu_seq, code_id) values ( 220, 'user.auth.type.code
 
 insert into menu_authority(menu_seq, code_id) values ( 100, 'user.auth.type.code.commiter');
 insert into menu_authority(menu_seq, code_id) values ( 110, 'user.auth.type.code.commiter');
+insert into menu_authority(menu_seq, code_id) values ( 120, 'user.auth.type.code.commiter');
 insert into menu_authority(menu_seq, code_id) values ( 200, 'user.auth.type.code.commiter');
 insert into menu_authority(menu_seq, code_id) values ( 210, 'user.auth.type.code.commiter');
 insert into menu_authority(menu_seq, code_id) values ( 220, 'user.auth.type.code.commiter');
