@@ -40,10 +40,7 @@ public class TransferController {
 	@RequestMapping(value="/request/list", method=RequestMethod.GET)
     public ModelAndView forwardTransferListPage( ModelMap model, RedirectAttributes redirectAttributes ) {
         List<Repository> repositoryList = repositoryService.retrieveAccesibleActiveRepositoryList();
-    	//model.addAttribute("repositoryList", repositoryList );
-    	
     	if( repositoryList.size() > 0 ){
-    		//redirectAttributes.addFlashAttribute("rUser", ContextHolder.getLoginUser().getUserId() );
     		return new ModelAndView(new RedirectView("/transfer/request/list/" + repositoryList.get(0).getRepositorySeq() + "?rUser="+ContextHolder.getLoginUser().getUserId(), true));
     	}else{
     		return new ModelAndView("/transfer/listTransfer");
