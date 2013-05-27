@@ -17,7 +17,6 @@ import com.haks.haksvn.repository.service.RepositoryService;
 import com.haks.haksvn.transfer.dao.TaggingDao;
 import com.haks.haksvn.transfer.model.Tagging;
 import com.haks.haksvn.transfer.model.TaggingAuth;
-import com.haks.haksvn.transfer.model.Transfer;
 import com.haks.haksvn.user.service.UserService;
 
 @Service

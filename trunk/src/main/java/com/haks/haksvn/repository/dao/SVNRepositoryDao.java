@@ -22,6 +22,8 @@ import org.tmatesoft.svn.core.SVNURL;
 import org.tmatesoft.svn.core.io.ISVNEditor;
 import org.tmatesoft.svn.core.io.SVNRepository;
 import org.tmatesoft.svn.core.wc.SVNClientManager;
+import org.tmatesoft.svn.core.wc.SVNCopyClient;
+import org.tmatesoft.svn.core.wc.SVNCopySource;
 import org.tmatesoft.svn.core.wc.SVNDiffClient;
 import org.tmatesoft.svn.core.wc.SVNRevision;
 import org.tmatesoft.svn.core.wc.SVNWCUtil;
@@ -243,7 +245,6 @@ public class SVNRepositoryDao {
             if (nodeKind == SVNNodeKind.NONE || nodeKind == SVNNodeKind.DIR ) {
             	svnSource.setContent( "[" + svnSource.getPath() + "] is not a file.");
             	return svnSource;
-            	//throw new HaksvnException( "[" + svnSource.getPath() + "] is not a file.");
             } 
         	SVNProperties fileProperties = new SVNProperties();
             baos = new ByteArrayOutputStream();
@@ -473,6 +474,31 @@ public class SVNRepositoryDao {
         	if( editor != null ){
         		try{ editor.abortEdit(); }catch(Exception ex){}
         	}
+        	e.printStackTrace();
+        	throw new HaksvnException(e);
+        }finally{
+        	try{
+        		if(targetRepository!=null) targetRepository.closeSession();
+        	}catch(Exception e){
+        		e.printStackTrace();
+        	}
+        }
+	}
+	
+	// srcPath,destPath 는 /trunk~, /branches~ 다 붙여서
+	public void copyPathToPath(Repository repository, String srcPath, String destPath, String log){
+		SVNRepository targetRepository = null;
+        try{
+        	targetRepository = SVNRepositoryUtils.getUserAuthSVNRepository(repository);
+        	
+    		final SVNCopyClient copyClient = SVNClientManager.newInstance(SVNWCUtil.createDefaultOptions(false), targetRepository.getAuthenticationManager()).getCopyClient();
+    		final SVNURL location = targetRepository.getLocation();
+    		final SVNURL srcURL = SVNURL.parseURIEncoded(location + srcPath);
+    		final SVNURL destURL = SVNURL.parseURIEncoded(location + destPath);
+    		final SVNCopySource source = new SVNCopySource(SVNRevision.HEAD, SVNRevision.HEAD, srcURL);
+    		copyClient.doCopy(new SVNCopySource[] { source }, destURL, false, true,false, log, null);
+            
+        }catch (Exception e) {
         	e.printStackTrace();
         	throw new HaksvnException(e);
         }finally{

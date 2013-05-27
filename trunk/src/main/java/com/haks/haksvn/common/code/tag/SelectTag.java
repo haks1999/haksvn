@@ -18,6 +18,7 @@ import com.haks.haksvn.common.code.service.CodeService;
 
 public class SelectTag extends SimpleTagSupport {
 
+	private String id;
 	private String name;
 	private String codeGroup;
 	private String selectedValue;
@@ -50,6 +51,11 @@ public class SelectTag extends SimpleTagSupport {
 			.append(" name=\"")
 			.append(name)
 			.append("\"");
+		if(id != null ){
+			sb.append(" id=\"")
+				.append(id)
+				.append("\"");
+		}
 		if(cssClass != null ){
 			sb.append(" class=\"")
 				.append(cssClass)
@@ -75,6 +81,14 @@ public class SelectTag extends SimpleTagSupport {
 	    out.println(sb.toString());
 	}
 
+	public String getId(){
+		return id;
+	}
+	
+	public void setId(String id){
+		this.id = id;
+	}
+	
 	public String getName() {
 		return name;
 	}

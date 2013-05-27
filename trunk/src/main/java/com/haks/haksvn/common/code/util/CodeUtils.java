@@ -113,5 +113,22 @@ public class CodeUtils {
 	public static boolean isTaggingRestoreType(String code){
 		return getTaggingRestoreCodeId().equals(code);
 	}
+	
+	// log template
+	public static String getLogTemplateRequestCodeId(){
+		return "log.template.type.code.request";
+	}
+	
+	public static String getLogTemplateTaggingCodeId(){
+		return "log.template.type.code.tagging";
+	}
+	
+	public static boolean isLogTemplateRequest(String code){
+		return getLogTemplateRequestCodeId().equals(code);
+	}
+	
+	public static boolean isLogTemplateTagging(String code){
+		return getLogTemplateTaggingCodeId().equals(code);
+	}
 		
 }

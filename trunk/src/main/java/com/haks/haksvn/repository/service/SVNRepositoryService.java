@@ -23,6 +23,7 @@ import com.haks.haksvn.repository.model.Repository;
 import com.haks.haksvn.source.model.SVNSource;
 import com.haks.haksvn.source.model.SVNSourceDiff;
 import com.haks.haksvn.source.model.SVNSourceLog;
+import com.haks.haksvn.source.model.SVNSourceTagging;
 import com.haks.haksvn.source.model.SVNSourceTransfer;
 import com.haks.haksvn.source.util.SourceUtils;
 import com.haks.haksvn.user.model.User;
@@ -171,7 +172,7 @@ public class SVNRepositoryService {
 		SVNSource svnSourceTrg = svnRepositoryDao.retrieveOlderAndNewerAndCurSVNSourceLogList(repository, svnSource);
 		SVNSource svnSourceSrc = SVNSource.Builder.getBuilder(new SVNSource()).path(svnSourceTrg.getPath()).build();
 		SVNSourceDiff svnSourceDiff = null;
-		System.out.println( "svnSourceTrg.getOlderLogs().size() : " + svnSourceTrg.getOlderLogs().size());
+		//System.out.println( "svnSourceTrg.getOlderLogs().size() : " + svnSourceTrg.getOlderLogs().size());
 		if( svnSourceTrg.getOlderLogs().size() < 1 ){
 			svnSourceSrc.setRevision(-1);
 			svnSourceDiff = new SVNSourceDiff();
@@ -183,7 +184,7 @@ public class SVNRepositoryService {
 			svnSourceDiff.setDiff(SourceUtils.deletedContentToDiffFormat(svnRepositoryDao.retrieveFileContentByRevision(repository, svnSourceTrg).getContent()));
 		}else{
 			
-			System.out.println( "svnSourceTrg.getOlderLogs().get(0).getRevision() : " + svnSourceTrg.getOlderLogs().get(0).getRevision());
+			//System.out.println( "svnSourceTrg.getOlderLogs().get(0).getRevision() : " + svnSourceTrg.getOlderLogs().get(0).getRevision());
 			svnSourceSrc.setRevision(svnSourceTrg.getOlderLogs().get(0).getRevision());
 			svnSourceDiff = svnRepositoryDao.retrieveDiff(repository, svnSourceSrc, svnSourceTrg);
 		}
@@ -205,6 +206,11 @@ public class SVNRepositoryService {
 	
 	public void transfer(Repository repository, List<SVNSourceTransfer> svnSourceTransferList, String log){
 		svnRepositoryDao.transferSourceList(repository, svnSourceTransferList, log);
+	}
+	
+	public void tagging(Repository repository, SVNSourceTagging svnSourceTaggng ){
+		svnRepositoryDao.copyPathToPath(repository, svnSourceTaggng.getSrcPath(), svnSourceTaggng.getDestPath(), svnSourceTaggng.getLog());
+		
 	}
 	
 }
