@@ -2,11 +2,19 @@ package com.haks.haksvn.common.property.util;
 
 public class PropertyUtils {
 
-	public static String getCommitLogTemplateKey(){
-		return "commit.log.template.default";
+	public static String getCommitLogTemplateRequestKey(){
+		return "commit.log.template.request.default";
 	}
 	
-	public static String getCommitLogTemplateKey(int repositorySeq){
-		return "commit.log.template." + repositorySeq;
+	public static String getCommitLogTemplateRequestKey(int repositorySeq){
+		return "commit.log.template.request." + repositorySeq;
+	}
+	
+	public static String getCommitLogTemplateTaggingKey(){
+		return "commit.log.template.tagging.default";
+	}
+	
+	public static String getCommitLogTemplateTaggingKey(int repositorySeq){
+		return "commit.log.template.tagging." + repositorySeq;
 	}
 }

@@ -191,7 +191,7 @@ public class TransferService {
 			svnSourceTransferList.add(SVNSourceTransfer.Builder.getBuilder(new SVNSourceTransfer()).revision(transferSource.getRevision())
 					.isToDelete(isToDeleted).relativePath(relPath).build());
 		}
-		svnRepositoryService.transfer(repository, svnSourceTransferList, TransferUtils.createTransferCommitLog(transfer, generalService.retrieveCommitLogTemplate(transfer.getRepositorySeq()).getTemplate()));
+		svnRepositoryService.transfer(repository, svnSourceTransferList, TransferUtils.createTransferCommitLog(transfer, generalService.retrieveCommitLogTemplate(transfer.getRepositorySeq(), CodeUtils.getLogTemplateRequestCodeId()).getTemplate()));
 		//svnRepositoryService.transfer(repository, svnSourceTransferList, transfer.getDescription());
 		return transfer;
 	}
