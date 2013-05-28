@@ -40,6 +40,10 @@ public class SVNSourceTagging {
 			this.svnSourceTagging = svnSourceTagging;
 		}
 		
+		public static Builder getBuilder(){
+			return new Builder(new SVNSourceTagging());
+		}
+		
 		public static Builder getBuilder(SVNSourceTagging svnSourceTagging){
 			return new Builder(svnSourceTagging);
 		}

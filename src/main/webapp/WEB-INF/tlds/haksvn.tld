@@ -10,6 +10,10 @@
     <tag-class>com.haks.haksvn.common.code.tag.SelectTag</tag-class>
     <body-content>scriptless</body-content>
     <attribute>
+       <name>id</name>
+       <required>false</required>
+    </attribute>
+    <attribute>
        <name>name</name>
        <required>true</required>
     </attribute>

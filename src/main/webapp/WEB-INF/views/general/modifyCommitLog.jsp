@@ -3,13 +3,15 @@
 	$(function() {
 		retrieveCommitLogTemplate();
 		$("#sel_repository").change(retrieveCommitLogTemplate);
+		$("#sel_logType").change(retrieveCommitLogTemplate);
+		
    	});
 	
 	function retrieveCommitLogTemplate(){
 		haksvn.block.on();
 		var repositorySeq = $("#sel_repository > option:selected").val();
 		$.getJSON( "<c:url value="/configuration/general/commitLog"/>" + "/" + repositorySeq,
-				{},
+				{logType:$("#sel_logType > option:selected").val()},
 				function(data) {
 					haksvn.block.off();
 					$("#commitLogTemplate").text(data.template);
@@ -19,7 +21,7 @@
 	function retrieveDefaultCommitLogTemplate(){
 		haksvn.block.on();
 		$.getJSON( "<c:url value="/configuration/general/commitLog/default"/>",
-				{},
+				{logType:$("#sel_logType > option:selected").val()},
 				function(data) {
 					haksvn.block.off();
 					$("#commitLogTemplate").text(data.template);
@@ -31,7 +33,8 @@
 		var repositorySeq = $("#sel_repository > option:selected").val();
 		$.post("<c:url value="/configuration/general/commitLog"/>" + "/" + repositorySeq,
 			{repositorySeq:repositorySeq,
-				template:$("#commitLogTemplate").text()},
+				template:$("#commitLogTemplate").text(),
+				logType:$("#sel_logType > option:selected").val()},
 	        function(data){
 				haksvn.block.off();
 				$().Message({type:data.type,text:data.text});
@@ -48,7 +51,7 @@
 		
 			<div class="box">
 				<div class="head"><div></div></div>
-				<div class="desc">
+				<div class="desc search">
 					<p>
 						<label>Repository Name</label> 
 						<select id="sel_repository">
@@ -58,13 +61,18 @@
 								</option>
 							</c:forEach>
 						</select>
+						<label>Log Type</label>
+						<haksvn:select id="sel_logType" name="logType" codeGroup="log.template.type.code" ></haksvn:select>
 					</p>
 				</div>
 				<div class="bottom"><div></div></div>
 			</div>
 			
-			<div style="font-size:11px;padding-bottom:10px;">
-				variables: #request-id#, #request-user-id#, #request-user-name#, #approve-user-id#, #approve-user-name#, #description#
+			<div>
+				<ul>
+					<li><b>Request-variables:</b> #request-id#, #request-user-id#, #request-user-name#, #approve-user-id#, #approve-user-name#, #description#</li>
+					<li><b>Tagging-variables:</b> #tagging-id#, #tagging-user-id#, #tagging-user-name#, #description#</li>
+				</ul>
 			</div>
 			
 			<form>
