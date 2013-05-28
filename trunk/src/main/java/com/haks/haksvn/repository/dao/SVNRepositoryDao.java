@@ -22,6 +22,7 @@ import org.tmatesoft.svn.core.SVNURL;
 import org.tmatesoft.svn.core.io.ISVNEditor;
 import org.tmatesoft.svn.core.io.SVNRepository;
 import org.tmatesoft.svn.core.wc.SVNClientManager;
+import org.tmatesoft.svn.core.wc.SVNCommitClient;
 import org.tmatesoft.svn.core.wc.SVNCopyClient;
 import org.tmatesoft.svn.core.wc.SVNCopySource;
 import org.tmatesoft.svn.core.wc.SVNDiffClient;
@@ -491,13 +492,23 @@ public class SVNRepositoryDao {
         try{
         	targetRepository = SVNRepositoryUtils.getUserAuthSVNRepository(repository);
         	
-    		final SVNCopyClient copyClient = SVNClientManager.newInstance(SVNWCUtil.createDefaultOptions(false), targetRepository.getAuthenticationManager()).getCopyClient();
-    		final SVNURL location = targetRepository.getLocation();
+        	SVNClientManager svnClientManager = SVNClientManager.newInstance(SVNWCUtil.createDefaultOptions(false), targetRepository.getAuthenticationManager());
+        	
+        	final SVNURL location = targetRepository.getLocation();
     		final SVNURL srcURL = SVNURL.parseURIEncoded(location + srcPath);
     		final SVNURL destURL = SVNURL.parseURIEncoded(location + destPath);
+    		
+    		// delete existing tag path
+    		SVNNodeKind nodeKind = targetRepository.checkPath(RepositoryUtils.getRelativeRepositoryPath(repository, destPath), -1);
+    		if( nodeKind != SVNNodeKind.NONE){
+    			final SVNCommitClient commitClient = svnClientManager.getCommitClient();
+            	commitClient.doDelete(new SVNURL[]{destURL}, "<<--DELETE EXISTING TAG FOR TAGGING-->>\n" + log );
+    		}
+        	
+    		final SVNCopyClient copyClient = svnClientManager.getCopyClient();
     		final SVNCopySource source = new SVNCopySource(SVNRevision.HEAD, SVNRevision.HEAD, srcURL);
-    		copyClient.doCopy(new SVNCopySource[] { source }, destURL, false, true,false, log, null);
-            
+    		copyClient.doCopy(new SVNCopySource[] { source }, destURL, false, false, false, log, null);
+    		
         }catch (Exception e) {
         	e.printStackTrace();
         	throw new HaksvnException(e);

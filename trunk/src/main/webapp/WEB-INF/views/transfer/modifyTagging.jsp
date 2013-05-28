@@ -12,7 +12,6 @@
 	};
 	
 	
-	
 </script>
 <c:set var="repoBrowsePathLink" value="${pageContext.request.contextPath}/source/browse/${repositorySeq}"/>
 <div id="table" class="help">
@@ -20,8 +19,7 @@
 	<div class="col w10 last">
 		<div class="content">
 		
-			<form:form commandName="tagging" class="w200" id="frm_tagging" method="post" onsubmit="javascript:haksvn.block.on();">
-				<p><span class="strong">Detail</span></p>
+			<form:form commandName="tagging" class="w200" id="frm_tagging" method="post">
 				<p>
 					<form:label path="taggingSeq" class="left">Tagging Seq</form:label>
 					<form:input class="text w_20 readOnly ${tagging.taggingSeq < 1?'visible-hidden':''}" path="taggingSeq" readonly="true"/>
@@ -74,6 +72,56 @@
 								$('#frm_tagging').attr('action', '<c:url value="/transfer/tagging/list" />' + '<c:out value="/${repositorySeq}/create"/>');
 								$('#frm_tagging').submit();
 							};
+							
+							$(function() {
+								$('#frm_tagging').bind('submit',function(){
+									if( !isValidForm ) validateTagging();
+									return isValidForm;
+								});
+						   	});
+							
+							var isValidForm = false;
+							function validateTagging(){
+								haksvn.block.on();
+								$.ajax( {
+									type:'POST',
+									url:"<c:url value="/transfer/tagging/list"/>" + "/" + '<c:out value="${repositorySeq}/validate" />',
+									data:{
+										tagName:$('#frm_tagging input[name="tagName"]').val()
+									},
+									success: function(data){
+										if( !data || !data.taggingSeq ){
+											isValidForm = true;
+											return;
+										}
+										haksvn.block.off();
+										$('#div_duplicateMessage .tagName').text(data.tagName);
+										$('#div_duplicateMessage .taggingSeq').text('tagging-'+data.taggingSeq);
+										$('#div_duplicateMessage .taggingUserId').text(data.taggingUser.userName+'('+data.taggingUser.userId+')');
+										$('#div_duplicateMessage .taggingDate').text(haksvn.date.convertToComplexFullFormat(new Date(data.taggingDate)));
+										$( "#div_duplicateMessage" ).dialog({
+									      	modal: true,
+									      	width: 350,
+									      	title:'Existing Tag Name',
+									      	resizable:false,
+									      	buttons: {
+									      		"Yes": function() {
+									          		$( this ).dialog( "close" );
+									          		haksvn.block.on();
+									          		isValidForm = true;
+									          		$('#frm_tagging').submit();
+									        	},
+									        	"No": function() {
+									          		$( this ).dialog( "close" );
+									        	}
+									      	}
+									    });
+										
+									},
+									dataType:'json',
+									async:false
+								});
+							};
 						</script>
 					</c:if>
 					<c:if test="${taggingAuth.isRestorable}">
@@ -82,6 +130,38 @@
 							function restoreTagging(){
 								$('#frm_tagging').attr('action', '<c:url value="/transfer/tagging/list" />' + '<c:out value="/${repositorySeq}/restore"/>');
 								$('#frm_tagging').submit();
+							};
+							
+							$(function() {
+								$('#frm_tagging').bind('submit',function(){
+									if( !isRestoreConfirm ) confirmRestore();
+									return isRestoreConfirm;
+								});
+						   	});
+							
+							var isRestoreConfirm = false;
+							function confirmRestore(){
+								$('#div_restoreConfirmMessage .tagName').text('<c:out value="${tagging.tagName}"/>');
+								$('#div_restoreConfirmMessage .taggingSeq').text('<c:out value="tagging-${tagging.taggingSeq}"/>');
+								$('#div_restoreConfirmMessage .taggingUserId').text('<c:out value="${tagging.taggingUser.userName}(${tagging.taggingUser.userId})"/>');
+								$('#div_restoreConfirmMessage .taggingDate').text(haksvn.date.convertToComplexFullFormat(new Date(Number('<c:out value="${tagging.taggingDate}"/>'))));
+								$( "#div_restoreConfirmMessage" ).dialog({
+							      	modal: true,
+							      	width: 450,
+							      	title:'Restore Tag To Production',
+							      	resizable:false,
+							      	buttons: {
+							      		"Yes": function() {
+							          		$( this ).dialog( "close" );
+							          		isRestoreConfirm = true;
+							          		haksvn.block.on();
+							          		$('#frm_tagging').submit();
+							        	},
+							        	"No": function() {
+							          		$( this ).dialog( "close" );
+							        	}
+							      	}
+							    });
 							};
 						</script>
 					</c:if>
@@ -93,3 +173,26 @@
 	<div class="clear"></div>
 </div>
 
+<div id="div_duplicateMessage" style="display:none;">
+  	<section>
+  		<p>Click "Yes" to overwrite existing Tag</p>
+	  	<ul>
+	  		<li>Tag name: <b class="tagName"></b></li>
+	  		<li>Tagging seq: <b class="taggingSeq"></b></li>
+	  		<li>Tagging user: <b class="taggingUserId"></b></li>
+	  		<li>Tagging date: <b class="taggingDate"></b></li>
+	  	</ul>
+  	</section>
+</div>
+
+<div id="div_restoreConfirmMessage" style="display:none;">
+  	<section>
+  		<p>Click "Yes" to restore this tag to "Production" branch</p>
+	  	<ul>
+	  		<li>Tag name: <b class="tagName"></b></li>
+	  		<li>Tagging seq: <b class="taggingSeq"></b></li>
+	  		<li>Tagging user: <b class="taggingUserId"></b></li>
+	  		<li>Tagging date: <b class="taggingDate"></b></li>
+	  	</ul>
+  	</section>
+</div>

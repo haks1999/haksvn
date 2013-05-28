@@ -30,6 +30,7 @@
 			error : function(jqXHR, textStatus, errorThrown) {
 				var errorMsg = jqXHR.responseText !== '' ? jqXHR.responseText:errorThrown;
 				$().Message({type:'error', text: textStatus + " : " + jqXHR.status + " : " + errorMsg});
+				haksvn.block.off();
 		    },
 		    complete : function( jqXHR ,textStatus ){
 		    	$.unblockUI();

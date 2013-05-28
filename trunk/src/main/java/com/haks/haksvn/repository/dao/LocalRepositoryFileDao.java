@@ -54,15 +54,31 @@ public class LocalRepositoryFileDao {
 			raf = new RandomAccessFile(new File(repository.getPasswdPath()), "rw");
 			channel = raf.getChannel();
 			fileLock = channel.tryLock();
-			boolean isFirst = true;
 			for( User user : userToAddList ){
 				raf.seek(raf.length());
-				raf.write(new String( (isFirst?"":System.getProperty("line.separator")) + 
-						user.getUserId() + 
+				raf.write(new String( 
+						"\r\n" + user.getUserId() + 
 						RepositoryUtils.getPasswdFileDelimeter(repository.getPasswdType()) + 
 						RepositoryUtils.encryptPasswd(CryptoUtils.decodeAES(user.getUserPasswd()), repository.getPasswdType())).getBytes());
-				isFirst = false;
 			}
+			
+			// delete empty line
+			long position = 0;
+			String line = "";
+			raf.seek(position);
+			while( (line = raf.readLine()) != null ){
+				if( line.trim().length() < 1) {
+					byte[] remainingBytes = new byte[(int) (raf.length() - raf.getFilePointer())];
+					raf.read(remainingBytes);
+					channel.truncate(position);
+					raf.seek(position);
+					raf.write(remainingBytes);
+					raf.seek(position);
+					continue;
+				}
+				position = raf.getFilePointer();
+			}
+			
 		}catch(Exception e){
 			throw new HaksvnException(e.getMessage());
 		}finally{

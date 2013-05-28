@@ -12,7 +12,6 @@ import org.springframework.stereotype.Repository;
 
 import com.haks.haksvn.common.paging.model.Paging;
 import com.haks.haksvn.transfer.model.Tagging;
-import com.haks.haksvn.transfer.model.Transfer;
 
 @Repository
 public class TaggingDao {
@@ -48,6 +47,15 @@ public class TaggingDao {
 		Paging.Builder.getBuilder(resultPaging).limit(paging.getLimit()).start(paging.getStart());
 		
 		return resultPaging;
+	}
+	
+	public List<Tagging> retrieveTaggingListByTagName(Tagging tagging){
+		Session session = sessionFactory.getCurrentSession();
+		@SuppressWarnings("unchecked") List<Tagging> taggingList= session.createCriteria(Tagging.class)
+				.add(Restrictions.eq("repositorySeq", tagging.getRepositorySeq()))
+				.add(Restrictions.eq("tagName", tagging.getTagName()))
+				.addOrder(Order.desc("taggingDate")).list();
+		return taggingList;
 	}
 	
 	

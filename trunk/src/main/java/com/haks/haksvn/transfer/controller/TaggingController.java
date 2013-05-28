@@ -4,9 +4,6 @@ import java.util.List;
 
 import javax.validation.Valid;
 
-import org.codehaus.jackson.map.DeserializationConfig;
-import org.codehaus.jackson.map.ObjectMapper;
-import org.codehaus.jackson.type.TypeReference;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
@@ -20,14 +17,10 @@ import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.springframework.web.servlet.view.RedirectView;
 
-import com.haks.haksvn.common.security.util.ContextHolder;
 import com.haks.haksvn.repository.model.Repository;
 import com.haks.haksvn.repository.service.RepositoryService;
 import com.haks.haksvn.transfer.model.Tagging;
 import com.haks.haksvn.transfer.model.TaggingAuth;
-import com.haks.haksvn.transfer.model.Transfer;
-import com.haks.haksvn.transfer.model.TransferSource;
-import com.haks.haksvn.transfer.model.TransferStateAuth;
 import com.haks.haksvn.transfer.service.TaggingService;
 
 @Controller
@@ -87,7 +80,7 @@ public class TaggingController {
     public String forwardTaggingDetailPage(ModelMap model, 
     										@PathVariable int repositorySeq,
     										@PathVariable int taggingSeq) {
-		Tagging tagging = taggingService.retrieveTaggingDetail(Tagging.Builder.getBuilder().repositorySeq(repositorySeq).taggingSeq(taggingSeq).build());
+		Tagging tagging = taggingService.retrieveTagging(Tagging.Builder.getBuilder().repositorySeq(repositorySeq).taggingSeq(taggingSeq).build());
 		model.addAttribute("repositoryList", repositoryService.retrieveAccesibleActiveRepositoryList() );
 		model.addAttribute("repository", repositoryService.retrieveRepositoryByRepositorySeq(repositorySeq));
 		model.addAttribute("tagging", tagging);
@@ -116,6 +109,16 @@ public class TaggingController {
     		return new ModelAndView(new RedirectView("/transfer/tagging/list/" + tagging.getRepositorySeq() , true));
     		
     	}
+    }
+	
+	@RequestMapping(value={"/tagging/list/{repositorySeq}/restore"}, method=RequestMethod.POST)
+    public ModelAndView restoreTagging(ModelMap model, 
+    									@ModelAttribute("tagging") Tagging tagging, 
+    									BindingResult result,
+    									@PathVariable int repositorySeq) throws Exception{
+   		taggingService.restoreTagging(tagging);
+   		//String param = "?rUser=" + ContextHolder.getLoginUser().getUserId() + "&sCode=" + transfer.getTransferStateCode().getCodeId();
+   		return new ModelAndView(new RedirectView("/transfer/tagging/list/" + repositorySeq , true));
     }
 	
  

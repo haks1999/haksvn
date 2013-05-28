@@ -17,6 +17,8 @@ import com.haks.haksvn.user.model.User;
 
 @Entity
 @Table(name="tagging")
+//	,uniqueConstraints=
+//		@UniqueConstraint(columnNames={"tag_name", "repository_seq"}))
 public class Tagging {
 	
 	public Tagging(){
@@ -31,7 +33,7 @@ public class Tagging {
 	
 	@Column(name = "tag_name", nullable = false, length=100)
 	@NotEmpty(message="tag name : Mandantory Field")
-	private String tagName;
+	private String tagName = "";
 	
 	@Column(name = "description", nullable = false, length=2000)
 	@NotEmpty(message="description : Mandantory Field")
@@ -70,11 +72,11 @@ public class Tagging {
 
 
 	public String getTagName(){
-		return tagName;
+		return tagName.toUpperCase();
 	}
 	
 	public void setTagName(String tagName){
-		this.tagName = tagName;
+		this.tagName = tagName.toUpperCase();
 	}
 
 	public String getDescription() {
