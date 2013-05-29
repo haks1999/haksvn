@@ -9,6 +9,7 @@ import org.hibernate.criterion.Restrictions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
+import com.googlecode.ehcache.annotations.Cacheable;
 import com.haks.haksvn.common.code.model.Code;
 
 @Repository
@@ -17,6 +18,7 @@ public class CodeDao {
 	@Autowired
 	private SessionFactory sessionFactory;
 	
+	@Cacheable(cacheName="codeCache")
 	public List<Code> retrieveCodeListByCodeGroup(Code code) {
 		Session session = sessionFactory.getCurrentSession();
 		@SuppressWarnings("unchecked") List<Code> result = 
@@ -28,6 +30,7 @@ public class CodeDao {
 		return result;
 	}
 	
+	@Cacheable(cacheName="codeCache")
 	public List<Code> retrieveCodeList() {
 		Session session = sessionFactory.getCurrentSession();
 		@SuppressWarnings("unchecked") List<Code> result = 
@@ -39,6 +42,7 @@ public class CodeDao {
 		return result;
 	}
 	
+	@Cacheable(cacheName="codeCache")
 	public Code retrieveCode(String codeId){
 		Session session = sessionFactory.getCurrentSession();
 		return (Code)session.get(Code.class, codeId);

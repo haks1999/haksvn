@@ -16,6 +16,16 @@
         maxElementsInMemory="100" overflowToDisk="false" diskPersistent="false"
         timeToIdleSeconds="0" timeToLiveSeconds="300"
         memoryStoreEvictionPolicy="LRU" />
+        
+    <cache name="codeCache" eternal="false"
+        maxElementsInMemory="100" overflowToDisk="false" diskPersistent="false"
+        timeToIdleSeconds="0" timeToLiveSeconds="300"
+        memoryStoreEvictionPolicy="LRU" />
+        
+    <cache name="repositoryCache" eternal="false"
+        maxElementsInMemory="100" overflowToDisk="false" diskPersistent="false"
+        timeToIdleSeconds="0" timeToLiveSeconds="300"
+        memoryStoreEvictionPolicy="LRU" />
 	<!-- 
     <cache name="weatherCache" eternal="false"
         maxElementsInMemory="100" overflowToDisk="false" diskPersistent="false"
