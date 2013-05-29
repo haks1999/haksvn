@@ -3,6 +3,7 @@
 <%@ taglib uri="http://tiles.apache.org/tags-tiles" prefix="tiles"%>
 <script type="text/javascript">
 $(function() {
+	
 	$('#frm_login input[name$="userId"]').each(function(){ this.focus();});
 	$("#frm_login input").keypress(function(event) {
 	    if (event.which == 13) {
@@ -17,16 +18,16 @@ $(function() {
 	}
 });
 </script>
-<body>
+<body style="overflow:hidden;">
 	<tiles:insertAttribute name="header" />
-	<div id="wrapper">
+	<div id="wrapper" style="position:relative;margin-left:50%;left:-230px;width:460px;margin-top:50px;min-width:200px;">
 		<div id="minwidth">
 			<div id="holder">
 				<div id="menu">
 					<div id="left"></div>
 					<div id="right"></div>
 					<ul>
-						<li><a href="#"><span>Login</span></a></li>
+						<li><a href="#"><span>Log In</span></a></li>
 					</ul>
 					<div class="clear"></div>
 				</div>

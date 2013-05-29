@@ -26,7 +26,7 @@
 					_paging.start = data.start + taggingList.length;
 					for( var inx = 0 ; inx < taggingList.length ; inx++ ){
 						var row = $("#tbl_taggingList > tbody > .sample").clone();
-						$(row).find(".taggingSeq a").text('tag-'+taggingList[inx].taggingSeq);
+						$(row).find(".taggingSeq a").text('tagging-'+taggingList[inx].taggingSeq);
 						$(row).children(".taggingType").text(taggingList[inx].taggingTypeCode.codeName);
 						$(row).children(".tagger").text(taggingList[inx].taggingUser.userName);
 						$(row).children(".tagName").text(taggingList[inx].tagName);
@@ -88,6 +88,10 @@
 					</form>
 				</div>
 				<div class="bottom"><div></div></div>
+			</div>
+			
+			<div style="color:#666;font-size:12px;border: 1px solid #3a3;background: #ddf8cc;font-family:Lucida Grande, Verdana, Arial, sans-serif;margin-bottom:10px;padding:10px;">
+				Latest Tag from production: <font class="path"><a>tagging-11</a></font>
 			</div>
 			
 			<table id="tbl_taggingList">

@@ -9,12 +9,16 @@ import org.hibernate.criterion.Restrictions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
+import com.googlecode.ehcache.annotations.Cacheable;
+import com.googlecode.ehcache.annotations.TriggersRemove;
+
 @Repository
 public class RepositoryDao {
 
 	@Autowired
 	private SessionFactory sessionFactory;
 	
+	@Cacheable(cacheName="repositoryCache")
 	public List<com.haks.haksvn.repository.model.Repository> retrieveRepositoryList() {
 		Session session = sessionFactory.getCurrentSession();
 		
@@ -26,6 +30,7 @@ public class RepositoryDao {
 		return result;
 	}
 	
+	@Cacheable(cacheName="repositoryCache")
 	public List<com.haks.haksvn.repository.model.Repository> retrieveActiveRepositoryList() {
 		Session session = sessionFactory.getCurrentSession();
 		
@@ -38,6 +43,7 @@ public class RepositoryDao {
 		return result;
 	}
 	
+	@Cacheable(cacheName="repositoryCache")
 	public List<com.haks.haksvn.repository.model.Repository> retrieveActiveRepositoryListByUserId(String userId) {
 		Session session = sessionFactory.getCurrentSession();
 		
@@ -52,6 +58,7 @@ public class RepositoryDao {
 		return result;
 	}
 	
+	@Cacheable(cacheName="repositoryCache")
 	public com.haks.haksvn.repository.model.Repository retrieveActiveRepositoryByRepositorySeqAndUserId(int repositorySeq,String userId) {
 		Session session = sessionFactory.getCurrentSession();
 		
@@ -67,7 +74,7 @@ public class RepositoryDao {
 	}
 	
 	
-	
+	@Cacheable(cacheName="repositoryCache")
 	public com.haks.haksvn.repository.model.Repository retrieveRepositoryByRepositorySeq(com.haks.haksvn.repository.model.Repository repository) {
 		Session session = sessionFactory.getCurrentSession();
 		com.haks.haksvn.repository.model.Repository result =
@@ -75,18 +82,21 @@ public class RepositoryDao {
 		return result;
 	}
 	
+	@TriggersRemove(cacheName="repositoryCache", removeAll=true)
 	public com.haks.haksvn.repository.model.Repository addRepository(com.haks.haksvn.repository.model.Repository repository) {
 		Session session = sessionFactory.getCurrentSession();
 		session.save(repository);
 		return repository;
 	}
 	
+	@TriggersRemove(cacheName="repositoryCache", removeAll=true)
 	public com.haks.haksvn.repository.model.Repository updateRepository(com.haks.haksvn.repository.model.Repository repository) {
 		Session session = sessionFactory.getCurrentSession();
 		session.update(repository);
 		return repository;
 	}
 	
+	@TriggersRemove(cacheName="repositoryCache", removeAll=true)
 	public void deleteRepository(com.haks.haksvn.repository.model.Repository repository) {
 		Session session = sessionFactory.getCurrentSession();
 		session.delete(repository);

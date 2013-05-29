@@ -102,7 +102,7 @@
 	</error-page>
 	
 	<welcome-file-list>
-		<welcome-file>/WEB-INF/views/login.jsp</welcome-file>
+		<welcome-file>/WEB-INF/views/index.jsp</welcome-file>
 	</welcome-file-list>
 	
 </web-app>

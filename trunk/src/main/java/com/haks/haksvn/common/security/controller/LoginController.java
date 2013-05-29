@@ -26,10 +26,17 @@ public class LoginController {
     @Autowired
     UserService userService;
     
+    private static final String WELCOME_MENU_URL = "/transfer/request/list";
+    
     @RequestMapping(value="/login", method=RequestMethod.GET)
-    public String forwardLoginPage() {
-         
-		return "login";
+    public ModelAndView forwardLoginPage() {
+        
+    	if( ContextHolder.isLoggedIn() ){
+    		return new ModelAndView(new RedirectView(WELCOME_MENU_URL,true));
+    	}else{
+    		return new ModelAndView("login");
+    	}
+    	
     }
     
     @RequestMapping(value="/login", method=RequestMethod.POST)
@@ -43,7 +50,7 @@ public class LoginController {
     		User user = userService.retrieveActiveUserByUserIdAndPasswd(User.Builder.getBuilder(new User()).userId(userId).userPasswd(userPasswd).build());
     		if( user != null ){
     			ContextHolder.addLoginUser(new LoginUser(user));
-    			String redirectUrl = "/transfer/request/list";
+    			String redirectUrl = WELCOME_MENU_URL;
     			try{
     				URI uri =  new URI(referer);
     				String refererPath = uri.getPath().substring(request.getContextPath().length());
