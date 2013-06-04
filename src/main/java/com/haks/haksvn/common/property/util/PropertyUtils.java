@@ -17,4 +17,8 @@ public class PropertyUtils {
 	public static String getCommitLogTemplateTaggingKey(int repositorySeq){
 		return "commit.log.template.tagging." + repositorySeq;
 	}
+	
+	public static String getApplicationVersionKey(){
+		return "application.version";
+	}
 }
