@@ -3,8 +3,18 @@
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:beans="http://www.springframework.org/schema/beans"
 	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
 		
-	<beans:bean id="dataImportListener" class="com.haks.haksvn.common.data.listener.InitialDataImportListener">
-		<beans:property name="applicationVersion" value="0.100a" />
+	<beans:bean id="systemPrereqs"
+		class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">
+		<beans:property name="targetObject" value="#{@systemProperties}" />
+		<beans:property name="targetMethod" value="putAll" />
+		<beans:property name="arguments">
+			<beans:props>
+				<beans:prop key="application.version">0.100a</beans:prop>
+			</beans:props>
+		</beans:property>
+			
 	</beans:bean>
+
+	<beans:bean id="dataImportListener" class="com.haks.haksvn.common.system.listener.InitialDataImportListener" />
 
 </beans:beans>
