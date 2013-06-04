@@ -27,7 +27,7 @@ $(function() {
 					<div id="left"></div>
 					<div id="right"></div>
 					<ul>
-						<li><a href="#"><span>Log In</span></a></li>
+						<li><a href="#"><span>Haksvn Login</span></a></li>
 					</ul>
 					<div class="clear"></div>
 				</div>
@@ -35,6 +35,7 @@ $(function() {
 					<div class="body">
 						<div id="_global_message"></div>
 						<form id="frm_login" method="post" class="w100" action="<c:url value="/login"/>" style="margin-top:20px;padding-bottom:20px;">
+							<p style="text-align:center;padding-bottom:10px;">Simple Subversion Repository Management</p>
 							<p>
 								<label class="left">User ID</label>
 								<input type="text" class="text w_20" name="userId"/>
@@ -45,7 +46,7 @@ $(function() {
 							</p>
 							<p>
 								<label class="left"></label>
-								<a class="button green mt ml form_submit"><span>Login</span></a>
+								<a class="button green mt form_submit"><small class="icon single_user"></small><span>LOG IN</span></a>
 							</p>
 						</form>
 					</div>

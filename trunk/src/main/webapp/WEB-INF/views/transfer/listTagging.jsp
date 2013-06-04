@@ -90,8 +90,8 @@
 				<div class="bottom"><div></div></div>
 			</div>
 			
-			<div style="color:#666;font-size:12px;border: 1px solid #3a3;background: #ddf8cc;font-family:Lucida Grande, Verdana, Arial, sans-serif;margin-bottom:10px;padding:10px;">
-				Latest Tag from production: <font class="path"><a>tagging-11</a></font>
+			<div class="info">
+				Latest Tag synchronized with production branch: <font class="path"><a>tagging-11</a></font>
 			</div>
 			
 			<table id="tbl_taggingList">

@@ -10,6 +10,7 @@ import org.hibernate.criterion.Restrictions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
+import com.haks.haksvn.common.code.util.CodeUtils;
 import com.haks.haksvn.common.paging.model.Paging;
 import com.haks.haksvn.transfer.model.Tagging;
 
@@ -56,6 +57,17 @@ public class TaggingDao {
 				.add(Restrictions.eq("tagName", tagging.getTagName()))
 				.addOrder(Order.desc("taggingDate")).list();
 		return taggingList;
+	}
+	
+	public Tagging retrieveLatestSyncTagging(Tagging tagging){
+		Session session = sessionFactory.getCurrentSession();
+		@SuppressWarnings("unchecked") List<Tagging> taggingList= session.createCriteria(Tagging.class)
+				.createAlias("taggingTypeCode", "ttcode")
+				.add(Restrictions.eq("repositorySeq", tagging.getRepositorySeq()))
+				.add(Restrictions.eq("ttcode.codeId", CodeUtils.getTaggingCreateCodeId()))
+				.addOrder(Order.desc("taggingDate")).list();
+		if( taggingList.size() < 1 ) return null;
+		return taggingList.get(0);
 	}
 	
 	
