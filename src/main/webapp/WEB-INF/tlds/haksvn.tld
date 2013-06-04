@@ -38,4 +38,15 @@
        <type>boolean</type>
     </attribute>
   </tag>
+  
+  <tag>
+    <name>systemProperty</name>
+    <tag-class>com.haks.haksvn.common.system.tag.SystemPropertyTag</tag-class>
+    <body-content>scriptless</body-content>
+    <attribute>
+       <name>key</name>
+       <required>true</required>
+    </attribute>
+  </tag>
+  
 </taglib>
