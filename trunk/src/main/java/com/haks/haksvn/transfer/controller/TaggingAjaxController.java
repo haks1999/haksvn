@@ -57,6 +57,14 @@ public class TaggingAjaxController {
     	}
     }
     
+    @RequestMapping(value="/tagging/list/{repositorySeq}/latest", method=RequestMethod.POST )
+    public @ResponseBody Tagging retrieveLatestSyncTagging(	
+													@PathVariable int repositorySeq) throws HaksvnException {
+    	
+    	Tagging tagging = Tagging.Builder.getBuilder().repositorySeq(repositorySeq).build();
+    	return taggingService.retrieveLatestSyncTagging(tagging);
+    }
+    
     
     
     @ExceptionHandler(Exception.class)

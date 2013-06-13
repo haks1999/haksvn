@@ -94,6 +94,10 @@ public class TaggingService {
 		return taggingDao.retrieveTaggingListByTagName(tagging);
 	}
 	
+	public Tagging retrieveLatestSyncTagging(Tagging tagging){
+		return taggingDao.retrieveLatestSyncTagging(tagging);
+	}
+	
 	@Transactional(readOnly=true)
 	private Repository checkRepositoryAccessRight(int repositorySeq){
 		Repository repository = repositoryService.retrieveAccesibleActiveRepositoryByRepositorySeq(repositorySeq);

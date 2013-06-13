@@ -1,10 +1,14 @@
 <%@ include file="/WEB-INF/views/common/include/taglib.jspf"%>
+<c:set var="repoBrowsePathLink" value="${pageContext.request.contextPath}/source/browse/${repositorySeq}"/>
 <script type="text/javascript">
 	$(function() {
 		$("#sel_repository option[value='<c:out value="${repositorySeq}" />']").attr('selected', 'selected');
 		$("#frm_tagging select[name='tUser'] option[value='<c:out value="${taggingUserId}" />']").attr('selected', 'selected');
 		$("#frm_tagging select[name='tCode'] option[value='<c:out value="${taggingTypeCodeId}" />']").attr('selected', 'selected');
-		if( '<c:out value="${repositorySeq}" />'.length > 0 ) retrieveTaggingList();
+		if( '<c:out value="${repositorySeq}" />'.length > 0 ){
+			retrieveTaggingList();
+			retrieveLatestSyncTagging();
+		}
 		
 		$("#sel_repository").change(changeRepository);
 	});
@@ -14,6 +18,17 @@
 		$("#frm_tagging").submit();
 	};
 	
+	function retrieveLatestSyncTagging(){
+		$.post( "<c:url value="/transfer/tagging/list"/>" + "/" + '<c:out value="${repositorySeq}/latest" />',
+				{},
+				function(data) {
+					if( !data ) return;
+					var taggingPath = data.taggingTypeCode.codeId == 'tagging.type.code.create' ?data.destPath:data.srcPath;
+					$("#div_syncTaggingInfo font a").text(taggingPath)
+						.attr("href","<c:out value="${repoBrowsePathLink}" />" + taggingPath);
+				},'json');
+	}
+	
 	function retrieveTaggingList(){
 		$("#tbl_taggingList tfoot span:not(.loading)").removeClass('display-none').addClass('display-none');
 		$("#tbl_taggingList tfoot span.loader").removeClass('display-none');
@@ -22,7 +37,11 @@
 		$.post( "<c:url value="/transfer/tagging/list"/>" + "/" + '<c:out value="${repositorySeq}" />',
 				_paging,
 				function(data) {
+					
 					var taggingList = data.model;
+					if( _paging.start < 1 && taggingList.length > 0 ){
+						$("#div_syncTaggingInfo font a").text(taggingList[0].taggingTypeCode.codeId == 'tagging.type.code.create' ?taggingList[0].destPath:taggingList[0].srcPath);
+					}
 					_paging.start = data.start + taggingList.length;
 					for( var inx = 0 ; inx < taggingList.length ; inx++ ){
 						var row = $("#tbl_taggingList > tbody > .sample").clone();
@@ -46,16 +65,12 @@
 					}else{
 						$("#tbl_taggingList tfoot span:not(.showmore)").removeClass('display-none').addClass('display-none');
 						$("#tbl_taggingList tfoot span.showmore").removeClass('display-none');
-					}
-					
-		},'json');
+					};
+			},'json');
 	};
 	
 	var _paging = {start:0,limit:15};
 </script>
-
-
-
 
 <div id="table" class="help">
 	<div class="col w10 last">
@@ -90,8 +105,8 @@
 				<div class="bottom"><div></div></div>
 			</div>
 			
-			<div class="info">
-				Latest Tag synchronized with production branch: <font class="path"><a>tagging-11</a></font>
+			<div class="info-green" id="div_syncTaggingInfo">
+				Latest Tag synchronized with production branch: <font class="path"><a></a></font>
 			</div>
 			
 			<table id="tbl_taggingList">
