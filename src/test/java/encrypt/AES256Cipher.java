@@ -12,6 +12,8 @@ import java.security.NoSuchAlgorithmException;
 import java.security.InvalidAlgorithmParameterException;
 import org.apache.commons.codec.binary.Base64;
 
+import com.haks.haksvn.common.crypto.util.CryptoUtils;
+
 public class AES256Cipher {
 
 	private static volatile AES256Cipher INSTANCE;
@@ -74,6 +76,9 @@ public class AES256Cipher {
 	public static void main(String[] args) throws Exception{
 		AES256Cipher a256 = AES256Cipher.getInstance();
 		System.out.println( "admin : " + a256.AES_Encode("admin") );
+		System.out.println( "admin : " + CryptoUtils.encodeAES("admin") );
+		System.out.println( "admin : " + a256.AES_Decode("CinA5MJWDvBTvOJSvluE4g==") );
+		
 		System.out.println( "haks : " + a256.AES_Encode("haks") );
 		System.out.println( "ggae : " + a256.AES_Encode("ggae") );
 		System.out.println( "1234 : " + a256.AES_Encode("1234") );
@@ -82,5 +87,7 @@ public class AES256Cipher {
 		System.out.println( "user03 : " + a256.AES_Encode("user03") );
 		System.out.println( "aW9fj8bm9Rt5 : " + a256.AES_Encode("aW9fj8bm9Rt5") );
 		System.out.println( "haks1999 : " + a256.AES_Encode("haks1999") );
+		System.out.println( "admin : " + CryptoUtils.decodeAES("ty0VNz1v8qkwfc8Cpz1NXA==") );
+		
 	}
 }

@@ -73,8 +73,8 @@ public class SVNRepositoryDao {
 				try {
 					editor.abortEdit();
 				} catch (Exception e) {
-					e.printStackTrace();
-					throw new HaksvnException(e.getMessage());
+					//e.printStackTrace();
+					//throw new HaksvnException(e.getMessage());
 				}
 			}
 		}

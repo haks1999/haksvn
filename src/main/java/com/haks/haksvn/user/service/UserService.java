@@ -90,6 +90,9 @@ public class UserService {
 		if( changedAuth || changedPasswd || changedToInActive ){
 			//List<Repository> repositoryList = repositoryService.retrieveActiveRepositoryListByUserId(currentUser.getUserId());
 			List<Repository> repositoryList = currentUser.getRepositoryList();
+			for( Repository repository : repositoryList ){
+				repository.setAuthUserPasswdEncrypted(true);
+			}
 			repositoryService.saveRepositoryList(repositoryList);
 			if( changedToInActive ){
 				for( Repository repository : repositoryList ){

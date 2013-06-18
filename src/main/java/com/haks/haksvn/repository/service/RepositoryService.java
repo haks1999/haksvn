@@ -101,9 +101,10 @@ public class RepositoryService {
 		//repositoryServerDao.updateRepository(repository.getRepositoryServer());
 		Repository repositoryInHibernate = repositoryDao.retrieveRepositoryByRepositorySeq(repository);
 		// exclude userList
+		String authUserPasswd = repository.getAuthUserPasswdEncrypted()? repository.getAuthUserPasswd():CryptoUtils.encodeAES(repository.getAuthUserPasswd());
 		Repository.Builder.getBuilder(repositoryInHibernate)
 			.active(repository.getActive())
-			.authUserId(repository.getAuthUserId()).authUserPasswd(CryptoUtils.encodeAES(repository.getAuthUserPasswd()))
+			.authUserId(repository.getAuthUserId()).authUserPasswd(authUserPasswd)
 			.repositoryLocation(repository.getRepositoryLocation()).repositoryName(repository.getRepositoryName()).svnName(repository.getSvnName())
 			.tagsPath(repository.getTagsPath()).trunkPath(repository.getTrunkPath()).branchesPath(repository.getBranchesPath()).syncUser(repository.getSyncUser())
 			.connectType(repository.getConnectType()).serverIp(repository.getServerIp())

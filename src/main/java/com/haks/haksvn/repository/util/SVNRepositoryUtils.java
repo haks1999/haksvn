@@ -51,7 +51,7 @@ public class SVNRepositoryUtils {
 	// repository.authUserPasswd 암호화되기 전 상태
 	public static SVNRepository getSVNRepositoryForTestConnection(Repository repository) throws Exception{
 		SVNRepository targetRepository = SVNRepositoryFactory.create(SVNURL.parseURIDecoded(repository.getRepositoryLocation()));
-		ISVNAuthenticationManager authManager = SVNWCUtil.createDefaultAuthenticationManager(repository.getAuthUserId(), repository.getAuthUserPasswd());
+		ISVNAuthenticationManager authManager = SVNWCUtil.createDefaultAuthenticationManager(repository.getAuthUserId(), CryptoUtils.decodeAES(repository.getAuthUserPasswd()));
 		targetRepository.setAuthenticationManager(authManager);
 		return targetRepository;
 	}

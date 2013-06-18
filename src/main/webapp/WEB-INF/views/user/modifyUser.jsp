@@ -1,7 +1,6 @@
 <%@ include file="/WEB-INF/views/common/include/taglib.jspf"%>
 <script type="text/javascript">
 	$(function() {
-		//$('#repositoryForm').validate();
 		var pathname = window.location.pathname;
 		actionUrl = pathname.replace('/save','') + '/save';
 		$('#frm_user').attr('action', actionUrl);
@@ -10,6 +9,44 @@
 	function deleteUser(){
 		$('#frm_user').attr('action', $('#frm_user').attr('action').replace('save','delete'));
 		frm_user.submit();
+	};
+	
+	function setFormValidation(){
+		validTaggingForm = $("#frm_user").validate({
+			rules: {
+				userId:{
+					required: true,
+					minlength: 4,
+					maxlength: 20
+				},
+				userName: {
+					required: true,
+					minlength: 4,
+					maxlength: 50
+				},
+				email: {
+					required: true,
+					email: true
+				},
+				password: {
+					required: true,
+					minlength: 4,
+					maxlength: 50
+				}
+			},
+			messages: {
+				tagName: {
+					required: "<spring:message code="validation.required" arguments="Tag Name" />",
+					minlength: "<spring:message code="validation.minlength" arguments="6" />",
+					maxlength: "<spring:message code="validation.maxlength" arguments="30" />"
+				},
+				description: {
+					required: "<spring:message code="validation.required" arguments="Description" />",
+					minlength: "<spring:message code="validation.minlength" arguments="10" />",
+					maxlength: "<spring:message code="validation.maxlength" arguments="500" />"
+				}
+			}
+		});
 	};
 	
 </script>

@@ -13,6 +13,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 import javax.persistence.UniqueConstraint;
 
 import org.hibernate.annotations.DynamicUpdate;
@@ -108,6 +109,9 @@ public class Repository{
 			inverseJoinColumns = { @JoinColumn(name = "user_seq",nullable = false, updatable = false) },
 			uniqueConstraints = { @UniqueConstraint(columnNames = {"repository_seq","user_seq"})})
 	private List<User> userList = new ArrayList<User>();
+	
+	@Transient
+	private boolean authUserPasswdEncrypted = false;
 	
 	/*
 	@OneToOne(targetEntity = RepositoryServer.class,fetch=FetchType.EAGER)
@@ -317,6 +321,14 @@ public class Repository{
 	
 	public void setAuthzTemplate(String authzTemplate){
 		this.authzTemplate = authzTemplate;
+	}
+	
+	public boolean getAuthUserPasswdEncrypted(){
+		return authUserPasswdEncrypted;
+	}
+	
+	public void setAuthUserPasswdEncrypted(boolean authUserPasswdEncrypted){
+		this.authUserPasswdEncrypted = authUserPasswdEncrypted;
 	}
 	
 	public static class Builder{
