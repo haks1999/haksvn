@@ -4,15 +4,11 @@
 		var pathname = window.location.pathname;
 		actionUrl = pathname.replace('/save','') + '/save';
 		$('#frm_user').attr('action', actionUrl);
+		setFormValidation();
    	});
 	
-	function deleteUser(){
-		$('#frm_user').attr('action', $('#frm_user').attr('action').replace('save','delete'));
-		frm_user.submit();
-	};
-	
 	function setFormValidation(){
-		validTaggingForm = $("#frm_user").validate({
+		$("#frm_user").validate({
 			rules: {
 				userId:{
 					required: true,
@@ -28,23 +24,32 @@
 					required: true,
 					email: true
 				},
-				password: {
+				userPasswd: {
 					required: true,
 					minlength: 4,
 					maxlength: 50
 				}
 			},
 			messages: {
-				tagName: {
-					required: "<spring:message code="validation.required" arguments="Tag Name" />",
+				userId: {
+					required: "<spring:message code="validation.required" arguments="User ID" />",
 					minlength: "<spring:message code="validation.minlength" arguments="6" />",
 					maxlength: "<spring:message code="validation.maxlength" arguments="30" />"
 				},
-				description: {
-					required: "<spring:message code="validation.required" arguments="Description" />",
-					minlength: "<spring:message code="validation.minlength" arguments="10" />",
-					maxlength: "<spring:message code="validation.maxlength" arguments="500" />"
-				}
+				userName: {
+					required: "<spring:message code="validation.required" arguments="User Name" />",
+					minlength: "<spring:message code="validation.minlength" arguments="4" />",
+					maxlength: "<spring:message code="validation.maxlength" arguments="50" />"
+				},
+				email: {
+					required: "<spring:message code="validation.required" arguments="Email" />",
+					email: "<spring:message code="validation.email" />",
+				},
+				userPasswd: {
+					required: "<spring:message code="validation.required" arguments="Password" />",
+					minlength: "<spring:message code="validation.minlength" arguments="4" />",
+					maxlength: "<spring:message code="validation.maxlength" arguments="50" />"
+				},
 			}
 		});
 	};
@@ -68,21 +73,25 @@
 						</c:otherwise>
 					</c:choose>
 					<form:errors path="userId" />
+					<span class="status"></span>
 				</p>
 				<p>
 					<form:label path="userName" class="left">User Name</form:label>
 					<form:input class="text w_20" path="userName" />
 					<form:errors path="userName" />
+					<span class="status"></span>
 				</p>
 				<p>
 					<form:label path="email" class="left">Email</form:label>
 					<form:input class="text w_20" path="email"/>
 					<form:errors path="email" />
+					<span class="status"></span>
 				</p>
 				<p>
 					<form:label path="userPasswd" class="left">Password</form:label>
-					<form:input class="text w_10" path="userPasswd"/>
+					<form:password class="text w_10" path="userPasswd"/>
 					<form:errors path="userPasswd" />
+					<span class="status"></span>
 				</p>
 				<p>
 					<form:label path="authType" class="left">User Authority</form:label>
@@ -97,6 +106,16 @@
 					<a class="button green mt ml form_submit"><small class="icon check"></small><span>Confirm</span></a>
 					<c:if test="${not isNewUser}">
 						<a class="button red mt ml" onclick="deleteUser()"><small class="icon cross"></small><span>Delete</span></a>
+						<script type="text/javascript">
+							$(function() {
+								$("#frm_user input[name=userPasswd]").rules( "remove", "required" );
+							});
+							function deleteUser(){
+								$('#frm_user').attr('action', $('#frm_user').attr('action').replace('save','delete'));
+								frm_user.submit();
+							};
+							
+						</script>
 					</c:if>
 				</p>
 			</form:form>
