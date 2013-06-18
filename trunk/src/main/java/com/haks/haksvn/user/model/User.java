@@ -19,6 +19,8 @@ import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
 import org.hibernate.annotations.FilterDef;
 import org.hibernate.annotations.ParamDef;
+import org.hibernate.validator.constraints.Email;
+import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.NotEmpty;
 
 import com.haks.haksvn.common.code.model.Code;
@@ -38,17 +40,21 @@ public class User implements Serializable{
     private int userSeq;
 	
 	@Column(name = "user_id",unique = true, nullable = false)
-	@NotEmpty(message="user id : Mandantory Field")
+	@NotEmpty
+	@Length(min=4, max=20)
 	private String userId;
 	
 	@Column(name = "user_name",nullable = false)
-	@NotEmpty(message="user name : Mandantory Field")
+	@NotEmpty
+	@Length(min=4, max=50)
 	private String userName;
 	
 	@Column(name = "active",nullable = true)
 	private String active;
 	
 	@Column(name = "email",nullable = false)
+	@NotEmpty
+	@Email
 	private String email;
 	
 	@Column(name = "user_passwd",nullable = false)

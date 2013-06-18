@@ -40,6 +40,14 @@
 		    	$('#loader-main').show();
 		    }
 		});
+		
+		$.validator.setDefaults({
+			errorPlacement: function(error, element) {
+				error.appendTo( element.parent().find(".status") );
+			},
+			errorClass: 'invalid'
+		});
+		
 		$(function() {
 			// IE -- http://stackoverflow.com/questions/7109120/add-blank-option-to-top-of-select-and-make-it-the-selected-option-in-ie
 			$('select.all').prepend("<option value=''>All</option>").val('');

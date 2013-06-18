@@ -10,6 +10,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.NotEmpty;
 
 import com.haks.haksvn.common.code.model.Code;
@@ -31,16 +32,18 @@ public class Tagging {
 	@Column(name = "tagging_seq",unique = true, nullable = false)
 	private int taggingSeq;
 	
-	@Column(name = "tag_name", nullable = false, length=100)
-	@NotEmpty(message="tag name : Mandantory Field")
+	@Column(name = "tag_name", nullable = false)
+	@NotEmpty
+	@Length(min=6, max=30)
 	private String tagName = "";
 	
-	@Column(name = "description", nullable = false, length=2000)
-	@NotEmpty(message="description : Mandantory Field")
+	@Column(name = "description", nullable = false, length=500)
+	@NotEmpty
+	@Length(min=10, max=500)
 	private String description;
 	
 	@ManyToOne(fetch = FetchType.EAGER)
-	@JoinColumn(name="tagging_user_id", referencedColumnName="user_id")
+	@JoinColumn(name="tagging_user_id", nullable = false, referencedColumnName="user_id")
 	private User taggingUser;
 	
 	@Column(name = "tagging_date", nullable = false)

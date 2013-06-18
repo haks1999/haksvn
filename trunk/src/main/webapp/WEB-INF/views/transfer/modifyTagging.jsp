@@ -4,12 +4,43 @@
 	$(function() {
 		$('#frm_tagging').attr('action', '<c:url value="/transfer/tagging/list/${repositorySeq}/save" />');
 		transformDateField();
+		setFormValidation();
    	});
 	
 	function transformDateField(){
 		var taggingDate = Number('<c:out value="${tagging.taggingDate}"/>');
 		if( taggingDate > 0 ) $('#frm_tagging input.taggingDate').val(haksvn.date.convertToComplexFullFormat(new Date(taggingDate)));
 	};
+	
+	var validTaggingForm;
+	function setFormValidation(){
+		validTaggingForm = $("#frm_tagging").validate({
+			rules: {
+				tagName:{
+					required: true,
+					minlength: 6,
+					maxlength: 30
+				},
+				description: {
+					required: true,
+					minlength: 10,
+					maxlength: 500
+				}
+			},
+			messages: {
+				tagName: {
+					required: "<spring:message code="validation.required" arguments="Tag Name" />",
+					minlength: "<spring:message code="validation.minlength" arguments="6" />",
+					maxlength: "<spring:message code="validation.maxlength" arguments="30" />"
+				},
+				description: {
+					required: "<spring:message code="validation.required" arguments="Description" />",
+					minlength: "<spring:message code="validation.minlength" arguments="10" />",
+					maxlength: "<spring:message code="validation.maxlength" arguments="500" />"
+				}
+			}
+		});
+	}
 	
 	
 </script>
@@ -18,7 +49,6 @@
 	<h1>Tagging Information</h1>
 	<div class="col w10 last">
 		<div class="content">
-		
 			<form:form commandName="tagging" class="w200" id="frm_tagging" method="post">
 				<p>
 					<form:label path="taggingSeq" class="left">Tagging Seq</form:label>
@@ -46,11 +76,13 @@
 					<form:label path="tagName" class="left">Tag Name</form:label>
 					<form:input class="text w_20" disabled="${not taggingAuth.isCreatable}" path="tagName"/>
 					<form:errors path="tagName" />
+					<span class="status"></span>
 				</p>
 				<p>
 					<form:label path="description" class="left">Description</form:label>
 					<form:textarea class="text" disabled="${not taggingAuth.isCreatable}" cols="50" rows="5" path="description"/>
 					<form:errors path="description" />
+					<span class="status"></span>
 				</p>
 				<p>
 					<form:hidden path="taggingUser.userId" />
@@ -73,8 +105,9 @@
 								$('#frm_tagging').submit();
 							};
 							
-							$(function() {
+							$(function() {								 
 								$('#frm_tagging').bind('submit',function(){
+									if( !validTaggingForm.valid() ) return;
 									if( !isValidForm ) validateTagging();
 									return isValidForm;
 								});
