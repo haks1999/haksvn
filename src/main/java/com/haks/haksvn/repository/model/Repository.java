@@ -15,10 +15,12 @@ import javax.persistence.ManyToMany;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 import javax.persistence.UniqueConstraint;
+import javax.validation.constraints.Pattern;
 
 import org.hibernate.annotations.DynamicUpdate;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
+import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.NotEmpty;
 
 import com.haks.haksvn.user.model.User;
@@ -35,11 +37,12 @@ public class Repository{
     private int repositorySeq;
 	
 	@Column(name = "repository_location",nullable = false)
-	@NotEmpty(message="repositoy location : Mandantory Field")
+	@NotEmpty
 	private String repositoryLocation;
 	
 	@Column(name = "repository_name",nullable = false)
-	@NotEmpty(message="repositoy name : Mandantory Field")
+	@NotEmpty
+	@Length(min=5, max=50)
 	private String repositoryName;
 	
 	@Column(name = "active",nullable = true)
@@ -48,28 +51,30 @@ public class Repository{
 	@Column(name = "svn_root")
 	private String svnRoot;
 	
-	//@Column(name = "svn_name",nullable = true)
 	@Column(name = "svn_name")
 	private String svnName;
 	
 	@Column(name = "trunk_path",nullable = false)
-	@NotEmpty(message="trunk path : Mandantory Field")
+	@NotEmpty
+	@Pattern(regexp="^/.+[^/]$")
 	private String trunkPath;
 	
 	@Column(name = "tags_path",nullable = false)
-	@NotEmpty(message="tags path : Mandantory Field")
+	@NotEmpty
+	@Pattern(regexp="^/.+[^/]$")
 	private String tagsPath;
 	
 	@Column(name = "branches_path",nullable = false)
-	@NotEmpty(message="branches path : Mandantory Field")
+	@NotEmpty
+	@Pattern(regexp="^/.+[^/]$")
 	private String branchesPath;
 	
 	@Column(name = "auth_user_id",nullable = false)
-	@NotEmpty(message="user id : Mandantory Field")
+	@NotEmpty
 	private String authUserId;
 	
 	@Column(name = "auth_user_passwd",nullable = false)
-	@NotEmpty(message="user password : Mandantory Field")
+	@NotEmpty
 	private String authUserPasswd;
 	
 	@Column(name = "sync_user",nullable = false)

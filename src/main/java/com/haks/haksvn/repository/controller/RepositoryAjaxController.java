@@ -31,7 +31,7 @@ public class RepositoryAjaxController {
     private SVNRepositoryService svnRepositoryService;
     
     @RequestMapping(value="/list/testConnection", method=RequestMethod.POST, produces="application/json")
-    public @ResponseBody DefaultMessage testConnection(@ModelAttribute("repository") Repository repository) throws HaksvnException {
+    public @ResponseBody ResultMessage testConnection(@ModelAttribute("repository") Repository repository) throws HaksvnException {
     	ResultMessage message = new ResultMessage("connection test success");
 		svnRepositoryService.testInitalConnection(repository);
 		return message;

@@ -1,24 +1,47 @@
 <%@ include file="/WEB-INF/views/common/include/taglib.jspf"%>
 <script type="text/javascript">
 	$(function() {
-		//$('#repositoryForm').validate();
 		var pathname = window.location.pathname;
 		actionUrl = pathname.replace('/save','') + '/save';
 		$('#frm_repository').attr('action', actionUrl);
+		setFormValidation();
+		
+		$('#frm_repository').bind('submit',function(){
+			if( !validRepositoryForm.valid() ) return;
+			if( !isValidForm ) confirmationConnection();
+			return isValidForm;
+		});
    	});
 	
 	function testConnection(){
-		ajaxProcessing();
+		if( !validRepositoryForm.form() ) return;
+		haksvn.block.on();
 		var queryString = $('#frm_repository').serialize();
 		$.post("<c:url value="/configuration/repositories/list/testConnection"/>",
 			queryString,
             function(data){
+				haksvn.block.off();
 				$().Message({type:data.type,text:data.text});
-				
         },"json");
-		
-		//$().Message({type:'error',time:10000,text:"Some text",target:"#div_repositoryMessage",click:false}); 
-	}
+	};
+	
+	var isValidForm = false;
+	function confirmationConnection(){
+		haksvn.block.on();
+		var queryString = $('#frm_repository').serialize();
+		$.post("<c:url value="/configuration/repositories/list/testConnection"/>",
+			queryString,
+            function(data){
+				haksvn.block.off();
+				isValidForm = data.success;
+				if(isValidForm){
+					haksvn.block.on();
+					$('#frm_repository').submit();
+				}else{
+					$().Message({type:data.type,text:data.text});
+				}
+        },"json");
+	};
 	
 	function selectSynchrozingUser( selection ){
 		if(selection){
@@ -35,8 +58,12 @@
 	function changeServerConnectType( connectType ){
 		if( connectType == 'server.connect.type.code.local' ){
 			$('#div_serverRemoteSettings').slideUp();
+			$("#frm_user input[name=authzPath]").rules("remove");
+			$("#frm_user input[name=passwdPath]").rules("remove");
 		}else{
 			$('#div_serverRemoteSettings').slideDown();
+			$("#frm_user input[name=authzPath]").rules("add", {required:true});
+			$("#frm_user input[name=passwdPath]").rules("add", {required:true});
 		}
 	};
 	
@@ -66,6 +93,46 @@
 		frm_repository.submit();
 	};
 	
+	var validRepositoryForm;
+	function setFormValidation(){
+		validRepositoryForm = $("#frm_repository").validate({
+			rules: {
+				repositoryName:{
+					required: true,
+					minlength: 5,
+					maxlength: 50
+				},
+				repositoryLocation: {
+					required: true
+				},
+				authUserId: {
+					required: true
+				},
+				authUserPasswd: {
+					required: true
+				},
+				trunkPath:{
+					required: true,
+					svnpath: true
+				},
+				tagsPath:{
+					required: true,
+					svnpath: true
+				},
+				branchesPath:{
+					required: true,
+					svnpath: true
+				},
+				authzPath:{
+					required: true
+				},
+				passwdPath:{
+					required: true
+				}
+			}
+		});
+	};
+	
 </script>
 <div id="table" class="help">
 	<h1>Repository Information</h1>
@@ -80,39 +147,43 @@
 					<form:label path="repositoryName" class="left">Repository Name</form:label>
 					<form:input class="text w_20" path="repositoryName"/>
 					<form:errors path="repositoryName" />
+					<span class="status"></span>
 				</p>
 				<p>
 					<form:label path="repositoryLocation" class="left">Repository Location</form:label>
 					<form:input class="text w_30" path="repositoryLocation" />
 					<form:errors path="repositoryLocation" cssClass="field_error"/>
+					<span class="status"></span>
 				</p>
 				<p>
 					<form:label path="authUserId" class="left">Repository User ID</form:label>
 					<form:input class="text w_10" path="authUserId"/>
 					<form:errors path="authUserId" />
+					<span class="status"></span>
 				</p>
 				<p>
 					<form:label path="authUserPasswd" class="left">Repository User Password</form:label>
 					<form:password class="text w_10" path="authUserPasswd"/>
 					<form:errors path="authUserPasswd" />
+					<span class="status"></span>
 				</p>
 				<p>
 					<form:label path="trunkPath" class="left">Trunk Path</form:label>
-					<form:input class="text w_20" path="trunkPath"/>
-					(default: /trunk)
+					<form:input class="text w_20" path="trunkPath" value="${isNewRepository? '/trunk':repository.trunkPath}"/>
 					<form:errors path="trunkPath" />
+					<span class="status"></span>
 				</p>
 				<p>
 					<form:label path="tagsPath" class="left">Tags Path</form:label>
-					<form:input class="text w_20" path="tagsPath"/>
-					(default: /tags)
+					<form:input class="text w_20" path="tagsPath" value="${isNewRepository? '/tags':repository.trunkPath}"/>
 					<form:errors path="tagsPath" />
+					<span class="status"></span>
 				</p>
 				<p>
-					<form:label path="branchesPath" class="left">Branches Path</form:label>
-					<form:input class="text w_20" path="branchesPath"/>
-					(default: /branches/production)
+					<form:label path="branchesPath" class="left">Production Branch Path</form:label>
+					<form:input class="text w_20" path="branchesPath" value="${isNewRepository? '/branches/production':repository.branchesPath}"/>
 					<form:errors path="branchesPath" />
+					<span class="status"></span>
 				</p>
 				<p>
 					<form:label path="active" class="left">Active</form:label>
@@ -148,6 +219,7 @@
 					<p>
 						<form:label path="authzPath" class="left">authz file path</form:label>
 						<form:input path="authzPath" class="text w_30" />
+						<span class="status"></span>
 					</p>
 					<p>
 						<form:label path="authzTemplate" class="left">authz file template</form:label>
@@ -157,6 +229,7 @@
 					<p>
 						<form:label path="passwdPath" class="left">passwd file path</form:label>
 						<form:input path="passwdPath" class="text w_30" />
+						<span class="status"></span>
 					</p>
 					<p>
 						<form:label path="passwdType" class="left">SVN password type</form:label>

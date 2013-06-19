@@ -26,18 +26,6 @@
 					minlength: 10,
 					maxlength: 500
 				}
-			},
-			messages: {
-				tagName: {
-					required: "<spring:message code="validation.required" arguments="Tag Name" />",
-					minlength: "<spring:message code="validation.minlength" arguments="6" />",
-					maxlength: "<spring:message code="validation.maxlength" arguments="30" />"
-				},
-				description: {
-					required: "<spring:message code="validation.required" arguments="Description" />",
-					minlength: "<spring:message code="validation.minlength" arguments="10" />",
-					maxlength: "<spring:message code="validation.maxlength" arguments="500" />"
-				}
 			}
 		});
 	}
