@@ -15,6 +15,7 @@ import javax.persistence.Table;
 import javax.persistence.Transient;
 
 import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.NotEmpty;
 
 import com.haks.haksvn.common.code.model.Code;
@@ -43,8 +44,9 @@ public class Transfer {
 	@JoinColumn(name="transfer_state", referencedColumnName="code_id")
 	private Code transferStateCode;
 	
-	@Column(name = "description", nullable = false, length=2000)
-	@NotEmpty(message="description : Mandantory Field")
+	@Column(name = "description", nullable = false)
+	@NotEmpty
+	@Length(min=10, max=2000)
 	private String description;
 	
 	@ManyToOne(fetch = FetchType.EAGER)
