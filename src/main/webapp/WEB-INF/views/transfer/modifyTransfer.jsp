@@ -68,7 +68,23 @@ ul.Delete li.revision{display:none;}
 		enableSearchSourceAutocomplete();
 		if( Number('<c:out value="${transfer.transferSeq}"/>') > 0) initTransferSourceList();
 		$('#btn_searchSource').button().click(searchSource);
+		setFormValidation();
    	});
+	
+	function setFormValidation(){
+		$("#frm_transfer").validate({
+			rules: {
+				description: {
+					required: true,
+					minlength: 10,
+					maxlength: 2000
+				}
+			},
+			onsubmit: function(){
+				haksvn.block.on();
+			}
+		});
+	};
 	
 	function transformDateField(){
 		var requestDate = Number('<c:out value="${transfer.requestDate}"/>');
@@ -510,7 +526,7 @@ ul.Delete li.revision{display:none;}
 			
 			$( "#div_invalidateMessage" ).dialog({
 		      	modal: true,
-		      	title:'Invalida Input',
+		      	title:'Invalid Input',
 		      	resizable:false,
 		      	buttons: {
 		        	Ok: function() {
@@ -519,12 +535,7 @@ ul.Delete li.revision{display:none;}
 		      	}
 		    });
 		};
-		if( $('#description').text().length < 1 ){
-			$("#div_invalidateMessage .input").text('Description Field');
-			showInvalidDialog();
-			$('#description').each(function(){focus();});
-			return false;
-		}
+
 		if($('#frm_transfer input[name=transferSourceList]').val().length < 1){
 			$("#div_invalidateMessage .input").text('Transfer Source List');
 			showInvalidDialog();
@@ -540,7 +551,7 @@ ul.Delete li.revision{display:none;}
 	<div class="col w10 last">
 		<div class="content">
 		
-			<form:form commandName="transfer" class="w200" id="frm_transfer" method="post" onsubmit="javascript:haksvn.block.on();">
+			<form:form commandName="transfer" class="w200" id="frm_transfer" method="post" >
 				<p><span class="strong">Detail</span></p>
 				<p>
 					<form:label path="transferSeq" class="left">Transfer Seq</form:label>
@@ -562,6 +573,7 @@ ul.Delete li.revision{display:none;}
 					<form:label path="description" class="left">Description</form:label>
 					<form:textarea class="text" disabled="${not transferStateAuth.isEditable}" cols="50" rows="5" path="description"/>
 					<form:errors path="description" />
+					<span class="status"></span>
 				</p>
 				<p>
 					<form:hidden path="requestUser.userId" />

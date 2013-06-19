@@ -7,7 +7,7 @@ insert into menu (menu_seq, menu_name, menu_url, parent_menu_seq, menu_order, me
 insert into menu (menu_seq, menu_name, menu_url, parent_menu_seq, menu_order, menu_level, view_type) values (300, 	'Configuration'		, '/configuration'							,300	,300, 1, 'menu.view.type.code.default');
 insert into menu (menu_seq, menu_name, menu_url, parent_menu_seq, menu_order, menu_level, view_type) values (310, 	'General'			, '/configuration/general/commitLog'		,300	,100, 2, 'menu.view.type.code.leftmenu');
 insert into menu (menu_seq, menu_name, menu_url, parent_menu_seq, menu_order, menu_level, view_type) values (311, 	'Commit_Log'		, '/configuration/general/commitLog'		,310	,100, 3, 'menu.view.type.code.leftmenu');
-insert into menu (menu_seq, menu_name, menu_url, parent_menu_seq, menu_order, menu_level, view_type) values (312, 	'Data_Management'	, '/configuration/general/dataManagement'	,310	,200, 3, 'menu.view.type.code.leftmenu');
+--insert into menu (menu_seq, menu_name, menu_url, parent_menu_seq, menu_order, menu_level, view_type) values (312, 	'Data_Management'	, '/configuration/general/dataManagement'	,310	,200, 3, 'menu.view.type.code.leftmenu');
 insert into menu (menu_seq, menu_name, menu_url, parent_menu_seq, menu_order, menu_level, view_type) values (320, 	'Users'				, '/configuration/users/list'				,300	,200, 2, 'menu.view.type.code.leftmenu');
 insert into menu (menu_seq, menu_name, menu_url, parent_menu_seq, menu_order, menu_level, view_type) values (321, 	'List'				, '/configuration/users/list'				,320	,100, 3, 'menu.view.type.code.leftmenu');
 insert into menu (menu_seq, menu_name, menu_url, parent_menu_seq, menu_order, menu_level, view_type) values (322, 	'Add'				, '/configuration/users/add'				,320	,200, 3, 'menu.view.type.code.leftmenu');
