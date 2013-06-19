@@ -74,7 +74,7 @@ insert into menu_authority(menu_seq, code_id) values ( 220, 'user.auth.type.code
 insert into menu_authority(menu_seq, code_id) values ( 300, 'user.auth.type.code.system-admin');
 insert into menu_authority(menu_seq, code_id) values ( 310, 'user.auth.type.code.system-admin');
 insert into menu_authority(menu_seq, code_id) values ( 311, 'user.auth.type.code.system-admin');
-insert into menu_authority(menu_seq, code_id) values ( 312, 'user.auth.type.code.system-admin');
+--insert into menu_authority(menu_seq, code_id) values ( 312, 'user.auth.type.code.system-admin');
 insert into menu_authority(menu_seq, code_id) values ( 320, 'user.auth.type.code.system-admin');
 insert into menu_authority(menu_seq, code_id) values ( 321, 'user.auth.type.code.system-admin');
 insert into menu_authority(menu_seq, code_id) values ( 322, 'user.auth.type.code.system-admin');
