@@ -1,6 +1,7 @@
 <%@ page pageEncoding="UTF-8" contentType="text/html; charset=utf-8" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="http://tiles.apache.org/tags-tiles" prefix="tiles" %>
+<%@ taglib uri="http://www.springframework.org/tags" prefix="spring" %>
 <%@ taglib uri="/WEB-INF/tlds/haksvn.tld" prefix="haksvn" %>
 <head>
 	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
@@ -10,6 +11,7 @@
 	<meta http-equiv="Pragma" content="no-cache" />
 	<title><tiles:getAsString name="title" /></title>
 	
+	<link rel="shortcut icon" href="<c:url value="/images/haksvn.ico"/>" />
 	<link rel="stylesheet" href="<c:url value="/css/style.css"/>" type="text/css"	media="screen" />
 	<link rel="stylesheet" href="<c:url value="/css/haksvn.css"/>" type="text/css"	media="screen" />
 	<link rel="stylesheet" href="<c:url value="/css/jquery-ui-1.9.2.custom.css"/>" type="text/css"	media="screen" />
@@ -46,6 +48,27 @@
 				error.appendTo( element.parent().find(".status") );
 			},
 			errorClass: 'invalid'
+		});
+		
+		$.validator.addMethod("svnpath", function(value, element) {
+		     return /^\/.+[^\/]$/.test(value);
+		}, "<spring:message code="validation.svnpath" />");
+		
+		$.extend($.validator.messages, {
+		    date: "<spring:message code="validation.date" />",
+		    digits: "<spring:message code="validation.digits" />",
+		    email: "<spring:message code="validation.email" />",
+		    equalTo: "<spring:message code="validation.equalTo" />",
+		    max: "<spring:message code="validation.min" />",
+			maxlength: "<spring:message code="validation.maxlength" />",
+			minlength: "<spring:message code="validation.minlength" />",
+		    min: "<spring:message code="validation.max" />",
+		    number: "<spring:message code="validation.number" />",
+		    range: "<spring:message code="validation.range" />",
+		    rangelength: "<spring:message code="validation.rangelength" />",
+		    remote: "<spring:message code="validation.remote" />",
+			required: "<spring:message code="validation.required" />",
+		    url: "<spring:message code="validation.url" />"
 		});
 		
 		$(function() {

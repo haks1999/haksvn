@@ -49,8 +49,10 @@ public class SVNRepositoryUtils {
 	}
 	
 	public static SVNRepository getSVNRepositoryForTestConnection(Repository repository) throws Exception{
+		String authzUserPasswd = repository.getAuthUserPasswd();
+		if( repository.getAuthUserPasswdEncrypted() ) authzUserPasswd = CryptoUtils.decodeAES(repository.getAuthUserPasswd());
 		SVNRepository targetRepository = SVNRepositoryFactory.create(SVNURL.parseURIDecoded(repository.getRepositoryLocation()));
-		ISVNAuthenticationManager authManager = SVNWCUtil.createDefaultAuthenticationManager(repository.getAuthUserId(), CryptoUtils.decodeAES(repository.getAuthUserPasswd()));
+		ISVNAuthenticationManager authManager = SVNWCUtil.createDefaultAuthenticationManager(repository.getAuthUserId(), authzUserPasswd);
 		targetRepository.setAuthenticationManager(authManager);
 		return targetRepository;
 	}

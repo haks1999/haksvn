@@ -29,27 +29,6 @@
 					minlength: 4,
 					maxlength: 50
 				}
-			},
-			messages: {
-				userId: {
-					required: "<spring:message code="validation.required" arguments="User ID" />",
-					minlength: "<spring:message code="validation.minlength" arguments="6" />",
-					maxlength: "<spring:message code="validation.maxlength" arguments="30" />"
-				},
-				userName: {
-					required: "<spring:message code="validation.required" arguments="User Name" />",
-					minlength: "<spring:message code="validation.minlength" arguments="4" />",
-					maxlength: "<spring:message code="validation.maxlength" arguments="50" />"
-				},
-				email: {
-					required: "<spring:message code="validation.required" arguments="Email" />",
-					email: "<spring:message code="validation.email" />",
-				},
-				userPasswd: {
-					required: "<spring:message code="validation.required" arguments="Password" />",
-					minlength: "<spring:message code="validation.minlength" arguments="4" />",
-					maxlength: "<spring:message code="validation.maxlength" arguments="50" />"
-				},
 			}
 		});
 	};
