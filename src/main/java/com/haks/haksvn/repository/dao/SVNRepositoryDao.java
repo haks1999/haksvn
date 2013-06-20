@@ -1,5 +1,6 @@
 package com.haks.haksvn.repository.dao;
 
+import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -21,6 +22,7 @@ import org.tmatesoft.svn.core.SVNProperty;
 import org.tmatesoft.svn.core.SVNURL;
 import org.tmatesoft.svn.core.io.ISVNEditor;
 import org.tmatesoft.svn.core.io.SVNRepository;
+import org.tmatesoft.svn.core.io.diff.SVNDeltaGenerator;
 import org.tmatesoft.svn.core.wc.SVNClientManager;
 import org.tmatesoft.svn.core.wc.SVNCommitClient;
 import org.tmatesoft.svn.core.wc.SVNCopyClient;
@@ -361,6 +363,8 @@ public class SVNRepositoryDao {
         	SVNDiffClient diffClient = SVNClientManager.newInstance(SVNWCUtil.createDefaultOptions(false), targetRepository.getAuthenticationManager()).getDiffClient();
         	
         	baos = new ByteArrayOutputStream();
+        	//SVNEncodingUtil.uriDecode(RepositoryUtils.getAbsoluteRepositoryPath(repository, svnSourceSrc.getPath()));
+        	//위 메써드로 대체하라고 하나 SVNURL을 얻어 낼 수가 없다. 걍 deprecated 로 일단 간다.
         	diffClient.doDiff(SVNURL.parseURIDecoded(RepositoryUtils.getAbsoluteRepositoryPath(repository, svnSourceSrc.getPath())), 
         						SVNRevision.create(svnSourceSrc.getRevision()), 
         						SVNURL.parseURIDecoded(RepositoryUtils.getAbsoluteRepositoryPath(repository, svnSourceTrg.getPath())),
@@ -384,6 +388,7 @@ public class SVNRepositoryDao {
 	// argument의 path 는 trunk, branches 등의 경로는 제외한 순수 파일 경로
 	public void transferSourceList(Repository repository, List<SVNSourceTransfer> transferList, String log){
 		SVNRepository targetRepository = null;
+		SVNRepository targetRepositoryForModify = null;
 		ISVNEditor editor = null;
         try{
         	targetRepository = SVNRepositoryUtils.getUserAuthSVNRepository(repository);
@@ -431,6 +436,8 @@ public class SVNRepositoryDao {
     				}
     			//}
     		}
+    		
+    		targetRepositoryForModify = SVNRepositoryUtils.getUserAuthSVNRepository(repository);
     		editor = targetRepository.getCommitEditor( log , null, true, null );
     		editor.openRoot( -1 );
     		String befParent = "!@#$";
@@ -444,25 +451,49 @@ public class SVNRepositoryDao {
     			}
     			
     			if( !addedDirs.contains(parent) ){
-    				//System.out.println( "add new dir: " + parent.substring(parent.lastIndexOf("/")));
-    				editor.addDir(parent.substring(parent.lastIndexOf("/")), null, -1);
+    				//System.out.println( "add new dir: " + parent);
+    				//editor.addDir(parent.substring(parent.lastIndexOf("/")), null, -1);
+    				editor.addDir(parent, null, -1);
     				addedDirs.add(parent);
     			}else{
-    				//System.out.println( "open added dir: " + parent.substring(parent.lastIndexOf("/")));
-    				editor.openDir(parent.substring(parent.lastIndexOf("/")),-1);
+    				//System.out.println( "open added dir: " + parent);
+    				//editor.openDir(parent.substring(parent.lastIndexOf("/")),-1);
+    				editor.openDir(parent,-1);
     			}
     			
     			String relPath = parent.replaceFirst(repository.getBranchesPath(), "");
     			//System.out.println( "-relPath: " + relPath + " -contains: "+ transferMap.containsKey(relPath) );
+    			
     			if( transferMap.containsKey(relPath)){
     				List<SVNSourceTransfer> svnSourceTransferList = transferMap.get(relPath);
     				for( SVNSourceTransfer svnSourceTransfer : svnSourceTransferList ){
-    					if( svnSourceTransfer.getIsToDelete()){
-        					editor.deleteEntry(SVNRepositoryUtils.extractFileName(svnSourceTransfer.getRelativePath()), svnSourceTransfer.getRevision());
-        				}else{
-        					editor.addFile(SVNRepositoryUtils.extractFileName(svnSourceTransfer.getRelativePath()), 
+    					if( svnSourceTransfer.getIsToDelete() ){
+    						editor.deleteEntry(repository.getBranchesPath() + svnSourceTransfer.getRelativePath(), svnSourceTransfer.getRevision());
+        				}else if(svnSourceTransfer.getIsToAdd()){
+        					editor.addFile(repository.getBranchesPath() + svnSourceTransfer.getRelativePath(), 
         							RepositoryUtils.getRelativeRepositoryPath(repository, repository.getTrunkPath() + svnSourceTransfer.getRelativePath()) ,svnSourceTransfer.getRevision());
+        				}else{
+        					
+        					ByteArrayOutputStream oldDataBos = new ByteArrayOutputStream();
+        					ByteArrayOutputStream newDataBos = new ByteArrayOutputStream();
+        					targetRepositoryForModify.getFile(RepositoryUtils.getRelativeRepositoryPath(repository, repository.getBranchesPath() + svnSourceTransfer.getRelativePath()), -1, new SVNProperties(), oldDataBos);
+        					targetRepositoryForModify.getFile(RepositoryUtils.getRelativeRepositoryPath(repository, repository.getTrunkPath() + svnSourceTransfer.getRelativePath()), svnSourceTransfer.getRevision(), new SVNProperties(), newDataBos);
+        		            byte[] oldData = oldDataBos.toByteArray();
+        		            byte[] newData = newDataBos.toByteArray();
+        		            
+        					editor.openFile( repository.getBranchesPath() + svnSourceTransfer.getRelativePath() , -1 );
+        					editor.applyTextDelta( repository.getBranchesPath() + svnSourceTransfer.getRelativePath() , null );
+        					
+        					SVNDeltaGenerator deltaGenerator = new SVNDeltaGenerator( );
+        					String checksum = deltaGenerator.sendDelta( repository.getBranchesPath() + svnSourceTransfer.getRelativePath() , new ByteArrayInputStream( oldData ) , 0 , new ByteArrayInputStream( newData ) , editor , true );
+        					editor.closeFile( repository.getBranchesPath() + svnSourceTransfer.getRelativePath() , checksum );
+        					oldDataBos.flush();
+        					oldDataBos.close();
+        					newDataBos.flush();
+        					newDataBos.close();
+        					  
         				}
+    					
     				}
     				transferMap.remove(relPath);
     			}
@@ -480,6 +511,7 @@ public class SVNRepositoryDao {
         }finally{
         	try{
         		if(targetRepository!=null) targetRepository.closeSession();
+        		if(targetRepositoryForModify!=null) targetRepositoryForModify.closeSession();
         	}catch(Exception e){
         		e.printStackTrace();
         	}

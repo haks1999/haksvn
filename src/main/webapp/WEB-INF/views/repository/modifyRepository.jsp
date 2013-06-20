@@ -175,7 +175,7 @@
 				</p>
 				<p>
 					<form:label path="tagsPath" class="left">Tags Path</form:label>
-					<form:input class="text w_20" path="tagsPath" value="${isNewRepository? '/tags':repository.trunkPath}"/>
+					<form:input class="text w_20" path="tagsPath" value="${isNewRepository? '/tags':repository.tagsPath}"/>
 					<form:errors path="tagsPath" />
 					<span class="status"></span>
 				</p>

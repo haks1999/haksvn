@@ -65,7 +65,6 @@ public class SVNRepositoryUtils {
 		return path.substring(path.lastIndexOf("/")+1);
 	}
 	
-	@SuppressWarnings("unchecked")
 	public static List<SVNSourceLog> transform(List<SVNLogEntry> svnLogEntryList, List<SVNSourceLog> svnSourceLogList, String path, Repository repository){
 		ListIterator<SVNLogEntry> reverseEntries = svnLogEntryList.listIterator(svnLogEntryList.size());
 		while( reverseEntries.hasPrevious()){

@@ -187,12 +187,13 @@ public class TransferService {
 		List<SVNSourceTransfer> svnSourceTransferList = new ArrayList<SVNSourceTransfer>(0);
 		for( TransferSource transferSource : transfer.getSourceList() ){
 			boolean isToDeleted = CodeUtils.isTransferSourceTypeDelete(transferSource.getTransferSourceTypeCode().getCodeId());
+			boolean isToAdd = CodeUtils.isTransferSourceTypeAdd(transferSource.getTransferSourceTypeCode().getCodeId());
+			boolean isToModify = CodeUtils.isTransferSourceTypeModify(transferSource.getTransferSourceTypeCode().getCodeId());
 			String relPath = transferSource.getPath().replaceFirst(isToDeleted?repository.getBranchesPath():repository.getTrunkPath(), "");
 			svnSourceTransferList.add(SVNSourceTransfer.Builder.getBuilder(new SVNSourceTransfer()).revision(transferSource.getRevision())
-					.isToDelete(isToDeleted).relativePath(relPath).build());
+					.isToAdd(isToAdd).isToDelete(isToDeleted).isToModify(isToModify).relativePath(relPath).build());
 		}
 		svnRepositoryService.transfer(repository, svnSourceTransferList, TransferUtils.createTransferCommitLog(transfer, generalService.retrieveCommitLogTemplate(transfer.getRepositorySeq(), CodeUtils.getLogTemplateRequestCodeId()).getTemplate()));
-		//svnRepositoryService.transfer(repository, svnSourceTransferList, transfer.getDescription());
 		return transfer;
 	}
 	

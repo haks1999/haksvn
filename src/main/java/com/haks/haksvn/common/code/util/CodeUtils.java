@@ -92,8 +92,16 @@ public class CodeUtils {
 		return "transfer.source.type.code.modify";
 	}
 	
+	public static boolean isTransferSourceTypeAdd( String code ){
+		return getTransferSourceTypeAddCodeId().equals(code);
+	}
+	
 	public static boolean isTransferSourceTypeDelete( String code ){
 		return getTransferSourceTypeDeleteCodeId().equals(code);
+	}
+	
+	public static boolean isTransferSourceTypeModify( String code ){
+		return getTransferSourceTypeModifyCodeId().equals(code);
 	}
 	
 	
