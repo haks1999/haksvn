@@ -46,9 +46,6 @@
 	<h1></h1>
 	<div class="col w10 last">
 		<div class="content">
-		
-		
-		
 			<div class="box" style="position:absolute;display:block;width:300px;float:left;margin-right:-370px;left:10px;">
 				<div class="head"><div></div></div>
 				<div class="desc">
@@ -87,7 +84,6 @@
 				<div class="bottom"><div></div></div>
 			</div>
 		
-		
 			<div style="float:left; width:100%;z-index:-1;">
 				<div style="margin-left:320px;min-height:350px;">
 					<div class="box">
@@ -95,13 +91,20 @@
 						<div class="desc">
 							<p>
 								<font class="path">Path:
-									<c:set var="pathLink" value="${repoChangesPathLink}"/>
+									<c:set var="listHeadChangesPathLink" value="${repoChangesPathLink}"/>
+									<c:set var="listHeadBrowsePathLink" value="${repoBrowsePathLink}"/>
 									/<a href="${repoChangesPathLink}?rev=${svnSource.revision}">[SVN root]</a>
 									<c:forEach var="pathFrag" items="${fn:split(path, '/')}" varStatus="loop">
-										<c:set var="pathLink" value="${pathLink}/${pathFrag}"/>
+										<c:set var="listHeadChangesPathLink" value="${listHeadChangesPathLink}/${pathFrag}"/>
+										<c:set var="listHeadBrowsePathLink" value="${listHeadBrowsePathLink}/${pathFrag}"/>
 										<c:choose>
-											<c:when test="${!loop.last}">/<a href="${pathLink}?rev=${svnSource.revision}"><c:out value="${pathFrag}" /></a></c:when>
-											<c:otherwise>/<c:out value="${pathFrag}" /></c:otherwise>
+											<c:when test="${!loop.last}">/<a href="${listHeadChangesPathLink}?rev=${svnSource.revision}"><c:out value="${pathFrag}" /></a></c:when>
+											<c:otherwise>
+												/<c:out value="${pathFrag}" />
+												<c:if test="${svnSource.isFolder}">
+													&nbsp;<span class="italic"><a href="${listHeadBrowsePathLink}">(browsing)</a></span>
+												</c:if>
+											</c:otherwise>
 										</c:choose>
 									</c:forEach>
 								</font>

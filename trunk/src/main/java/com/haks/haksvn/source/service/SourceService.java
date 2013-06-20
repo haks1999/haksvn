@@ -8,7 +8,6 @@ import org.tmatesoft.svn.core.SVNNodeKind;
 
 import com.haks.haksvn.common.paging.model.NextPaging;
 import com.haks.haksvn.repository.model.Repository;
-import com.haks.haksvn.repository.service.RepositoryService;
 import com.haks.haksvn.repository.service.SVNRepositoryService;
 import com.haks.haksvn.source.model.SVNSource;
 import com.haks.haksvn.source.model.SVNSourceDiff;
@@ -19,59 +18,47 @@ public class SourceService {
 
 	@Autowired 
 	private SVNRepositoryService svnRepositoryService;
-	@Autowired 
-	private RepositoryService repositoryService;
 	
-	public List<SVNSource> retrieveSVNSourceList(int repositorySeq, String path ){
-		Repository repository = repositoryService.retrieveAccesibleActiveRepositoryByRepositorySeq(repositorySeq);
+	public List<SVNSource> retrieveSVNSourceList(Repository repository, String path ){
 		return svnRepositoryService.retrieveSVNSourceList(repository, path);
 	}
 	
-	public List<SVNSource> retrieveSVNSourceDirList(int repositorySeq, String path ){
-		Repository repository = repositoryService.retrieveAccesibleActiveRepositoryByRepositorySeq(repositorySeq);
+	public List<SVNSource> retrieveSVNSourceDirList(Repository repository, String path ){
 		return svnRepositoryService.retrieveSVNSourceListByNodeKind(repository, path, SVNNodeKind.DIR);
 	}
 	
-	public SVNSource retrieveSVNSource(int repositorySeq, SVNSource svnSource){
-		Repository repository = repositoryService.retrieveAccesibleActiveRepositoryByRepositorySeq(repositorySeq);
+	public SVNSource retrieveSVNSource(Repository repository, SVNSource svnSource){
 		svnSource = svnRepositoryService.checkIsCopiedOrDeletedAndChangeRevision(repository, svnSource);
 		svnSource = svnRepositoryService.retrieveSVNSourceContent(repository, svnSource);
 		svnSource = svnRepositoryService.retrieveOlderAndNewerAndCurSVNSourceLogList(repository, svnSource);
-		//svnSource.setLogs(svnRepositoryService.retrieveSVNSourceLogs(repository, svnSource.getPath(), Paging.Builder.getBuilder(new Paging()).limit(5).build()));
 		return svnSource;
 	}
 	
-	public SVNSource retrieveSVNSourceWithoutContent(int repositorySeq, SVNSource svnSource){
-		Repository repository = repositoryService.retrieveAccesibleActiveRepositoryByRepositorySeq(repositorySeq);
+	public SVNSource retrieveSVNSourceWithoutContent(Repository repository, SVNSource svnSource){
 		svnSource = svnRepositoryService.checkIsCopiedOrDeletedAndChangeRevision(repository, svnSource);
 		svnSource = svnRepositoryService.retrieveOlderAndNewerAndCurSVNSourceLogList(repository, svnSource);
 		return svnSource;
 	}
 	
-	public SVNSource retrieveSVNSourceWithoutContentAndLogs(int repositorySeq, SVNSource svnSource){
-		Repository repository = repositoryService.retrieveAccesibleActiveRepositoryByRepositorySeq(repositorySeq);
+	public SVNSource retrieveSVNSourceWithoutContentAndLogs(Repository repository, SVNSource svnSource){
 		svnSource = svnRepositoryService.checkIsCopiedOrDeletedAndChangeRevision(repository, svnSource);
 		svnSource = svnRepositoryService.retrieveSVNSourceWithoutContentAndLogs(repository, svnSource);
 		return svnSource;
 	}
 	
-	public NextPaging<List<SVNSourceLog>> retrieveSVNSourceLogList(int repositorySeq, NextPaging<SVNSource> paging){
-		Repository repository = repositoryService.retrieveAccesibleActiveRepositoryByRepositorySeq(repositorySeq);
+	public NextPaging<List<SVNSourceLog>> retrieveSVNSourceLogList(Repository repository, NextPaging<SVNSource> paging){
 		paging.setModel(svnRepositoryService.checkIsCopiedOrDeletedAndChangeRevision(repository, paging.getModel()));
 		return svnRepositoryService.retrieveSVNSourceLogList(repository, paging );
 	}
 	
-	public SVNSourceDiff retrieveDiffByPrevious(int repositorySeq, SVNSource svnSource){
-		Repository repository = repositoryService.retrieveAccesibleActiveRepositoryByRepositorySeq(repositorySeq);
+	public SVNSourceDiff retrieveDiffByPrevious(Repository repository, SVNSource svnSource){
 		svnSource = svnRepositoryService.checkIsCopiedOrDeletedAndChangeRevision(repository, svnSource);
-		//svnSource = retrieveSVNSourceWithoutContentAndLogs(repository.getRepositorySeq(), svnSource);
 		SVNSourceDiff svnSourceDiff = svnRepositoryService.retrieveDiffByPrevious(repository, svnSource);
 		
 		return svnSourceDiff;
 	}
 	
-	public SVNSourceDiff retrieveDiffWithContentsByPrevious(int repositorySeq, SVNSource svnSource){
-		Repository repository = repositoryService.retrieveAccesibleActiveRepositoryByRepositorySeq(repositorySeq);
+	public SVNSourceDiff retrieveDiffWithContentsByPrevious(Repository repository, SVNSource svnSource){
 		svnSource = svnRepositoryService.checkIsCopiedOrDeletedAndChangeRevision(repository, svnSource);
 		SVNSourceDiff svnSourceDiff = svnRepositoryService.retrieveDiffByPrevious(repository, svnSource);
 		if( !svnSourceDiff.getIsNewContent() ){
@@ -83,8 +70,7 @@ public class SourceService {
 		return svnSourceDiff;
 	}
 	
-	public SVNSourceDiff retrieveDiffWithContentsByRevisions(int repositorySeq, SVNSource svnSourceSrc, SVNSource svnSourceTrg){
-		Repository repository = repositoryService.retrieveAccesibleActiveRepositoryByRepositorySeq(repositorySeq);
+	public SVNSourceDiff retrieveDiffWithContentsByRevisions(Repository repository, SVNSource svnSourceSrc, SVNSource svnSourceTrg){
 		svnSourceSrc = svnRepositoryService.checkIsCopiedOrDeletedAndChangeRevision(repository, svnSourceSrc);
 		svnSourceTrg = svnRepositoryService.checkIsCopiedOrDeletedAndChangeRevision(repository, svnSourceTrg);
 		SVNSourceDiff svnSourceDiff = svnRepositoryService.retrieveDiffByRevisions(repository, svnSourceSrc, svnSourceTrg);

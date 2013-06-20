@@ -9,7 +9,7 @@
 	function changeRepository(){
 		frm_repository.action = "<c:url value="/source/changes"/>" + "/" + $("#sel_repository > option:selected").val();
 		frm_repository.submit();
-	}
+	};
 	
 	function retrieveRepositoryChangeList(){
 		//$("#tbl_changeList tbody tr:not(.sample)").remove();
@@ -73,16 +73,38 @@
 			<div>
 				<p>
 					<font class="path">Path:
-						<c:set var="pathLink" value="${pageContext.request.contextPath}/source/changes/${repositorySeq}"/>
+						<c:set var="repoChangesPathLink" value="${pageContext.request.contextPath}/source/changes/${repositorySeq}"/>
+						<c:set var="repoBrowsePathLink" value="${pageContext.request.contextPath}/source/browse/${repositorySeq}"/>
+						/<a href="${repoChangesPathLink}">[SVN root]</a>
 						<c:forEach var="pathFrag" items="${fn:split(path, '/')}" varStatus="loop">
-							<c:set var="pathLink" value="${pathLink}/${pathFrag}"/>
+							<c:set var="repoChangesPathLink" value="${repoChangesPathLink}/${pathFrag}"/>
+							<c:set var="repoBrowsePathLink" value="${repoBrowsePathLink}/${pathFrag}"/>
 							<c:choose>
-								<c:when test="${!loop.last}">/<a href="${pathLink}"><c:out value="${pathFrag}" /></a></c:when>
-								<c:when test="${(loop.last) && (svnSource.isFolder)}">/<a href="${pathLink}"><c:out value="${pathFrag}" /></a></c:when>
-								<c:otherwise>/<c:out value="${pathFrag}" /></c:otherwise>
+								<c:when test="${!loop.last}">/<a href="${repoChangesPathLink}"><c:out value="${pathFrag}" /></a></c:when>
+								<c:when test="${(loop.last) && (svnSource.isFolder)}">
+									<c:out value="${fn:length(path) > 0 ? '/':''}" /><a href="${repoChangesPathLink}"><c:out value="${pathFrag}" /></a>
+								</c:when>
+								<c:otherwise>
+									/<c:out value="${pathFrag}" />&nbsp;<span class="italic"><a href="${repoBrowsePathLink}?rev=-1">(view source)</a></span>
+								</c:otherwise>
 							</c:choose>
 						</c:forEach>
 					</font>
+					<c:if test="${svnSource.isFolder}">
+						<select id="sel_lowerSvnSource">
+							<option value="">/</option>
+							<c:forEach items="${lowerSvnSourceList}" var="lowerSvnSource">
+								<option value="<c:out value="${lowerSvnSource.title}"/>">
+									/<c:out value="${lowerSvnSource.title}" />
+								</option>
+							</c:forEach>
+						</select>
+						<script type="text/javascript">
+							$("#sel_lowerSvnSource").change(function(){
+								location.href = "<c:out value="${repoChangesPathLink}/" />" + $(this).val();
+							});
+						</script>
+					</c:if>
 				</p>
 			</div>
 			<table id="tbl_changeList">
