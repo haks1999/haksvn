@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.haks.haksvn.common.exception.HaksvnException;
 import com.haks.haksvn.common.paging.model.NextPaging;
+import com.haks.haksvn.repository.service.RepositoryService;
 import com.haks.haksvn.source.model.SVNSource;
 import com.haks.haksvn.source.model.SVNSourceDiff;
 import com.haks.haksvn.source.model.SVNSourceLog;
@@ -29,12 +30,14 @@ public class SourceAjaxController {
 	
 	@Autowired
 	private SourceService sourceService;
+	@Autowired
+	private RepositoryService repositoryService;
     
 	@RequestMapping(value="/browse/list", method=RequestMethod.GET ,params ={"repositorySeq","path"})
     public @ResponseBody List<SVNSource> listSVNSource(@RequestParam(value = "repositorySeq", required = true) int repositorySeq
     												,@RequestParam(value = "path", required = true) String path){
     	
-		return sourceService.retrieveSVNSourceList(repositorySeq, path);
+		return sourceService.retrieveSVNSourceList(repositoryService.retrieveAccesibleActiveRepositoryByRepositorySeq(repositorySeq), path);
     }
 	
 	// request source 검색 시 자동 완성을 위한 dir 검색
@@ -42,7 +45,7 @@ public class SourceAjaxController {
     public @ResponseBody List<SVNSource> searchSVNSourceDir(@RequestParam(value = "repositorySeq", required = true) int repositorySeq
     												,@RequestParam(value = "path", required = true) String path){
     	try{
-    		return sourceService.retrieveSVNSourceDirList(repositorySeq, path);
+    		return sourceService.retrieveSVNSourceDirList(repositoryService.retrieveAccesibleActiveRepositoryByRepositorySeq(repositorySeq), path);
     	}catch(HaksvnException e){
     		//TODO warn 처리?
     		// 입력 조건을 받아서 검색하므로 svn not found 오류가 많이 생길듯
@@ -90,7 +93,7 @@ public class SourceAjaxController {
 		
 		SVNSource svnSource = SVNSource.Builder.getBuilder(new SVNSource()).path(path).build();
 		paging.setModel(svnSource);
-		return sourceService.retrieveSVNSourceLogList(repositorySeq, paging);
+		return sourceService.retrieveSVNSourceLogList(repositoryService.retrieveAccesibleActiveRepositoryByRepositorySeq(repositorySeq), paging);
     }
 	
 	@RequestMapping(value="/changes/diff", headers="Accept=application/json")
@@ -99,7 +102,7 @@ public class SourceAjaxController {
     										@RequestParam(value = "rev", required = true) long rev){
 		
 		SVNSource svnSource = SVNSource.Builder.getBuilder(new SVNSource()).path(path).revision(rev).build();
-		SVNSourceDiff svnSourceDiff = sourceService.retrieveDiffByPrevious(repositorySeq, svnSource);
+		SVNSourceDiff svnSourceDiff = sourceService.retrieveDiffByPrevious(repositoryService.retrieveAccesibleActiveRepositoryByRepositorySeq(repositorySeq), svnSource);
 		svnSourceDiff.setDiffToHtml(SourceUtils.diffToHtml(svnSourceDiff.getDiff()));
 		svnSourceDiff.setDiff("");
 		return svnSourceDiff;

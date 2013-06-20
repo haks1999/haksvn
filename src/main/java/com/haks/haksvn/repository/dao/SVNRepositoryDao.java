@@ -323,6 +323,10 @@ public class SVNRepositoryDao {
 		SVNRepository targetRepository = null;
         try {
         	targetRepository = SVNRepositoryUtils.getUserAuthSVNRepository(repository);
+        	
+        	SVNNodeKind nodeKind = targetRepository.checkPath(RepositoryUtils.getRelativeRepositoryPath(repository, svnSource.getPath()), svnSource.getRevision());
+        	svnSource.setIsFolder(nodeKind == SVNNodeKind.DIR);
+        	
         	final List<SVNLogEntry> newerLogList = new ArrayList<SVNLogEntry>(0);
        		targetRepository.log(new String[]{RepositoryUtils.getRelativeRepositoryPath(repository, svnSource.getPath())}, svnSource.getRevision(), svnSource.getLastestRevision(), false, true, 5, new ISVNLogEntryHandler() { 
                    public void handleLogEntry(SVNLogEntry entry) throws SVNException { 
