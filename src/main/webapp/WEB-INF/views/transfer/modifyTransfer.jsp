@@ -71,7 +71,7 @@ ul.Delete li.revision{display:none;}
 		setFormValidation();
    	});
 	
-	var validTransferForm
+	var validTransferForm;
 	function setFormValidation(){
 		validTransferForm = $("#frm_transfer").validate({
 			rules: {
