@@ -7,7 +7,9 @@ public class SVNSourceTransfer {
 
 	private String relativePath;
 	private long revision;
+	private boolean isToAdd;
 	private boolean isToDelete;
+	private boolean isToModify;
 	
 	public String getRelativePath() {
 		return relativePath;
@@ -24,6 +26,14 @@ public class SVNSourceTransfer {
 	public void setRevision(long revision){
 		this.revision = revision;
 	}
+	
+	public boolean getIsToAdd(){
+		return isToAdd;
+	}
+	
+	public void setIsToAdd(boolean isToAdd){
+		this.isToAdd = isToAdd;
+	}
 
 	public boolean getIsToDelete() {
 		return isToDelete;
@@ -31,6 +41,14 @@ public class SVNSourceTransfer {
 
 	public void setIsToDelete(boolean isToDelete) {
 		this.isToDelete = isToDelete;
+	}
+	
+	public boolean getIsToModify(){
+		return isToModify;
+	}
+	
+	public void setIsToModify(boolean isToModify){
+		this.isToModify = isToModify;
 	}
 
 
@@ -60,8 +78,18 @@ public class SVNSourceTransfer {
 			return this;
 		}
 		
+		public Builder isToAdd(boolean isToAdd){
+			svnSourceTransfer.setIsToAdd(isToAdd);
+			return this;
+		}
+		
 		public Builder isToDelete(boolean isToDelete){
 			svnSourceTransfer.setIsToDelete(isToDelete);
+			return this;
+		}
+		
+		public Builder isToModify(boolean isToModify){
+			svnSourceTransfer.setIsToModify(isToModify);
 			return this;
 		}
 		

@@ -71,8 +71,9 @@ ul.Delete li.revision{display:none;}
 		setFormValidation();
    	});
 	
+	var validTransferForm
 	function setFormValidation(){
-		$("#frm_transfer").validate({
+		validTransferForm = $("#frm_transfer").validate({
 			rules: {
 				description: {
 					required: true,
@@ -80,8 +81,10 @@ ul.Delete li.revision{display:none;}
 					maxlength: 2000
 				}
 			},
-			onsubmit: function(){
+			submitHandler : function(form){
+				if( !validTransferForm.valid() ) return false;
 				haksvn.block.on();
+				form.submit();
 			}
 		});
 	};

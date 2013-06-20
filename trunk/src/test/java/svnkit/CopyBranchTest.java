@@ -62,9 +62,9 @@ public class CopyBranchTest {
 		editor.addFile(".project", "/haksvn/trunk/.project",5);
 		editor.closeDir();
 		editor.closeDir();
-		editor.openDir( "nodeA" , -1 );
-		editor.openDir( "nodeAA" ,  -1 );
-		editor.addFile("pom.xml", "/haksvn/trunk/pom.xml",17);
+		//editor.openDir( "nodeA" , -1 );
+		//editor.openDir( "nodeAA" ,  -1 );
+		//editor.addFile("pom.xml", "/haksvn/trunk/pom.xml",17);
 		editor.closeEdit();
 		
 		

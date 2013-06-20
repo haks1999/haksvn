@@ -8,12 +8,14 @@ import org.springframework.context.ApplicationListener;
 import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.jdbc.datasource.init.ResourceDatabasePopulator;
+import org.springframework.jdbc.datasource.init.ScriptStatementFailedException;
 import org.springframework.stereotype.Component;
 
 import com.haks.haksvn.common.exception.HaksvnException;
 import com.haks.haksvn.common.property.model.Property;
 import com.haks.haksvn.common.property.service.PropertyService;
 import com.haks.haksvn.common.property.util.PropertyUtils;
+import com.trilead.ssh2.log.Logger;
 
 @SuppressWarnings("rawtypes")
 @Component
@@ -38,6 +40,8 @@ public class InitialDataImportListener implements ApplicationListener{
 				final ResourceDatabasePopulator rdp = new ResourceDatabasePopulator();
 				rdp.addScript(new ClassPathResource("init.sql"));
 				rdp.populate(dataSource.getConnection());
+			}catch(ScriptStatementFailedException e){
+				Logger.getLogger(this.getClass()).log(0, "Installation...this message appears only first time.");
 			}catch(Exception e){
 				e.printStackTrace();
 				throw new HaksvnException("initial data import failed");
