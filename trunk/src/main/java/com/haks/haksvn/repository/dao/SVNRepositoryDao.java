@@ -131,6 +131,7 @@ public class SVNRepositoryDao {
         	targetRepository = SVNRepositoryUtils.getUserAuthSVNRepository(repository);
         	SVNNodeKind nodeKind = targetRepository.checkPath(RepositoryUtils.getRelativeRepositoryPath(repository, svnSource.getPath()), svnSource.getRevision());
         	svnSource.setIsFolder(nodeKind == SVNNodeKind.DIR);
+        	if( svnSource.getIsFolder() ) return svnSource;
         	SVNProperties fileProperties = new SVNProperties();
             targetRepository.getFile(RepositoryUtils.getRelativeRepositoryPath(repository, svnSource.getPath()), svnSource.getRevision(), fileProperties, null);
             String mimeType = fileProperties.getStringValue(SVNProperty.MIME_TYPE);
@@ -180,8 +181,8 @@ public class SVNRepositoryDao {
         	String relativePath = RepositoryUtils.getRelativeRepositoryPath(repository, svnSource.getPath());
         	SVNNodeKind headNodeKind = targetRepository.checkPath(relativePath, -1);
         	svnSource.setIsDeleted(headNodeKind == SVNNodeKind.NONE);
-        	// revision이 -1 로 들어오는경우 revision을 명시하도록 바꾼다. diff 시 -1 로는 비교가 안 됨
-        	if( !svnSource.getIsDeleted() && svnSource.getRevision() < 0 ){
+        	// 파일인 경우, revision이 -1 로 들어오는경우 revision을 명시하도록 바꾼다. diff 시 -1 로는 비교가 안 됨
+        	if( !svnSource.getIsDeleted() && svnSource.getRevision() < 0 && headNodeKind == SVNNodeKind.FILE){
         		SVNProperties fileProperties = new SVNProperties();
                 targetRepository.getFile(RepositoryUtils.getRelativeRepositoryPath(repository, svnSource.getPath()), -1, fileProperties, null);
                 svnSource.setRevision(Long.parseLong(fileProperties.getStringValue(SVNProperty.COMMITTED_REVISION)));
