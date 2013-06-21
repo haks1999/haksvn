@@ -31,7 +31,7 @@
 					<c:forEach items="${repositoryList}" var="repository">
 						<tr>
 							<td>
-								<a href="<c:url value="/configuration/repositories/list/${repository.repositorySeq}"/>"><c:out value="${repository.repositoryName}" /></a>
+								<font class="path"><a href="<c:url value="/configuration/repositories/list/${repository.repositorySeq}"/>"><c:out value="${repository.repositoryName}" /></a></font>
 							</td>
 							<td><c:out value="${repository.repositoryLocation}" /></td>
 							<td>

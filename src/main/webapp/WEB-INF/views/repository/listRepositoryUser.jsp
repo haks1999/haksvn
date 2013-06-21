@@ -30,6 +30,7 @@
 	};
 	
 	function delRepositoryUser(){
+		if($('#tbl_userList input[name="userId"]:checked').length < 1 ) return; 
 		var repositorySeq = $("#sel_repository > option:selected").val();
 		$.post("<c:url value="/configuration/repositories/listUser/delUser"/>" + "/" + repositorySeq,
 				$('#tbl_userList input[name="userId"]:checked').serialize(),
@@ -41,6 +42,7 @@
 	};
 	
 	function addRepositoryUser(){
+		if(selectedUsers.length < 1) return;
 		var repositorySeq = $("#sel_repository > option:selected").val();
 		var userIds = {userId: selectedUsers, overwrite: $('#ckb_overwrite').is(':checked')};
 		$.post("<c:url value="/configuration/repositories/listUser/addUser"/>" + "/" + repositorySeq,
@@ -172,7 +174,7 @@
 			<table id="tbl_userList">
 				<thead>
 					<tr>
-						<th class="checkbox"><input type="checkbox"/></th>
+						<th class="checkbox"></th>
 						<th>ID</th>
 						<th>Name</th>
 						<th>Email</th>
@@ -183,7 +185,7 @@
 					<tr class="sample">
 						<td class="checkbox"><input name="userId" type="checkbox"/></td>
 						<td class="userId">
-							<a href="<c:url value="/configuration/users/list/"/>">test</a>
+							<font class="path"><a href="<c:url value="/configuration/users/list/"/>"></a></font>
 						</td>
 						<td class="userName"></td>
 						<td class="email"></td>

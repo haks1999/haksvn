@@ -24,8 +24,8 @@
 				function(data) {
 					if( !data ) return;
 					var taggingPath = data.taggingTypeCode.codeId == 'tagging.type.code.create' ?data.destPath:data.srcPath;
-					$("#div_syncTaggingInfo font a").text(taggingPath)
-						.attr("href","<c:out value="${repoBrowsePathLink}" />" + taggingPath);
+					$("#div_syncTaggingInfo font a").text(taggingPath);
+					$("#div_syncTaggingInfo a").attr("href","<c:out value="${repoBrowsePathLink}" />" + taggingPath);
 				},'json');
 	}
 	
@@ -106,7 +106,7 @@
 			</div>
 			
 			<div class="info-green" id="div_syncTaggingInfo">
-				Latest Tag synchronized with production branch: <font class="path"><a></a></font>
+				Latest Tag synchronized with production branch: <font class="path open-window"><a></a></font>
 			</div>
 			
 			<table id="tbl_taggingList">
