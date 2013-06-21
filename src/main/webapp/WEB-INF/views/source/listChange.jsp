@@ -27,7 +27,8 @@
 					var path = '<c:out value="${path}" />';
 					for( var inx = 0 ; inx < model.length ; inx++ ){
 						var row = $("#tbl_changeList > tbody > .sample").clone();
-						$(row).find(".revision a").text('r'+model[inx].revision).attr('href',(hrefRoot + "/" + repositorySeq + (path.length<1?"":"/") + path + "?rev=" + model[inx].revision).replace("//", "/"));
+						$(row).find(".revision a").attr('href',(hrefRoot + "/" + repositorySeq + (path.length<1?"":"/") + path + "?rev=" + model[inx].revision).replace("//", "/"));
+						$(row).find(".revision font a").text('r'+model[inx].revision);
 						$(row).children(".message").text(model[inx].message);
 						$(row).children(".date").text(haksvn.date.convertToEasyFormat(new Date(model[inx].date)));
 						$(row).children(".author").text(model[inx].author);
@@ -118,7 +119,9 @@
 				</thead>
 				<tbody>
 					<tr class="sample">
-						<td class="revision"><font class="path font12"><a href=""></a></font></td>
+						<td class="revision">
+							<font class="path font12 open-window"><a href=""></a></font>
+						</td>
 						<td class="message"></td>
 						<td class="date"></td>
 						<td class="author"></td>

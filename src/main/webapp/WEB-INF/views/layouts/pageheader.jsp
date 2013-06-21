@@ -71,9 +71,16 @@
 		    url: "<spring:message code="validation.url" />"
 		});
 		
+		function _setLinkNewWindow(){
+			$("font.path.open-window").each(function(){
+				$(this).after('<a class="open-window" target="_blank" href="' + $(this).find('a').attr('href') + '"><img src="<c:url value="/images/open-window.gif"/>" title="Open New Window"/></a>');
+			});
+		};
+		
 		$(function() {
 			// IE -- http://stackoverflow.com/questions/7109120/add-blank-option-to-top-of-select-and-make-it-the-selected-option-in-ie
 			$('select.all').prepend("<option value=''>All</option>").val('');
+			_setLinkNewWindow();
 		});
 	</script>
 </head>
