@@ -62,7 +62,6 @@ ul.Delete li.revision{display:none;}
 	var _gRepoBranches = '<c:out value="${repository.branchesPath}"/>';
 	
 	$(function() {
-		//$('#repositoryForm').validate();
 		$('#frm_transfer').attr('action', '<c:url value="/transfer/request/list/${repositorySeq}/save" />');
 		transformDateField();
 		enableSearchSourceAutocomplete();
@@ -255,6 +254,7 @@ ul.Delete li.revision{display:none;}
 	
 	
 	function retrieveTransferSourceList(){
+		haksvn.block.on();
 		$.getJSON(
 				"<c:url value="/transfer/request/list/${repositorySeq}/${transfer.transferSeq}/sources"/>",
 				{},
@@ -262,6 +262,7 @@ ul.Delete li.revision{display:none;}
 					for( var inx = 0 ; inx < result.length ; inx++){
 						addToTransferSourceList({index:inx, transferSourceSeq:result[inx].transferSourceSeq,path:result[inx].path,revision:result[inx].revision,transferSourceTypeCode:result[inx].transferSourceTypeCode,inserted:false});
 					}
+					haksvn.block.off();
 				});
 	};
 	
@@ -602,7 +603,9 @@ ul.Delete li.revision{display:none;}
 				<input type="hidden" name="transferSourceList" />
 				<p>
 					<span class="strong">Sources</span>
-					<span class="italic"><font class="path"><a onclick="initTransferSourceList()">(Reload)</a></font></span>
+					<c:if test="${transferStateAuth.isRequestable}">
+						<span class="italic"><font class="path"><a onclick="initTransferSourceList()">(Reload)</a></font></span>
+					</c:if>
 				</p>
 				<p>
 					<label class="left">Sources To Transfer</label>
