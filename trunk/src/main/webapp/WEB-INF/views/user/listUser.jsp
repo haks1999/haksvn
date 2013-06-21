@@ -28,7 +28,7 @@
 				<c:forEach items="${userList}" var="user">
 					<tr>
 						<td>
-							<a href="<c:url value="/configuration/users/list/${user.userSeq}"/>"><c:out value="${user.userId}" /></a>
+							<font class="path"><a href="<c:url value="/configuration/users/list/${user.userSeq}"/>"><c:out value="${user.userId}" /></a></font>
 						</td>
 						<td><c:out value="${user.userName}" /></td>
 						<td><c:out value="${user.email}" /></td>

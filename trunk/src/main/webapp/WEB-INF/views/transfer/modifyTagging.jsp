@@ -53,12 +53,12 @@
 				<p>
 					<form:label path="srcPath" class="left">Source Path</form:label>
 					<form:hidden class="text w_20" disabled="true" path="srcPath"/>
-					<font class="path"><a href="${repoBrowsePathLink}${tagging.srcPath}"><c:out value="${tagging.srcPath}"/></a></font><input type="text" class="text visible-hidden"/>
+					<font class="path ${not empty tagging.srcPath?'open-window':'' }"><a href="${repoBrowsePathLink}${tagging.srcPath}"><c:out value="${tagging.srcPath}"/></a></font><input type="text" class="text visible-hidden"/>
 				</p>
 				<p>
 					<form:label path="destPath" class="left">Destination Path</form:label>
 					<form:hidden class="text w_20" disabled="true" path="destPath"/>
-					<font class="path"><a href="${repoBrowsePathLink}${tagging.destPath}"><c:out value="${tagging.destPath}"/></a></font><input type="text" class="text visible-hidden"/>
+					<font class="path ${not empty tagging.destPath?'open-window':'' }"><a href="${repoBrowsePathLink}${tagging.destPath}"><c:out value="${tagging.destPath}"/></a></font><input type="text" class="text visible-hidden"/>
 				</p>
 				<p>
 					<form:label path="tagName" class="left">Tag Name</form:label>
