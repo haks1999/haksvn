@@ -173,7 +173,7 @@ public class SVNRepositoryService {
 		SVNSource svnSourceSrc = SVNSource.Builder.getBuilder(new SVNSource()).path(svnSourceTrg.getPath()).build();
 		SVNSourceDiff svnSourceDiff = null;
 		//System.out.println( "svnSourceTrg.getOlderLogs().size() : " + svnSourceTrg.getOlderLogs().size());
-		if( svnSourceTrg.getOlderLogs().size() < 1 ){
+		if( !svnSourceTrg.getIsDeleted() && svnSourceTrg.getOlderLogs().size() < 1 ){
 			svnSourceSrc.setRevision(-1);
 			svnSourceDiff = new SVNSourceDiff();
 			svnSourceDiff.setIsNewContent(true);
