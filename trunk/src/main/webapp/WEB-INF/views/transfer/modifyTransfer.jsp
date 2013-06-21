@@ -328,7 +328,7 @@ ul.Delete li.revision{display:none;}
 			var param='?repositorySeq=' + '<c:out value="${repositorySeq}"/>'
 						+'&srcPath=' + _gRepoBranches+srcD.path.substr(_gRepoTrunk.length)
 						+'&path=' + srcD.path
-						+'&srcRev=-1&trgRev=' + srcD.revision;
+						+'&srcRev=' + srcD.revision + '&trgRev=-1';
 			var win = window.open('<c:url value="/source/changes/diff" />' + param, '_blank');
 			win.focus();
 		});
