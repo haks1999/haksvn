@@ -156,6 +156,10 @@ display:none;
 cursor:pointer;
 }
 
+a.open-window{
+margin-left:1px;
+}
+
 font.path{
 font-weight:normal;
 font-size:10pt;

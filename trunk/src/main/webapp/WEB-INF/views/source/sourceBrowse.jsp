@@ -68,9 +68,11 @@
 		var changesHrefRoot = '<c:url value="/source/changes"/>';
 		for( var inx = 0 ; inx < sourceNodeList.length ; inx++ ){
 			var row = $("#tbl_sourceList > tbody > .sample").clone();
-			$(row).find(".name a").text(sourceNodeList[inx].name).attr('href',(browseHrefRoot + "/" + repositorySeq + "/" + sourceNodeList[inx].path + "?rev=" + sourceNodeList[inx].revision).replace("//", "/"));
+			$(row).find(".name a").attr('href',(browseHrefRoot + "/" + repositorySeq + "/" + sourceNodeList[inx].path + "?rev=" + sourceNodeList[inx].revision).replace("//", "/"));
+			$(row).find(".name font a").text(sourceNodeList[inx].name);
 			$(row).children(".size").text(sourceNodeList[inx].formattedSize);
-			$(row).find(".revision a").text('r'+sourceNodeList[inx].revision).attr('href',(changesHrefRoot + "/" + repositorySeq + "/" + path + "?rev=" + sourceNodeList[inx].revision).replace("//", "/").replace("/?","?"));
+			$(row).find(".revision a").attr('href',(changesHrefRoot + "/" + repositorySeq + "/" + path + "?rev=" + sourceNodeList[inx].revision).replace("//", "/").replace("/?","?"));
+			$(row).find(".revision font a").text('r'+sourceNodeList[inx].revision);
 			$(row).children(".date").text(haksvn.date.convertToEasyFormat(new Date(sourceNodeList[inx].date)));
 			$(row).children(".author").text(sourceNodeList[inx].author);
 			$(row).removeClass("sample");
@@ -143,9 +145,13 @@
 						<tbody>
 							<tr class="nodata"><td colspan="5">No files in the selected directory.</td></tr>
 							<tr class="sample">
-								<td class="name"><font class="path font12"><a href=""></a></font></td>
+								<td class="name">
+									<font class="path font12 open-window"><a href=""></a></font>
+								</td>
 								<td class="size"></td>
-								<td class="revision"><font class="path font12"><a href=""></a></font></td>
+								<td class="revision">
+									<font class="path font12 open-window"><a href=""></a></font>
+								</td>
 								<td class="date"></td>
 								<td class="author"></td>
 							</tr>

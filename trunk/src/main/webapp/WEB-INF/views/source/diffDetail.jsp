@@ -33,7 +33,7 @@
 								<c:set var="srcChangedPath" value="${fn:replace(srcChangedPath,'//','/')}"/>
 								<c:set var="srcRevision" value="${svnSourceSrc.isCopied ? svnSourceSrc.copiedRevision:svnSourceSrc.revision}" />
 								<p style="width:500px;">
-									<font class="path">
+									<font class="path open-window">
 										<a href="<c:out value="${srcBrowsePath}?rev=${srcRevision}" />">
 											<c:forEach var="pathFrag" items="${fn:split(svnSourceSrc.path, '/')}" varStatus="loop">
 												/<c:out value="${pathFrag}" />&#8203;
@@ -42,7 +42,7 @@
 									</font>
 								</p>
 								<p>
-									<font><a href="<c:out value="${srcChangedPath}?rev=${srcRevision}" />"><c:out value="r${srcRevision}"/></a></font>
+									<font class="path open-window"><a href="<c:out value="${srcChangedPath}?rev=${srcRevision}" />"><c:out value="r${srcRevision}"/></a></font>
 								</p>
 							</div>
 							<div class="bottom"><div></div></div>
@@ -60,7 +60,7 @@
 								<c:set var="trgChangedPath" value="${fn:replace(trgChangedPath,'//','/')}"/>
 								<c:set var="trgRevision" value="${svnSourceTrg.isCopied ? svnSourceTrg.copiedRevision:svnSourceTrg.revision}" />
 								<p style="width:500px;">
-									<font class="path">
+									<font class="path open-window">
 										<a href="<c:out value="${trgBrowsePath}?rev=${trgRevision}" />">
 											<c:forEach var="pathFrag" items="${fn:split(svnSourceTrg.path, '/')}" varStatus="loop">
 												/<c:out value="${pathFrag}" />
@@ -69,7 +69,7 @@
 									</font>
 								</p>
 								<p>
-									<font><a href="<c:out value="${trgChangedPath}?rev=${trgRevision}" />"><c:out value="r${trgRevision}"/></a></font>
+									<font class="path open-window"><a href="<c:out value="${trgChangedPath}?rev=${trgRevision}" />"><c:out value="r${trgRevision}"/></a></font>
 								</p>
 							</div>
 							<div class="bottom"><div></div></div>

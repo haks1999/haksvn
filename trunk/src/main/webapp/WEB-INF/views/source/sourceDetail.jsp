@@ -2,14 +2,7 @@
 <%@ include file="/WEB-INF/views/common/include/syntaxhighlighter.jspf"%>
 <script type="text/javascript">
 	$(function() {
-		/*//using ajax
-		var brush = getShBrush(data.path);//new SyntaxHighlighter.brushes.JScript();
-        brush.init({ toolbar: false });
-        $('#pre_fileContent').html(brush.getHtml(data.content));
-        */
         $('.logDate').text(haksvn.date.convertToComplexFullFormat(new Date(Number('<c:out value="${svnSource.log.date}"/>'))));
-        
-        
 		$('#pre_fileContent').addClass('brush:'+getShBrush('<c:out value="${svnSource.path}" />'));
 		SyntaxHighlighter.defaults['auto-links'] = false;
 		SyntaxHighlighter.defaults['toolbar'] = false;
@@ -97,7 +90,7 @@
 										<img class="pClosed" src="<c:url value="/images/plus_small_white.png"/>"/><img class="mOpened" src="<c:url value="/images/minus_small_white.png"/>"/>
 									</a>
 									<span>
-										<font class="path">
+										<font class="path open-window">
 										<a href="${repoChangesPathLink}/${svnSource.path}?rev=${newerLog.revision}">r<c:out value="${newerLog.revision}"/></a></font>
 										&nbsp;by&nbsp;<c:out value="${newerLog.author}"/>
 										,&nbsp;
@@ -108,8 +101,8 @@
 								<p class="display-none">
 									<span>
 										<c:out value="${newerLog.message}"/><br/>
-										<font class="path"><a href="${repoBrowsePathLink}/${svnSource.path}?rev=${newerLog.revision}">View File</a></font>,&nbsp;
-										<font class="path"><a href="${repoDiffPathLink}?repositorySeq=${repositorySeq}&trgRev=${svnSource.revision}&srcRev=${newerLog.revision}&path=${svnSource.path}">Diff</a></font>
+										<font class="path open-window"><a href="${repoBrowsePathLink}/${svnSource.path}?rev=${newerLog.revision}">View File</a></font>,&nbsp;
+										<font class="path open-window"><a href="${repoDiffPathLink}?repositorySeq=${repositorySeq}&trgRev=${svnSource.revision}&srcRev=${newerLog.revision}&path=${svnSource.path}">Diff</a></font>
 									</span>
 								</p>
 								
@@ -126,7 +119,7 @@
 										<img class="pClosed" src="<c:url value="/images/plus_small_white.png"/>"/><img class="mOpened" src="<c:url value="/images/minus_small_white.png"/>"/>
 									</a>
 									<span>
-										<font class="path"><a href="${repoChangesPathLink}/${svnSource.path}?rev=${olderLog.revision}">r<c:out value="${olderLog.revision}"/></a></font>
+										<font class="path open-window"><a href="${repoChangesPathLink}/${svnSource.path}?rev=${olderLog.revision}">r<c:out value="${olderLog.revision}"/></a></font>
 										&nbsp;by&nbsp;<c:out value="${olderLog.author}"/>
 										,&nbsp;
 										<jsp:setProperty name="dateValue" property="time" value="${olderLog.date}" />
@@ -136,14 +129,14 @@
 								<p class="display-none">
 									<span>
 										<c:out value="${olderLog.message}"/><br/>
-										<font class="path"><a href="${repoBrowsePathLink}/${svnSource.path}?rev=${olderLog.revision}">View File</a></font>,&nbsp;
-										<font class="path"><a href="${repoDiffPathLink}?repositorySeq=${repositorySeq}&trgRev=${svnSource.revision}&srcRev=${olderLog.revision}&path=${svnSource.path}">Diff</a></font>
+										<font class="path open-window"><a href="${repoBrowsePathLink}/${svnSource.path}?rev=${olderLog.revision}">View File</a></font>,&nbsp;
+										<font class="path open-window"><a href="${repoDiffPathLink}?repositorySeq=${repositorySeq}&trgRev=${svnSource.revision}&srcRev=${olderLog.revision}&path=${svnSource.path}">Diff</a></font>
 									</span>
 								</p>
 							</c:forEach>
 							<p>
 								<span>
-									<font class="path"><a href="${repoChangesPathLink}/${svnSource.path}">All revisions of this file</a></font>
+									<font class="path open-window"><a href="${repoChangesPathLink}/${svnSource.path}">All revisions of this file</a></font>
 								</span>
 							</p>
 						</div>
