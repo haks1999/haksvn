@@ -194,7 +194,8 @@ public class SVNRepositoryDao {
         	long repositorylastestRevision = targetRepository.getLatestRevision();
         	
         	if( svnSource.getIsDeleted() ){
-        		long deletedRevision = targetRepository.getDeletedRevision(relativePath, svnSource.getRevision()<0?0:svnSource.getRevision(), repositorylastestRevision);
+        		//long deletedRevision = targetRepository.getDeletedRevision(relativePath, svnSource.getRevision()<0?0:svnSource.getRevision(), repositorylastestRevision);
+				long deletedRevision = targetRepository.getDeletedRevision(relativePath, 0, repositorylastestRevision);
         		//TODO deleted lastest revision 을 꼭 구해야 하나. 오류로 처리해 버리면 안 되나... 
         		// 0 ~ -1 로 찾는 경우는 list change 에서만 쓰이며, diff 등에서는 실제 존재하는 revision을 넘겨준다. ㅅㅂ
         		if( deletedRevision < 0 ){
