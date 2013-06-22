@@ -266,8 +266,11 @@ ul.Delete li.revision{display:none;}
 				});
 	};
 	
+	var _gTransferChanged = false;
+	
 	var _gSourceList = [];
 	function addToTransferSourceList( nSrc ){
+		_gTransferChanged = true;
 		for( var inx = 0 ; inx < _gSourceList.length ; inx++){
 			if( !_gSourceList[inx].inserted && !_gSourceList[inx].deleted && _gSourceList[inx].path == nSrc.path ) return;
 		}
@@ -294,6 +297,7 @@ ul.Delete li.revision{display:none;}
 	};
 	
 	function removeFromTransferSourceList( oSrc ){
+		_gTransferChanged = true;
 		oSrc.deleted = true;
 		if(oSrc.inserted ){
 			$('#div_transferSourceDetail_' + oSrc.index).remove();	
@@ -304,6 +308,7 @@ ul.Delete li.revision{display:none;}
 	};
 	
 	function changeRevisionAtTransferSourceList( _h_index, rev ){
+		_gTransferChanged = true;
 		_gSourceList[_h_index].revision = rev;
 		var srcDetail = $('#div_transferSourceDetail_' + _h_index);
 		$(srcDetail).find('td.revision').text('r' + rev);
@@ -625,9 +630,27 @@ ul.Delete li.revision{display:none;}
 						<a class="button red mt ml" onclick="deleteTransfer()"><small class="icon cross"></small><span>Delete</span></a>
 						<script type="text/javascript" >
 							function requestTransfer(){
-								if( !validateTransferInput() ) return;
-								$('#frm_transfer').attr('action', '<c:url value="/transfer/request/list" />' + '<c:out value="/${repositorySeq}/request"/>');
-								$('#frm_transfer').submit();
+								if( _gTransferChanged ){
+									$("#div_changeOccurMessage").dialog({
+										title:'Changes occured',
+								      	resizable:false,
+								      	width:300,
+									    modal: true,
+									    buttons: {
+									    	"Yes": function(){
+									    		$('#frm_transfer').attr('action', '<c:url value="/transfer/request/list" />' + '<c:out value="/${repositorySeq}/request"/>');
+												$('#frm_transfer').submit();
+										    },
+									    	"No": function() {
+									            $( this ).dialog( "close" );
+									            return;
+									        }
+									    }
+								    });
+								}else{
+									$('#frm_transfer').attr('action', '<c:url value="/transfer/request/list" />' + '<c:out value="/${repositorySeq}/request"/>');
+									$('#frm_transfer').submit();
+								}
 							};
 							
 							function deleteTransfer(){
@@ -641,7 +664,6 @@ ul.Delete li.revision{display:none;}
 						<a class="button red mt ml" onclick="rejectTransfer()"><small class="icon cross"></small><span>Reject</span></a>
 						<script type="text/javascript" >
 							function approveTransfer(){
-								if( !validateTransferInput() ) return;
 								$('#frm_transfer').attr('action', '<c:url value="/transfer/request/list" />' + '<c:out value="/${repositorySeq}/approve"/>');
 								$('#frm_transfer').submit();
 							};
@@ -847,5 +869,15 @@ ul.Delete li.revision{display:none;}
 	<p>
     	<span class="ui-icon ui-icon-alert" style="float: left; margin: 0 7px 50px 0;"></span>
     	<span><b class="input"></b> can not be empty!</span>
+  	</p>
+</div>
+
+<div id="div_changeOccurMessage" style="display:none;">
+	<p>
+    	<span class="ui-icon ui-icon-alert" style="float: left; margin: 0 7px 50px 0;"></span>
+    	<span>There are some changes.</span>
+  	</p>
+  	<p>
+  		If request without saving, changes will be lost. Proceed?
   	</p>
 </div>
