@@ -27,29 +27,40 @@ public class TransferDao {
 	public Paging<List<Transfer>> retrieveTransferList(Paging<Transfer> paging ){
 		Session session = sessionFactory.getCurrentSession();
 		Transfer search = paging.getModel();
-		Criteria crit = session.createCriteria(Transfer.class)
-				.createAlias("requestUser", "requser")
-				.createAlias("transferStateCode", "stcode")
-				.createAlias("sourceList", "trsrc")
+		Criteria crit = session.createCriteria(Transfer.class,"t_transfer")
 				.setFirstResult((int)paging.getStart())
+				.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY)
 				.setMaxResults((int)paging.getLimit())
 				.add(Restrictions.eq("repositorySeq", search.getRepositorySeq()))
 				.addOrder(Order.desc("requestDate"))
-				.addOrder(Order.desc("transferSeq"))
-				.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
-		
+				.addOrder(Order.desc("transferSeq"));
 		
 		if( search.getRequestUser() != null ){
 			String requestUserId = search.getRequestUser().getUserId();
-			if( requestUserId != null && requestUserId.length() > 0 ) crit.add(Restrictions.eq("requser.userId", requestUserId));
+			if( requestUserId != null && requestUserId.length() > 0 ){
+				
+				crit.createAlias("t_transfer.requestUser", "t_user")
+					.add(Restrictions.eq("t_user.userId", requestUserId));
+			}
 		}
 		if( search.getTransferStateCode() != null ){
 			String transferStateCode = search.getTransferStateCode().getCodeId();
-			if( transferStateCode != null && transferStateCode.length() > 0 ) crit.add(Restrictions.eq("stcode.codeId", transferStateCode));
+			if( transferStateCode != null && transferStateCode.length() > 0 ){
+				crit.createAlias("t_transfer.transferStateCode", "t_code")
+					.add(Restrictions.eq("t_code.codeId", transferStateCode));
+			}
 		}
+		// path 포기.. 시박
+		/*
 		if( search.getPath() != null && search.getPath().length() > 0 ){
-			crit.add(Restrictions.like("trsrc.path","%" + search.getPath() + "%"));
+			// subselect 개념인데 걍 join 하고 maxresult, distinct 하면 distinct 전에 maxresult 가 적용되고 distinct 한다
+			// 10*10 에서 max를 20,으로 하면 실행하면 조인해서 20개 뽑고 그거를 distinct 하네.. 
+			// 아래와 같이 fetchmode 설정을 해주믄 된다.
+			crit.createAlias("t_transfer.sourceList", "t_source")
+				.setFetchMode("t_source", FetchMode.SELECT)
+				.add(Restrictions.like("t_source.path","%" + search.getPath() + "%"));
 		}
+		*/
 		
 		@SuppressWarnings("unchecked") List<Transfer> result = (List<Transfer>)crit.list();
 		Paging<List<Transfer>> resultPaging = new Paging<List<Transfer>>();

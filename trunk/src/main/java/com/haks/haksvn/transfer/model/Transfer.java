@@ -12,9 +12,11 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
-import javax.persistence.Transient;
 
+import org.hibernate.annotations.Filter;
+import org.hibernate.annotations.FilterDef;
 import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.ParamDef;
 import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.NotEmpty;
 
@@ -23,6 +25,8 @@ import com.haks.haksvn.user.model.User;
 
 @Entity
 @Table(name="transfer")
+@FilterDef(name="transfer.searchPath", 
+	parameters=@ParamDef( name="path", type="String" ) )
 public class Transfer {
 	
 	public Transfer(){
@@ -68,11 +72,14 @@ public class Transfer {
 	private int repositorySeq;
 	
 	@OneToMany(cascade = { CascadeType.ALL }, mappedBy = "transfer", orphanRemoval=true)
+	@Filter(name="transfer.searchPath", condition=":path like '%'")
 	private List<TransferSource> sourceList;
 	
 	// 검색을 위한 transient attr
+	/*
 	@Transient
 	private String path;
+	*/
 	
 	public int getTransferSeq() {
 		return transferSeq;
@@ -154,6 +161,7 @@ public class Transfer {
 		this.sourceList = sourceList;
 	}
 	
+	/*
 	public String getPath(){
 		return path;
 	}
@@ -161,6 +169,7 @@ public class Transfer {
 	public void setPath(String path){
 		this.path = path;
 	}
+	*/
 	
 	public static class Builder{
 		
@@ -232,10 +241,12 @@ public class Transfer {
 			return this;
 		}
 		
+		/*
 		public Builder path(String path){
 			transfer.setPath(path);
 			return this;
 		}
+		*/
 		
 	} 
 	
