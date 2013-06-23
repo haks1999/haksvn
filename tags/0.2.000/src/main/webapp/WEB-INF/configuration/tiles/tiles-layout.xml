@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!DOCTYPE tiles-definitions PUBLIC "-//Apache Software Foundation//DTD Tiles Configuration 3.0//EN" "http://tiles.apache.org/dtds/tiles-config_3_0.dtd">
+<tiles-definitions>
+
+	<definition name=".defaultBody" template="/WEB-INF/views/layouts/pagebody.jsp">
+		<put-attribute name="header" value="/WEB-INF/views/tiles/header.jsp" />
+		<put-attribute name="footer" value="/WEB-INF/views/tiles/footer.jsp" />
+	</definition>
+			
+	<definition name=".default" template="/WEB-INF/views/layouts/default.jsp">
+		<put-attribute name="pageHeader">
+			<definition template="/WEB-INF/views/layouts/pageheader.jsp">
+				<put-attribute name="title" value="HakSVN" />
+			</definition>
+		</put-attribute>
+		<put-attribute name="pageBody">
+			<definition extends=".defaultBody" template="/WEB-INF/views/layouts/pagebody.jsp">
+				<put-attribute name="menu" value="/WEB-INF/views/tiles/menu.jsp" />
+			</definition>
+		</put-attribute>	
+	</definition>
+
+	<definition name="login.default" extends=".default">
+		<put-attribute name="pageBody">
+			<definition extends=".defaultBody" template="/WEB-INF/views/layouts/loginbody.jsp" >
+			</definition>
+		</put-attribute>	
+	</definition>
+	
+	<definition name="pagewithleftmenu.default" extends=".default">
+		<put-attribute name="pageBody">
+			<definition extends=".defaultBody" template="/WEB-INF/views/layouts/pagebodywithleftmenu.jsp">
+				<put-attribute name="menu" value="/WEB-INF/views/tiles/menu.jsp" />
+				<put-attribute name="leftmenu" value="/WEB-INF/views/tiles/leftmenu.jsp" />
+			</definition>
+		</put-attribute>	
+	</definition>
+	
+	<definition name="error.400.default" extends=".default">
+		<put-attribute name="pageBody">
+			<definition extends=".defaultBody"  template="/WEB-INF/views/layouts/errorbody.jsp">
+				<put-attribute name="errorContent" value="/WEB-INF/views/common/error/400.jsp" />
+			</definition>
+		</put-attribute>	
+	</definition>
+	
+	<definition name="error.401.default" extends=".default">
+		<put-attribute name="pageBody">
+			<definition extends=".defaultBody"  template="/WEB-INF/views/layouts/errorbody.jsp">
+				<put-attribute name="errorContent" value="/WEB-INF/views/common/error/401.jsp" />
+			</definition>
+		</put-attribute>	
+	</definition>
+	
+	<definition name="error.404.default" extends=".default">
+		<put-attribute name="pageBody">
+			<definition extends=".defaultBody"  template="/WEB-INF/views/layouts/errorbody.jsp">
+				<put-attribute name="errorContent" value="/WEB-INF/views/common/error/404.jsp" />
+			</definition>
+		</put-attribute>	
+	</definition>
+	
+	<definition name="error.500.default" extends=".default">
+		<put-attribute name="pageBody">
+			<definition extends=".defaultBody"  template="/WEB-INF/views/layouts/errorbody.jsp">
+				<put-attribute name="errorContent" value="/WEB-INF/views/common/error/500.jsp" />
+			</definition>
+		</put-attribute>	
+	</definition>
+
+</tiles-definitions>
