@@ -1,6 +1,18 @@
+delete from transfer_source;
+delete from transfer;
+delete from tagging;
+delete from properties;
+delete from menu_authority;
+delete from repositories_users;
+delete from menu;
+delete from repositories;
+delete from users;
+delete from code;
+
 insert into menu (menu_seq, menu_name, menu_url, parent_menu_seq, menu_order, menu_level, view_type) values (100, 	'Transfer'			, '/transfer'								,100	,100, 1, 'menu.view.type.code.default');
 insert into menu (menu_seq, menu_name, menu_url, parent_menu_seq, menu_order, menu_level, view_type) values (110, 	'Request'			, '/transfer/request/list'					,100	,100, 2, 'menu.view.type.code.default');
-insert into menu (menu_seq, menu_name, menu_url, parent_menu_seq, menu_order, menu_level, view_type) values (120, 	'Tagging'			, '/transfer/tagging/list'					,100	,200, 2, 'menu.view.type.code.default');
+insert into menu (menu_seq, menu_name, menu_url, parent_menu_seq, menu_order, menu_level, view_type) values (120, 	'Request_Group'		, '/transfer/requestGroup/list'				,100	,200, 2, 'menu.view.type.code.default');
+insert into menu (menu_seq, menu_name, menu_url, parent_menu_seq, menu_order, menu_level, view_type) values (130, 	'Tagging'			, '/transfer/tagging/list'					,100	,300, 2, 'menu.view.type.code.default');
 insert into menu (menu_seq, menu_name, menu_url, parent_menu_seq, menu_order, menu_level, view_type) values (200, 	'Source'			, '/source'									,200	,200, 1, 'menu.view.type.code.default');
 insert into menu (menu_seq, menu_name, menu_url, parent_menu_seq, menu_order, menu_level, view_type) values (210, 	'Browse'			, '/source/browse'							,200	,100, 2, 'menu.view.type.code.default');
 insert into menu (menu_seq, menu_name, menu_url, parent_menu_seq, menu_order, menu_level, view_type) values (220, 	'Changes'			, '/source/changes'							,200	,200, 2, 'menu.view.type.code.default');
@@ -15,7 +27,6 @@ insert into menu (menu_seq, menu_name, menu_url, parent_menu_seq, menu_order, me
 insert into menu (menu_seq, menu_name, menu_url, parent_menu_seq, menu_order, menu_level, view_type) values (331, 	'List'				, '/configuration/repositories/list'		,330	,100, 3, 'menu.view.type.code.leftmenu');
 insert into menu (menu_seq, menu_name, menu_url, parent_menu_seq, menu_order, menu_level, view_type) values (332,		'Add'				, '/configuration/repositories/add'			,330	,200, 3, 'menu.view.type.code.leftmenu');
 insert into menu (menu_seq, menu_name, menu_url, parent_menu_seq, menu_order, menu_level, view_type) values (333,		'Repository_User'	, '/configuration/repositories/listUser'	,330	,300, 3, 'menu.view.type.code.leftmenu');
-
 
 insert into code (code_id, code_group, code_name, code_value, code_order) values ('menu.view.type.code.default'		,'menu.view.type.code'			,'default'		,'00'	,10 );
 insert into code (code_id, code_group, code_name, code_value, code_order) values ('menu.view.type.code.leftmenu'		,'menu.view.type.code'			,'leftmenu'		,'01'	,20 );
@@ -46,7 +57,7 @@ insert into code (code_id, code_group, code_name, code_value, code_order) values
 insert into properties (property_key, property_value) values ('svn.authz.template.default'			,'[groups]%nsystem-admin=#system-admin#%ncommiter=#commiter#%nreviewer=#reviewer#%n%n[#svn_name#:/]%n@system-admin=rw%n%n[#svn_name#:#trunk_path#]%n@reviewer=rw%n@commiter=rw%n%n[#svn_name#:#branches_path#]%n@reviewer=r%n@commiter=r%n%n[#svn_name#:#tags_path#]%n@reviewer=rw%n@commiter=r');
 insert into properties (property_key, property_value) values ('commit.log.template.request.default'	,'[Request ID]: #request-id#%n[Request User]: #request-user-name#(#request-user-id#)%n[Approve User]: #approve-user-name#(#approve-user-id#)%n[Description]:%n#description#');
 insert into properties (property_key, property_value) values ('commit.log.template.tagging.default'	,'[Tagging ID]: #tagging-id#%n[Tagging User]: #tagging-user-name#(#tagging-user-id#)%n[Description]:%n#description#');
-insert into properties (property_key, property_value) values ('application.version'					,'0.100a');
+insert into properties (property_key, property_value) values ('application.version'					,'0.2.000');
 
 -- haks1999 // aW9fj8bm9Rt5
 insert into repositories (repository_seq, repository_location, active, repository_name, svn_root, svn_name, trunk_path, tags_path, branches_path, auth_user_id, auth_user_passwd, sync_user ) values (1,'https://googlecode.com/svn', 'common.boolean.yn.code.y', 'haksvn google repository', 'https://googlecode.com/svn', 'svn', '/trunk', '/tags', '/branches/production', 'haks1999', 'nijy14K6p4n1oleemgofSw==','common.boolean.yn.code.n' );
@@ -68,6 +79,7 @@ insert into repositories_users(repository_seq, user_seq) values (1,3);
 insert into menu_authority(menu_seq, code_id) values ( 100, 'user.auth.type.code.system-admin');
 insert into menu_authority(menu_seq, code_id) values ( 110, 'user.auth.type.code.system-admin');
 insert into menu_authority(menu_seq, code_id) values ( 120, 'user.auth.type.code.system-admin');
+insert into menu_authority(menu_seq, code_id) values ( 130, 'user.auth.type.code.system-admin');
 insert into menu_authority(menu_seq, code_id) values ( 200, 'user.auth.type.code.system-admin');
 insert into menu_authority(menu_seq, code_id) values ( 210, 'user.auth.type.code.system-admin');
 insert into menu_authority(menu_seq, code_id) values ( 220, 'user.auth.type.code.system-admin');
@@ -86,6 +98,7 @@ insert into menu_authority(menu_seq, code_id) values ( 333, 'user.auth.type.code
 insert into menu_authority(menu_seq, code_id) values ( 100, 'user.auth.type.code.reviewer');
 insert into menu_authority(menu_seq, code_id) values ( 110, 'user.auth.type.code.reviewer');
 insert into menu_authority(menu_seq, code_id) values ( 120, 'user.auth.type.code.reviewer');
+insert into menu_authority(menu_seq, code_id) values ( 130, 'user.auth.type.code.reviewer');
 insert into menu_authority(menu_seq, code_id) values ( 200, 'user.auth.type.code.reviewer');
 insert into menu_authority(menu_seq, code_id) values ( 210, 'user.auth.type.code.reviewer');
 insert into menu_authority(menu_seq, code_id) values ( 220, 'user.auth.type.code.reviewer');
@@ -93,6 +106,7 @@ insert into menu_authority(menu_seq, code_id) values ( 220, 'user.auth.type.code
 insert into menu_authority(menu_seq, code_id) values ( 100, 'user.auth.type.code.commiter');
 insert into menu_authority(menu_seq, code_id) values ( 110, 'user.auth.type.code.commiter');
 insert into menu_authority(menu_seq, code_id) values ( 120, 'user.auth.type.code.commiter');
+insert into menu_authority(menu_seq, code_id) values ( 130, 'user.auth.type.code.commiter');
 insert into menu_authority(menu_seq, code_id) values ( 200, 'user.auth.type.code.commiter');
 insert into menu_authority(menu_seq, code_id) values ( 210, 'user.auth.type.code.commiter');
 insert into menu_authority(menu_seq, code_id) values ( 220, 'user.auth.type.code.commiter');
