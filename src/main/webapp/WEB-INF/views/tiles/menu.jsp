@@ -1,4 +1,5 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %> 
 <script type="text/javascript">
 	$(function() {
     	$('#menu .<c:out value="${selectedMenuNameLevel1}" />').addClass('selected');
@@ -30,16 +31,12 @@
 			<div class="module buttons">
 				<c:forEach items="${menuLevel1.subMenuList}" var="menuLevel2" >
 					<a href="<c:url value="${menuLevel2.menuUrl}"/>" class="dropdown_button <c:out value="${menuLevel2.menuName}" />">
-						<small class="icon clipboard"></small><span><c:out value="${menuLevel2.menuName}" /></span>
+						<small class="icon clipboard"></small><span><c:out value="${fn:replace(menuLevel2.menuName,'_',' ')}" /></span>
 					</a>
 				</c:forEach>
 			</div>
 		</div>
 	</c:forEach>
-	<!-- 
-	<div class="title">Help</div>
-	<div class="modules_right"></div>
-	-->
 </div>
 <div id="loader-main">
 	<img src="<c:url value="/images/ajax-loader_arrow.gif"/>"/><span>Loading</span>

@@ -34,7 +34,6 @@ public class InitialDataImportListener implements ApplicationListener{
 			Property applicationVersionProp = propertyService.retrievePropertyByPropertyKey(PropertyUtils.getApplicationVersionKey());
 			
 			if( applicationVersionProp != null && applicationVersionProp.getPropertyValue().equals(System.getProperty("application.version"))) return;
-			
 			try{
 				//TODO 단순 스크립트 실행이 아닌 업그레이드가 가능하도록 변경 필요
 				final ResourceDatabasePopulator rdp = new ResourceDatabasePopulator();
@@ -42,6 +41,7 @@ public class InitialDataImportListener implements ApplicationListener{
 				rdp.populate(dataSource.getConnection());
 			}catch(ScriptStatementFailedException e){
 				Logger.getLogger(this.getClass()).log(0, "Installation...this message appears only first time.");
+				e.printStackTrace();
 			}catch(Exception e){
 				e.printStackTrace();
 				throw new HaksvnException("initial data import failed");
