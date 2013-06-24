@@ -79,7 +79,6 @@ public class TransferController {
 		transfer.setRepositorySeq(repositorySeq);
     	model.addAttribute("tranfer", transfer );
     	model.addAttribute("transferStateAuth", TransferStateAuth.Builder.getBuilder().transfer(transfer).build());
-    	model.addAttribute("mode_create", true );
     	return "/transfer/modifyTransfer";
     }
 	
@@ -152,10 +151,10 @@ public class TransferController {
     }
 	
 	@RequestMapping(value={"/request/list/{repositorySeq}/approve"}, method=RequestMethod.POST)
-    public ModelAndView completeTransfer(ModelMap model, 
+    public ModelAndView approveTransfer(ModelMap model, 
     									@ModelAttribute("transfer") Transfer transfer, 
     									@PathVariable int repositorySeq){
-    	transfer = transferService.completeTransfer(transfer);
+    	transfer = transferService.approveTransfer(transfer);
     	String param = "?rUser=" + ContextHolder.getLoginUser().getUserId() + "&sCode=" + transfer.getTransferStateCode().getCodeId();
     	return new ModelAndView(new RedirectView("/transfer/request/list/" + transfer.getRepositorySeq() + param, true));
     }

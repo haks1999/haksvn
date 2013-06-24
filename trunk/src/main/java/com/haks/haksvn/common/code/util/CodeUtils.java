@@ -51,12 +51,16 @@ public class CodeUtils {
 		return "transfer.state.code.request";
 	}
 	
-	public static String getTransferCompleteCodeId(){
-		return "transfer.state.code.complete";
+	public static String getTransferApprovedCodeId(){
+		return "transfer.state.code.approved";
 	}
 	
 	public static String getTransferRejectCodeId(){
 		return "transfer.state.code.reject";
+	}
+	
+	public static String getTransferTransferedCodeId(){
+		return "transfer.state.code.transfered";
 	}
 	
 	public static boolean isEditableState(String stateCode){
@@ -75,8 +79,25 @@ public class CodeUtils {
 		return getTransferRequestCodeId().equals(stateCode);
 	}
 	
-	public static boolean isCompleteState(String stateCode){
-		return getTransferCompleteCodeId().equals(stateCode) || getTransferRejectCodeId().equals(stateCode);
+	public static boolean isApprovedState(String stateCode){
+		return getTransferApprovedCodeId().equals(stateCode) || getTransferRejectCodeId().equals(stateCode);
+	}
+	
+	public static boolean isTransferablState(String stateCode){
+		return getTransferApprovedCodeId().equals(stateCode);
+	}
+	
+	// transfer group
+	public static String getTransferGroupStandbyCodeId(){
+		return "transfergroup.state.code.standby";
+	}
+	
+	public static String getTransferGroupCompleteCodeId(){
+		return "transfergroup.state.code.complete";
+	}
+	
+	public static boolean isEditableTransferGroupState(String stateCode){
+		return stateCode ==null || stateCode.length() < 1 || getTransferGroupStandbyCodeId().equals(stateCode);
 	}
 	
 	// transfer source

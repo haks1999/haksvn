@@ -22,12 +22,15 @@
 		$.post( "<c:url value="/transfer/tagging/list"/>" + "/" + '<c:out value="${repositorySeq}/latest" />',
 				{},
 				function(data) {
-					if( !data ) return;
+					if( !data ) {
+						$("#div_syncTaggingInfo a").remove();
+						return;
+					}
 					var taggingPath = data.taggingTypeCode.codeId == 'tagging.type.code.create' ?data.destPath:data.srcPath;
 					$("#div_syncTaggingInfo font a").text(taggingPath);
 					$("#div_syncTaggingInfo a").attr("href","<c:out value="${repoBrowsePathLink}" />" + taggingPath);
 				},'json');
-	}
+	};
 	
 	function retrieveTaggingList(){
 		$("#tbl_taggingList tfoot span:not(.loading)").removeClass('display-none').addClass('display-none');

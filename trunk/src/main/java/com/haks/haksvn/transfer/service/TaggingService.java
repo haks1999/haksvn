@@ -41,17 +41,17 @@ public class TaggingService {
 	private GeneralService generalService;
 	
 	public Paging<List<Tagging>> retrieveTaggingList(Paging<Tagging> paging){
-		checkRepositoryAccessRight(paging.getModel().getRepositorySeq());
+		repositoryService.checkRepositoryAccessRight(paging.getModel().getRepositorySeq());
 		return taggingDao.retrieveTaggingList(paging);
 	}
 	
 	public Tagging retrieveTagging(Tagging tagging){
-		checkRepositoryAccessRight(tagging.getRepositorySeq());
+		repositoryService.checkRepositoryAccessRight(tagging.getRepositorySeq());
 		return taggingDao.retrieveTaggingByTaggingSeq(tagging.getTaggingSeq());
 	}
 	
 	public Tagging createTagging(Tagging tagging){
-		Repository repository = checkRepositoryAccessRight(tagging.getRepositorySeq());
+		Repository repository = repositoryService.checkRepositoryAccessRight(tagging.getRepositorySeq());
 		if( !TaggingAuth.Builder.getBuilder().tagging(tagging).build().getIsCreatable() ){
 			throw new HaksvnException("Insufficient privileges.");
 		}
@@ -71,7 +71,7 @@ public class TaggingService {
 	
 	public Tagging restoreTagging(Tagging tagging){
 		Tagging srcTagging = retrieveTagging(tagging);
-		Repository repository = checkRepositoryAccessRight(srcTagging.getRepositorySeq());
+		Repository repository = repositoryService.checkRepositoryAccessRight(srcTagging.getRepositorySeq());
 		if( !TaggingAuth.Builder.getBuilder().tagging(srcTagging).build().getIsRestorable() ){
 			throw new HaksvnException("Insufficient privileges.");
 		}
@@ -98,12 +98,4 @@ public class TaggingService {
 		return taggingDao.retrieveLatestSyncTagging(tagging);
 	}
 	
-	@Transactional(readOnly=true)
-	private Repository checkRepositoryAccessRight(int repositorySeq){
-		Repository repository = repositoryService.retrieveAccesibleActiveRepositoryByRepositorySeq(repositorySeq);
-		if( repository == null || repositorySeq != repository.getRepositorySeq()){
-			throw new HaksvnException("do not have the repository access right");
-		}
-		return repository;
-	}
 }

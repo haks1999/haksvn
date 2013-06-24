@@ -34,7 +34,7 @@
 						$(row).children(".requestor").text(transferList[inx].requestUser.userName);
 						$(row).children(".description").text(transferList[inx].description);
 						if(transferList[inx].requestDate > 0) $(row).children(".requestDate").text(haksvn.date.convertToEasyFormat(new Date(transferList[inx].requestDate)));
-						if(transferList[inx].transferDate > 0) $(row).children(".transferDate").text(haksvn.date.convertToEasyFormat(new Date(transferList[inx].transferDate)));
+						if(transferList[inx].approveDate > 0) $(row).children(".approveDate").text(haksvn.date.convertToEasyFormat(new Date(transferList[inx].approveDate)));
 						$(row).attr('transferSeq',transferList[inx].transferSeq).attr('repositorySeq',transferList[inx].repositorySeq);
 						$(row).click(function(){
 							location.href = '<c:url value="/transfer/request/list"/>' + '/' + $(this).attr('repositorySeq') + '/' +  $(this).attr('transferSeq');
@@ -110,7 +110,7 @@
 						<th>requestor</th>
 						<th>description</th>
 						<th>request date</th>
-						<th>transfer date</th>
+						<th>approve date</th>
 					</tr>
 				</thead>
 				<tbody>
@@ -121,7 +121,7 @@
 						<td class="requestor w_90"></td>
 						<td class="description"></td>
 						<td class="requestDate w_90" style="text-align:center;"></td>
-						<td class="transferDate w_90" style="text-align:center;"></td>
+						<td class="approveDate w_90" style="text-align:center;"></td>
 					</tr>
 				</tbody>
 				<tfoot>
