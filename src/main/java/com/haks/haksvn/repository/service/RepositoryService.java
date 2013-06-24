@@ -11,6 +11,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.haks.haksvn.common.code.util.CodeUtils;
 import com.haks.haksvn.common.crypto.util.CryptoUtils;
 import com.haks.haksvn.common.exception.HaksvnException;
+import com.haks.haksvn.common.exception.HaksvnNoRepositoryAvailableException;
 import com.haks.haksvn.common.security.util.ContextHolder;
 import com.haks.haksvn.repository.dao.RepositoryDao;
 import com.haks.haksvn.repository.model.Repository;
@@ -176,5 +177,12 @@ public class RepositoryService {
 			deleteRepositoryUser(repositoryToDelete.getRepositorySeq(), userIdList);
 		}
 		repositoryDao.deleteRepository(repositoryToDelete);
+	}
+	
+	@Transactional(readOnly=true)
+	public Repository checkRepositoryAccessRight(int repositorySeq){
+		Repository repository = retrieveAccesibleActiveRepositoryByRepositorySeq(repositorySeq);
+		if( repository == null || repositorySeq != repository.getRepositorySeq()) throw new HaksvnNoRepositoryAvailableException("do not have the repository access right"); 
+		return repository;
 	}
 }

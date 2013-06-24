@@ -11,7 +11,7 @@ public class TransferStateAuth {
 	private boolean isApprovable;		// == isRejectable
 	private boolean isRejectable;		// == isApprovable
 	private boolean isRequestCancelable;
-	private boolean isComplete;
+	private boolean isApproved;
 	
 	private String stateCodeId;
 	private String requestUserId;
@@ -70,12 +70,12 @@ public class TransferStateAuth {
 		return isRequestCancelable;
 	}
 	
-	public void setIsComplete(boolean isComplete){
-		this.isComplete = isComplete;
+	public void setIsApproved(boolean isApproved){
+		this.isApproved = isApproved;
 	}
 	
-	public boolean getIsComplete(){
-		return isComplete;
+	public boolean getIsApproved(){
+		return isApproved;
 	}
 	
 	
@@ -150,7 +150,7 @@ public class TransferStateAuth {
 			transferStateAuth.setIsApprovable(CodeUtils.isApprovableState(stateCode) && (CodeUtils.isReviewer(loginUserAuthCode) || CodeUtils.isSystemAdmin(loginUserAuthCode)));
 			transferStateAuth.setIsRejectable(transferStateAuth.getIsApprovable());
 			transferStateAuth.setIsRequestCancelable( CodeUtils.isRequestCancelableState(stateCode) && requestUserId.equals(loginUserId) );
-			transferStateAuth.setIsComplete( CodeUtils.isCompleteState(stateCode));
+			transferStateAuth.setIsApproved( CodeUtils.isApprovedState(stateCode));
 			
 			return transferStateAuth;
 		}

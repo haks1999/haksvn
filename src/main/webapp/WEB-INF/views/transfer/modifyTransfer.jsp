@@ -90,9 +90,9 @@ ul.Delete li.revision{display:none;}
 	
 	function transformDateField(){
 		var requestDate = Number('<c:out value="${transfer.requestDate}"/>');
-		var transferDate = Number('<c:out value="${transfer.transferDate}"/>');
+		var approveDate = Number('<c:out value="${transfer.approveDate}"/>');
 		if( requestDate > 0 ) $('#frm_transfer input.requestDate').val(haksvn.date.convertToComplexFullFormat(new Date(requestDate)));
-		if( transferDate > 0 ) $('#frm_transfer input.transferDate').val(haksvn.date.convertToComplexFullFormat(new Date(transferDate)));
+		if( approveDate > 0 ) $('#frm_transfer input.approveDate').val(haksvn.date.convertToComplexFullFormat(new Date(approveDate)));
 	};
 	
 	function enableSearchSourceAutocomplete(){
@@ -262,6 +262,7 @@ ul.Delete li.revision{display:none;}
 					for( var inx = 0 ; inx < result.length ; inx++){
 						addToTransferSourceList({index:inx, transferSourceSeq:result[inx].transferSourceSeq,path:result[inx].path,revision:result[inx].revision,transferSourceTypeCode:result[inx].transferSourceTypeCode,inserted:false});
 					}
+					_gTransferChanged = false;
 					haksvn.block.off();
 				});
 	};
@@ -596,13 +597,18 @@ ul.Delete li.revision{display:none;}
 					<input type="text" class="text w_30 readOnly requestDate" readonly/>
 				</p>
 				<p>
-					<label class="left">Transfer User</label>
-					<input type="text" class="text w_30 readOnly" readonly value="${transfer.transferUser.userName}(${transfer.transferUser.userId})"/>
+					<label class="left">Approve User</label>
+					<input type="text" class="text w_30 readOnly" readonly value="${transfer.approveUser.userName}(${transfer.approveUser.userId})"/>
 				</p>
 				<p>
-					<form:hidden path="transferDate" />
-					<label class="left">Transfer Date</label>
-					<input type="text" class="text w_30 readOnly transferDate" readonly/>
+					<form:hidden path="approveDate" />
+					<label class="left">Approve Date</label>
+					<input type="text" class="text w_30 readOnly approveDate" readonly/>
+				</p>
+				<p>
+					<form:hidden path="revision" />
+					<label class="left">Commit revision</label>
+					<input type="text" class="text w_30 readOnly revision" readonly/>
 				</p>
 				<hr/>
 				<input type="hidden" name="transferSourceList" />

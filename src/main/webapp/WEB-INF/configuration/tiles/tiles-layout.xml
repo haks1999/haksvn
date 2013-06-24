@@ -67,5 +67,13 @@
 			</definition>
 		</put-attribute>	
 	</definition>
+	
+	<definition name="error.norepositoryavailable.default" extends=".default">
+		<put-attribute name="pageBody">
+			<definition extends=".defaultBody"  template="/WEB-INF/views/layouts/errorbody.jsp">
+				<put-attribute name="errorContent" value="/WEB-INF/views/common/error/norepositoryavailable.jsp" />
+			</definition>
+		</put-attribute>	
+	</definition>
 
 </tiles-definitions>

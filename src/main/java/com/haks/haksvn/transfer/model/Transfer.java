@@ -13,10 +13,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
-import org.hibernate.annotations.Filter;
-import org.hibernate.annotations.FilterDef;
 import org.hibernate.annotations.GenericGenerator;
-import org.hibernate.annotations.ParamDef;
 import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.NotEmpty;
 
@@ -25,8 +22,6 @@ import com.haks.haksvn.user.model.User;
 
 @Entity
 @Table(name="transfer")
-@FilterDef(name="transfer.searchPath", 
-	parameters=@ParamDef( name="path", type="String" ) )
 public class Transfer {
 	
 	public Transfer(){
@@ -61,19 +56,25 @@ public class Transfer {
 	private long requestDate;
 	
 	@ManyToOne(fetch = FetchType.EAGER)
-	@JoinColumn(name="transfer_user_id", referencedColumnName="user_id", nullable=true)
-	private User transferUser;
+	@JoinColumn(name="approve_user_id", referencedColumnName="user_id", nullable=true)
+	private User approveUser;
 	
-	@Column(name = "transfer_date")
-	private long transferDate;
+	@Column(name = "approve_date")
+	private long approveDate;
+	
+	@Column(name = "revision")
+	private long revision = -1;
 	
 	// 연관 관계는 맺지 않는다. 불필요
 	@Column(name = "repository_seq")
 	private int repositorySeq;
 	
 	@OneToMany(cascade = { CascadeType.ALL }, mappedBy = "transfer", orphanRemoval=true)
-	@Filter(name="transfer.searchPath", condition=":path like '%'")
 	private List<TransferSource> sourceList;
+	
+	@ManyToOne
+	@JoinColumn(name="transfer_group_seq")
+	private TransferGroup transferGroup;
 	
 	// 검색을 위한 transient attr
 	/*
@@ -129,20 +130,28 @@ public class Transfer {
 		this.requestDate = requestDate;
 	}
 
-	public User getTransferUser() {
-		return transferUser;
+	public User getApproveUser() {
+		return approveUser;
 	}
 
-	public void setTransferUser(User transferUser) {
-		this.transferUser = transferUser;
+	public void setApproveUser(User approveUser) {
+		this.approveUser = approveUser;
 	}
 
-	public long getTransferDate() {
-		return transferDate;
+	public long getApproveDate() {
+		return approveDate;
 	}
 
-	public void setTransferDate(long transferDate) {
-		this.transferDate = transferDate;
+	public void setApproveDate(long approveDate) {
+		this.approveDate = approveDate;
+	}
+	
+	public long getRevision(){
+		return revision;
+	}
+	
+	public void setRevision(long revision){
+		this.revision = revision;
 	}
 	
 	public int getRepositorySeq(){
@@ -159,6 +168,14 @@ public class Transfer {
 
 	public void setSourceList(List<TransferSource> sourceList) {
 		this.sourceList = sourceList;
+	}
+	
+	public TransferGroup getTransferGroup(){
+		return transferGroup;
+	}
+	
+	public void setTransferGroup(TransferGroup transferGroup){
+		this.transferGroup = transferGroup;
 	}
 	
 	/*
@@ -221,13 +238,18 @@ public class Transfer {
 			return this;
 		}
 		
-		public Builder transferUser(User user){
-			transfer.setTransferUser(user);
+		public Builder approveUser(User user){
+			transfer.setApproveUser(user);
 			return this;
 		}
 		
-		public Builder transferDate(long transferDate){
-			transfer.setTransferDate(transferDate);
+		public Builder approveDate(long approveDate){
+			transfer.setApproveDate(approveDate);
+			return this;
+		}
+		
+		public Builder revision(long revision){
+			transfer.setRevision(revision);
 			return this;
 		}
 		
@@ -238,6 +260,11 @@ public class Transfer {
 		
 		public Builder sourceList(List<TransferSource> sourceList){
 			transfer.setSourceList(sourceList);
+			return this;
+		}
+		
+		public Builder tranferGroup(TransferGroup transferGroup){
+			transfer.setTransferGroup(transferGroup);
 			return this;
 		}
 		

@@ -96,6 +96,9 @@
 	         <beans:prop key="com.haks.haksvn.common.exception.HaksvnAuthenticationException">
 	            login
 	         </beans:prop>
+	          <beans:prop key="com.haks.haksvn.common.exception.HaksvnNoRepositoryAvailableException">
+	            /common/error/norepositoryavailable
+	         </beans:prop>
 	      </beans:props>
    		</beans:property>
    		<beans:property name="defaultErrorView" value="common/error/error500"/>

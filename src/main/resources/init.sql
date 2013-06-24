@@ -1,5 +1,6 @@
 delete from transfer_source;
 delete from transfer;
+delete from transfer_group;
 delete from tagging;
 delete from properties;
 delete from menu_authority;
@@ -30,15 +31,21 @@ insert into menu (menu_seq, menu_name, menu_url, parent_menu_seq, menu_order, me
 
 insert into code (code_id, code_group, code_name, code_value, code_order) values ('menu.view.type.code.default'		,'menu.view.type.code'			,'default'		,'00'	,10 );
 insert into code (code_id, code_group, code_name, code_value, code_order) values ('menu.view.type.code.leftmenu'		,'menu.view.type.code'			,'leftmenu'		,'01'	,20 );
-insert into code (code_id, code_group, code_name, code_value, code_order) values ('transfer.type.code.normal'			,'transfer.type.code'			,'normal'		,'00'	,10 );
-insert into code (code_id, code_group, code_name, code_value, code_order) values ('transfer.type.code.emergency'		,'transfer.type.code'			,'emergency'	,'01'	,20 );
+insert into code (code_id, code_group, code_name, code_value, code_order) values ('transfer.type.code.normal'			,'transfer.type.code'			,'Normal'		,'00'	,10 );
+insert into code (code_id, code_group, code_name, code_value, code_order) values ('transfer.type.code.emergency'		,'transfer.type.code'			,'Emergency'	,'01'	,20 );
 insert into code (code_id, code_group, code_name, code_value, code_order) values ('transfer.state.code.keep'			,'transfer.state.code'			,'Keep'			,'00'	,10 );
 insert into code (code_id, code_group, code_name, code_value, code_order) values ('transfer.state.code.request'		,'transfer.state.code'			,'Request'		,'10'	,20 );
-insert into code (code_id, code_group, code_name, code_value, code_order) values ('transfer.state.code.complete'		,'transfer.state.code'			,'Complete'		,'20'	,30 );
-insert into code (code_id, code_group, code_name, code_value, code_order) values ('transfer.state.code.reject'		,'transfer.state.code'			,'Reject'		,'30'	,40 );
+insert into code (code_id, code_group, code_name, code_value, code_order) values ('transfer.state.code.approved'		,'transfer.state.code'			,'Approved'		,'20'	,30 );
+insert into code (code_id, code_group, code_name, code_value, code_order) values ('transfer.state.code.transfered'	,'transfer.state.code'			,'Transfered'	,'30'	,40 );
+insert into code (code_id, code_group, code_name, code_value, code_order) values ('transfer.state.code.rejected'		,'transfer.state.code'			,'Rejected'		,'40'	,50 );
 insert into code (code_id, code_group, code_name, code_value, code_order) values ('transfer.source.type.code.add'		,'transfer.source.type.code'	,'Add'			,'00'	,10 );
 insert into code (code_id, code_group, code_name, code_value, code_order) values ('transfer.source.type.code.modify'	,'transfer.source.type.code'	,'Modify'		,'10'	,20 );
 insert into code (code_id, code_group, code_name, code_value, code_order) values ('transfer.source.type.code.delete'	,'transfer.source.type.code'	,'Delete'		,'20'	,30 );
+insert into code (code_id, code_group, code_name, code_value, code_order) values ('transfergroup.type.code.normal'	,'transfergroup.type.code'		,'Normal'		,'00'	,10 );
+insert into code (code_id, code_group, code_name, code_value, code_order) values ('transfergroup.type.code.emergency'	,'transfergroup.type.code'		,'Emergency'	,'10'	,20 );
+insert into code (code_id, code_group, code_name, code_value, code_order) values ('transfergroup.type.code.scheduled'	,'transfergroup.type.code'		,'Scheduled'	,'20'	,30 );
+insert into code (code_id, code_group, code_name, code_value, code_order) values ('transfergroup.state.code.standby'	,'transfergroup.state.code'		,'Stand by'		,'00'	,10 );
+insert into code (code_id, code_group, code_name, code_value, code_order) values ('transfergroup.state.code.complete'	,'transfergroup.state.code'		,'Complete'		,'10'	,20 );
 insert into code (code_id, code_group, code_name, code_value, code_order) values ('tagging.type.code.create'			,'tagging.type.code'			,'Create'		,'00'	,10 );
 insert into code (code_id, code_group, code_name, code_value, code_order) values ('tagging.type.code.restore'			,'tagging.type.code'			,'Restore'		,'10'	,20 );
 insert into code (code_id, code_group, code_name, code_value, code_order) values ('common.boolean.yn.code.y'			,'common.boolean.yn.code'		,'Y'			,'true'	,10 );

@@ -49,4 +49,25 @@
     </attribute>
   </tag>
   
+  <tag>
+    <name>access</name>
+    <tag-class>com.haks.haksvn.common.security.tag.AccessControlTag</tag-class>
+    <body-content>scriptless</body-content>
+    <attribute>
+       <name>admin</name>
+       <required>true</required>
+       <type>boolean</type>
+    </attribute>
+    <attribute>
+       <name>reviewer</name>
+       <required>true</required>
+       <type>boolean</type>
+    </attribute>
+    <attribute>
+       <name>commiter</name>
+       <required>true</required>
+       <type>boolean</type>
+    </attribute>
+  </tag>
+  
 </taglib>
