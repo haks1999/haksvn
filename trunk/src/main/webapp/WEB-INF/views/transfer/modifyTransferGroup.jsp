@@ -13,12 +13,12 @@ form p span font a{text-decoration:underline;cursor:pointer;}
 		$('#frm_transferGroup').attr('action', '<c:url value="/transfer/requestGroup/list/${repositorySeq}/save" />');
 		transformDateField();
 		setFormValidation();
+		if( Number('<c:out value="${transferGroup.transferGroupSeq}"/>') > 0) retrieveAddedRequestList();
    	});
 	
 	var validTransferGroupForm;
 	function setFormValidation(){
 		validTransferGroupForm = $("#frm_transferGroup").validate({
-			
 			rules: {
 				title: {
 					required: true,
@@ -29,6 +29,10 @@ form p span font a{text-decoration:underline;cursor:pointer;}
 					required: true,
 					minlength: 10,
 					maxlength: 2000
+				},
+				transferListCount: {
+					required: true,
+					min: 1
 				}
 			},
 			submitHandler : function(form){
@@ -55,6 +59,7 @@ form p span font a{text-decoration:underline;cursor:pointer;}
 		    buttons: {
 		    	"Add" : function(){
 		    		addRequestToTransferList();
+		    		$( this ).dialog( "close" );
 		    	},
 		    	"Close": function() {
 		            $( this ).dialog( "close" );
@@ -105,13 +110,45 @@ form p span font a{text-decoration:underline;cursor:pointer;}
 		},'json');
 	};
 	
+	function retrieveAddedRequestList(){
+		haksvn.block.on();
+		$.getJSON(
+				"<c:url value="/transfer/requestGroup/list/${repositorySeq}/${transferGroup.transferGroupSeq}/requests"/>",
+				{},
+	            function(result){
+					for( var inx = 0 ; inx < result.length ; inx++){
+						addRequestToTransferListPanel(result[inx]);
+					}
+					haksvn.block.off();
+				});
+	};
+	
 	function addRequestToTransferList(){
 		var checkedRequestList = $('#tbl_approvedRequestList input[type="checkbox"]:checked');
 		if(checkedRequestList.length < 1 ) return; 
 		
 		$(checkedRequestList).each(function(){
 			var transfer = $(this).parent().parent().data("transfer");
-			var requestDetail = $('#div_requestDetail').clone().removeAttr('id').removeClass('display-none');
+			addRequestToTransferListPanel(transfer);
+		});
+	};
+	
+	function addRequestToTransferListPanel(transfer){
+		var elemId = "div_requestDetail_" + transfer.transferSeq;
+		if( $("#"+elemId).length > 0 ){
+			$( "#div_duplicateMessage" ).find(".transferSeq").text("req-" + transfer.transferSeq);
+			$( "#div_duplicateMessage" ).dialog({
+		      	modal: true,
+		      	title:'Duplicate Request',
+		      	resizable:false,
+		      	buttons: {
+		        	Ok: function() {
+		          		$( this ).dialog( "close" );
+		        	}
+		      	}
+		    });
+		}else{
+			var requestDetail = $('#div_requestDetail').clone().removeClass('display-none').attr("id",elemId);
 			$(requestDetail).attr("transferSeq",transfer.transferSeq);
 			$(requestDetail).find(".transferSeq font a").text("req-"+transfer.transferSeq);
 			$(requestDetail).find(".transferSeq a").attr("href",'<c:url value="/transfer/request/list"/>' + '/' + transfer.repositorySeq + '/' +  transfer.transferSeq);
@@ -119,7 +156,43 @@ form p span font a{text-decoration:underline;cursor:pointer;}
 			$(requestDetail).find(".approver").text(transfer.approveUser.userName);
 			$(requestDetail).find(".description").text(transfer.description);
 			$("#spn_requestsToTran").append(requestDetail);
-		});
+			changeCurrentTransferListCount(1);
+			validTransferGroupForm.form();
+			
+			$(requestDetail).find(".toggle").click(function(event){
+				toggleRequestDetail(this);
+			});
+			$(requestDetail).find("font.remove a").click(function(event){
+				event.stopPropagation();
+				removeRequestFromTransferListPanel($(this).parent().parent().parent().parent());
+				changeCurrentTransferListCount(-1);
+			});
+			$(requestDetail).find("font.cancel a").click(function(event){
+				event.stopPropagation();
+				removeCancelRequestFromTransferListPanel($(this).parent().parent().parent().parent());
+				changeCurrentTransferListCount(1);
+			});
+		}
+	};
+	
+	function changeCurrentTransferListCount(change){
+		var curCnt = $("#frm_transferGroup input[name=\"transferListCount\"]").val();
+		$("#frm_transferGroup input[name=\"transferListCount\"]").val(Number(curCnt) + change);
+	};
+	
+	function removeRequestFromTransferListPanel(transferDetailPanel){
+		$(transferDetailPanel).addClass("removed").find(".transferSeq font").addClass("strike")
+			.parent().parent().find("font.default").addClass("strike")
+			.parent().parent().find("font.remove").addClass("display-none")
+			.parent().find("font.cancel").removeClass("display-none");
+		
+	};
+	
+	function removeCancelRequestFromTransferListPanel(transferDetailPanel){
+		$(transferDetailPanel).removeClass("removed").find(".transferSeq font").removeClass("strike")
+			.parent().parent().find("font.default").removeClass("strike")
+			.parent().parent().find("font.remove").removeClass("display-none")
+			.parent().find("font.cancel").addClass("display-none");
 	};
 	
 	function toggleRequestDetail(pmOpenerParent){
@@ -168,11 +241,12 @@ form p span font a{text-decoration:underline;cursor:pointer;}
 	<div class="col w10 last">
 		<div class="content">
 		
-			<form:form commandName="transferGroup" class="w200" id="frm_transferGroup" method="post" >
+			<form:form commandName="transferGroup" class="w200" id="frm_transferGroup" method="post" modelAttribute="transferGroup" >
+				<c:if test="${transferGroup.transferGroupSeq < 1 }" var="isNewTransferGroup" />
 				<p><span class="strong">Detail</span></p>
 				<p>
 					<form:label path="transferGroupSeq" class="left">Transfer Group Seq</form:label>
-					<form:input class="text w_20 readOnly ${transferGroup.transferGroupSeq < 1?'visible-hidden':''}" path="transferGroupSeq" readonly="true"/>
+					<form:input class="text w_20 readOnly ${isNewTransferGroup ?'visible-hidden':''}" path="transferGroupSeq" readonly="true"/>
 				</p>
 				<p>
 					<form:label path="repositorySeq" class="left">Repository</form:label>
@@ -212,9 +286,6 @@ form p span font a{text-decoration:underline;cursor:pointer;}
 				<hr/>
 				<p>
 					<span class="strong">Transfer List</span>
-					<c:if test="${transferGroupStateAuth.isEditable}">
-						<span class="italic"><font class="path"><a onclick="initTransferSourceList()">(Reload)</a></font></span>
-					</c:if>
 				</p>
 				<p>
 					<label class="left">Requests for Transfer</label>
@@ -223,7 +294,8 @@ form p span font a{text-decoration:underline;cursor:pointer;}
 					</c:if>
 					<span class="italic" style="margin-left:20px;"><font class="path"><a onclick="expandAllTransferDetail()">expand all</a></font></span>
 					<span class="italic"><font class="path"><a onclick="collapseAllTransferDetail()">collapse all</a></font></span>
-					<input type="text" class="text visible-hidden"/>
+					<input type="text" name="transferListCount" class="text visible-hidden" value="${fn:length(requestGroup.transferList)}"/>
+					<span class="status"></span>
 					<span id="spn_requestsToTran" style="display:block;margin-left:220px;">
 					</span>
 				</p>
@@ -233,16 +305,35 @@ form p span font a{text-decoration:underline;cursor:pointer;}
 						<a class="button green mt ml" onclick="saveTransferGroup()"><small class="icon save"></small><span>Save</span></a>
 						<script type="text/javascript" >
 							function saveTransferGroup(){
+								var requestCnt = 0;
+								$("#spn_requestsToTran .requestDetail-panel").not(".removed").each(function(){
+									$('#frm_transferGroup').append("<input type=\"hidden\" name=\"transferList[" + (requestCnt++) + "].transferSeq\" value=\"" + $(this).attr("transferSeq") + "\" />");
+								});
+								
 								$('#frm_transferGroup').attr('action', '<c:url value="/transfer/requestGroup/list" />' + '<c:out value="/${repositorySeq}/save"/>');
 								$('#frm_transferGroup').submit();
 							};
 						</script>
-						<a class="button green mt ml" onclick="requestTransfer()"><small class="icon check"></small><span>Transfer</span></a>
-						<a class="button red mt ml" onclick="deleteTransfer()"><small class="icon cross"></small><span>Delete</span></a>
+						<c:if test="${!isNewTransferGroup}">
+							<a class="button green mt ml" onclick="transferTransferGroup()"><small class="icon check"></small><span>Transfer</span></a>
+							<script type="text/javascript" >
+								function transferTransferGroup(){
+									haksvn.block.on();
+									var queryString = $('#frm_transferGroup').serialize();
+									$.post('<c:url value="/transfer/requestGroup/list" />' + '<c:out value="/${repositorySeq}/transfer"/>',
+										queryString,
+							            function(data){
+											haksvn.block.off();
+											$().Message({type:data.type,text:data.text});
+							        },"json");
+								};
+							</script>
+						</c:if>
+						<a class="button red mt ml" onclick="deleteTransferGroup()"><small class="icon cross"></small><span>Delete</span></a>
 						<script type="text/javascript" >
-							function deleteTransfer(){
-								$('#frm_transfer').attr('action', '<c:url value="/transfer/request/list" />' + '<c:out value="/${repositorySeq}/delete"/>');
-								$('#frm_transfer').submit();
+							function deleteTransferGroup(){
+								$('#frm_transferGroup').attr('action', '<c:url value="/transfer/requestGroup/list" />' + '<c:out value="/${repositorySeq}/delete"/>');
+								$('#frm_transferGroup').submit();
 							};
 						</script>
 					</c:if>
@@ -279,7 +370,7 @@ form p span font a{text-decoration:underline;cursor:pointer;}
 				</tbody>
 				<tfoot>
 					<tr>
-						<td colspan="4" style="text-align:center;">
+						<td colspan="5" style="text-align:center;">
 							<span class="showmore display-none"><font class="path"><a onclick="retrieveApprovedRequestList()">Show More</a></font></span>
 							<span class="loader display-none"><img src="<c:url value="/images/ajax-loader.gif"/>" /></span>
 							<span class="nodata">no data</span>
@@ -292,14 +383,16 @@ form p span font a{text-decoration:underline;cursor:pointer;}
 </div>
 
 
-<div id="div_requestDetail" class="display-none">
-	<span onclick="toggleRequestDetail(this)">
+<div id="div_requestDetail" class="display-none requestDetail-panel">
+	<span class="toggle">
 		<a class="pmOpener closed"><img class="pClosed" src="<c:url value="/images/plus_small_white.png"/>"/><img class="mOpened" src="<c:url value="/images/minus_small_white.png"/>"/></a>
 		<span>
 			<span class="transferSeq">
 				<font class="path font12 open-window"><a></a></font>
 			</span>
 			<font class="default">requested by <b class="requestor"></b>, approved by <b class="approver"></b></font>
+			<font class="path italic remove"><a>Remove</a></font>
+			<font class="path italic cancel display-none"><a>Cancel</a></font>
 		</span>
 	</span>
 	
@@ -315,4 +408,9 @@ form p span font a{text-decoration:underline;cursor:pointer;}
 	</div>
 </div>
 
-
+<div id="div_duplicateMessage" style="display:none;">
+	<p>
+    	<span class="ui-icon ui-icon-alert" style="float: left; margin: 0 7px 50px 0;"></span>
+    	<span><b class="transferSeq"></b> is already in the list.</span>
+  	</p>
+</div>

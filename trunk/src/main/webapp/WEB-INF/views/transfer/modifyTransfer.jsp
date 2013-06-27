@@ -606,9 +606,20 @@ ul.Delete li.revision{display:none;}
 					<input type="text" class="text w_30 readOnly approveDate" readonly/>
 				</p>
 				<p>
+					<form:hidden path="transferGroup.transferGroupSeq" />
+					<label class="left">Transfer Group</label>
+					<c:if test="${not empty transfer.transferGroup && transfer.transferGroup.transferGroupSeq > 0}">
+						<font class="path open-window"><a href="<c:url value="/transfer/requestGroup/list/${repository.repositorySeq}/${transfer.transferGroup.transferGroupSeq}"/>"><c:out value="group-${transfer.transferGroup.transferGroupSeq}"/></a></font>
+					</c:if>
+					<input type="text" class="text visible-hidden"/>
+				</p>
+				<p>
 					<form:hidden path="revision" />
 					<label class="left">Commit revision</label>
-					<input type="text" class="text w_30 readOnly revision" readonly/>
+					<c:if test="${transfer.revision > 0 }">
+						<font class="path open-window"><a href="<c:url value="/source/changes/${repository.repositorySeq}?rev=${transfer.revision}"/>"><c:out value="rev${transfer.revision}"/></a></font>
+					</c:if>
+					<input type="text" class="text visible-hidden"/>
 				</p>
 				<hr/>
 				<input type="hidden" name="transferSourceList" />

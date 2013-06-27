@@ -59,6 +59,10 @@ public class CodeUtils {
 		return "transfer.state.code.reject";
 	}
 	
+	public static String getTransferStandbyCodeId(){
+		return "transfer.state.code.standby";
+	}
+	
 	public static String getTransferTransferedCodeId(){
 		return "transfer.state.code.transfered";
 	}
@@ -83,8 +87,12 @@ public class CodeUtils {
 		return getTransferApprovedCodeId().equals(stateCode) || getTransferRejectCodeId().equals(stateCode);
 	}
 	
-	public static boolean isTransferablState(String stateCode){
+	public static boolean isStandbyableState(String stateCode){
 		return getTransferApprovedCodeId().equals(stateCode);
+	}
+	
+	public static boolean isTransferableState(String stateCode){
+		return getTransferStandbyCodeId().equals(stateCode);
 	}
 	
 	// transfer group
@@ -92,8 +100,8 @@ public class CodeUtils {
 		return "transfergroup.state.code.standby";
 	}
 	
-	public static String getTransferGroupCompleteCodeId(){
-		return "transfergroup.state.code.complete";
+	public static String getTransferGroupTransferedCodeId(){
+		return "transfergroup.state.code.transfered";
 	}
 	
 	public static boolean isEditableTransferGroupState(String stateCode){

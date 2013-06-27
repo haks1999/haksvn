@@ -12,6 +12,7 @@ import java.util.Set;
 
 import org.springframework.stereotype.Component;
 import org.tmatesoft.svn.core.ISVNLogEntryHandler;
+import org.tmatesoft.svn.core.SVNCommitInfo;
 import org.tmatesoft.svn.core.SVNDepth;
 import org.tmatesoft.svn.core.SVNDirEntry;
 import org.tmatesoft.svn.core.SVNException;
@@ -392,10 +393,11 @@ public class SVNRepositoryDao {
 	}
 	
 	// argument의 path 는 trunk, branches 등의 경로는 제외한 순수 파일 경로
-	public void transferSourceList(Repository repository, List<SVNSourceTransfer> transferList, String log){
+	public long transferSourceList(Repository repository, List<SVNSourceTransfer> transferList, String log){
 		SVNRepository targetRepository = null;
 		SVNRepository targetRepositoryForModify = null;
 		ISVNEditor editor = null;
+		long newRevision = -1;
         try{
         	targetRepository = SVNRepositoryUtils.getUserAuthSVNRepository(repository);
         	
@@ -506,7 +508,8 @@ public class SVNRepositoryDao {
     			depth++;
     			befParent = parent;
     		}
-    		editor.closeEdit();
+    		SVNCommitInfo info = editor.closeEdit();
+    		newRevision = info.getNewRevision();
             
         }catch (Exception e) {
         	if( editor != null ){
@@ -522,6 +525,7 @@ public class SVNRepositoryDao {
         		e.printStackTrace();
         	}
         }
+        return newRevision;
 	}
 	
 	// srcPath,destPath 는 /trunk~, /branches~ 다 붙여서

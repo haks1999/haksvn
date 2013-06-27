@@ -13,6 +13,7 @@ import org.hibernate.criterion.Restrictions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
+import com.haks.haksvn.common.code.util.CodeUtils;
 import com.haks.haksvn.common.paging.model.Paging;
 import com.haks.haksvn.transfer.model.Transfer;
 import com.haks.haksvn.transfer.model.TransferSource;
@@ -87,6 +88,16 @@ public class TransferDao {
 		return (Transfer)session.get(Transfer.class, transferSeq );
 	}
 	
+	public List<Transfer> retrieveTransferListByTransferGroupSeq( int transferGroupSeq ){
+		Session session = sessionFactory.getCurrentSession();
+		Criteria criteria = session.createCriteria(Transfer.class)
+				.add(Restrictions.eq("transferGroup.transferGroupSeq", transferGroupSeq))
+				.addOrder(Order.asc("transferSeq"));
+		@SuppressWarnings("unchecked") List<Transfer> result = criteria.list();
+		
+		return result;
+	}
+	
 	public Transfer deleteTransfer(Transfer transfer){
 		Session session = sessionFactory.getCurrentSession();
 		session.delete(transfer);
@@ -107,8 +118,9 @@ public class TransferDao {
 		Criteria crit = session.createCriteria(TransferSource.class)
 				.createAlias("transfer", "tr")
 				.createAlias("tr.transferStateCode", "trc")
-				.add(Restrictions.ne("trc.codeId", "transfer.state.code.complete"))
-				.add(Restrictions.ne("trc.codeId", "transfer.state.code.reject"))
+				//.add(Restrictions.ne("trc.codeId", CodeUtils.getTransferApprovedCodeId()))
+				//.add(Restrictions.ne("trc.codeId", CodeUtils.getTransferRejectCodeId()))
+				.add(Restrictions.ne("trc.codeId", CodeUtils.getTransferTransferedCodeId()))
 				.add(Restrictions.eq("tr.repositorySeq", repositorySeq))
 				.add(Restrictions.eq("path", path));
 		

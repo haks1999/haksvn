@@ -44,6 +44,7 @@ public class TransferAjaxController {
     	Paging<List<Transfer>> transferListPaging = transferService.retrieveTransferList(paging);
     	for( Transfer resultTransfer : transferListPaging.getModel() ){
     		resultTransfer.setSourceList(null);
+    		if( resultTransfer.getTransferGroup() !=null ) resultTransfer.getTransferGroup().setTransferList(null);
     	}
     	return transferListPaging;
     }
@@ -57,7 +58,10 @@ public class TransferAjaxController {
     				.transferSourceTypeCode(Code.Builder.getBuilder().codeId(toDelete?CodeUtils.getTransferSourceTypeDeleteCodeId():"").build())
     				.transfer(Transfer.Builder.getBuilder().repositorySeq(repositorySeq).build()).build();
     	transferSource = transferService.checkRequestableTransferSource(transferSource);
-    	if(transferSource.getTransfer() != null ) transferSource.getTransfer().setSourceList(null);
+    	if(transferSource.getTransfer() != null ){
+    		transferSource.getTransfer().setSourceList(null);
+    		transferSource.getTransfer().setTransferGroup(null);
+    	}
     	return transferSource;
     }
     

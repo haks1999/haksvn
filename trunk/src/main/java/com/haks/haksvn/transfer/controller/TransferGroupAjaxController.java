@@ -3,6 +3,7 @@ package com.haks.haksvn.transfer.controller;
 import java.util.List;
 
 import javax.servlet.http.HttpServletResponse;
+import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -16,9 +17,12 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.haks.haksvn.common.code.model.Code;
 import com.haks.haksvn.common.exception.HaksvnException;
+import com.haks.haksvn.common.message.model.ResultMessage;
 import com.haks.haksvn.common.paging.model.Paging;
+import com.haks.haksvn.transfer.model.Transfer;
 import com.haks.haksvn.transfer.model.TransferGroup;
 import com.haks.haksvn.transfer.service.TransferGroupService;
+import com.haks.haksvn.transfer.service.TransferService;
 
 @Controller
 @RequestMapping(value="/transfer")
@@ -26,6 +30,8 @@ public class TransferGroupAjaxController {
      
     @Autowired
     private TransferGroupService transferGroupService;
+    @Autowired
+    private TransferService transferService;
     
     @RequestMapping(value="/requestGroup/list/{repositorySeq}", method=RequestMethod.POST)
     public @ResponseBody Paging<List<TransferGroup>> retrieveTransferGroupList(@ModelAttribute("paging") Paging<TransferGroup> paging,
@@ -43,6 +49,27 @@ public class TransferGroupAjaxController {
     		resultTransferGroup.setTransferList(null);
     	}
     	return transferGroupListPaging;
+    }
+    
+    @RequestMapping(value="/requestGroup/list/{repositorySeq}/{transferGroupSeq}/requests")
+    public @ResponseBody List<Transfer> retrieveAddedTransferList(@PathVariable int repositorySeq,
+													@PathVariable int transferGroupSeq){
+    	
+    	List<Transfer> transferList = transferService.retrieveTransferListByTransferGroupSeq(transferGroupSeq);
+    	for( Transfer resultTransfer : transferList ){
+    		resultTransfer.setSourceList(null);
+    		if( resultTransfer.getTransferGroup() !=null ) resultTransfer.setTransferGroup(null);
+    	}
+    	return transferList;
+    }
+    
+    @RequestMapping(value={"/requestGroup/list/{repositorySeq}/transfer"}, method=RequestMethod.POST)
+    public @ResponseBody ResultMessage transferTranferGroup(@PathVariable int repositorySeq,
+    														@ModelAttribute("transferGroup") @Valid TransferGroup transferGroup){
+    	
+    	ResultMessage message = new ResultMessage("Transfer success");
+    	transferGroupService.transferTransferGroup(transferGroup);
+    	return message;
     }
     
     

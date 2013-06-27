@@ -63,7 +63,7 @@ public class TransferGroup {
 	@Column(name = "repository_seq")
 	private int repositorySeq;
 	
-	@OneToMany(cascade = { CascadeType.ALL }, mappedBy = "transferGroup", orphanRemoval=true)
+	@OneToMany(cascade = { CascadeType.PERSIST }, mappedBy = "transferGroup")
 	private List<Transfer> transferList;
 	
 	public int getTransferGroupSeq() {

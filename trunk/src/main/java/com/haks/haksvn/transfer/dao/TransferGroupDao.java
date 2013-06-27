@@ -3,6 +3,7 @@ package com.haks.haksvn.transfer.dao;
 import java.util.List;
 
 import org.hibernate.Criteria;
+import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.criterion.Order;
@@ -11,6 +12,7 @@ import org.hibernate.sql.JoinType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
+import com.haks.haksvn.common.code.util.CodeUtils;
 import com.haks.haksvn.common.paging.model.Paging;
 import com.haks.haksvn.transfer.model.TransferGroup;
 
@@ -55,7 +57,12 @@ public class TransferGroupDao {
 		return resultPaging;
 	}
 	
-	public TransferGroup addTransferGroup(TransferGroup transferGroup){
+	public TransferGroup retrieveTransferGroupByTransferGroupSeq( int transferGroupSeq ){
+		Session session = sessionFactory.getCurrentSession();
+		return (TransferGroup)session.get(TransferGroup.class, transferGroupSeq );
+	}
+	
+	public TransferGroup saveTransferGroup(TransferGroup transferGroup){
 		Session session = sessionFactory.getCurrentSession();
 		session.saveOrUpdate(transferGroup);
 		return transferGroup;
@@ -64,6 +71,20 @@ public class TransferGroupDao {
 	public TransferGroup updateTransferGroup(TransferGroup transferGroup){
 		Session session = sessionFactory.getCurrentSession();
 		session.update(transferGroup);
+		return transferGroup;
+	}
+	
+	public void releaseTransferTransferGroup(TransferGroup transferGroup){
+		Session session = sessionFactory.getCurrentSession();
+		Query query = session.createSQLQuery("UPDATE transfer SET transfer_group_seq=null, transfer_state=:transferState WHERE transfer_group_seq = :transferGroupSeq");
+		query.setParameter("transferState", CodeUtils.getTransferApprovedCodeId());
+		query.setParameter("transferGroupSeq", transferGroup.getTransferGroupSeq());
+		query.executeUpdate();
+	}
+	
+	public TransferGroup deleteTransferGroup(TransferGroup transferGroup){
+		Session session = sessionFactory.getCurrentSession();
+		session.delete(transferGroup);
 		return transferGroup;
 	}
 	

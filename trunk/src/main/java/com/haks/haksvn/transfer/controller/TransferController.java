@@ -115,7 +115,7 @@ public class TransferController {
    			mapper.configure(DeserializationConfig.Feature.FAIL_ON_UNKNOWN_PROPERTIES, false);
        		List<TransferSource> transferSourceList = mapper.readValue(sourceListJson, new TypeReference<List<TransferSource>>(){});
        		transfer.setSourceList(transferSourceList);
-    		
+    		transfer.setTransferGroup(null);
     		transfer = transferService.saveTransfer(transfer);
     		String param = "?rUser=" + ContextHolder.getLoginUser().getUserId() + "&sCode=" + transfer.getTransferStateCode().getCodeId();
     		return new ModelAndView(new RedirectView("/transfer/request/list/" + transfer.getRepositorySeq() + param, true));
