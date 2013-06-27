@@ -27,16 +27,14 @@
 					_paging.start = data.start + transferGroupList.length;
 					for( var inx = 0 ; inx < transferGroupList.length ; inx++ ){
 						var row = $("#tbl_transferGroupList > tbody > .sample").clone();
-						$(row).find(".transferGroupSeq a").text('req-'+transferGroupList[inx].transferGroupSeq);
-						$(row).children(".transferGroupType").text(transferGrouopList[inx].transferGroupTypeCode.codeName);
+						$(row).find(".transferGroupSeq font a").text('group-'+transferGroupList[inx].transferGroupSeq);
+						$(row).find(".transferGroupSeq a").attr("href",'<c:url value="/transfer/requestGroup/list/${repositorySeq}/"/>' +  transferGroupList[inx].transferGroupSeq);
+						$(row).children(".transferGroupType").text(transferGroupList[inx].transferGroupTypeCode.codeName);
 						$(row).children(".transferGroupState").text(transferGroupList[inx].transferGroupStateCode.codeName);
 						$(row).children(".title").text(transferGroupList[inx].title);
-						$(row).children(".transferrer").text(transferGroupList[inx].transferUser.userName);
+						if(transferGroupList[inx].transferUser) $(row).children(".transferrer").text(transferGroupList[inx].transferUser.userName);
 						if(transferGroupList[inx].transferDate > 0) $(row).children(".transferDate").text(haksvn.date.convertToEasyFormat(new Date(transferGroupList[inx].transferDate)));
 						$(row).attr('transferGroupSeq',transferGroupList[inx].transferGroupSeq).attr('repositorySeq',transferGroupList[inx].repositorySeq);
-						$(row).click(function(){
-							location.href = '<c:url value="/transfer/requestGroup/list"/>' + '/' + $(this).attr('repositorySeq') + '/' +  $(this).attr('transferGroupSeq');
-						});
 						$(row).removeClass("sample");
 						$('#tbl_transferGroupList > tbody').append(row);
 					}
@@ -100,18 +98,18 @@
 					</tr>
 				</thead>
 				<tbody>
-					<tr class="sample clickable">
-						<td class="transferGroupSeq w_80"><font class="path"><a></a></font></td>
+					<tr class="sample">
+						<td class="transferGroupSeq w_80"><font class="path open-window"><a></a></font></td>
 						<td class="transferGroupType w_80"></td>
 						<td class="transferGroupState w_70"></td>
-						<td class="transferrer w_90"></td>
 						<td class="title"></td>
+						<td class="transferrer w_90"></td>
 						<td class="transferDate w_90" style="text-align:center;"></td>
 					</tr>
 				</tbody>
 				<tfoot>
 					<tr>
-						<td colspan="7" style="text-align:center;">
+						<td colspan="6" style="text-align:center;">
 							<span class="showmore display-none"><font class="path"><a onclick="retrieveTransferGroupList()">Show More</a></font></span>
 							<span class="loader display-none"><img src="<c:url value="/images/ajax-loader.gif"/>"/></span>
 							<span class="nodata">no data</span>

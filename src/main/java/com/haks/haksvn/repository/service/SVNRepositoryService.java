@@ -204,8 +204,8 @@ public class SVNRepositoryService {
 		return svnRepositoryDao.checkIsCopiedOrDeletedAndChangeRevision(repository, svnSource);
 	}
 	
-	public void transfer(Repository repository, List<SVNSourceTransfer> svnSourceTransferList, String log){
-		svnRepositoryDao.transferSourceList(repository, svnSourceTransferList, log);
+	public long transfer(Repository repository, List<SVNSourceTransfer> svnSourceTransferList, String log){
+		return svnRepositoryDao.transferSourceList(repository, svnSourceTransferList, log);
 	}
 	
 	public void tagging(Repository repository, SVNSourceTagging svnSourceTagging ){

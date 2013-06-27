@@ -177,6 +177,9 @@ color:#483D8B;
 font.path a:hover{
 color:#00008B;
 }
+font.strike{
+text-decoration: line-through;
+}
 
 #loader-main{
 display:none;

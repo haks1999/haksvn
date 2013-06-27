@@ -14,17 +14,14 @@ import com.haks.haksvn.common.code.util.CodeUtils;
 import com.haks.haksvn.common.exception.HaksvnException;
 import com.haks.haksvn.common.paging.model.Paging;
 import com.haks.haksvn.common.security.util.ContextHolder;
-import com.haks.haksvn.general.service.GeneralService;
 import com.haks.haksvn.repository.model.Repository;
 import com.haks.haksvn.repository.service.RepositoryService;
 import com.haks.haksvn.repository.service.SVNRepositoryService;
 import com.haks.haksvn.repository.util.RepositoryUtils;
-import com.haks.haksvn.source.model.SVNSourceTransfer;
 import com.haks.haksvn.transfer.dao.TransferDao;
 import com.haks.haksvn.transfer.model.Transfer;
 import com.haks.haksvn.transfer.model.TransferSource;
 import com.haks.haksvn.transfer.model.TransferStateAuth;
-import com.haks.haksvn.transfer.util.TransferUtils;
 import com.haks.haksvn.user.service.UserService;
 
 @Service
@@ -37,8 +34,6 @@ public class TransferService {
 	private UserService userService;
 	@Autowired
 	private CodeService codeService;
-	@Autowired
-	private GeneralService generalService;
 	@Autowired
 	private RepositoryService repositoryService;
 	@Autowired
@@ -138,6 +133,10 @@ public class TransferService {
 		return transferDao.retrieveTransferByTransferSeq(transfer.getTransferSeq());
 	}
 	
+	public List<Transfer> retrieveTransferListByTransferGroupSeq(int transferGroupSeq){
+		return transferDao.retrieveTransferListByTransferGroupSeq(transferGroupSeq);
+	}
+	
 	public List<TransferSource> retrieveTransferSourceList(Transfer transfer){
 		repositoryService.checkRepositoryAccessRight(transfer.getRepositorySeq());
 		return transferDao.retrieveTransferSourceList(transfer.getTransferSeq());
@@ -189,31 +188,6 @@ public class TransferService {
 		return transfer;
 	}
 	
-	
-	/*
-	public Transfer completeTransfer(Transfer transfer){
-		transfer = transferDao.retrieveTransferByTransferSeq(transfer.getTransferSeq());
-		Repository repository = checkRepositoryAccessRight(transfer.getRepositorySeq());
-		if( !TransferStateAuth.Builder.getBuilder().transfer(transfer).build().getIsApprovable() ){
-			throw new HaksvnException("Insufficient privileges.");
-		}
-		transfer.setTransferStateCode(Code.Builder.getBuilder().codeId(CodeUtils.getTransferApprovedCodeId()).build());
-		transfer.setApproveDate(System.currentTimeMillis());
-		transfer.setApproveUser(userService.retrieveUserByUserId(ContextHolder.getLoginUser().getUserId()));
-		transfer = transferDao.updateTransfer(transfer);
-		List<SVNSourceTransfer> svnSourceTransferList = new ArrayList<SVNSourceTransfer>(0);
-		for( TransferSource transferSource : transfer.getSourceList() ){
-			boolean isToDeleted = CodeUtils.isTransferSourceTypeDelete(transferSource.getTransferSourceTypeCode().getCodeId());
-			boolean isToAdd = CodeUtils.isTransferSourceTypeAdd(transferSource.getTransferSourceTypeCode().getCodeId());
-			boolean isToModify = CodeUtils.isTransferSourceTypeModify(transferSource.getTransferSourceTypeCode().getCodeId());
-			String relPath = transferSource.getPath().replaceFirst(isToDeleted?repository.getBranchesPath():repository.getTrunkPath(), "");
-			svnSourceTransferList.add(SVNSourceTransfer.Builder.getBuilder(new SVNSourceTransfer()).revision(transferSource.getRevision())
-					.isToAdd(isToAdd).isToDelete(isToDeleted).isToModify(isToModify).relativePath(relPath).build());
-		}
-		svnRepositoryService.transfer(repository, svnSourceTransferList, TransferUtils.createTransferCommitLog(transfer, generalService.retrieveCommitLogTemplate(transfer.getRepositorySeq(), CodeUtils.getLogTemplateRequestCodeId()).getTemplate()));
-		return transfer;
-	}
-	*/
 	
 	public Transfer rejectTransfer(Transfer transfer){
 		transfer = transferDao.retrieveTransferByTransferSeq(transfer.getTransferSeq());
