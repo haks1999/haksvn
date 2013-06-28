@@ -19,7 +19,7 @@
 		$("#tbl_transferGroupList tfoot span.loader").removeClass('display-none');
 		_paging.sCode = $("#frm_transferGroup select[name='sCode'] option:selected").val();
 		_paging.tCode = $("#frm_transferGroup select[name='tCode'] option:selected").val();
-		_paging.path = $("#ipt_title").val();
+		_paging.title = $("#ipt_title").val();
 		$.post( "<c:url value="/transfer/requestGroup/list"/>" + "/" + '<c:out value="${repositorySeq}" />',
 				_paging,
 				function(data) {
