@@ -79,6 +79,8 @@ public class TransferGroupService {
 	public TransferGroup transferTransferGroup(TransferGroup transferGroup){
 		Repository repository = repositoryService.checkRepositoryAccessRight(transferGroup.getRepositorySeq());
 		TransferGroup currentTransferGroup = transferGroupDao.retrieveTransferGroupByTransferGroupSeq(transferGroup.getTransferGroupSeq());
+		TransferGroup.Builder.getBuilder(currentTransferGroup).transferGroupStateCode(codeService.retrieveCode(CodeUtils.getTransferGroupTransferedCodeId()))
+					.transferDate(System.currentTimeMillis()).transferUser(userService.retrieveUserByUserId(ContextHolder.getLoginUser().getUserId())).build();
 		for( Transfer transfer : currentTransferGroup.getTransferList() ){
 			checkTransferableTransfer(transfer);
 			List<SVNSourceTransfer> svnSourceTransferList = new ArrayList<SVNSourceTransfer>(0);
@@ -93,10 +95,9 @@ public class TransferGroupService {
 			transfer.setRevision(svnRepositoryService.transfer(repository, svnSourceTransferList, TransferUtils.createTransferCommitLog(transfer, generalService.retrieveCommitLogTemplate(transfer.getRepositorySeq(), CodeUtils.getLogTemplateRequestCodeId()).getTemplate())));
 			transfer.setTransferStateCode(codeService.retrieveCode(CodeUtils.getTransferTransferedCodeId()));
 		}
-		TransferGroup.Builder.getBuilder(currentTransferGroup).transferGroupStateCode(codeService.retrieveCode(CodeUtils.getTransferGroupTransferedCodeId()))
-			.transferDate(System.currentTimeMillis()).transferUser(userService.retrieveUserByUserId(ContextHolder.getLoginUser().getUserId())).build();
-		transferGroupDao.saveTransferGroup(currentTransferGroup);
 		
+		// 최종 revision 을 가져 온 후 최종 update
+		transferGroupDao.saveTransferGroup(currentTransferGroup);
 		return currentTransferGroup;
 	}
 	

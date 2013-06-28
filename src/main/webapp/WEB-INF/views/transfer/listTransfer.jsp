@@ -28,17 +28,16 @@
 					_paging.start = data.start + transferList.length;
 					for( var inx = 0 ; inx < transferList.length ; inx++ ){
 						var row = $("#tbl_transferList > tbody > .sample").clone();
-						$(row).find(".transferSeq a").text('req-'+transferList[inx].transferSeq);
+						//$(row).find(".transferSeq a font").text('req-'+transferList[inx].transferSeq);
+						$(row).find(".transferSeq font a").text('req-'+transferList[inx].transferSeq);
+						$(row).find(".transferSeq a").attr("href",'<c:url value="/transfer/request/list/${repositorySeq}/"/>' + transferList[inx].transferSeq);
 						$(row).children(".transferType").text(transferList[inx].transferTypeCode.codeName);
 						$(row).children(".transferState").text(transferList[inx].transferStateCode.codeName);
 						$(row).children(".requestor").text(transferList[inx].requestUser.userName);
 						$(row).children(".description").text(transferList[inx].description);
 						if(transferList[inx].requestDate > 0) $(row).children(".requestDate").text(haksvn.date.convertToEasyFormat(new Date(transferList[inx].requestDate)));
 						if(transferList[inx].approveDate > 0) $(row).children(".approveDate").text(haksvn.date.convertToEasyFormat(new Date(transferList[inx].approveDate)));
-						$(row).attr('transferSeq',transferList[inx].transferSeq).attr('repositorySeq',transferList[inx].repositorySeq);
-						$(row).click(function(){
-							location.href = '<c:url value="/transfer/request/list"/>' + '/' + $(this).attr('repositorySeq') + '/' +  $(this).attr('transferSeq');
-						});
+						if(transferList[inx].transferGroup && transferList[inx].transferGroup.transferDate > 0) $(row).children(".transferDate").text(haksvn.date.convertToEasyFormat(new Date(transferList[inx].transferGroup.transferDate)));
 						$(row).removeClass("sample");
 						$('#tbl_transferList > tbody').append(row);
 					}
@@ -111,22 +110,24 @@
 						<th>description</th>
 						<th>request date</th>
 						<th>approve date</th>
+						<th>transfer date</th>
 					</tr>
 				</thead>
 				<tbody>
-					<tr class="sample clickable">
-						<td class="transferSeq w_80"><font class="path"><a></a></font></td>
+					<tr class="sample">
+						<td class="transferSeq w_80"><font class="path open-window"><a></a></font></td>
 						<td class="transferType w_80"></td>
 						<td class="transferState w_70"></td>
 						<td class="requestor w_90"></td>
 						<td class="description"></td>
 						<td class="requestDate w_90" style="text-align:center;"></td>
 						<td class="approveDate w_90" style="text-align:center;"></td>
+						<td class="transferDate w_90" style="text-align:center;"></td>
 					</tr>
 				</tbody>
 				<tfoot>
 					<tr>
-						<td colspan="7" style="text-align:center;">
+						<td colspan="8" style="text-align:center;">
 							<span class="showmore display-none"><font class="path"><a onclick="retrieveTransferList()">Show More</a></font></span>
 							<span class="loader display-none"><img src="<c:url value="/images/ajax-loader.gif"/>"/></span>
 							<span class="nodata">no data</span>

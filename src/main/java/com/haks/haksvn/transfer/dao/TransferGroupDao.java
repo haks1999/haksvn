@@ -34,6 +34,10 @@ public class TransferGroupDao {
 				.addOrder(Order.asc("t_state_code.codeOrder"))
 				.addOrder(Order.desc("transferGroupSeq"));
 		
+		if( search.getTitle() != null ){
+			crit.add(Restrictions.like("title", "%" + search.getTitle() + "%"));
+		}
+		
 		if( search.getTransferGroupStateCode() != null ){
 			String transferGroupStateCode = search.getTransferGroupStateCode().getCodeId();
 			if( transferGroupStateCode != null && transferGroupStateCode.length() > 0 ){
