@@ -51,7 +51,6 @@ public class SourceAjaxController {
     		// 입력 조건을 받아서 검색하므로 svn not found 오류가 많이 생길듯
     		return new ArrayList<SVNSource>(0);
     	}
-		
     }
 	
 	/*
@@ -108,6 +107,14 @@ public class SourceAjaxController {
 		return svnSourceDiff;
     }
 	
+	@RequestMapping(value="/changes/search")
+    public @ResponseBody SVNSource searchChangeInfo( @RequestParam(value = "repositorySeq", required = true) int repositorySeq,  
+    							@RequestParam(value = "path", required = true) String path,
+    							@RequestParam(value = "rev", required = true) long revision ) {
+		SVNSource svnSource = SVNSource.Builder.getBuilder(new SVNSource()).path(path).revision(revision).build();
+		svnSource = sourceService.retrieveSVNSourceWithoutContent(repositoryService.retrieveAccesibleActiveRepositoryByRepositorySeq(repositorySeq), svnSource);
+        return svnSource;
+    }
 	
 	/*
 	@ExceptionHandler(HaksvnException.class)

@@ -182,7 +182,9 @@ public class RepositoryService {
 	@Transactional(readOnly=true)
 	public Repository checkRepositoryAccessRight(int repositorySeq){
 		Repository repository = retrieveAccesibleActiveRepositoryByRepositorySeq(repositorySeq);
-		if( repository == null || repositorySeq != repository.getRepositorySeq()) throw new HaksvnNoRepositoryAvailableException("do not have the repository access right"); 
+		if( repository == null || repositorySeq != repository.getRepositorySeq()){
+			throw new HaksvnNoRepositoryAvailableException("do not have the repository access right"); 
+		}
 		return repository;
 	}
 }
