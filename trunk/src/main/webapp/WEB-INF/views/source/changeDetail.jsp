@@ -123,7 +123,8 @@
 								<a class="pmOpener closed" onclick="toggleChangedPath(this,'${changed.path}','${svnSource.log.revision}')">
 									<img class="pClosed" src="<c:url value="/images/plus_small_white.png"/>"/><img class="mOpened" src="<c:url value="/images/minus_small_white.png"/>"/>
 								</a>
-								<span><c:out value="${changed.typeName}" />
+								<span>
+									<span style="display:inline-block;width:53px;"><c:out value="${changed.typeName}" /></span>
 									<font class="path font12 open-window">
 										<c:set var="changedFullPath" value="${repoBrowsePathLink}/${changed.path}?rev=${svnSource.log.revision}" />
 										<a href="${fn:replace(changedFullPath,'//','/')}"><c:out value="${changed.path}"/></a>
