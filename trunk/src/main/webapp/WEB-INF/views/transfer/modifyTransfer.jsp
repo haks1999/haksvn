@@ -238,12 +238,11 @@ form p span font a{text-decoration:underline;cursor:pointer;}
 	};
 	
 	function initTransferSourceList(){
-		_gSourceList = [];
 		$("[id^='div_transferSourceDetail_']").remove();	
 		retrieveTransferSourceList();
 	}
 	
-	
+	var _gTransferChanged = false;
 	function retrieveTransferSourceList(){
 		haksvn.block.on();
 		$.getJSON(
@@ -253,6 +252,7 @@ form p span font a{text-decoration:underline;cursor:pointer;}
 					for( var inx = 0 ; inx < result.length ; inx++){
 						addToTransferSourceList(result[inx]);
 					}
+					_gTransferChanged = false;
 					haksvn.block.off();
 				});
 	};
@@ -619,7 +619,6 @@ form p span font a{text-decoration:underline;cursor:pointer;}
 						<a class="button green mt ml" onclick="requestTransfer()"><small class="icon plus"></small><span>Request</span></a>
 						<a class="button red mt ml" onclick="deleteTransfer()"><small class="icon cross"></small><span>Delete</span></a>
 						<script type="text/javascript" >
-							var _gTransferChanged = false;
 							$(function() {
 								$("#frm_transfer textarea[name='description']").change(function(){
 									_gTransferChanged = true;
@@ -664,8 +663,34 @@ form p span font a{text-decoration:underline;cursor:pointer;}
 						<a class="button red mt ml" onclick="rejectTransfer()"><small class="icon cross"></small><span>Reject</span></a>
 						<script type="text/javascript" >
 							function approveTransfer(){
-								$('#frm_transfer').attr('action', '<c:url value="/transfer/request/list" />' + '<c:out value="/${repositorySeq}/approve"/>');
-								$('#frm_transfer').submit();
+								haksvn.block.on();
+								var queryString = $('#frm_transfer').serialize();
+								$.post('<c:url value="/transfer/request/list" />' + '<c:out value="/${repositorySeq}/approve"/>',
+									queryString,
+						            function(data){
+										haksvn.block.off();
+										if( data.type != 'success'){
+											$().Message({type:data.type,text:data.text});
+											return;
+										}
+										$("#div_approveSuccessMessage").dialog({
+											title:'Approved Request',
+									      	resizable:false,
+									      	width:300,
+										    modal: true,
+										    buttons: {
+										    	"Yes": function(){
+										    		var sCode = "<spring:eval expression="T(com.haks.haksvn.common.code.util.CodeUtils).getTransferStandbyCodeId()"/>";
+										    		location.href = "<c:url value="/transfer/requestGroup/list/${repositorySeq}"/>" + "?sCode=" + sCode;
+											    },
+										    	"No": function() {
+										    		var sCode = "<spring:eval expression="T(com.haks.haksvn.common.code.util.CodeUtils).getTransferApprovedCodeId()"/>";
+										    		location.href = "<c:url value="/transfer/request/list/${repositorySeq}"/>" + "?sCode=" + sCode;
+										        }
+										    }
+									    });
+										
+						        },"json");
 							};
 							
 							function rejectTransfer(){
@@ -903,5 +928,15 @@ form p span font a{text-decoration:underline;cursor:pointer;}
 	<p>
     	<span class="ui-icon ui-icon-alert" style="float: left; margin: 0 7px 50px 0;"></span>
     	<span><b style="break" class="path"></b> is already in the list.</span>
+  	</p>
+</div>
+
+<div id="div_approveSuccessMessage" style="display:none;">
+	<p>
+    	<span class="ui-icon ui-icon-circle-check" style="float: left; margin: 0 7px 50px 0;"></span>
+    	<span>Approved request successfully.</span>
+  	</p>
+  	<p>
+  		Do you want to add this request to request group?
   	</p>
 </div>
