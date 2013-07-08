@@ -151,6 +151,15 @@ public class TransferController {
     	return new ModelAndView(new RedirectView("/transfer/request/list/" + transfer.getRepositorySeq() + param, true));
     }
 	
+	@RequestMapping(value={"/request/list/{repositorySeq}/approveCancel"}, method=RequestMethod.POST)
+    public ModelAndView approveCancelTransfer(ModelMap model, 
+    									@ModelAttribute("transfer") Transfer transfer, 
+    									@PathVariable int repositorySeq){
+    	transfer = transferService.approveCancelTransfer(transfer);
+    	String param = "?rUser=" + ContextHolder.getLoginUser().getUserId() + "&sCode=" + transfer.getTransferStateCode().getCodeId();
+    	return new ModelAndView(new RedirectView("/transfer/request/list/" + transfer.getRepositorySeq() + param, true));
+    }
+	
 	@RequestMapping(value={"/request/list/{repositorySeq}/reject"}, method=RequestMethod.POST)
     public ModelAndView rejectTransfer(ModelMap model, 
     									@ModelAttribute("transfer") Transfer transfer, 

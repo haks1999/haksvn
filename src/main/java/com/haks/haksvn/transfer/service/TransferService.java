@@ -188,6 +188,18 @@ public class TransferService {
 		return transfer;
 	}
 	
+	public Transfer approveCancelTransfer(Transfer transfer){
+		transfer = transferDao.retrieveTransferByTransferSeq(transfer.getTransferSeq());
+		if( !TransferStateAuth.Builder.getBuilder().transfer(transfer).build().getIsApproveCancelable() ){
+			throw new HaksvnException("Insufficient privileges.");
+		}
+		transfer.setTransferStateCode(Code.Builder.getBuilder().codeId(CodeUtils.getTransferRequestCodeId()).build());
+		transfer.setApproveDate(0L);
+		transfer.setApproveUser(null);
+		transfer = transferDao.updateTransfer(transfer);
+		return transfer;
+	}
+	
 	
 	public Transfer rejectTransfer(Transfer transfer){
 		transfer = transferDao.retrieveTransferByTransferSeq(transfer.getTransferSeq());

@@ -11,10 +11,12 @@ public class TransferStateAuth {
 	private boolean isApprovable;		// == isRejectable
 	private boolean isRejectable;		// == isApprovable
 	private boolean isRequestCancelable;
+	private boolean isApproveCancelable;
 	private boolean isApproved;
 	
 	private String stateCodeId;
 	private String requestUserId;
+	private String approveUserId;
 	private String loginUserId;
 	private String loginUserAuthCodeId;
 	
@@ -70,6 +72,14 @@ public class TransferStateAuth {
 		return isRequestCancelable;
 	}
 	
+	public void setIsApproveCancelable(boolean isApproveCancelable){
+		this.isApproveCancelable = isApproveCancelable;
+	}
+	
+	public boolean getIsApproveCancelable(){
+		return isApproveCancelable;
+	}
+	
 	public void setIsApproved(boolean isApproved){
 		this.isApproved = isApproved;
 	}
@@ -93,6 +103,14 @@ public class TransferStateAuth {
 
 	public void setRequestUserId(String requestUserId) {
 		this.requestUserId = requestUserId;
+	}
+	
+	public String getApproveUserId(){
+		return approveUserId;
+	}
+	
+	public void setApproveUserId(String approveUserId){
+		this.approveUserId = approveUserId;
 	}
 
 	public String getLoginUserId() {
@@ -131,6 +149,7 @@ public class TransferStateAuth {
 		
 		public Builder transfer(Transfer transfer){
 			transferStateAuth.setRequestUserId(transfer.getRequestUser()==null?"":transfer.getRequestUser().getUserId());
+			transferStateAuth.setApproveUserId(transfer.getApproveUser()==null?"":transfer.getApproveUser().getUserId());
 			transferStateAuth.setStateCodeId(transfer.getTransferStateCode()==null?"":transfer.getTransferStateCode().getCodeId());
 			return this;
 		}
@@ -140,6 +159,7 @@ public class TransferStateAuth {
 			transferStateAuth.setLoginUserId(ContextHolder.getLoginUser().getUserId());
 			
 			String requestUserId = transferStateAuth.getRequestUserId();
+			String approveUserId = transferStateAuth.getApproveUserId();
 			String stateCode = transferStateAuth.getStateCodeId();
 			String loginUserId = transferStateAuth.getLoginUserId();
 			String loginUserAuthCode = transferStateAuth.getLoginUserAuthCodeId();
@@ -150,6 +170,7 @@ public class TransferStateAuth {
 			transferStateAuth.setIsApprovable(CodeUtils.isApprovableState(stateCode) && (CodeUtils.isReviewer(loginUserAuthCode) || CodeUtils.isSystemAdmin(loginUserAuthCode)));
 			transferStateAuth.setIsRejectable(transferStateAuth.getIsApprovable());
 			transferStateAuth.setIsRequestCancelable( CodeUtils.isRequestCancelableState(stateCode) && requestUserId.equals(loginUserId) );
+			transferStateAuth.setIsApproveCancelable( CodeUtils.isApproveCancelableState(stateCode) && (approveUserId.equals(loginUserId) || CodeUtils.isSystemAdmin(loginUserAuthCode)) );
 			transferStateAuth.setIsApproved( CodeUtils.isApprovedState(stateCode));
 			
 			return transferStateAuth;

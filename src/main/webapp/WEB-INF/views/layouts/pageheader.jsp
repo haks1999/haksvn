@@ -54,15 +54,19 @@
 		     return /^\/.+[^\/]$/.test(value);
 		}, "<spring:message code="validation.svnpath" />");
 		
+		$.validator.addMethod("minSelect", function(value, element, params) {
+		     return value >= Number(params);
+		}, "<spring:message code="validation.minSelect" />");
+		
 		$.extend($.validator.messages, {
 		    date: "<spring:message code="validation.date" />",
 		    digits: "<spring:message code="validation.digits" />",
 		    email: "<spring:message code="validation.email" />",
 		    equalTo: "<spring:message code="validation.equalTo" />",
-		    max: "<spring:message code="validation.min" />",
+		    max: "<spring:message code="validation.max" />",
 			maxlength: "<spring:message code="validation.maxlength" />",
 			minlength: "<spring:message code="validation.minlength" />",
-		    min: "<spring:message code="validation.max" />",
+		    min: "<spring:message code="validation.min" />",
 		    number: "<spring:message code="validation.number" />",
 		    range: "<spring:message code="validation.range" />",
 		    rangelength: "<spring:message code="validation.rangelength" />",

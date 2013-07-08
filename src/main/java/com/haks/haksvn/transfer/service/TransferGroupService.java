@@ -65,7 +65,7 @@ public class TransferGroupService {
 			exsitingTransferList.add(existingTransfer);
 		}
 		TransferGroup.Builder.getBuilder(currentTransferGroup).transferGroupStateCode(codeService.retrieveCode(CodeUtils.getTransferGroupStandbyCodeId()))
-			.transferDate(0).transferList(exsitingTransferList).transferUser(null).build();
+			.transferDate(0).transferList(exsitingTransferList).transferUser(null).description(transferGroup.getDescription()).title(transferGroup.getTitle()).build();
 		return transferGroupDao.saveTransferGroup(currentTransferGroup);
 	}
 	
