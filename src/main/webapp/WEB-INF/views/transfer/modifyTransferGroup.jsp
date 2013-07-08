@@ -110,6 +110,7 @@ form p span font a{text-decoration:underline;cursor:pointer;}
 		},'json');
 	};
 	
+	var _gTransferGroupChanged = false;
 	function retrieveAddedRequestList(){
 		haksvn.block.on();
 		$.getJSON(
@@ -120,6 +121,7 @@ form p span font a{text-decoration:underline;cursor:pointer;}
 						addRequestToTransferListPanel(result[inx]);
 					}
 					haksvn.block.off();
+					_gTransferGroupChanged = false;
 				});
 	};
 	
@@ -318,8 +320,6 @@ form p span font a{text-decoration:underline;cursor:pointer;}
 						<c:if test="${!isNewTransferGroup}">
 							<a class="button green mt ml" onclick="transferTransferGroup()"><small class="icon check"></small><span>Transfer</span></a>
 							<script type="text/javascript" >
-							
-								var _gTransferGroupChanged = false;
 								$(function() {
 									$("#frm_transferGroup input[name='title']").change(function(){
 										_gTransferGroupChanged = true;
@@ -331,8 +331,8 @@ form p span font a{text-decoration:underline;cursor:pointer;}
 										_gTransferGroupChanged = true;
 									});
 								});
+								
 								function transferTransferGroup(){
-									
 									if( _gTransferGroupChanged ){
 										$("#div_changeOccurMessage").dialog({
 											title:'Changes occured',
@@ -356,8 +356,26 @@ form p span font a{text-decoration:underline;cursor:pointer;}
 										$.post('<c:url value="/transfer/requestGroup/list" />' + '<c:out value="/${repositorySeq}/transfer"/>',
 											queryString,
 								            function(data){
-												haksvn.block.off();
+											haksvn.block.off();
+											if( data.type != 'success'){
 												$().Message({type:data.type,text:data.text});
+												return;
+											}
+											$("#div_transferSuccessMessage").dialog({
+												title:'Transfer finished',
+										      	resizable:false,
+										      	width:300,
+											    modal: true,
+											    buttons: {
+											    	"Yes": function(){
+											    		location.href = "<c:url value="/transfer/tagging/list/${repositorySeq}/add"/>";
+												    },
+											    	"No": function() {
+											    		var sCode = "<spring:eval expression="T(com.haks.haksvn.common.code.util.CodeUtils).getTransferTransferedCodeId()"/>";
+											    		location.href = "<c:url value="/transfer/requestGroup/list/${repositorySeq}"/>" + "?sCode=" + sCode;
+											        }
+											    }
+										    });
 								        },"json");
 									}
 								};
@@ -456,5 +474,15 @@ form p span font a{text-decoration:underline;cursor:pointer;}
   	</p>
   	<p>
   		If transfer without saving, changes will be lost. Proceed?
+  	</p>
+</div>
+
+<div id="div_transferSuccessMessage" style="display:none;">
+	<p>
+    	<span class="ui-icon ui-icon-circle-check" style="float: left; margin: 0 7px 50px 0;"></span>
+    	<span>Transfer finished successfully.</span>
+  	</p>
+  	<p>
+  		Do you want to create tagging from current branch?
   	</p>
 </div>

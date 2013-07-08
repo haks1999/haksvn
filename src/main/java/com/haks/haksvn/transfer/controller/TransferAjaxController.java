@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import com.haks.haksvn.common.code.model.Code;
 import com.haks.haksvn.common.code.util.CodeUtils;
 import com.haks.haksvn.common.exception.HaksvnException;
+import com.haks.haksvn.common.message.model.ResultMessage;
 import com.haks.haksvn.common.paging.model.Paging;
 import com.haks.haksvn.transfer.model.Transfer;
 import com.haks.haksvn.transfer.model.TransferSource;
@@ -74,6 +75,16 @@ public class TransferAjaxController {
     		transferSource.setTransfer(null);	// lazy loading
     	}
     	return transferSourceList;
+    }
+    
+    @RequestMapping(value={"/request/list/{repositorySeq}/approve"}, method=RequestMethod.POST)
+    public @ResponseBody ResultMessage approveTransfer(@ModelAttribute("transfer") Transfer transfer, 
+    									@PathVariable int repositorySeq){
+    	ResultMessage message = new ResultMessage("Approve success");
+    	transfer = transferService.approveTransfer(transfer);
+    	//String param = "?rUser=" + ContextHolder.getLoginUser().getUserId() + "&sCode=" + transfer.getTransferStateCode().getCodeId();
+    	//return new ModelAndView(new RedirectView("/transfer/request/list/" + transfer.getRepositorySeq() + param, true));
+    	return message;
     }
     
     
