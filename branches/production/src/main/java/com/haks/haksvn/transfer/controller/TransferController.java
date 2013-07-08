@@ -4,9 +4,6 @@ import java.util.List;
 
 import javax.validation.Valid;
 
-import org.codehaus.jackson.map.DeserializationConfig;
-import org.codehaus.jackson.map.ObjectMapper;
-import org.codehaus.jackson.type.TypeReference;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
@@ -24,7 +21,6 @@ import com.haks.haksvn.common.security.util.ContextHolder;
 import com.haks.haksvn.repository.model.Repository;
 import com.haks.haksvn.repository.service.RepositoryService;
 import com.haks.haksvn.transfer.model.Transfer;
-import com.haks.haksvn.transfer.model.TransferSource;
 import com.haks.haksvn.transfer.model.TransferStateAuth;
 import com.haks.haksvn.transfer.service.TransferService;
 
@@ -98,24 +94,20 @@ public class TransferController {
 	@RequestMapping(value={"/request/list/{repositorySeq}/save"}, method=RequestMethod.POST)
     public ModelAndView saveTransfer(ModelMap model, 
     									@ModelAttribute("transfer") @Valid Transfer transfer, 
-    									@RequestParam(value = "transferSourceList") String sourceListJson,
+    									//@RequestParam(value = "transferSourceList") String sourceListJson,
     									BindingResult result,
     									@PathVariable int repositorySeq) throws Exception{
+		transfer.setRepositorySeq(repositorySeq);
+		transfer.setTransferGroup(null);
     	if( result.hasErrors() ){
     		List<Repository> repositoryList = repositoryService.retrieveAccesibleActiveRepositoryList();
     		model.addAttribute("repositoryList", repositoryList );
     		model.addAttribute("repository", repositoryService.retrieveRepositoryByRepositorySeq(repositorySeq));
-    		transfer.setRepositorySeq(transfer.getRepositorySeq());
         	model.addAttribute("tranfer", transfer );
         	model.addAttribute("transferStateAuth", TransferStateAuth.Builder.getBuilder().transfer(transfer).build());
         	model.addAttribute("repositorySeq", repositorySeq );
     		return new ModelAndView("/transfer/modifyTransfer");
     	}else{
-    		ObjectMapper mapper = new ObjectMapper();
-   			mapper.configure(DeserializationConfig.Feature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-       		List<TransferSource> transferSourceList = mapper.readValue(sourceListJson, new TypeReference<List<TransferSource>>(){});
-       		transfer.setSourceList(transferSourceList);
-    		transfer.setTransferGroup(null);
     		transfer = transferService.saveTransfer(transfer);
     		String param = "?rUser=" + ContextHolder.getLoginUser().getUserId() + "&sCode=" + transfer.getTransferStateCode().getCodeId();
     		return new ModelAndView(new RedirectView("/transfer/request/list/" + transfer.getRepositorySeq() + param, true));
@@ -155,6 +147,15 @@ public class TransferController {
     									@ModelAttribute("transfer") Transfer transfer, 
     									@PathVariable int repositorySeq){
     	transfer = transferService.approveTransfer(transfer);
+    	String param = "?rUser=" + ContextHolder.getLoginUser().getUserId() + "&sCode=" + transfer.getTransferStateCode().getCodeId();
+    	return new ModelAndView(new RedirectView("/transfer/request/list/" + transfer.getRepositorySeq() + param, true));
+    }
+	
+	@RequestMapping(value={"/request/list/{repositorySeq}/approveCancel"}, method=RequestMethod.POST)
+    public ModelAndView approveCancelTransfer(ModelMap model, 
+    									@ModelAttribute("transfer") Transfer transfer, 
+    									@PathVariable int repositorySeq){
+    	transfer = transferService.approveCancelTransfer(transfer);
     	String param = "?rUser=" + ContextHolder.getLoginUser().getUserId() + "&sCode=" + transfer.getTransferStateCode().getCodeId();
     	return new ModelAndView(new RedirectView("/transfer/request/list/" + transfer.getRepositorySeq() + param, true));
     }

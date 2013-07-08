@@ -32,7 +32,7 @@ form p span font a{text-decoration:underline;cursor:pointer;}
 				},
 				transferListCount: {
 					required: true,
-					min: 1
+					minSelect: 1
 				}
 			},
 			submitHandler : function(form){
@@ -177,7 +177,7 @@ form p span font a{text-decoration:underline;cursor:pointer;}
 	
 	function changeCurrentTransferListCount(change){
 		var curCnt = $("#frm_transferGroup input[name=\"transferListCount\"]").val();
-		$("#frm_transferGroup input[name=\"transferListCount\"]").val(Number(curCnt) + change);
+		$("#frm_transferGroup input[name=\"transferListCount\"]").val(Number(curCnt) + change).change();
 	};
 	
 	function removeRequestFromTransferListPanel(transferDetailPanel){
@@ -294,7 +294,7 @@ form p span font a{text-decoration:underline;cursor:pointer;}
 					</c:if>
 					<span class="italic" style="margin-left:20px;"><font class="path"><a onclick="expandAllTransferDetail()">expand all</a></font></span>
 					<span class="italic"><font class="path"><a onclick="collapseAllTransferDetail()">collapse all</a></font></span>
-					<input type="text" name="transferListCount" class="text visible-hidden" value="${fn:length(requestGroup.transferList)}"/>
+					<input type="text" name="transferListCount" readonly class="text readOnly w_10" style="text-align:right;" value="${fn:length(requestGroup.transferList)}"/> requests
 					<span class="status"></span>
 					<span id="spn_requestsToTran" style="display:block;margin-left:220px;">
 					</span>
@@ -306,6 +306,7 @@ form p span font a{text-decoration:underline;cursor:pointer;}
 						<script type="text/javascript" >
 							function saveTransferGroup(){
 								var requestCnt = 0;
+								$("#frm_transferGroup input[name^='transferList[']").remove();
 								$("#spn_requestsToTran .requestDetail-panel").not(".removed").each(function(){
 									$('#frm_transferGroup').append("<input type=\"hidden\" name=\"transferList[" + (requestCnt++) + "].transferSeq\" value=\"" + $(this).attr("transferSeq") + "\" />");
 								});
@@ -317,25 +318,58 @@ form p span font a{text-decoration:underline;cursor:pointer;}
 						<c:if test="${!isNewTransferGroup}">
 							<a class="button green mt ml" onclick="transferTransferGroup()"><small class="icon check"></small><span>Transfer</span></a>
 							<script type="text/javascript" >
+							
+								var _gTransferGroupChanged = false;
+								$(function() {
+									$("#frm_transferGroup input[name='title']").change(function(){
+										_gTransferGroupChanged = true;
+									});
+									$("#frm_transferGroup textarea[name='description']").change(function(){
+										_gTransferGroupChanged = true;
+									});
+									$("#frm_transferGroup input[name='transferListCount']").change(function(){
+										_gTransferGroupChanged = true;
+									});
+								});
 								function transferTransferGroup(){
-									haksvn.block.on();
-									var queryString = $('#frm_transferGroup').serialize();
-									$.post('<c:url value="/transfer/requestGroup/list" />' + '<c:out value="/${repositorySeq}/transfer"/>',
-										queryString,
-							            function(data){
-											haksvn.block.off();
-											$().Message({type:data.type,text:data.text});
-							        },"json");
+									
+									if( _gTransferGroupChanged ){
+										$("#div_changeOccurMessage").dialog({
+											title:'Changes occured',
+									      	resizable:false,
+									      	width:300,
+										    modal: true,
+										    buttons: {
+										    	"Yes": function(){
+										    		_gTransferGroupChanged = false;
+										    		transferTransferGroup();
+											    },
+										    	"No": function() {
+										            $( this ).dialog( "close" );
+										            return;
+										        }
+										    }
+									    });
+									}else{
+										haksvn.block.on();
+										var queryString = $('#frm_transferGroup').serialize();
+										$.post('<c:url value="/transfer/requestGroup/list" />' + '<c:out value="/${repositorySeq}/transfer"/>',
+											queryString,
+								            function(data){
+												haksvn.block.off();
+												$().Message({type:data.type,text:data.text});
+								        },"json");
+									}
+								};
+							</script>
+							<a class="button red mt ml" onclick="deleteTransferGroup()"><small class="icon cross"></small><span>Delete</span></a>
+							<script type="text/javascript" >
+								function deleteTransferGroup(){
+									$('#frm_transferGroup').attr('action', '<c:url value="/transfer/requestGroup/list" />' + '<c:out value="/${repositorySeq}/delete"/>');
+									$('#frm_transferGroup').submit();
 								};
 							</script>
 						</c:if>
-						<a class="button red mt ml" onclick="deleteTransferGroup()"><small class="icon cross"></small><span>Delete</span></a>
-						<script type="text/javascript" >
-							function deleteTransferGroup(){
-								$('#frm_transferGroup').attr('action', '<c:url value="/transfer/requestGroup/list" />' + '<c:out value="/${repositorySeq}/delete"/>');
-								$('#frm_transferGroup').submit();
-							};
-						</script>
 					</c:if>
 					<a class="button yellow mt ml" onclick="history.back()"><small class="icon play"></small><span>Back to List</span></a>
 				</p>
@@ -412,5 +446,15 @@ form p span font a{text-decoration:underline;cursor:pointer;}
 	<p>
     	<span class="ui-icon ui-icon-alert" style="float: left; margin: 0 7px 50px 0;"></span>
     	<span><b class="transferSeq"></b> is already in the list.</span>
+  	</p>
+</div>
+
+<div id="div_changeOccurMessage" style="display:none;">
+	<p>
+    	<span class="ui-icon ui-icon-alert" style="float: left; margin: 0 7px 50px 0;"></span>
+    	<span>There are some changes.</span>
+  	</p>
+  	<p>
+  		If transfer without saving, changes will be lost. Proceed?
   	</p>
 </div>
