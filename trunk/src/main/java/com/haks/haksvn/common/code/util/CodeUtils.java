@@ -83,6 +83,10 @@ public class CodeUtils {
 		return getTransferRequestCodeId().equals(stateCode);
 	}
 	
+	public static boolean isApproveCancelableState(String stateCode){
+		return getTransferApprovedCodeId().equals(stateCode);
+	}
+	
 	public static boolean isApprovedState(String stateCode){
 		return getTransferApprovedCodeId().equals(stateCode) || getTransferRejectCodeId().equals(stateCode);
 	}

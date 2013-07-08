@@ -66,10 +66,12 @@ form p span font a{text-decoration:underline;cursor:pointer;}
 				},
 				sourceListCount: {
 					required: true,
-					min: 1
+					minSelect: 1
 				}
 			},
 			submitHandler : function(form){
+				// 이놈은 왜 같이 안 될까...
+				//if( !validTransferForm.element("#frm_transfer input[name=sourceListCount]")) return false;
 				if( !validTransferForm.valid() ) return false;
 				haksvn.block.on();
 				form.submit();
@@ -251,15 +253,11 @@ form p span font a{text-decoration:underline;cursor:pointer;}
 					for( var inx = 0 ; inx < result.length ; inx++){
 						addToTransferSourceList(result[inx]);
 					}
-					_gTransferChanged = false;
 					haksvn.block.off();
 				});
 	};
 	
-	var _gTransferChanged = false;
-	
 	function addToTransferSourceList( nSrc ){
-		_gTransferChanged = true;
 		if( $('#' + transformPathToId(nSrc.path)).length > 0 ){
 			$( "#div_duplicateMessage" ).find(".path").text(nSrc.path);
 			$( "#div_duplicateMessage" ).dialog({
@@ -286,7 +284,7 @@ form p span font a{text-decoration:underline;cursor:pointer;}
 	
 	function changeCurrentSourceListCount(change){
 		var curCnt = $("#frm_transfer input[name=\"sourceListCount\"]").val();
-		$("#frm_transfer input[name=\"sourceListCount\"]").val(Number(curCnt) + change);
+		$("#frm_transfer input[name=\"sourceListCount\"]").val(Number(curCnt) + change).change();
 	};
 	
 	function transformPathToId( oPath ){
@@ -309,7 +307,8 @@ form p span font a{text-decoration:underline;cursor:pointer;}
 				$(this).addClass("removed").attr("value","Remove Cancel");
 				changeCurrentSourceListCount(-1);
 			}
-		}).parent().find("input.diff-prod").unbind("click").click(function(){
+		});
+		$(oElem).find("input.diff-prod").unbind("click").click(function(){
 			var srcD = $(oElem).data('transferSource');
 			var param='?repositorySeq=' + '<c:out value="${repositorySeq}"/>'
 						+'&srcPath=' + _gRepoBranches+srcD.path.substr(_gRepoTrunk.length)
@@ -317,14 +316,14 @@ form p span font a{text-decoration:underline;cursor:pointer;}
 						+'&srcRev=' + srcD.revision + '&trgRev=-1';
 			var win = window.open('<c:url value="/source/changes/diff" />' + param, '_blank');
 			win.focus();
-		}).parent().find("input.chg-revision").unbind("click").click(function(){
+		});
+		$(oElem).find("input.chg-revision").unbind("click").click(function(){
 			_gChangePaging.path = $(oElem).data('transferSource').path;
 			openRevisionSourceDialog(_gChangePaging.path);
 		});
 	};
 	
 	function initTransferSourceDetailLinks( oPath, rev ){
-		//_gTransferChanged = true;
 		var srcDetail = $('#' + transformPathToId(oPath));
 		$(srcDetail).find(".change-info").removeClass("loaded").children("div").not(".sample").remove();
 		$(srcDetail).find('.src-tail font.path a').text(oPath);
@@ -525,30 +524,6 @@ form p span font a{text-decoration:underline;cursor:pointer;}
 		$('#frm_transfer .transferSourceDetailPanel .pmOpener.opened').parent().trigger('click');
 	};
 	
-	function validateTransferInput(){
-		var showInvalidDialog = function(){
-			
-			$( "#div_invalidateMessage" ).dialog({
-		      	modal: true,
-		      	title:'Invalid Input',
-		      	resizable:false,
-		      	buttons: {
-		        	Ok: function() {
-		          		$( this ).dialog( "close" );
-		        	}
-		      	}
-		    });
-		};
-
-		if($('#frm_transfer input[name=transferSourceList]').val().length < 1){
-			$("#div_invalidateMessage .input").text('Transfer Source List');
-			showInvalidDialog();
-			$('#spn_sourcesToTran').focus();
-			return false;
-		}
-		return true;
-	};
-	
 </script>
 <div id="table" class="help">
 	<h1>Transfer Information</h1>
@@ -623,7 +598,7 @@ form p span font a{text-decoration:underline;cursor:pointer;}
 					<label class="left">Sources To Transfer</label>
 					<span class="italic"><font class="path"><a onclick="expandAllTransferDetail()">expand all</a></font></span>
 					<span class="italic"><font class="path"><a onclick="collapseAllTransferDetail()">collapse all</a></font></span>
-					<input type="text" name="sourceListCount" class="text readOnly w_10" style="text-align:right;" value="${fn:length(transfer.sourceList)}"/> sources
+					<input type="text" name="sourceListCount" readonly class="text readOnly w_10" style="text-align:right;" value="${fn:length(transfer.sourceList)}"/> sources
 					<span class="status"></span>
 					<span style="display:block;margin-left:210px;">
 						<c:if test="${transferStateAuth.isEditable}">
@@ -632,7 +607,7 @@ form p span font a{text-decoration:underline;cursor:pointer;}
 									<option value="openSearchSourceDialog('<c:out value="${repository.trunkPath}" />',false)">transfer to production, by name</option>
 									<option value="openSearchSourceDialog('<c:out value="${repository.branchesPath}" />',true)">delete from production, by name</option>
 								</select>
-								<input type="button" value="Search" onclick="eval($(this).parent().children('select').val())"/>
+								<input type="button" value="Search & Add" onclick="eval($(this).parent().children('select').val())"/>
 							</span>
 						</c:if>
 						<span id="spn_sourcesToTran"></span>
@@ -644,6 +619,16 @@ form p span font a{text-decoration:underline;cursor:pointer;}
 						<a class="button green mt ml" onclick="requestTransfer()"><small class="icon plus"></small><span>Request</span></a>
 						<a class="button red mt ml" onclick="deleteTransfer()"><small class="icon cross"></small><span>Delete</span></a>
 						<script type="text/javascript" >
+							var _gTransferChanged = false;
+							$(function() {
+								$("#frm_transfer textarea[name='description']").change(function(){
+									_gTransferChanged = true;
+								});
+								$("#frm_transfer input[name='sourceListCount']").change(function(){
+									_gTransferChanged = true;
+								});
+							});
+							
 							function requestTransfer(){
 								if( _gTransferChanged ){
 									$("#div_changeOccurMessage").dialog({
@@ -702,9 +687,8 @@ form p span font a{text-decoration:underline;cursor:pointer;}
 						<a class="button green mt ml" onclick="saveTransfer()"><small class="icon save"></small><span>Save</span></a>
 						<script type="text/javascript" >
 							function saveTransfer(){
-								//if( !validateTransferInput() ) return;
 								
-								$('#frm_transfer input[name^=sourceList]').remove();
+								$("#frm_transfer input[name^='sourceList[']").remove();
 								var sourceCnt = 0;
 								$("#spn_sourcesToTran .transferSourceDetailPanel").each(function(){
 									var transferSource = $(this).data("transferSource"); 
@@ -722,6 +706,15 @@ form p span font a{text-decoration:underline;cursor:pointer;}
 								
 								
 								$('#frm_transfer').attr('action', '<c:url value="/transfer/request/list" />' + '<c:out value="/${repositorySeq}/save"/>');
+								$('#frm_transfer').submit();
+							};
+						</script>
+					</c:if>
+					<c:if test="${transferStateAuth.isApproveCancelable}">
+						<a class="button red mt ml" onclick="approveCancelTransfer()"><small class="icon minus"></small><span>Cancel Approve</span></a>
+						<script type="text/javascript" >
+							function approveCancelTransfer(){
+								$('#frm_transfer').attr('action', '<c:url value="/transfer/request/list" />' + '<c:out value="/${repositorySeq}/approveCancel"/>');
 								$('#frm_transfer').submit();
 							};
 						</script>
@@ -896,13 +889,6 @@ form p span font a{text-decoration:underline;cursor:pointer;}
   	</p>
 </div>
 
-<div id="div_invalidateMessage" style="display:none;">
-	<p>
-    	<span class="ui-icon ui-icon-alert" style="float: left; margin: 0 7px 50px 0;"></span>
-    	<span><b class="input"></b> can not be empty!</span>
-  	</p>
-</div>
-
 <div id="div_changeOccurMessage" style="display:none;">
 	<p>
     	<span class="ui-icon ui-icon-alert" style="float: left; margin: 0 7px 50px 0;"></span>
@@ -916,6 +902,6 @@ form p span font a{text-decoration:underline;cursor:pointer;}
 <div id="div_duplicateMessage" style="display:none;">
 	<p>
     	<span class="ui-icon ui-icon-alert" style="float: left; margin: 0 7px 50px 0;"></span>
-    	<span><b class="path"></b> is already in the list.</span>
+    	<span><b style="break" class="path"></b> is already in the list.</span>
   	</p>
 </div>
