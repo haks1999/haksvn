@@ -1,9 +1,6 @@
 package com.haks.haksvn.user.controller;
 
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -30,18 +27,9 @@ public class CommonUserAjaxController {
     private UserService userService;
     
     @RequestMapping(value="/find", params ={"searchString"})
-    public @ResponseBody List<Map<String,String>> listActiveUserByUserIdOrUserName(@RequestParam(value = "searchString", required = true) String searchString) {
+    public @ResponseBody List<User> listActiveUserByUserIdOrUserName(@RequestParam(value = "searchString", required = true) String searchString) {
     	List<User> userList = userService.retrieveActiveUserByUserIdOrUserName(searchString);
-    	List<Map<String,String>> simpleUserList = new ArrayList<Map<String,String>>();
-    	for( User user : userList ){
-    		Map<String, String> simpleUser = new HashMap<String,String>();
-    		simpleUser.put("userId", user.getUserId());
-    		simpleUser.put("userName", user.getUserName());
-    		simpleUser.put("label", user.getUserName() + "(" + user.getUserId() + ")");
-    		simpleUser.put("value", user.getUserId());
-    		simpleUserList.add( simpleUser );
-    	}
-    	return simpleUserList;
+    	return userList;
     }
     
     @ExceptionHandler(HaksvnException.class)

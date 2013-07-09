@@ -1,13 +1,12 @@
 <%@ include file="/WEB-INF/views/common/include/taglib.jspf"%>
-<style>
-  .ui-autocomplete-loading {
-    background: white url('/haksvn/resources/images/ui-anim_basic_16x16.gif') right center no-repeat;
-  }
-  </style>
+<style type="text/css">
+.chzn-results {height: 100px;}
+</style>
 <script type="text/javascript">
 	$(function() {
 		retrieveRepositoryUserList();
 		$("#sel_repository").change(retrieveRepositoryUserList);
+		
 	});
 	    
 	function retrieveRepositoryUserList(){
@@ -42,6 +41,7 @@
 	};
 	
 	function addRepositoryUser(){
+		var selectedUsers = $("#div_searchUser .chzn-select").chosen().val();
 		if(selectedUsers.length < 1) return;
 		var repositorySeq = $("#sel_repository > option:selected").val();
 		var userIds = {userId: selectedUsers, overwrite: $('#ckb_overwrite').is(':checked')};
@@ -54,94 +54,32 @@
 	        },"json");
 	};
 	
-	function autocompleteSplit( val ) {
-		return val.split( /,\s*/ );
-	};
-	    
-	function autocompleteExtractLast( term ) {
-		return autocompleteSplit( term ).pop();
-	};
-	
-	var selectedUsers = [];
-	function enableSearchUserAutocomplete(){
-		$( "#ipt_users" ).autocomplete({
-			source: function( request, response ) {
-						if( autocompleteExtractLast(request.term).trim().length < 2 ) return;
-		          		$.postJSON( "<c:url value="/common/users/find/"/>",
-		          					{searchString: autocompleteExtractLast(request.term)}, 
-		          					function(data){
-			            				if (!data.length || data.length < 1) {
-			            					data = [{ noresult: true, noresultmsg: "No Result!"}];
-			            				}
-			            				response(data);
-		        	  	});
-		          
-		        	},
-			minLength: 2,
-			focus: 	function( event, ui ) {
-						// prevent value inserted on focus
-						return false;
-		      		},
-			select: function( event, ui ) {
-						
-						var terms = autocompleteSplit( this.value );
-				        terms.pop();
-				        if (ui.item.noresult || selectedUsers.join( "," ).indexOf(ui.item.value) > -1){
-				        	 //terms.push( "" );
-						}else{
-							selectedUsers.push(ui.item.value);
-							terms.push( ui.item.value );
-						}
-				        terms.push( "" );
-				        this.value = terms.join( ", " );
-				        return false;
-					},
-			open: 	function() {
-						$( this ).removeClass( "ui-corner-all" ).addClass( "ui-corner-top" );
-					},
-			close: 	function() {
-						$( this ).removeClass( "ui-corner-top" ).addClass( "ui-corner-all" );
-					}
-		})
-		.data( "autocomplete" )._renderItem = function( ul, item ) {
-			if( item.noresult ){
-				return $( "<li>" )
-		        .append( "<a class=\"italic\">" + item.noresultmsg + "</a>" )
-		        .appendTo( ul ); 
-			}else{
-				return $( "<li>" )
-		        .append( "<a>" + item.label + "</a>" )
-		        .appendTo( ul );
-			}
-		     
-		};
-	};
-	
-	function disableSearchUserAutocomplete(){
-		selectedUsers = [];
-		//$("#ipt_users").autocomplete( "destroy" );
-		$('#ipt_users').data().autocomplete.term = null;
-		$('#ipt_users').val('');
-	};
-	
 	function openSearchUserDialog(){
-		//$('#AutocompleteElementID').data().autocomplete.term = null;
-		//selectedUsers = [];
 		
-		enableSearchUserAutocomplete();
+		$("#div_searchUser .chzn-select").val('').trigger("liszt:updated");
+		$.getJSON( "<c:url value="/common/users/find/"/>",
+				{searchString: ""}, 
+				function(data){
+					$("#div_searchUser .chzn-select option").remove();
+					for( var inx = 0 ; inx < data.length ; inx++ ){
+						$("#div_searchUser .chzn-select").append("<option value=\"" +  data[inx].userId + "\">" + data[inx].userName + "(" + data[inx].userName + ")" + "</option>");
+					}
+					$("#div_searchUser .chzn-select").chosen({width:"100%"});
+		    	}
+		);
+		
 		$("#div_searchUser").dialog({
 			resizable: false,
-			height: 260,
+			height: 300,
+			width: 450,
 		    modal: true,
 		    buttons: {
 		          "Confirm": function() {
 		        	  addRepositoryUser();
-		        	  disableSearchUserAutocomplete();
-		            $( this ).dialog( "close" );
+		              $( this ).dialog( "close" );
 		          },
 		          Cancel: function() {
-		        	  disableSearchUserAutocomplete();
-		            $( this ).dialog( "close" );
+		              $( this ).dialog( "close" );
 		          }
 		        }
 	    });
@@ -206,8 +144,10 @@
 
 <div id="div_searchUser" title="Search User" style="display:none;">
 	<div class="module text">
-  		<p>Enter user id or user name <br>(minimum 3 characters)</p>
-		<input id="ipt_users" class="text w_20">
+		
+		<select data-placeholder="Find Users" class="chzn-select" multiple>
+        </select>
+          
 		<span class="italic"><input id="ckb_overwrite" type="checkbox"/>Overwrite if a user exists in passwd</span>
 	</div>
 </div>
