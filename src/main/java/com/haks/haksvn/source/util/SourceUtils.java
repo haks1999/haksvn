@@ -214,8 +214,14 @@ public class SourceUtils {
 					}
 					srcDiffLineSideBySideList.get(0).isFirst = true;
 					srcDiffLineSideBySideList.get(srcDiffLineSideBySideList.size()-1).isLast = true;
+					for( DiffLineSideBySide diffLineSideBySide : srcDiffLineSideBySideList){
+						diffLineSideBySide.isDiff = true;
+					}
 					trgDiffLineSideBySideList.get(0).isFirst = true;
 					trgDiffLineSideBySideList.get(trgDiffLineSideBySideList.size()-1).isLast = true;
+					for( DiffLineSideBySide diffLineSideBySide : trgDiffLineSideBySideList){
+						diffLineSideBySide.isDiff = true;
+					}
 					srcDiffLineSideBySideTotalList.addAll(srcDiffLineSideBySideList);
 					trgDiffLineSideBySideTotalList.addAll(trgDiffLineSideBySideList);
 					srcDiffLineSideBySideList = new ArrayList<DiffLineSideBySide>(0);
@@ -237,20 +243,23 @@ public class SourceUtils {
 			diffLineSideBySideCombined.index = srcDiffLineSideBySide.index - 1;
 			diffLineSideBySideCombined.isFirst = srcDiffLineSideBySide.isFirst;
 			diffLineSideBySideCombined.isLast = srcDiffLineSideBySide.isLast;
+			diffLineSideBySideCombined.isDiff = srcDiffLineSideBySide.isDiff;
 			diffLineSideBySideCombined.isEmptySrc = srcDiffLineSideBySide.isEmpty;
 			diffLineSideBySideCombined.isEmptyTrg = trgDiffLineSideBySide.isEmpty;
 			diffLineSideBySideCombinedMap.put(diffLineSideBySideCombined.index, diffLineSideBySideCombined);
 		}
 		
 		//
-		System.out.println( "srcDiffLineSideBySideTotalList.size : " + srcDiffLineSideBySideTotalList.size() );
-		System.out.println( "trgDiffLineSideBySideTotalList.size : " + trgDiffLineSideBySideTotalList.size() );
+		//System.out.println( "srcDiffLineSideBySideTotalList.size : " + srcDiffLineSideBySideTotalList.size() );
+		//System.out.println( "trgDiffLineSideBySideTotalList.size : " + trgDiffLineSideBySideTotalList.size() );
 
+		/*
 		for( int inx = 0 ; inx < srcDiffLineSideBySideTotalList.size() ; inx++){
 			DiffLineSideBySide srcDiffLineSideBySide = srcDiffLineSideBySideTotalList.get(inx);
 			DiffLineSideBySide trgDiffLineSideBySide = trgDiffLineSideBySideTotalList.get(inx);
 			System.out.println( srcDiffLineSideBySide.index + " | " +srcDiffLineSideBySide.isFirst + " | "+srcDiffLineSideBySide.isLast + " | " + trgDiffLineSideBySide.index + " | " + trgDiffLineSideBySide.isFirst + " | " + trgDiffLineSideBySide.isLast);
 		}
+		*/
 		//
 		
 		
@@ -267,7 +276,7 @@ public class SourceUtils {
 			StringBuffer tr = new StringBuffer("<tr>");
 			if( diffLineSideBySideCombinedMap.containsKey(lineIndex)){
 				DiffLineSideBySideCombined diffLineSideBySideCombined = diffLineSideBySideCombinedMap.get(lineIndex);
-				String trCls = (diffLineSideBySideCombined.isFirst?" isFirst":"") + (diffLineSideBySideCombined.isLast?" isLast":"");
+				String trCls = (diffLineSideBySideCombined.isFirst?" isFirst":"") + (diffLineSideBySideCombined.isLast?" isLast":"") + (diffLineSideBySideCombined.isDiff?" isDiff":"");
 				if(trCls.length() > 1 ) tr = new StringBuffer("<tr class=\"" + trCls + "\">");
 				if(diffLineSideBySideCombined.isEmptySrc){
 					if( isSrcContentLonger ) maxLine++;
@@ -304,6 +313,7 @@ public class SourceUtils {
 		boolean isFirst = false;
 		boolean isLast = false;
 		boolean isEmpty = false;
+		boolean isDiff = false;
 	}
 	
 	class DiffLineSideBySideCombined{
@@ -312,6 +322,7 @@ public class SourceUtils {
 		boolean isEmptyTrg = false;
 		boolean isFirst = false;
 		boolean isLast = false;
+		boolean isDiff = false;
 	}
 	
 	public static String newContentToDiffFormat(String content){

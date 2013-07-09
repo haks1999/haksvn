@@ -58,8 +58,8 @@ public class SVNRepositoryService {
 		return true;
 	}
 	
-	public Repository getRepositorySVNInfo(Repository repository){
-		return svnRepositoryDao.getSVNInfo(repository);
+	public Repository setRepositorySVNInfo(Repository repository){
+		return svnRepositoryDao.setSVNInfo(repository);
     	
 	}
 	

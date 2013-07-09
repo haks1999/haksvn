@@ -38,7 +38,6 @@ form p span font a{text-decoration:underline;cursor:pointer;}
 .transferSourceDetail.Delete input.chg-revision{display:none;}
 .transferSourceDetail.Delete input.diff-prod{display:none;}
 
-#tbl_changeList{height:100%;}
 #tbl_changeList .revision{color:#800000;font-size:12px;text-align:center;}
 #tbl_changeList .message{font-family:"Malgun Gothic";font-size:10px;}
 </style>
@@ -310,10 +309,16 @@ form p span font a{text-decoration:underline;cursor:pointer;}
 		});
 		$(oElem).find("input.diff-prod").unbind("click").click(function(){
 			var srcD = $(oElem).data('transferSource');
+			/*
 			var param='?repositorySeq=' + '<c:out value="${repositorySeq}"/>'
 						+'&srcPath=' + _gRepoBranches+srcD.path.substr(_gRepoTrunk.length)
 						+'&path=' + srcD.path
 						+'&srcRev=' + srcD.revision + '&trgRev=-1';
+			*/
+			var param='?repositorySeq=' + '<c:out value="${repositorySeq}"/>'
+						+'&srcPath=' + srcD.path
+						+'&path=' + _gRepoBranches+srcD.path.substr(_gRepoTrunk.length)
+						+'&srcRev=-1&trgRev=' + srcD.revision;
 			var win = window.open('<c:url value="/source/changes/diff" />' + param, '_blank');
 			win.focus();
 		});

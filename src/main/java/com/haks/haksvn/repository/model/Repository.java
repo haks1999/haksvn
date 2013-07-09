@@ -377,6 +377,11 @@ public class Repository{
 			return this;
 		}
 		
+		public Builder svnRoot(String svnRoot){
+			repository.setSvnRoot(svnRoot);
+			return this;
+		}
+		
 		public Builder trunkPath(String trunkPath){
 			repository.setTrunkPath(trunkPath);
 			return this;
