@@ -47,7 +47,7 @@
 		
 		$.validator.setDefaults({
 			errorPlacement: function(error, element) {
-				error.appendTo( element.parent().find(".status") );
+				error.appendTo( element.parent().find(".form-status") );
 			},
 			errorClass: 'invalid'
 		});

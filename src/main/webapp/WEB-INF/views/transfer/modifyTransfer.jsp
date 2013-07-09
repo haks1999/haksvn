@@ -557,7 +557,7 @@ form p span font a{text-decoration:underline;cursor:pointer;}
 					<form:label path="description" class="left">Description</form:label>
 					<form:textarea class="text" disabled="${not transferStateAuth.isEditable}" cols="50" rows="5" path="description"/>
 					<form:errors path="description" />
-					<span class="status"></span>
+					<span class="form-status"></span>
 				</p>
 				<p>
 					<form:hidden path="requestUser.userId" />
@@ -604,7 +604,7 @@ form p span font a{text-decoration:underline;cursor:pointer;}
 					<span class="italic"><font class="path"><a onclick="expandAllTransferDetail()">expand all</a></font></span>
 					<span class="italic"><font class="path"><a onclick="collapseAllTransferDetail()">collapse all</a></font></span>
 					<input type="text" name="sourceListCount" readonly class="text readOnly w_10" style="text-align:right;" value="${fn:length(transfer.sourceList)}"/> sources
-					<span class="status"></span>
+					<span class="form-status"></span>
 					<span style="display:block;margin-left:210px;">
 						<c:if test="${transferStateAuth.isEditable}">
 							<span style="display:block;">
