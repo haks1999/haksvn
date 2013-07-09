@@ -89,12 +89,12 @@
 			<table id="tbl_transferGroupList">
 				<thead>
 					<tr>
-						<th>seq</th>
-						<th>type</th>
-						<th>state</th>
-						<th>title</th>
-						<th>transferrer</th>
-						<th>transfer date</th>
+						<th>ID</th>
+						<th>Type</th>
+						<th>State</th>
+						<th>Title</th>
+						<th>Transferrer</th>
+						<th>Transfer Date</th>
 					</tr>
 				</thead>
 				<tbody>

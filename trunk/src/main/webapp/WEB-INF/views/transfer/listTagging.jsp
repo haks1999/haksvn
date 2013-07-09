@@ -115,11 +115,11 @@
 			<table id="tbl_taggingList">
 				<thead>
 					<tr>
-						<th>seq</th>
-						<th>type</th>
-						<th>tagger</th>
-						<th>tag name</th>
-						<th>tagging date</th>
+						<th>ID</th>
+						<th>Type</th>
+						<th>Tagger</th>
+						<th>Tag Name</th>
+						<th>Tagging Date</th>
 					</tr>
 				</thead>
 				<tbody>

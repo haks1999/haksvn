@@ -85,7 +85,7 @@ public class SVNRepositoryDao {
 	}
 	
 	
-	public Repository getSVNInfo(Repository repository){
+	public Repository setSVNInfo(Repository repository){
 		SVNRepository targetRepository = null;
 		try{
 			targetRepository = SVNRepositoryUtils.getSVNRepositoryForTestConnection(repository);

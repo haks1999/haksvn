@@ -80,7 +80,7 @@ public class RepositoryService {
 	}
 	
 	public Repository saveRepository(Repository repository){
-		repository = svnRepositoryService.getRepositorySVNInfo(repository);
+		repository = svnRepositoryService.setRepositorySVNInfo(repository);
 		repository.setAuthzTemplate(CodeUtils.isTrue(repository.getSyncUser())?RepositoryUtils.getFormattedAuthzTemplate(repository.getAuthzTemplate()):null);
 		if( repository.getRepositorySeq() < 1 ){
 			return addRepository(repository);
@@ -106,7 +106,7 @@ public class RepositoryService {
 		Repository.Builder.getBuilder(repositoryInHibernate)
 			.active(repository.getActive())
 			.authUserId(repository.getAuthUserId()).authUserPasswd(authUserPasswd)
-			.repositoryLocation(repository.getRepositoryLocation()).repositoryName(repository.getRepositoryName()).svnName(repository.getSvnName())
+			.repositoryLocation(repository.getRepositoryLocation()).repositoryName(repository.getRepositoryName()).svnName(repository.getSvnName()).svnRoot(repository.getSvnRoot())
 			.tagsPath(repository.getTagsPath()).trunkPath(repository.getTrunkPath()).branchesPath(repository.getBranchesPath()).syncUser(repository.getSyncUser())
 			.connectType(repository.getConnectType()).serverIp(repository.getServerIp())
 			.serverUserId(repository.getServerUserId()).serverUserPasswd(repository.getServerUserPasswd())

@@ -103,14 +103,14 @@
 			<table id="tbl_transferList">
 				<thead>
 					<tr>
-						<th>seq</th>
-						<th>type</th>
-						<th>state</th>
-						<th>requestor</th>
-						<th>description</th>
-						<th>request date</th>
-						<th>approve date</th>
-						<th>transfer date</th>
+						<th>ID</th>
+						<th>Type</th>
+						<th>State</th>
+						<th>Requestor</th>
+						<th>Description</th>
+						<th>Request Date</th>
+						<th>Approve Date</th>
+						<th>Transfer Date</th>
 					</tr>
 				</thead>
 				<tbody>
