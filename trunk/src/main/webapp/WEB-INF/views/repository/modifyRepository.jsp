@@ -134,11 +134,10 @@
 	};
 	
 </script>
-<div id="table" class="help">
+<div class="help">
 	<h1>Repository Information</h1>
 	<div class="col w10 last">
 		<div class="content">
-		
 			<form:form commandName="repository" class="w200" id="frm_repository" method="post">
 					<form:hidden path="repositorySeq" name="repositorySeq"/>
 					<c:if test="${repository.repositorySeq lt 1}" var="isNewRepository" />
@@ -147,43 +146,56 @@
 					<form:label path="repositoryName" class="left">Repository Name</form:label>
 					<form:input class="text w_20" path="repositoryName"/>
 					<form:errors path="repositoryName" />
-					<span class="status"></span>
+					<span class="form-help repository.repositoryName">
+						<label style="padding-bottom:2px;padding-left:20px;background:url('/haksvn/images/info.png') no-repeat"></label>
+						<div class="info" style="width:auto;">
+							<div class="tl"></div>
+							<div class="tr"></div>
+							<div class="desc">
+								<p>description</p>
+							</div>
+							<div class="bl"></div>
+							<div class="br"></div>
+						</div>
+					</span>
+					<span class="form-status"></span>
 				</p>
+				
 				<p>
 					<form:label path="repositoryLocation" class="left">Repository Location</form:label>
 					<form:input class="text w_30" path="repositoryLocation" />
 					<form:errors path="repositoryLocation" cssClass="field_error"/>
-					<span class="status"></span>
+					<span class="form-status"></span>
 				</p>
 				<p>
 					<form:label path="authUserId" class="left">Repository User ID</form:label>
 					<form:input class="text w_10" path="authUserId"/>
 					<form:errors path="authUserId" />
-					<span class="status"></span>
+					<span class="form-status"></span>
 				</p>
 				<p>
 					<form:label path="authUserPasswd" class="left">Repository User Password</form:label>
 					<form:password class="text w_10" path="authUserPasswd"/>
 					<form:errors path="authUserPasswd" />
-					<span class="status"></span>
+					<span class="form-status"></span>
 				</p>
 				<p>
 					<form:label path="trunkPath" class="left">Trunk Path</form:label>
 					<form:input class="text w_20" path="trunkPath" value="${isNewRepository? '/trunk':repository.trunkPath}"/>
 					<form:errors path="trunkPath" />
-					<span class="status"></span>
+					<span class="form-status"></span>
 				</p>
 				<p>
 					<form:label path="tagsPath" class="left">Tags Path</form:label>
 					<form:input class="text w_20" path="tagsPath" value="${isNewRepository? '/tags':repository.tagsPath}"/>
 					<form:errors path="tagsPath" />
-					<span class="status"></span>
+					<span class="form-status"></span>
 				</p>
 				<p>
 					<form:label path="branchesPath" class="left">Production Branch Path</form:label>
 					<form:input class="text w_20" path="branchesPath" value="${isNewRepository? '/branches/production':repository.branchesPath}"/>
 					<form:errors path="branchesPath" />
-					<span class="status"></span>
+					<span class="form-status"></span>
 				</p>
 				<p>
 					<form:label path="active" class="left">Active</form:label>
@@ -219,7 +231,7 @@
 					<p>
 						<form:label path="authzPath" class="left">authz file path</form:label>
 						<form:input path="authzPath" class="text w_30" />
-						<span class="status"></span>
+						<span class="form-status"></span>
 					</p>
 					<p>
 						<form:label path="authzTemplate" class="left">authz file template</form:label>
@@ -229,7 +241,7 @@
 					<p>
 						<form:label path="passwdPath" class="left">passwd file path</form:label>
 						<form:input path="passwdPath" class="text w_30" />
-						<span class="status"></span>
+						<span class="form-status"></span>
 					</p>
 					<p>
 						<form:label path="passwdType" class="left">SVN password type</form:label>

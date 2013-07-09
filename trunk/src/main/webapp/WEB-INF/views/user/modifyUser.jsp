@@ -52,25 +52,25 @@
 						</c:otherwise>
 					</c:choose>
 					<form:errors path="userId" />
-					<span class="status"></span>
+					<span class="form-status"></span>
 				</p>
 				<p>
 					<form:label path="userName" class="left">User Name</form:label>
 					<form:input class="text w_20" path="userName" />
 					<form:errors path="userName" />
-					<span class="status"></span>
+					<span class="form-status"></span>
 				</p>
 				<p>
 					<form:label path="email" class="left">Email</form:label>
 					<form:input class="text w_20" path="email"/>
 					<form:errors path="email" />
-					<span class="status"></span>
+					<span class="form-status"></span>
 				</p>
 				<p>
 					<form:label path="userPasswd" class="left">Password</form:label>
 					<form:password class="text w_10" path="userPasswd"/>
 					<form:errors path="userPasswd" />
-					<span class="status"></span>
+					<span class="form-status"></span>
 				</p>
 				<p>
 					<form:label path="authType" class="left">User Authority</form:label>

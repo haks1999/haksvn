@@ -64,13 +64,13 @@
 					<form:label path="tagName" class="left">Tag Name</form:label>
 					<form:input class="text w_20" disabled="${not taggingAuth.isCreatable}" path="tagName"/>
 					<form:errors path="tagName" />
-					<span class="status"></span>
+					<span class="form-status"></span>
 				</p>
 				<p>
 					<form:label path="description" class="left">Description</form:label>
 					<form:textarea class="text" disabled="${not taggingAuth.isCreatable}" cols="50" rows="5" path="description"/>
 					<form:errors path="description" />
-					<span class="status"></span>
+					<span class="form-status"></span>
 				</p>
 				<p>
 					<form:hidden path="taggingUser.userId" />

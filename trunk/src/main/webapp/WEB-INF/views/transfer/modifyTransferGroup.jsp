@@ -266,13 +266,13 @@ form p span font a{text-decoration:underline;cursor:pointer;}
 					<form:label path="title" class="left">Title</form:label>
 					<form:input class="text w_30" disabled="${not transferGroupStateAuth.isEditable}" path="title"/>
 					<form:errors path="title" />
-					<span class="status"></span>
+					<span class="form-status"></span>
 				</p>
 				<p>
 					<form:label path="description" class="left">Description</form:label>
 					<form:textarea class="text" disabled="${not transferGroupStateAuth.isEditable}" cols="50" rows="5" path="description"/>
 					<form:errors path="description" />
-					<span class="status"></span>
+					<span class="form-status"></span>
 				</p>
 				<p>
 					<form:hidden path="transferUser.userId" />
@@ -297,7 +297,7 @@ form p span font a{text-decoration:underline;cursor:pointer;}
 					<span class="italic" style="margin-left:20px;"><font class="path"><a onclick="expandAllTransferDetail()">expand all</a></font></span>
 					<span class="italic"><font class="path"><a onclick="collapseAllTransferDetail()">collapse all</a></font></span>
 					<input type="text" name="transferListCount" readonly class="text readOnly w_10" style="text-align:right;" value="${fn:length(requestGroup.transferList)}"/> requests
-					<span class="status"></span>
+					<span class="form-status"></span>
 					<span id="spn_requestsToTran" style="display:block;margin-left:220px;">
 					</span>
 				</p>
