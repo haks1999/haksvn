@@ -25,15 +25,15 @@ public class GeneralService {
 		return CommitLogTemplate.Builder.getBuilder(new CommitLogTemplate()).template(property.getPropertyValue().replaceAll("%n", "\r")).build();
 	}
 	
-	public CommitLogTemplate retrieveCommitLogTemplate(int repositorySeq, String logTemplateCodeId){
+	public CommitLogTemplate retrieveCommitLogTemplate(String repositoryKey, String logTemplateCodeId){
 		boolean isRequestType = CodeUtils.isLogTemplateRequest(logTemplateCodeId);
-		Property property = propertyService.retrievePropertyByPropertyKey(isRequestType?PropertyUtils.getCommitLogTemplateRequestKey(repositorySeq):PropertyUtils.getCommitLogTemplateTaggingKey(repositorySeq));
+		Property property = propertyService.retrievePropertyByPropertyKey(isRequestType?PropertyUtils.getCommitLogTemplateRequestKey(repositoryKey):PropertyUtils.getCommitLogTemplateTaggingKey(repositoryKey));
 		if( property == null ) property = propertyService.retrievePropertyByPropertyKey(isRequestType?PropertyUtils.getCommitLogTemplateRequestKey():PropertyUtils.getCommitLogTemplateTaggingKey());
-		return CommitLogTemplate.Builder.getBuilder(new CommitLogTemplate()).repositorySeq(repositorySeq).template(property.getPropertyValue().replaceAll("%n", "\r")).build();
+		return CommitLogTemplate.Builder.getBuilder(new CommitLogTemplate()).repositoryKey(repositoryKey).template(property.getPropertyValue().replaceAll("%n", "\r")).build();
 	}
 	
 	public void saveCommitLogTemplate(CommitLogTemplate commitLogTemplate, String logTemplateCodeId){
 		boolean isRequestType = CodeUtils.isLogTemplateRequest(logTemplateCodeId);
-		propertyService.saveProperty(isRequestType?PropertyUtils.getCommitLogTemplateRequestKey(commitLogTemplate.getRepositorySeq()):PropertyUtils.getCommitLogTemplateTaggingKey(commitLogTemplate.getRepositorySeq()), commitLogTemplate.getTemplate().replaceAll("\r", "%n"));
+		propertyService.saveProperty(isRequestType?PropertyUtils.getCommitLogTemplateRequestKey(commitLogTemplate.getRepositoryKey()):PropertyUtils.getCommitLogTemplateTaggingKey(commitLogTemplate.getRepositoryKey()), commitLogTemplate.getTemplate().replaceAll("\r", "%n"));
 	}
 }

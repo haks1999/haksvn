@@ -60,6 +60,10 @@
 		     return value >= Number(params);
 		}, "<spring:message code="validation.minSelect" />");
 		
+		$.validator.addMethod("alphabet", function(value, element, params) {
+		     return /^[a-zA-Z]+$/.test(value);
+		}, "<spring:message code="validation.alphabet" />");
+		
 		$.extend($.validator.messages, {
 		    date: "<spring:message code="validation.date" />",
 		    digits: "<spring:message code="validation.digits" />",

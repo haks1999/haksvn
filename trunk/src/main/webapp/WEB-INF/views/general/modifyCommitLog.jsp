@@ -9,8 +9,8 @@
 	
 	function retrieveCommitLogTemplate(){
 		haksvn.block.on();
-		var repositorySeq = $("#sel_repository > option:selected").val();
-		$.getJSON( "<c:url value="/configuration/general/commitLog"/>" + "/" + repositorySeq,
+		var repositoryKey = $("#sel_repository > option:selected").val();
+		$.getJSON( "<c:url value="/configuration/general/commitLog"/>" + "/" + repositoryKey,
 				{logType:$("#sel_logType > option:selected").val()},
 				function(data) {
 					haksvn.block.off();
@@ -30,9 +30,9 @@
 	
 	function saveCommitLogTemplate(){
 		haksvn.block.on();
-		var repositorySeq = $("#sel_repository > option:selected").val();
-		$.post("<c:url value="/configuration/general/commitLog"/>" + "/" + repositorySeq,
-			{repositorySeq:repositorySeq,
+		var repositoryKey = $("#sel_repository > option:selected").val();
+		$.post("<c:url value="/configuration/general/commitLog"/>" + "/" + repositoryKey,
+			{repositoryKey:repositoryKey,
 				template:$("#commitLogTemplate").text(),
 				logType:$("#sel_logType > option:selected").val()},
 	        function(data){
@@ -56,7 +56,7 @@
 						<label>Repository Name</label> 
 						<select id="sel_repository">
 							<c:forEach items="${repositoryList}" var="repository">
-								<option value="<c:out value="${repository.repositorySeq}"/>">
+								<option value="<c:out value="${repository.repositoryKey}"/>">
 									<c:out value="${repository.repositoryName}" />
 								</option>
 							</c:forEach>

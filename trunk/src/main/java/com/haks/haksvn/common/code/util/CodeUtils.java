@@ -4,8 +4,12 @@ package com.haks.haksvn.common.code.util;
 public class CodeUtils {
 
 	// common
+	public static String getCommonCodeY(){
+		return "common.boolean.yn.code.y";
+	}
+	
 	public static boolean isTrue(String flag){
-		return "common.boolean.yn.code.y".equals(flag);
+		return getCommonCodeY().equals(flag);
 	}
 	
 	// user

@@ -38,51 +38,52 @@ public class SourceController {
     	model.addAttribute("repositoryList", repositoryList );
     	
     	if( repositoryList.size() > 0 ){
-    		return new ModelAndView(new RedirectView("/source/browse/" + repositoryList.get(0).getRepositorySeq(), true));
+    		return new ModelAndView(new RedirectView("/source/browse/" + repositoryList.get(0).getRepositoryKey(), true));
     	}else{
     		return new ModelAndView("/source/sourceBrowse");
     	}
     }
 	
 	// .jsp 등의 확장자는 여기서 처리하지 못하여 url rewrite로 . 을 %2E 로 변경해준다 
-	// 그러기 위하여 url 중간에 /r/ 을 넣어 rewrite 완료 여부를 구분한다.
+	// 그러기 위하여 url 중간에 /_r_/ 을 넣어 rewrite 완료 여부를 구분한다.
 	// 여기서 %2E 를 다시 . 으로 변경
 	// /resources/ 이거는 이유를 모르겠지만 다 스태틱으로 넘기는듯... 일단 이것도 url rewrite
-	@RequestMapping(value={"/browse/r/{repositorySeq}"}, method=RequestMethod.GET)
+	// WEB-INF/configuration/urlrewrite/urlrewrite.xml
+	@RequestMapping(value={"/browse/_r_/{repositoryKey}"}, method=RequestMethod.GET)
     public String forwardSourceBrowsePage( ModelMap model,
-    							@PathVariable int repositorySeq) {
+    							@PathVariable String repositoryKey) {
         List<Repository> repositoryList = repositoryService.retrieveAccesibleActiveRepositoryList();
     	model.addAttribute("repositoryList", repositoryList );
-    	model.addAttribute("repositorySeq", repositorySeq );
+    	model.addAttribute("repositoryKey", repositoryKey );
     	model.addAttribute("path", "");
         return "/source/sourceBrowse";
     }
 	
-	@RequestMapping(value={"/browse/r/{repositorySeq}/**"}, method=RequestMethod.GET)
+	@RequestMapping(value={"/browse/_r_/{repositoryKey}/**"}, method=RequestMethod.GET)
     public String forwardSourceBrowsePage( ModelMap model,
     							HttpServletRequest request,
-    							@PathVariable int repositorySeq) {
-		String path = SourceUrlRewriteUtils.reverseUrlRewrite(request,"/source/browse/r", repositorySeq);
+    							@PathVariable String repositoryKey) {
+		String path = SourceUrlRewriteUtils.reverseUrlRewrite(request,"/source/browse/_r_", repositoryKey);
         List<Repository> repositoryList = repositoryService.retrieveAccesibleActiveRepositoryList();
     	model.addAttribute("repositoryList", repositoryList );
-    	model.addAttribute("repositorySeq", repositorySeq );
+    	model.addAttribute("repositoryKey", repositoryKey );
     	model.addAttribute("path", path);
         return "/source/sourceBrowse";
     }
 	
 	
 	
-	@RequestMapping(value={"/browse/r/{repositorySeq}/**"}, method=RequestMethod.GET,params ={"rev"})
+	@RequestMapping(value={"/browse/_r_/{repositoryKey}/**"}, method=RequestMethod.GET,params ={"rev"})
     public String forwardSourceDetailPage( ModelMap model,
     							HttpServletRequest request,
     							@RequestParam(value = "rev", required = true) long revision,
-    							@PathVariable int repositorySeq) {
-		String path = SourceUrlRewriteUtils.reverseUrlRewrite(request,"/source/browse/r", repositorySeq);
+    							@PathVariable String repositoryKey) {
+		String path = SourceUrlRewriteUtils.reverseUrlRewrite(request,"/source/browse/_r_", repositoryKey);
 		SVNSource svnSource = SVNSource.Builder.getBuilder(new SVNSource()).path(path).revision(revision).build();
-		svnSource = sourceService.retrieveSVNSource(repositoryService.retrieveAccesibleActiveRepositoryByRepositorySeq(repositorySeq), svnSource);
+		svnSource = sourceService.retrieveSVNSource(repositoryService.retrieveAccesibleActiveRepositoryByRepositoryKey(repositoryKey), svnSource);
 		//svnSource.setContent(svnSource.getContent().replaceAll("<","&lt;"));	// for syntaxhighligher
 		model.addAttribute("svnSource", svnSource);
-		model.addAttribute("repositorySeq", repositorySeq );
+		model.addAttribute("repositoryKey", repositoryKey );
         return "/source/sourceDetail";
     }
 	
@@ -91,42 +92,43 @@ public class SourceController {
         List<Repository> repositoryList = repositoryService.retrieveAccesibleActiveRepositoryList();
     	model.addAttribute("repositoryList", repositoryList );
     	if( repositoryList.size() > 0 ){
-    		return new ModelAndView(new RedirectView("/source/changes/" + repositoryList.get(0).getRepositorySeq(), true));
+    		return new ModelAndView(new RedirectView("/source/changes/" + repositoryList.get(0).getRepositoryKey(), true));
     	}else{
     		return new ModelAndView("/source/listChange");
     	}
     }
 	
-	@RequestMapping(value={"/changes/r/{repositorySeq}"}, method=RequestMethod.GET)
+	@RequestMapping(value={"/changes/_r_/{repositoryKey}"}, method=RequestMethod.GET)
     public String forwardSourceChangePage( ModelMap model,
-    							@PathVariable int repositorySeq) {
+    							@PathVariable String repositoryKey) {
 		
 		SVNSource svnSource = SVNSource.Builder.getBuilder(new SVNSource()).path("/").revision(-1).isFolder(true).build();
 		model.addAttribute("svnSource", svnSource );
 		
         List<Repository> repositoryList = repositoryService.retrieveAccesibleActiveRepositoryList();
     	model.addAttribute("repositoryList", repositoryList );
-    	model.addAttribute("repositorySeq", repositorySeq );
+    	model.addAttribute("repositoryKey", repositoryKey );
     	model.addAttribute("path", "");
-    	Repository repository = repositoryService.retrieveAccesibleActiveRepositoryByRepositorySeq(repositorySeq);
+    	
+    	Repository repository = repositoryService.retrieveAccesibleActiveRepositoryByRepositoryKey(repositoryKey);
     	List<SVNSource> svnSourceList = sourceService.retrieveSVNSourceList(repository, "");
     	model.addAttribute("lowerSvnSourceList", svnSourceList);
         return "/source/listChange";
     }
 	
-	@RequestMapping(value={"/changes/r/{repositorySeq}/**"}, method=RequestMethod.GET)
+	@RequestMapping(value={"/changes/_r_/{repositoryKey}/**"}, method=RequestMethod.GET)
     public String forwardSourceChangePage( ModelMap model,
     							HttpServletRequest request,
-    							@PathVariable int repositorySeq) {
-		String path = SourceUrlRewriteUtils.reverseUrlRewrite(request,"/source/changes/r", repositorySeq);
-        Repository repository = repositoryService.retrieveAccesibleActiveRepositoryByRepositorySeq(repositorySeq);
+    							@PathVariable String repositoryKey) {
+		String path = SourceUrlRewriteUtils.reverseUrlRewrite(request,"/source/changes/_r_", repositoryKey);
+        Repository repository = repositoryService.retrieveAccesibleActiveRepositoryByRepositoryKey(repositoryKey);
         SVNSource svnSource = SVNSource.Builder.getBuilder(new SVNSource()).path(path).revision(-1).build();
         svnSource = sourceService.retrieveSVNSourceWithoutContentAndLogs(repository, svnSource);
 		model.addAttribute("svnSource", svnSource);
 		
 		List<Repository> repositoryList = repositoryService.retrieveAccesibleActiveRepositoryList();
     	model.addAttribute("repositoryList", repositoryList );
-    	model.addAttribute("repositorySeq", repositorySeq );
+    	model.addAttribute("repositoryKey", repositoryKey );
     	model.addAttribute("path", svnSource.getPath());
     	
     	if( svnSource.getIsFolder() ){
@@ -136,36 +138,36 @@ public class SourceController {
         return "/source/listChange";
     }
 	
-	@RequestMapping(value={"/changes/r/{repositorySeq}"}, method=RequestMethod.GET,params ={"rev"})
+	@RequestMapping(value={"/changes/_r_/{repositoryKey}"}, method=RequestMethod.GET,params ={"rev"})
     public String forwardChangeDetailPage( ModelMap model,
     							@RequestParam(value = "rev", required = true) long revision,
-    							@PathVariable int repositorySeq) {
+    							@PathVariable String repositoryKey) {
 		String path = "";
 		SVNSource svnSource = SVNSource.Builder.getBuilder(new SVNSource()).path(path).revision(revision).build();
-		svnSource = sourceService.retrieveSVNSourceWithoutContent(repositoryService.retrieveAccesibleActiveRepositoryByRepositorySeq(repositorySeq), svnSource);
+		svnSource = sourceService.retrieveSVNSourceWithoutContent(repositoryService.retrieveAccesibleActiveRepositoryByRepositoryKey(repositoryKey), svnSource);
 		model.addAttribute("svnSource", svnSource);
-		model.addAttribute("repositorySeq", repositorySeq );
+		model.addAttribute("repositoryKey", repositoryKey );
 		model.addAttribute("path", svnSource.getPath());
         return "/source/changeDetail";
     }
 	
-	@RequestMapping(value={"/changes/r/{repositorySeq}/**"}, method=RequestMethod.GET,params ={"rev"})
+	@RequestMapping(value={"/changes/_r_/{repositoryKey}/**"}, method=RequestMethod.GET,params ={"rev"})
     public String forwardChangeDetailPage( ModelMap model,
     							HttpServletRequest request,
     							@RequestParam(value = "rev", required = true) long revision,
-    							@PathVariable int repositorySeq) {
-		String path = SourceUrlRewriteUtils.reverseUrlRewrite(request,"/source/changes/r", repositorySeq);
+    							@PathVariable String repositoryKey) {
+		String path = SourceUrlRewriteUtils.reverseUrlRewrite(request,"/source/changes/_r_", repositoryKey);
 		SVNSource svnSource = SVNSource.Builder.getBuilder(new SVNSource()).path(path).revision(revision).build();
-		svnSource = sourceService.retrieveSVNSourceWithoutContent(repositoryService.retrieveAccesibleActiveRepositoryByRepositorySeq(repositorySeq), svnSource);
+		svnSource = sourceService.retrieveSVNSourceWithoutContent(repositoryService.retrieveAccesibleActiveRepositoryByRepositoryKey(repositoryKey), svnSource);
 		model.addAttribute("svnSource", svnSource);
-		model.addAttribute("repositorySeq", repositorySeq );
+		model.addAttribute("repositoryKey", repositoryKey );
 		model.addAttribute("path", svnSource.getPath());
         return "/source/changeDetail";
     }
 	
-	@RequestMapping(value="/changes/diff")
+	@RequestMapping(value="/changes/_r_/diff")
     public String forwardDiffDetailPage(ModelMap model,
-    										@RequestParam(value = "repositorySeq", required = true) int repositorySeq,
+    										@RequestParam(value = "repositoryKey", required = true) String repositoryKey,
     										@RequestParam(value = "srcPath", required = false, defaultValue="") String srcPath,
     										@RequestParam(value = "path", required = true) String path,
     										@RequestParam(value = "srcRev", required = true) long srcRev,
@@ -176,9 +178,9 @@ public class SourceController {
 		SVNSource svnSourceTrg = SVNSource.Builder.getBuilder(new SVNSource()).path(srcPath).revision(trgRev).build();
 		SVNSourceDiff svnSourceDiff = new SVNSourceDiff();
 		if( diffWithPrevious ){
-			svnSourceDiff = sourceService.retrieveDiffWithContentsByPrevious(repositoryService.retrieveAccesibleActiveRepositoryByRepositorySeq(repositorySeq), svnSourceTrg);
+			svnSourceDiff = sourceService.retrieveDiffWithContentsByPrevious(repositoryService.retrieveAccesibleActiveRepositoryByRepositoryKey(repositoryKey), svnSourceTrg);
 		}else{
-			svnSourceDiff = sourceService.retrieveDiffWithContentsByRevisions(repositoryService.retrieveAccesibleActiveRepositoryByRepositorySeq(repositorySeq), svnSourceSrc, svnSourceTrg);
+			svnSourceDiff = sourceService.retrieveDiffWithContentsByRevisions(repositoryService.retrieveAccesibleActiveRepositoryByRepositoryKey(repositoryKey), svnSourceSrc, svnSourceTrg);
 		}
 		if( svnSourceDiff.getIsNewContent() || svnSourceDiff.getIsDeletedContent() ){
 			svnSourceDiff.setDiffToHtml(SourceUtils.diffToHtml(svnSourceDiff.getDiff()));
@@ -190,7 +192,7 @@ public class SourceController {
 		model.addAttribute("svnSourceDiff", svnSourceDiff);
 		model.addAttribute("svnSourceSrc", svnSourceDiff.getSrc() );
 		model.addAttribute("svnSourceTrg", svnSourceDiff.getTrg());
-		model.addAttribute("repositorySeq", repositorySeq);
+		model.addAttribute("repositoryKey", repositoryKey);
 		
 		return "/source/diffDetail";
     }

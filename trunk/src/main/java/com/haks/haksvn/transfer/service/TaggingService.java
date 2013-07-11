@@ -41,17 +41,17 @@ public class TaggingService {
 	private GeneralService generalService;
 	
 	public Paging<List<Tagging>> retrieveTaggingList(Paging<Tagging> paging){
-		repositoryService.checkRepositoryAccessRight(paging.getModel().getRepositorySeq());
+		repositoryService.checkRepositoryAccessRight(paging.getModel().getRepositoryKey());
 		return taggingDao.retrieveTaggingList(paging);
 	}
 	
 	public Tagging retrieveTagging(Tagging tagging){
-		repositoryService.checkRepositoryAccessRight(tagging.getRepositorySeq());
+		repositoryService.checkRepositoryAccessRight(tagging.getRepositoryKey());
 		return taggingDao.retrieveTaggingByTaggingSeq(tagging.getTaggingSeq());
 	}
 	
 	public Tagging createTagging(Tagging tagging){
-		Repository repository = repositoryService.checkRepositoryAccessRight(tagging.getRepositorySeq());
+		Repository repository = repositoryService.checkRepositoryAccessRight(tagging.getRepositoryKey());
 		if( !TaggingAuth.Builder.getBuilder().tagging(tagging).build().getIsCreatable() ){
 			throw new HaksvnException("Insufficient privileges.");
 		}
@@ -63,7 +63,7 @@ public class TaggingService {
 		
 		SVNSourceTagging svnSourceTagging = SVNSourceTagging.Builder.getBuilder()
 				.srcPath(tagging.getSrcPath()).destPath(tagging.getDestPath())
-				.log(TransferUtils.createTaggingCommitLog(tagging, generalService.retrieveCommitLogTemplate(tagging.getRepositorySeq(), CodeUtils.getLogTemplateTaggingCodeId()).getTemplate())).build();
+				.log(TransferUtils.createTaggingCommitLog(tagging, generalService.retrieveCommitLogTemplate(tagging.getRepositoryKey(), CodeUtils.getLogTemplateTaggingCodeId()).getTemplate())).build();
 		
 		svnRepositoryService.tagging(repository, svnSourceTagging);
 		return tagging;
@@ -71,13 +71,13 @@ public class TaggingService {
 	
 	public Tagging restoreTagging(Tagging tagging){
 		Tagging srcTagging = retrieveTagging(tagging);
-		Repository repository = repositoryService.checkRepositoryAccessRight(srcTagging.getRepositorySeq());
+		Repository repository = repositoryService.checkRepositoryAccessRight(srcTagging.getRepositoryKey());
 		if( !TaggingAuth.Builder.getBuilder().tagging(srcTagging).build().getIsRestorable() ){
 			throw new HaksvnException("Insufficient privileges.");
 		}
 		Tagging destTagging = Tagging.Builder.getBuilder().taggingUser(userService.retrieveUserByUserId(ContextHolder.getLoginUser().getUserId()))
 			.taggingSeq(0).destPath(repository.getBranchesPath()).srcPath(srcTagging.getDestPath())
-			.taggingDate(System.currentTimeMillis()).repositorySeq(tagging.getRepositorySeq())
+			.taggingDate(System.currentTimeMillis()).repositoryKey(tagging.getRepositoryKey())
 			.tagName("[Restore]" + srcTagging.getTagName() + "(" + System.currentTimeMillis() + ")")
 			.description("Restore From [" + srcTagging.getTagName() + "(tagging-" + srcTagging.getTaggingSeq() + ")] by Haksvn")
 			.taggingTypeCode(codeService.retrieveCode(CodeUtils.getTaggingRestoreCodeId())).build();
@@ -85,7 +85,7 @@ public class TaggingService {
 		
 		SVNSourceTagging svnSourceTagging = SVNSourceTagging.Builder.getBuilder()
 				.srcPath(destTagging.getSrcPath()).destPath(destTagging.getDestPath())
-				.log(TransferUtils.createTaggingCommitLog(destTagging, generalService.retrieveCommitLogTemplate(srcTagging.getRepositorySeq(), CodeUtils.getLogTemplateTaggingCodeId()).getTemplate())).build();
+				.log(TransferUtils.createTaggingCommitLog(destTagging, generalService.retrieveCommitLogTemplate(srcTagging.getRepositoryKey(), CodeUtils.getLogTemplateTaggingCodeId()).getTemplate())).build();
 		svnRepositoryService.tagging(repository, svnSourceTagging);
 		return destTagging;
 	}

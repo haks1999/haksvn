@@ -45,11 +45,11 @@ public class RepositoryService {
 		
 	}
 	
-	public Repository retrieveRepositoryByRepositorySeq(int repositorySeq){
+	public Repository retrieveRepositoryByRepositoryKey(String repositoryKey){
 		Repository repository = new Repository();
-		repository.setRepositorySeq(repositorySeq);
+		repository.setRepositoryKey(repositoryKey);
 		
-		Repository result = repositoryDao.retrieveRepositoryByRepositorySeq(repository);
+		Repository result = repositoryDao.retrieveRepositoryByRepositoryKey(repository);
 		return result;
 	}
 	
@@ -65,8 +65,8 @@ public class RepositoryService {
 		
 	}
 	
-	public Repository retrieveAccesibleActiveRepositoryByRepositorySeq(int repositorySeq){
-		Repository result = repositoryDao.retrieveActiveRepositoryByRepositorySeqAndUserId( repositorySeq, ContextHolder.getLoginUser().getUserId());
+	public Repository retrieveAccesibleActiveRepositoryByRepositoryKey(String repositoryKey){
+		Repository result = repositoryDao.retrieveActiveRepositoryByRepositoryKeyAndUserId( repositoryKey, ContextHolder.getLoginUser().getUserId());
 		return result;
 		
 	}
@@ -82,7 +82,7 @@ public class RepositoryService {
 	public Repository saveRepository(Repository repository){
 		repository = svnRepositoryService.setRepositorySVNInfo(repository);
 		repository.setAuthzTemplate(CodeUtils.isTrue(repository.getSyncUser())?RepositoryUtils.getFormattedAuthzTemplate(repository.getAuthzTemplate()):null);
-		if( repository.getRepositorySeq() < 1 ){
+		if( repositoryDao.retrieveRepositoryByRepositoryKey(repository) == null ){
 			return addRepository(repository);
 		}else{
 			return updateRepository(repository);
@@ -100,7 +100,7 @@ public class RepositoryService {
 		// 그냥 신규 repo obj 로 업뎃하믄 다른 객체로 인식해서 cascade 가 엉망이 됨
 		// manytoone 등과 같은 relation 이 설정된 경우 주의해야 함
 		//repositoryServerDao.updateRepository(repository.getRepositoryServer());
-		Repository repositoryInHibernate = repositoryDao.retrieveRepositoryByRepositorySeq(repository);
+		Repository repositoryInHibernate = repositoryDao.retrieveRepositoryByRepositoryKey(repository);
 		// exclude userList
 		String authUserPasswd = repository.getAuthUserPasswdEncrypted()? repository.getAuthUserPasswd():CryptoUtils.encodeAES(repository.getAuthUserPasswd());
 		Repository.Builder.getBuilder(repositoryInHibernate)
@@ -116,9 +116,9 @@ public class RepositoryService {
 		return repositoryInHibernate;
 	}
 	
-	public Repository addRepositoryUser(int repositorySeq, List<String> userIdList, boolean overwrite){
-		Repository repository = repositoryDao.retrieveRepositoryByRepositorySeq(
-						Repository.Builder.getBuilder(new Repository()).repositorySeq(repositorySeq).build());
+	public Repository addRepositoryUser(String repositoryKey, List<String> userIdList, boolean overwrite){
+		Repository repository = repositoryDao.retrieveRepositoryByRepositoryKey(
+						Repository.Builder.getBuilder(new Repository()).repositoryKey(repositoryKey).build());
 		List<User> userList = repository.getUserList();
 		List<User> userToAddList = new ArrayList<User>();
 		for( String userId : userIdList ){
@@ -136,13 +136,13 @@ public class RepositoryService {
 	
 	
 	
-	public Repository deleteRepositoryUser(int repositorySeq, List<String> userIdList){
+	public Repository deleteRepositoryUser(String repositoryKey, List<String> userIdList){
 		
 		if( userIdList.size() < 1) throw new HaksvnException("does not select user ");
 		// TODO
 		// List.remove 를 통하여 삭제하여 update 실행 시 concurrentmodification 오류 발생
-		Repository repository = repositoryDao.retrieveRepositoryByRepositorySeq(
-						Repository.Builder.getBuilder(new Repository()).repositorySeq(repositorySeq).build());
+		Repository repository = repositoryDao.retrieveRepositoryByRepositoryKey(
+						Repository.Builder.getBuilder(new Repository()).repositoryKey(repositoryKey).build());
 		List<User> currentUserList = repository.getUserList();
 		List<User> userToDeleteList = new ArrayList<User>();
 		List<User> userList = new ArrayList<User>();
@@ -167,22 +167,22 @@ public class RepositoryService {
 	}
 	
 	public void deleteRepository(Repository repository){
-		Repository repositoryToDelete = repositoryDao.retrieveRepositoryByRepositorySeq(repository);
+		Repository repositoryToDelete = repositoryDao.retrieveRepositoryByRepositoryKey(repository);
 		List<User> userList = repositoryToDelete.getUserList();
 		List<String> userIdList = new ArrayList<String>(0);
 		for( User user : userList ){
 			userIdList.add(user.getUserId());
 		}
 		if( userIdList.size() > 0 ){
-			deleteRepositoryUser(repositoryToDelete.getRepositorySeq(), userIdList);
+			deleteRepositoryUser(repositoryToDelete.getRepositoryKey(), userIdList);
 		}
 		repositoryDao.deleteRepository(repositoryToDelete);
 	}
 	
 	@Transactional(readOnly=true)
-	public Repository checkRepositoryAccessRight(int repositorySeq){
-		Repository repository = retrieveAccesibleActiveRepositoryByRepositorySeq(repositorySeq);
-		if( repository == null || repositorySeq != repository.getRepositorySeq()){
+	public Repository checkRepositoryAccessRight(String repositoryKey){
+		Repository repository = retrieveAccesibleActiveRepositoryByRepositoryKey(repositoryKey);
+		if( repository == null || !repositoryKey.equals(repository.getRepositoryKey())){
 			throw new HaksvnNoRepositoryAvailableException("do not have the repository access right"); 
 		}
 		return repository;

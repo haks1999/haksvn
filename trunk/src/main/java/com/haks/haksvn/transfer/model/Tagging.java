@@ -18,8 +18,6 @@ import com.haks.haksvn.user.model.User;
 
 @Entity
 @Table(name="tagging")
-//	,uniqueConstraints=
-//		@UniqueConstraint(columnNames={"tag_name", "repository_seq"}))
 public class Tagging {
 	
 	public Tagging(){
@@ -60,8 +58,8 @@ public class Tagging {
 	private Code taggingTypeCode;
 	
 	// 연관 관계는 맺지 않는다. 불필요
-	@Column(name = "repository_seq")
-	private int repositorySeq;
+	@Column(name = "repository_key")
+	private String repositoryKey;
 	
 	public int getTaggingSeq() {
 		return taggingSeq;
@@ -136,14 +134,14 @@ public class Tagging {
 	}
 
 
-	public int getRepositorySeq() {
-		return repositorySeq;
+	public String getRepositoryKey() {
+		return repositoryKey;
 	}
 
 
 
-	public void setRepositorySeq(int repositorySeq) {
-		this.repositorySeq = repositorySeq;
+	public void setRepositoryKey(String repositoryKey) {
+		this.repositoryKey = repositoryKey;
 	}
 	
 	public Code getTaggingTypeCode(){
@@ -211,8 +209,8 @@ public class Tagging {
 			return this;
 		}
 		
-		public Builder repositorySeq(int repositorySeq){
-			tagging.setRepositorySeq(repositorySeq);
+		public Builder repositoryKey(String repositoryKey){
+			tagging.setRepositoryKey(repositoryKey);
 			return this;
 		}
 		

@@ -66,8 +66,8 @@ public class Transfer {
 	private long revision = -1;
 	
 	// 연관 관계는 맺지 않는다. 불필요
-	@Column(name = "repository_seq")
-	private int repositorySeq;
+	@Column(name = "repository_key")
+	private String repositoryKey;
 	
 	@OneToMany(cascade = { CascadeType.ALL }, mappedBy = "transfer", orphanRemoval=true)
 	private List<TransferSource> sourceList;
@@ -154,12 +154,12 @@ public class Transfer {
 		this.revision = revision;
 	}
 	
-	public int getRepositorySeq(){
-		return repositorySeq;
+	public String getRepositoryKey(){
+		return repositoryKey;
 	}
 	
-	public void setRepositorySeq(int repositorySeq){
-		this.repositorySeq = repositorySeq;
+	public void setRepositoryKey(String repositoryKey){
+		this.repositoryKey = repositoryKey;
 	}
 
 	public List<TransferSource> getSourceList() {
@@ -253,8 +253,8 @@ public class Transfer {
 			return this;
 		}
 		
-		public Builder repositorySeq(int repositorySeq){
-			transfer.setRepositorySeq(repositorySeq);
+		public Builder repositoryKey(String repositoryKey){
+			transfer.setRepositoryKey(repositoryKey);
 			return this;
 		}
 		

@@ -24,11 +24,11 @@ public class GeneralAjaxController {
     @Autowired
     private GeneralService generalService;
     
-    @RequestMapping(value="/commitLog/{repositorySeq}", method=RequestMethod.GET)
+    @RequestMapping(value="/commitLog/{repositoryKey}", method=RequestMethod.GET)
     public @ResponseBody CommitLogTemplate retrieveCommitLogTemplate(
     												@RequestParam(value = "logType", required = true) String logTemplateTypeCodeId,
-													@PathVariable int repositorySeq){
-    	return generalService.retrieveCommitLogTemplate(repositorySeq, logTemplateTypeCodeId);
+													@PathVariable String repositoryKey){
+    	return generalService.retrieveCommitLogTemplate(repositoryKey, logTemplateTypeCodeId);
     }
     
     @RequestMapping(value="/commitLog/default", method=RequestMethod.GET)
@@ -37,9 +37,9 @@ public class GeneralAjaxController {
     	return generalService.retrieveDefaultCommitLogTemplate(logTemplateTypeCodeId);
     }
     
-    @RequestMapping(value="/commitLog/{repositorySeq}", method=RequestMethod.POST)
+    @RequestMapping(value="/commitLog/{repositoryKey}", method=RequestMethod.POST)
     public @ResponseBody DefaultMessage saveCommitLogTemplate(
-													@PathVariable int repositorySeq,
+													@PathVariable String repositoryKey,
 													@RequestParam(value = "logType", required = true) String logTemplateTypeCodeId,
 													@ModelAttribute("commitLogTemplate") CommitLogTemplate commitLogTemplate){
     	generalService.saveCommitLogTemplate(commitLogTemplate, logTemplateTypeCodeId);

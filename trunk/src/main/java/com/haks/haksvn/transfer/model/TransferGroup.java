@@ -60,8 +60,8 @@ public class TransferGroup {
 	private long transferDate;
 	
 	// 연관 관계는 맺지 않는다. 불필요
-	@Column(name = "repository_seq")
-	private int repositorySeq;
+	@Column(name = "repository_key")
+	private String repositoryKey;
 	
 	@OneToMany(cascade = { CascadeType.PERSIST }, mappedBy = "transferGroup")
 	private List<Transfer> transferList;
@@ -122,12 +122,12 @@ public class TransferGroup {
 		this.transferDate = transferDate;
 	}
 
-	public int getRepositorySeq() {
-		return repositorySeq;
+	public String getRepositoryKey() {
+		return repositoryKey;
 	}
 
-	public void setRepositorySeq(int repositorySeq) {
-		this.repositorySeq = repositorySeq;
+	public void setRepositoryKey(String repositoryKey) {
+		this.repositoryKey = repositoryKey;
 	}
 
 	public List<Transfer> getTransferList() {
@@ -193,8 +193,8 @@ public class TransferGroup {
 			return this;
 		}
 		
-		public Builder repositorySeq(int repositorySeq){
-			transferGroup.setRepositorySeq(repositorySeq);
+		public Builder repositoryKey(String repositoryKey){
+			transferGroup.setRepositoryKey(repositoryKey);
 			return this;
 		}
 		

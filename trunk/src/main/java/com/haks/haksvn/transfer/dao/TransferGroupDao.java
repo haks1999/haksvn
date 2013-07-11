@@ -30,7 +30,7 @@ public class TransferGroupDao {
 				.createAlias("t_transferGroup.transferGroupStateCode", "t_state_code", JoinType.INNER_JOIN)
 				.setFirstResult((int)paging.getStart())
 				.setMaxResults((int)paging.getLimit())
-				.add(Restrictions.eq("repositorySeq", search.getRepositorySeq()))
+				.add(Restrictions.eq("repositoryKey", search.getRepositoryKey()))
 				.addOrder(Order.asc("t_state_code.codeOrder"))
 				.addOrder(Order.desc("transferGroupSeq"));
 		

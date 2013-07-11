@@ -6,8 +6,6 @@ import java.util.List;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
@@ -32,9 +30,10 @@ import com.haks.haksvn.user.model.User;
 public class Repository{
 
 	@Id
-    @GeneratedValue(strategy=GenerationType.AUTO)
-	@Column(name = "repository_seq",unique = true, nullable = false)
-    private int repositorySeq;
+	@Column(name = "repository_key",unique = true, nullable = false)
+	@Length(min=5, max=15)
+	@Pattern(regexp="^[a-zA-Z]+$")
+    private String repositoryKey;
 	
 	@Column(name = "repository_location",nullable = false)
 	@NotEmpty
@@ -110,56 +109,25 @@ public class Repository{
 	//@Cascade({org.hibernate.annotations.CascadeType.DETACH})
 	@Fetch(FetchMode.SUBSELECT)
 	@JoinTable(name = "repositories_users", 
-			joinColumns = { @JoinColumn(name = "repository_seq", nullable = false, updatable = false) }, 
+			joinColumns = { @JoinColumn(name = "repository_key", nullable = false, updatable = false) }, 
 			inverseJoinColumns = { @JoinColumn(name = "user_seq",nullable = false, updatable = false) },
-			uniqueConstraints = { @UniqueConstraint(columnNames = {"repository_seq","user_seq"})})
+			uniqueConstraints = { @UniqueConstraint(columnNames = {"repository_key","user_seq"})})
 	private List<User> userList = new ArrayList<User>();
 	
 	@Transient
 	private boolean authUserPasswdEncrypted = false;
-	
-	/*
-	@OneToOne(targetEntity = RepositoryServer.class,fetch=FetchType.EAGER)
-	@org.hibernate.annotations.Cascade(value={org.hibernate.annotations.CascadeType.DELETE})
-	@JoinTable(name = "repository_server", 
-		joinColumns = { @JoinColumn(name = "repository_seq", nullable = false, updatable = false) },
-		inverseJoinColumns = { @JoinColumn(name = "repository_seq",nullable = false, updatable = false) })
-	private RepositoryServer repositoryServer;
-	*/
 	
 	public Repository(){
 		
 	}
 	
 	
-	/*
-	public Repository (Repository repository){
-		repositorySeq = repository.getRepositorySeq();
-		repositoryLocation = repository.getRepositoryLocation();
-		repositoryName = repository.getRepositoryName();
-		active = repository.getActive();
-		trunkPath = repository.getTrunkPath();
-		tagsPath = repository.getTagsPath();
-		authUserId = repository.getAuthUserId();
-		authUserPasswd = repository.getAuthUserPasswd();
-		userList = repository.getUserList();
-		return this;
-	}
-	*/
-	
-	@Override
-	public String toString(){
-		return "[ Repository ]\n - repositorySeq : " + repositorySeq + "\n - repositoryLocation : " + repositoryLocation +
-					"\n - repositoryName : " + repositoryName + "\n - active : " + active  + repositorySeq + "\n - connectType : " + connectType + "\n - syncUser : " + syncUser +
-					"\n - serverIp : " + serverIp + "\n - authzPath : " + authzPath  + "\n - passwdPath : " + passwdPath + "\n - passwdType : " + passwdType ;
-	}
-	
-	public int getRepositorySeq() {
-		return repositorySeq;
+	public String getRepositoryKey() {
+		return repositoryKey;
 	}
 
-	public void setRepositorySeq(int repositorySeq) {
-		this.repositorySeq = repositorySeq;
+	public void setRepositoryKey(String repositoryKey) {
+		this.repositoryKey = repositoryKey;
 	}
 
 	public String getRepositoryLocation() {
@@ -352,8 +320,8 @@ public class Repository{
 			return repository;
 		}
 		
-		public Builder repositorySeq(int repositorySeq){
-			repository.setRepositorySeq(repositorySeq);
+		public Builder repositoryKey(String repositoryKey){
+			repository.setRepositoryKey(repositoryKey);
 			return this;
 		}
 		

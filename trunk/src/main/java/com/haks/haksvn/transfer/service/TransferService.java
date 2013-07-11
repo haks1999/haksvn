@@ -40,14 +40,14 @@ public class TransferService {
 	private SVNRepositoryService svnRepositoryService;
 	
 	public Paging<List<Transfer>> retrieveTransferList(Paging<Transfer> paging){
-		repositoryService.checkRepositoryAccessRight(paging.getModel().getRepositorySeq());
+		repositoryService.checkRepositoryAccessRight(paging.getModel().getRepositoryKey());
 		return transferDao.retrieveTransferList(paging);
 	}
 	
 	public TransferSource checkRequestableTransferSource(TransferSource transferSource){
-		Repository repository = repositoryService.checkRepositoryAccessRight(transferSource.getTransfer().getRepositorySeq());
+		Repository repository = repositoryService.checkRepositoryAccessRight(transferSource.getTransfer().getRepositoryKey());
 		
-		TransferSource transferSourceLocked = transferDao.retrieveLockedTransferSource(transferSource.getPath(), repository.getRepositorySeq());
+		TransferSource transferSourceLocked = transferDao.retrieveLockedTransferSource(transferSource.getPath(), repository.getRepositoryKey());
 		if( transferSourceLocked != null ){
 			transferSourceLocked.setIsLocked(true);
 			return transferSourceLocked;
@@ -64,7 +64,7 @@ public class TransferService {
 	}
 	
 	public Transfer saveTransfer(Transfer transfer){
-		repositoryService.checkRepositoryAccessRight(transfer.getRepositorySeq());
+		repositoryService.checkRepositoryAccessRight(transfer.getRepositoryKey());
 		Transfer currentTransfer = transferDao.retrieveTransferByTransferSeq(transfer.getTransferSeq());
 		if( currentTransfer == null ){
 			return addTransfer(transfer);
@@ -117,7 +117,7 @@ public class TransferService {
 			if( transferSource.getTransferSourceSeq() < 1 ){	// 추가인 경우 
 				// 신규 Transfer 가 아닌 연관된 Transfer를 세팅하면 다른 Service method 호출 시 insert, update 가 일어난다.
 				// 이유를 알 수 없음. 단순 select method 임에도 불구하고...
-				TransferSource transferSourceLocked = transferDao.retrieveLockedTransferSource(transferSource.getPath(), transfer.getRepositorySeq());
+				TransferSource transferSourceLocked = transferDao.retrieveLockedTransferSource(transferSource.getPath(), transfer.getRepositoryKey());
 				if( transferSourceLocked != null && transferSourceLocked.getTransfer().getTransferSeq() != transfer.getTransferSeq()){
 					throw new HaksvnException("[" + transferSource.getPath() + "] is locked by [" + transferSource.getTransfer().getTransferSeq() + "]");
 				}
@@ -129,7 +129,7 @@ public class TransferService {
 	}
 	
 	public Transfer retrieveTransferDetail(Transfer transfer){
-		repositoryService.checkRepositoryAccessRight(transfer.getRepositorySeq());
+		repositoryService.checkRepositoryAccessRight(transfer.getRepositoryKey());
 		return transferDao.retrieveTransferByTransferSeq(transfer.getTransferSeq());
 	}
 	
@@ -138,13 +138,13 @@ public class TransferService {
 	}
 	
 	public List<TransferSource> retrieveTransferSourceList(Transfer transfer){
-		repositoryService.checkRepositoryAccessRight(transfer.getRepositorySeq());
+		repositoryService.checkRepositoryAccessRight(transfer.getRepositoryKey());
 		return transferDao.retrieveTransferSourceList(transfer.getTransferSeq());
 	}
 	
 	public Transfer deleteTransfer(Transfer transfer){
 		transfer = transferDao.retrieveTransferByTransferSeq(transfer.getTransferSeq());
-		repositoryService.checkRepositoryAccessRight(transfer.getRepositorySeq());
+		repositoryService.checkRepositoryAccessRight(transfer.getRepositoryKey());
 		if( !TransferStateAuth.Builder.getBuilder().transfer(transfer).build().getIsDeletable() ){
 			throw new HaksvnException("Insufficient privileges.");
 		}
@@ -153,7 +153,7 @@ public class TransferService {
 	
 	public Transfer requestTransfer(Transfer transfer){
 		transfer = transferDao.retrieveTransferByTransferSeq(transfer.getTransferSeq());
-		repositoryService.checkRepositoryAccessRight(transfer.getRepositorySeq());
+		repositoryService.checkRepositoryAccessRight(transfer.getRepositoryKey());
 		if( !TransferStateAuth.Builder.getBuilder().transfer(transfer).build().getIsRequestable() ){
 			throw new HaksvnException("Insufficient privileges.");
 		}
@@ -164,7 +164,7 @@ public class TransferService {
 	
 	public Transfer requestCancelTransfer(Transfer transfer){
 		transfer = transferDao.retrieveTransferByTransferSeq(transfer.getTransferSeq());
-		repositoryService.checkRepositoryAccessRight(transfer.getRepositorySeq());
+		repositoryService.checkRepositoryAccessRight(transfer.getRepositoryKey());
 		if( !TransferStateAuth.Builder.getBuilder().transfer(transfer).build().getIsRequestCancelable() ){
 			throw new HaksvnException("Insufficient privileges.");
 		}
@@ -177,7 +177,6 @@ public class TransferService {
 	
 	public Transfer approveTransfer(Transfer transfer){
 		transfer = transferDao.retrieveTransferByTransferSeq(transfer.getTransferSeq());
-		//Repository repository = checkRepositoryAccessRight(transfer.getRepositorySeq());
 		if( !TransferStateAuth.Builder.getBuilder().transfer(transfer).build().getIsApprovable() ){
 			throw new HaksvnException("Insufficient privileges.");
 		}
@@ -203,7 +202,7 @@ public class TransferService {
 	
 	public Transfer rejectTransfer(Transfer transfer){
 		transfer = transferDao.retrieveTransferByTransferSeq(transfer.getTransferSeq());
-		repositoryService.checkRepositoryAccessRight(transfer.getRepositorySeq());
+		repositoryService.checkRepositoryAccessRight(transfer.getRepositoryKey());
 		if( !TransferStateAuth.Builder.getBuilder().transfer(transfer).build().getIsRejectable() ){
 			throw new HaksvnException("Insufficient privileges.");
 		}

@@ -2,7 +2,7 @@
 <script type="text/javascript">
 	
 	$(function() {
-		$('#frm_tagging').attr('action', '<c:url value="/transfer/tagging/list/${repositorySeq}/save" />');
+		$('#frm_tagging').attr('action', '<c:url value="/transfer/tagging/list/${repositoryKey}/save" />');
 		transformDateField();
 		setFormValidation();
    	});
@@ -32,7 +32,7 @@
 	
 	
 </script>
-<c:set var="repoBrowsePathLink" value="${pageContext.request.contextPath}/source/browse/${repositorySeq}"/>
+<c:set var="repoBrowsePathLink" value="${pageContext.request.contextPath}/source/browse/${repositoryKey}"/>
 <div class="content-page">
 	<h1>Tagging Information</h1>
 	<div class="col w10 last">
@@ -43,8 +43,8 @@
 					<form:input class="text w_20 readOnly ${tagging.taggingSeq < 1?'visible-hidden':''}" path="taggingSeq" readonly="true"/>
 				</p>
 				<p>
-					<form:label path="repositorySeq" class="left">Repository</form:label>
-					<form:select path="repositorySeq" disabled="true" items="${repositoryList}" itemValue="repositorySeq" itemLabel="repositoryName"/>
+					<form:label path="repositoryKey" class="left">Repository</form:label>
+					<form:select path="repositoryKey" disabled="true" items="${repositoryList}" itemValue="repositoryKey" itemLabel="repositoryName"/>
 				</p>
 				<p>
 					<form:label path="taggingTypeCode.codeId" class="left">Type</form:label>
@@ -89,7 +89,7 @@
 						<a class="button green mt ml" onclick="createTagging()"><small class="icon plus"></small><span>Create</span></a>
 						<script type="text/javascript" >
 							function createTagging(){
-								$('#frm_tagging').attr('action', '<c:url value="/transfer/tagging/list" />' + '<c:out value="/${repositorySeq}/create"/>');
+								$('#frm_tagging').attr('action', '<c:url value="/transfer/tagging/list" />' + '<c:out value="/${repositoryKey}/create"/>');
 								$('#frm_tagging').submit();
 							};
 							
@@ -106,7 +106,7 @@
 								haksvn.block.on();
 								$.ajax( {
 									type:'POST',
-									url:"<c:url value="/transfer/tagging/list"/>" + "/" + '<c:out value="${repositorySeq}/validate" />',
+									url:"<c:url value="/transfer/tagging/list"/>" + "/" + '<c:out value="${repositoryKey}/validate" />',
 									data:{
 										tagName:$('#frm_tagging input[name="tagName"]').val()
 									},
@@ -149,7 +149,7 @@
 						<a class="button green mt ml" onclick="restoreTagging()"><small class="icon plus"></small><span>Restore</span></a>
 						<script type="text/javascript" >
 							function restoreTagging(){
-								$('#frm_tagging').attr('action', '<c:url value="/transfer/tagging/list" />' + '<c:out value="/${repositorySeq}/restore"/>');
+								$('#frm_tagging').attr('action', '<c:url value="/transfer/tagging/list" />' + '<c:out value="/${repositoryKey}/restore"/>');
 								$('#frm_tagging').submit();
 							};
 							

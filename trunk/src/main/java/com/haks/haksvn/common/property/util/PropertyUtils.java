@@ -6,16 +6,16 @@ public class PropertyUtils {
 		return "commit.log.template.request.default";
 	}
 	
-	public static String getCommitLogTemplateRequestKey(int repositorySeq){
-		return "commit.log.template.request." + repositorySeq;
+	public static String getCommitLogTemplateRequestKey(String repositoryKey){
+		return "commit.log.template.request." + repositoryKey;
 	}
 	
 	public static String getCommitLogTemplateTaggingKey(){
 		return "commit.log.template.tagging.default";
 	}
 	
-	public static String getCommitLogTemplateTaggingKey(int repositorySeq){
-		return "commit.log.template.tagging." + repositorySeq;
+	public static String getCommitLogTemplateTaggingKey(String repositoryKey){
+		return "commit.log.template.tagging." + repositoryKey;
 	}
 	
 	public static String getApplicationVersionKey(){

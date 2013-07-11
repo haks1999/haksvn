@@ -28,7 +28,7 @@ public class TaggingDao {
 				.createAlias("taggingTypeCode", "ttcode")
 				.setFirstResult((int)paging.getStart())
 				.setMaxResults((int)paging.getLimit())
-				.add(Restrictions.eq("repositorySeq", search.getRepositorySeq()))
+				.add(Restrictions.eq("repositoryKey", search.getRepositoryKey()))
 				.addOrder(Order.desc("taggingDate"))
 				.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
 		
@@ -52,7 +52,7 @@ public class TaggingDao {
 	public List<Tagging> retrieveTaggingListByTagName(Tagging tagging){
 		Session session = sessionFactory.getCurrentSession();
 		@SuppressWarnings("unchecked") List<Tagging> taggingList= session.createCriteria(Tagging.class)
-				.add(Restrictions.eq("repositorySeq", tagging.getRepositorySeq()))
+				.add(Restrictions.eq("repositoryKey", tagging.getRepositoryKey()))
 				.add(Restrictions.eq("tagName", tagging.getTagName()))
 				.addOrder(Order.desc("taggingDate")).list();
 		return taggingList;
@@ -61,7 +61,7 @@ public class TaggingDao {
 	public Tagging retrieveLatestSyncTagging(Tagging tagging){
 		Session session = sessionFactory.getCurrentSession();
 		@SuppressWarnings("unchecked") List<Tagging> taggingList= session.createCriteria(Tagging.class)
-				.add(Restrictions.eq("repositorySeq", tagging.getRepositorySeq()))
+				.add(Restrictions.eq("repositoryKey", tagging.getRepositoryKey()))
 				.addOrder(Order.desc("taggingDate")).list();
 		if( taggingList.size() < 1 ) return null;
 		return taggingList.get(0);

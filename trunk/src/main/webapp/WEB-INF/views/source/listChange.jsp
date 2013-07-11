@@ -1,7 +1,7 @@
 <%@ include file="/WEB-INF/views/common/include/taglib.jspf"%>
 <script type="text/javascript">
 	$(function() {
-		$("#sel_repository").val('<c:out value="${repositorySeq}" />');
+		$("#sel_repository").val('<c:out value="${repositoryKey}" />');
 		retrieveRepositoryChangeList();
 		$("#sel_repository").change(changeRepository);
 	});
@@ -16,18 +16,18 @@
 		$("#tbl_changeList tfoot span:not(.loading)").removeClass('display-none').addClass('display-none');
 		$("#tbl_changeList tfoot span.loader").removeClass('display-none');
 		_paging.path = '<c:out value="${path}" />';
-		_paging.repositorySeq = $("#sel_repository > option:selected").val();
+		_paging.repositoryKey = $("#sel_repository > option:selected").val();
 		$.getJSON( "<c:url value="/source/changes/list"/>",
 				_paging,
 				function(data) {
 					var model = data.model;
 					_paging.start = data.end;
-					var repositorySeq = '<c:out value="${repositorySeq}" />';
+					var repositoryKey = '<c:out value="${repositoryKey}" />';
 					var hrefRoot = '<c:url value="/source/changes"/>';
 					var path = '<c:out value="${path}" />';
 					for( var inx = 0 ; inx < model.length ; inx++ ){
 						var row = $("#tbl_changeList > tbody > .sample").clone();
-						$(row).find(".revision a").attr('href',(hrefRoot + "/" + repositorySeq + (path.length<1?"":"/") + path + "?rev=" + model[inx].revision).replace("//", "/"));
+						$(row).find(".revision a").attr('href',(hrefRoot + "/" + repositoryKey + (path.length<1?"":"/") + path + "?rev=" + model[inx].revision).replace("//", "/"));
 						$(row).find(".revision font a").text('r'+model[inx].revision);
 						$(row).children(".message").text(model[inx].message);
 						$(row).children(".date").text(haksvn.date.convertToEasyFormat(new Date(model[inx].date)));
@@ -62,7 +62,7 @@
 						<label>Repository Name</label> 
 						<select id="sel_repository">
 							<c:forEach items="${repositoryList}" var="repository">
-								<option value="<c:out value="${repository.repositorySeq}"/>">
+								<option value="<c:out value="${repository.repositoryKey}"/>">
 									<c:out value="${repository.repositoryName}" />
 								</option>
 							</c:forEach>
@@ -74,8 +74,8 @@
 			<div>
 				<p>
 					<font class="path">Path:
-						<c:set var="repoChangesPathLink" value="${pageContext.request.contextPath}/source/changes/${repositorySeq}"/>
-						<c:set var="repoBrowsePathLink" value="${pageContext.request.contextPath}/source/browse/${repositorySeq}"/>
+						<c:set var="repoChangesPathLink" value="${pageContext.request.contextPath}/source/changes/${repositoryKey}"/>
+						<c:set var="repoBrowsePathLink" value="${pageContext.request.contextPath}/source/browse/${repositoryKey}"/>
 						/<a href="${repoChangesPathLink}">[SVN root]</a>
 						<c:forEach var="pathFrag" items="${fn:split(path, '/')}" varStatus="loop">
 							<c:set var="repoChangesPathLink" value="${repoChangesPathLink}/${pathFrag}"/>
@@ -102,7 +102,8 @@
 						</select>
 						<script type="text/javascript">
 							$("#sel_lowerSvnSource").change(function(){
-								location.href = "<c:out value="${repoChangesPathLink}/" />" + $(this).val();
+								haksvn.block.on();
+								location.href = ("<c:out value="${repoChangesPathLink}/" />" + $(this).val()).replace("//", "/");
 							});
 						</script>
 					</c:if>

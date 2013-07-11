@@ -11,6 +11,7 @@ import org.springframework.stereotype.Repository;
 
 import com.googlecode.ehcache.annotations.Cacheable;
 import com.googlecode.ehcache.annotations.TriggersRemove;
+import com.haks.haksvn.common.code.util.CodeUtils;
 
 @Repository
 public class RepositoryDao {
@@ -24,7 +25,7 @@ public class RepositoryDao {
 		
 		@SuppressWarnings("unchecked") List<com.haks.haksvn.repository.model.Repository> result = 
 					session.createCriteria(com.haks.haksvn.repository.model.Repository.class)
-				.addOrder(Order.asc("repositorySeq"))
+				.addOrder(Order.asc("repositoryKey"))
 				.list();
 		
 		return result;
@@ -50,7 +51,7 @@ public class RepositoryDao {
 		@SuppressWarnings("unchecked") List<com.haks.haksvn.repository.model.Repository> result = 
 					session.createCriteria(com.haks.haksvn.repository.model.Repository.class)
 					.add(Restrictions.eq("active", "common.boolean.yn.code.y"))
-					.addOrder(Order.asc("repositorySeq"))
+					.addOrder(Order.asc("repositoryKey"))
 					.createCriteria("userList")
 				.add(Restrictions.eq("userId", userId))
 				.list();
@@ -59,13 +60,13 @@ public class RepositoryDao {
 	}
 	
 	@Cacheable(cacheName="repositoryCache")
-	public com.haks.haksvn.repository.model.Repository retrieveActiveRepositoryByRepositorySeqAndUserId(int repositorySeq,String userId) {
+	public com.haks.haksvn.repository.model.Repository retrieveActiveRepositoryByRepositoryKeyAndUserId(String repositoryKey,String userId) {
 		Session session = sessionFactory.getCurrentSession();
 		
 		com.haks.haksvn.repository.model.Repository result = 
 					(com.haks.haksvn.repository.model.Repository)session.createCriteria(com.haks.haksvn.repository.model.Repository.class)
-					.add(Restrictions.eq("active", "common.boolean.yn.code.y"))
-					.add(Restrictions.eq("repositorySeq", repositorySeq))
+					.add(Restrictions.eq("active", CodeUtils.getCommonCodeY()))
+					.add(Restrictions.eq("repositoryKey", repositoryKey))
 					.createCriteria("userList")
 				.add(Restrictions.eq("userId", userId))
 				.uniqueResult();
@@ -75,10 +76,10 @@ public class RepositoryDao {
 	
 	
 	@Cacheable(cacheName="repositoryCache")
-	public com.haks.haksvn.repository.model.Repository retrieveRepositoryByRepositorySeq(com.haks.haksvn.repository.model.Repository repository) {
+	public com.haks.haksvn.repository.model.Repository retrieveRepositoryByRepositoryKey(com.haks.haksvn.repository.model.Repository repository) {
 		Session session = sessionFactory.getCurrentSession();
 		com.haks.haksvn.repository.model.Repository result =
-				(com.haks.haksvn.repository.model.Repository)session.get(com.haks.haksvn.repository.model.Repository.class, repository.getRepositorySeq());
+				(com.haks.haksvn.repository.model.Repository)session.get(com.haks.haksvn.repository.model.Repository.class, repository.getRepositoryKey());
 		return result;
 	}
 	
