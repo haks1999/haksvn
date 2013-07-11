@@ -335,7 +335,6 @@ margin:0 33px 0 0;
 }
 
 #leftmenu .content {
-background:#666;
 border-radius:5px;
 padding:10px;
 }
@@ -348,7 +347,7 @@ color:#dbdbdb;
 display:block;
 border:0;
 background:url(../images/dropdown_hr.png) no-repeat center top;
-height:2px;
+height:1px;
 font-size:0px;
 margin:0 0 10px 0;
 }
@@ -804,7 +803,7 @@ a:hover {color:#444;}
 a.logo {display:block;float:left;padding:4px 0 0 0;}
 .dropdown a {color:#fff;}
 .dropdown a.button {color:#666;}
-#leftmenu a {color:#fff;}
+#leftmenu a {color:#666;}
 #leftmenu a.button {color:#666;}
 /*-------------------------ANCHOR-------------------------*/
 

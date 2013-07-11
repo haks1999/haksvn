@@ -88,7 +88,7 @@
 	
 	
 </script>
-<div id="table" class="help">
+<div class="content-page">
 	<h1></h1>
 	<div class="col w10">
 		<div class="content">

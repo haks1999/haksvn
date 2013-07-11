@@ -13,7 +13,15 @@
 				userId:{
 					required: true,
 					minlength: 4,
-					maxlength: 20
+					maxlength: 20,
+					remote:{
+                      url: "<c:url value="/configuration/users/add/validateUserId/"/>",
+                      data:{
+                          userId: function(){
+                              return $("#frm_user input[name=userId]").val();
+                          }
+                      }
+                    }
 				},
 				userName: {
 					required: true,
@@ -29,12 +37,18 @@
 					minlength: 4,
 					maxlength: 50
 				}
+			},
+			messages: {
+				userId:{
+					remote: $.validator.format("<spring:message code="validation.duplicate" />")
+				}
+				
 			}
 		});
 	};
 	
 </script>
-<div id="table" class="help">
+<div class="content-page">
 	<h1>User Information</h1>
 	<div class="col w10 last">
 		<div class="content">
@@ -75,6 +89,7 @@
 				<p>
 					<form:label path="authType" class="left">User Authority</form:label>
 					<form:select path="authType" items="${requestScope['user.auth.type.code']}" itemValue="codeId" itemLabel="codeName"/>
+					<span class="form-help"><spring:message htmlEscape="true" code="helper.user.authType" /></span>
 				</p>
 				<p>
 					<form:label path="active" class="left">Active</form:label>

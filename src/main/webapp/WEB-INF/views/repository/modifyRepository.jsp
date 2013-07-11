@@ -70,7 +70,6 @@
 	function openAuthzTemplateDialog(){
 		$('#txa_authzTemplate').val(frm_repository.authzTemplate.value);
 		$("#div_authzTemplate").dialog({
-			height: 500,
 		    width: 550,
 		    modal: true,
 		    buttons: {
@@ -134,7 +133,7 @@
 	};
 	
 </script>
-<div class="help">
+<div class="content-page">
 	<h1>Repository Information</h1>
 	<div class="col w10 last">
 		<div class="content">
@@ -232,7 +231,7 @@
 						<form:hidden path="authzTemplate" />
 						<span class="underline italic link" onclick="openAuthzTemplateDialog()">Edit</span>
 						<input type="text" disabled class="text visible-hidden" style="width:1px;"/>
-						<span class="form-help"><spring:message code="helper.repository.authzTemplate" /></span>
+						<span class="form-help"><spring:message htmlEscape="true" code="helper.repository.authzTemplate" /></span>
 					</p>
 					<p>
 						<form:label path="passwdPath" class="left">passwd file path</form:label>
@@ -258,6 +257,14 @@
 	<div class="clear"></div>
 </div>
 <div id="div_authzTemplate" title="Authz Template" style="display:none;">
+	<div class="info">
+		<div class="tl"></div>
+		<div class="tr"></div>
+		<div class="desc variable-help"><spring:message code="helper.repository.authzTemplateVariables" /></div>
+		<div class="bl"></div>
+		<div class="br"></div>
+	</div>
+						
 	<div class="content fullsize">
 		<textarea id="txa_authzTemplate"><c:out value="${repository.authzTemplate}"/></textarea>
 		<textarea id="txa_authzDefaultTemplate" style="display:none;"><c:out value="${authzTemplate}"/></textarea>

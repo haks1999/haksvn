@@ -38,6 +38,3 @@
 		</div>
 	</c:forEach>
 </div>
-<div id="loader-main">
-	<img src="<c:url value="/images/ajax-loader_arrow.gif"/>"/><span>Loading</span>
-</div>

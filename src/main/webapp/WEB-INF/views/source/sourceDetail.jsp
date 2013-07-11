@@ -34,7 +34,7 @@
 <c:set var="repoChangesPathLink" value="${pageContext.request.contextPath}/source/changes/${repositorySeq}"/>
 <c:set var="repoDiffPathLink" value="${pageContext.request.contextPath}/source/changes/diff"/>
 <jsp:useBean id="dateValue" class="java.util.Date" />
-<div id="table" class="help">
+<div class="content-page">
 	<h1></h1>
 	<div class="col w10 last">
 		<div class="content">

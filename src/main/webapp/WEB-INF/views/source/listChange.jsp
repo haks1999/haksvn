@@ -51,7 +51,7 @@
 	var _paging = {start:-1,end:-1,limit:50};
 </script>
 <form id="frm_repository" action=""></form>
-<div id="table" class="help">
+<div class="content-page">
 	<h1></h1>
 	<div class="col w10 last">
 		<div class="content">
