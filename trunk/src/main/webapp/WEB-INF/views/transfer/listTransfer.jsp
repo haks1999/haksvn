@@ -57,10 +57,7 @@
 	var _paging = {start:0,limit:15};
 </script>
 
-
-
-
-<div id="table" class="help">
+<div class="content-page">
 	<div class="col w10 last">
 		<div class="content">
 			<div class="box">

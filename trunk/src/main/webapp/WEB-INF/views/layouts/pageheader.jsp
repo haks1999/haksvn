@@ -37,11 +37,11 @@
 				haksvn.block.off();
 		    },
 		    complete : function( jqXHR ,textStatus ){
-		    	$.unblockUI();
-		    	$('#loader-main').hide();
+		    	//$.unblockUI();
+		    	//$('#loader-main').hide();
 		    },
 		    beforeSend: function(){
-		    	$('#loader-main').show();
+		    	//$('#loader-main').show();
 		    }
 		});
 		
@@ -85,16 +85,15 @@
 		
 		function _setFormHelper(){
 			$("form span.form-help").each(function(){
-				var messageBody = $(this).html();
+				var messageBody = $(this).text();
 				$(this).empty();
-				$(this).append( "<label class=\"help\"></label><div class=\"info display-none\"><div class=\"tl\"></div><div class=\"tr\"></div>"
+				$(this).append("<label class=\"help\"></label>");
+				$(this).parent().after("<div class=\"form-help info\"><div class=\"tl\"></div><div class=\"tr\"></div>"
 						+ "<div class=\"desc\"><p></p></div><div class=\"bl\"></div><div class=\"br\"></div></div>");
-				//$(this).find(".desc p").append(messageBody);
-				//$(this).append(messageBody);
+				$(this).parent().next("div.form-help").find("p").html(messageBody);
 				$(this).find("label.help").click(function(){
-					$(this).parent().find("div.info").toggle();
+					$(this).parent().parent().next("div.form-help").toggle();
 				});
-				//$(this).css("display","inline");
 				$(this).show();
 			});
 		};

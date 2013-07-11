@@ -44,7 +44,7 @@
 	
 	
 </script>
-<div id="table" class="help">
+<div class="content-page">
 	<h1></h1>
 	<div class="col w10 last">
 		<div class="content">
@@ -68,17 +68,11 @@
 				<div class="bottom"><div></div></div>
 			</div>
 			
-			<div>
-				<ul>
-					<li><b>Request-variables:</b> #request-id#, #request-user-id#, #request-user-name#, #approve-user-id#, #approve-user-name#, #description#</li>
-					<li><b>Tagging-variables:</b> #tagging-id#, #tagging-user-id#, #tagging-user-name#, #description#</li>
-				</ul>
-			</div>
-			
 			<form>
 				<p>
 					<label for="commitLogTemplate" class="left">Log Template</label>
 					<textarea class="text" id="commitLogTemplate" rows="20" cols="80"></textarea>
+					<span class="form-help"><spring:message htmlEscape="true" code="helper.general.commitLogTemplateVariables" /></span>
 				</p>
 				<p>
 					<label class="left"></label>

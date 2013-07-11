@@ -238,7 +238,7 @@ form p span font a{text-decoration:underline;cursor:pointer;}
 	};
 	
 </script>
-<div id="table" class="help">
+<div class="content-page">
 	<h1>Transfer Group Information</h1>
 	<div class="col w10 last">
 		<div class="content">
