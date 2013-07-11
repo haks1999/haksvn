@@ -31,14 +31,13 @@ public class TransferAjaxController {
     @Autowired
     private TransferService transferService;
     
-    @RequestMapping(value="/request/list/{repositorySeq}", method=RequestMethod.POST, headers = "Accept=application/json", produces="application/json")
+    @RequestMapping(value="/request/list/{repositoryKey}", method=RequestMethod.POST, headers = "Accept=application/json", produces="application/json")
     public @ResponseBody Paging<List<Transfer>> retrieveTransferList(@ModelAttribute("paging") Paging<Transfer> paging,
 										    		@RequestParam(value = "rUser", required = false, defaultValue="") String requestUserId,
 													@RequestParam(value = "sCode", required = false, defaultValue="") String transferStateCodeId,
 													@RequestParam(value = "path", required = false, defaultValue="") String path,
-													@PathVariable int repositorySeq) throws HaksvnException {
-    	//Transfer transfer = Transfer.Builder.getBuilder().repositorySeq(repositorySeq).path(path)
-    	Transfer transfer = Transfer.Builder.getBuilder().repositorySeq(repositorySeq).revision(-1)
+													@PathVariable String repositoryKey) throws HaksvnException {
+    	Transfer transfer = Transfer.Builder.getBuilder().repositoryKey(repositoryKey).revision(-1)
     		.transferStateCode(Code.Builder.getBuilder().codeId(transferStateCodeId).build())
     		.requestUser(User.Builder.getBuilder().userId(requestUserId).build()).build();
     	paging.setModel(transfer);
@@ -50,14 +49,14 @@ public class TransferAjaxController {
     	return transferListPaging;
     }
     
-    @RequestMapping(value="/request/list/check/{repositorySeq}", method=RequestMethod.GET, params ={"path","del"})
+    @RequestMapping(value="/request/list/check/{repositoryKey}", method=RequestMethod.GET, params ={"path","del"})
     public @ResponseBody TransferSource checkRequestableTransferSource(
     												@RequestParam(value = "path", required = true) String path,
     												@RequestParam(value = "del", required = true) boolean toDelete,
-													@PathVariable int repositorySeq){
+													@PathVariable String repositoryKey){
     	TransferSource transferSource = TransferSource.Builder.getBuilder().path(path)
     				.transferSourceTypeCode(Code.Builder.getBuilder().codeId(toDelete?CodeUtils.getTransferSourceTypeDeleteCodeId():"").build())
-    				.transfer(Transfer.Builder.getBuilder().repositorySeq(repositorySeq).build()).build();
+    				.transfer(Transfer.Builder.getBuilder().repositoryKey(repositoryKey).build()).build();
     	transferSource = transferService.checkRequestableTransferSource(transferSource);
     	if(transferSource.getTransfer() != null ){
     		transferSource.getTransfer().setSourceList(null);
@@ -66,10 +65,10 @@ public class TransferAjaxController {
     	return transferSource;
     }
     
-    @RequestMapping(value="/request/list/{repositorySeq}/{transferSeq}/sources")
-    public @ResponseBody List<TransferSource> retrieveTranasferSourceList(@PathVariable int repositorySeq,
+    @RequestMapping(value="/request/list/{repositoryKey}/{transferSeq}/sources")
+    public @ResponseBody List<TransferSource> retrieveTranasferSourceList(@PathVariable String repositoryKey,
 													@PathVariable int transferSeq){
-    	Transfer transfer = transferService.retrieveTransferDetail(Transfer.Builder.getBuilder().repositorySeq(repositorySeq).transferSeq(transferSeq).build());
+    	Transfer transfer = transferService.retrieveTransferDetail(Transfer.Builder.getBuilder().repositoryKey(repositoryKey).transferSeq(transferSeq).build());
     	List<TransferSource> transferSourceList = transferService.retrieveTransferSourceList(transfer);
     	for( TransferSource transferSource : transferSourceList ){
     		transferSource.setTransfer(null);	// lazy loading
@@ -77,13 +76,11 @@ public class TransferAjaxController {
     	return transferSourceList;
     }
     
-    @RequestMapping(value={"/request/list/{repositorySeq}/approve"}, method=RequestMethod.POST)
+    @RequestMapping(value={"/request/list/{repositoryKey}/approve"}, method=RequestMethod.POST)
     public @ResponseBody ResultMessage approveTransfer(@ModelAttribute("transfer") Transfer transfer, 
-    									@PathVariable int repositorySeq){
+    									@PathVariable String repositoryKey){
     	ResultMessage message = new ResultMessage("Approve success");
     	transfer = transferService.approveTransfer(transfer);
-    	//String param = "?rUser=" + ContextHolder.getLoginUser().getUserId() + "&sCode=" + transfer.getTransferStateCode().getCodeId();
-    	//return new ModelAndView(new RedirectView("/transfer/request/list/" + transfer.getRepositorySeq() + param, true));
     	return message;
     }
     

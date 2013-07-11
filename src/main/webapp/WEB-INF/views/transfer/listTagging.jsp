@@ -1,11 +1,11 @@
 <%@ include file="/WEB-INF/views/common/include/taglib.jspf"%>
-<c:set var="repoBrowsePathLink" value="${pageContext.request.contextPath}/source/browse/${repositorySeq}"/>
+<c:set var="repoBrowsePathLink" value="${pageContext.request.contextPath}/source/browse/${repositoryKey}"/>
 <script type="text/javascript">
 	$(function() {
-		$("#sel_repository option[value='<c:out value="${repositorySeq}" />']").attr('selected', 'selected');
+		$("#sel_repository option[value='<c:out value="${repositoryKey}" />']").attr('selected', 'selected');
 		$("#frm_tagging select[name='tUser'] option[value='<c:out value="${taggingUserId}" />']").attr('selected', 'selected');
 		$("#frm_tagging select[name='tCode'] option[value='<c:out value="${taggingTypeCodeId}" />']").attr('selected', 'selected');
-		if( '<c:out value="${repositorySeq}" />'.length > 0 ){
+		if( '<c:out value="${repositoryKey}" />'.length > 0 ){
 			retrieveTaggingList();
 			retrieveLatestSyncTagging();
 		}
@@ -19,7 +19,7 @@
 	};
 	
 	function retrieveLatestSyncTagging(){
-		$.post( "<c:url value="/transfer/tagging/list"/>" + "/" + '<c:out value="${repositorySeq}/latest" />',
+		$.post( "<c:url value="/transfer/tagging/list"/>" + "/" + '<c:out value="${repositoryKey}/latest" />',
 				{},
 				function(data) {
 					if( !data ) {
@@ -37,7 +37,7 @@
 		$("#tbl_taggingList tfoot span.loader").removeClass('display-none');
 		_paging.tUser = $("#frm_tagging select[name='tUser'] option:selected").val();
 		_paging.tCode = $("#frm_tagging select[name='tCode'] option:selected").val();
-		$.post( "<c:url value="/transfer/tagging/list"/>" + "/" + '<c:out value="${repositorySeq}" />',
+		$.post( "<c:url value="/transfer/tagging/list"/>" + "/" + '<c:out value="${repositoryKey}" />',
 				_paging,
 				function(data) {
 					
@@ -53,9 +53,9 @@
 						$(row).children(".tagger").text(taggingList[inx].taggingUser.userName);
 						$(row).children(".tagName").text(taggingList[inx].tagName);
 						$(row).children(".taggingDate").text(haksvn.date.convertToEasyFormat(new Date(taggingList[inx].taggingDate)));
-						$(row).attr('taggingSeq',taggingList[inx].taggingSeq).attr('repositorySeq',taggingList[inx].repositorySeq);
+						$(row).attr('taggingSeq',taggingList[inx].taggingSeq).attr('repositoryKey',taggingList[inx].repositoryKey);
 						$(row).click(function(){
-							location.href = '<c:url value="/transfer/tagging/list"/>' + '/' + $(this).attr('repositorySeq') + '/' +  $(this).attr('taggingSeq');
+							location.href = '<c:url value="/transfer/tagging/list"/>' + '/' + $(this).attr('repositoryKey') + '/' +  $(this).attr('taggingSeq');
 						});
 						$(row).removeClass("sample");
 						$('#tbl_taggingList > tbody').append(row);
@@ -86,7 +86,7 @@
 							<label for="sel_repository" class="w_120">Repository Name</label> 
 							<select id="sel_repository">
 								<c:forEach items="${repositoryList}" var="repository">
-									<option value="<c:out value="${repository.repositorySeq}"/>">
+									<option value="<c:out value="${repository.repositoryKey}"/>">
 										<c:out value="${repository.repositoryName}" />
 									</option>
 								</c:forEach>
@@ -144,7 +144,7 @@
 		</div>
 	</div>
 	<c:if test="${taggingAuth.isCreatable}">
-		<c:set var="createTaggingPathLink" value="${pageContext.request.contextPath}/transfer/tagging/list/${repositorySeq}/add"/>
+		<c:set var="createTaggingPathLink" value="${pageContext.request.contextPath}/transfer/tagging/list/${repositoryKey}/add"/>
 		<a href="<c:out value="${createTaggingPathLink}"/>" class="button green right"><small class="icon plus"></small><span>Create</span></a>
 	</c:if>
 	<div class="clear"></div>

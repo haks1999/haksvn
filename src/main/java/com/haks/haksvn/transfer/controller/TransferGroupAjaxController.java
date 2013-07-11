@@ -33,13 +33,13 @@ public class TransferGroupAjaxController {
     @Autowired
     private TransferService transferService;
     
-    @RequestMapping(value="/requestGroup/list/{repositorySeq}", method=RequestMethod.POST)
+    @RequestMapping(value="/requestGroup/list/{repositoryKey}", method=RequestMethod.POST)
     public @ResponseBody Paging<List<TransferGroup>> retrieveTransferGroupList(@ModelAttribute("paging") Paging<TransferGroup> paging,
 										    		@RequestParam(value = "sCode", required = false, defaultValue="") String transferGroupStateCodeId,
 													@RequestParam(value = "tCode", required = false, defaultValue="") String transferGroupTypeCodeId,
 													@RequestParam(value = "title", required = false, defaultValue="") String title,
-													@PathVariable int repositorySeq) throws HaksvnException {
-    	TransferGroup transferGroup = TransferGroup.Builder.getBuilder().repositorySeq(repositorySeq)
+													@PathVariable String repositoryKey) throws HaksvnException {
+    	TransferGroup transferGroup = TransferGroup.Builder.getBuilder().repositoryKey(repositoryKey)
     			.transferGroupStateCode(Code.Builder.getBuilder().codeId(transferGroupStateCodeId).build())
     			.transferGroupTypeCode(Code.Builder.getBuilder().codeId(transferGroupTypeCodeId).build())
     			.title(title).build();
@@ -51,8 +51,8 @@ public class TransferGroupAjaxController {
     	return transferGroupListPaging;
     }
     
-    @RequestMapping(value="/requestGroup/list/{repositorySeq}/{transferGroupSeq}/requests")
-    public @ResponseBody List<Transfer> retrieveAddedTransferList(@PathVariable int repositorySeq,
+    @RequestMapping(value="/requestGroup/list/{repositoryKey}/{transferGroupSeq}/requests")
+    public @ResponseBody List<Transfer> retrieveAddedTransferList(@PathVariable String repositoryKey,
 													@PathVariable int transferGroupSeq){
     	
     	List<Transfer> transferList = transferService.retrieveTransferListByTransferGroupSeq(transferGroupSeq);
@@ -63,8 +63,8 @@ public class TransferGroupAjaxController {
     	return transferList;
     }
     
-    @RequestMapping(value={"/requestGroup/list/{repositorySeq}/transfer"}, method=RequestMethod.POST)
-    public @ResponseBody ResultMessage transferTranferGroup(@PathVariable int repositorySeq,
+    @RequestMapping(value={"/requestGroup/list/{repositoryKey}/transfer"}, method=RequestMethod.POST)
+    public @ResponseBody ResultMessage transferTranferGroup(@PathVariable String repositoryKey,
     														@ModelAttribute("transferGroup") @Valid TransferGroup transferGroup){
     	
     	ResultMessage message = new ResultMessage("Transfer success");

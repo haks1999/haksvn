@@ -63,55 +63,15 @@ public class User implements Serializable{
 	@Column(name = "auth_type",nullable = false)
 	private String authType;
 	
-	//@ManyToMany(fetch = FetchType.EAGER, mappedBy = "users")
-	/*
-	@ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
-	@JoinTable(name = "repositories_users", joinColumns = { 
-			@JoinColumn(name = "user_seq", nullable = false, updatable = false) }, 
-			inverseJoinColumns = { @JoinColumn(name = "repository_seq", 
-					nullable = false, updatable = false) })
-	private Set<Repository> repositories = new HashSet<Repository>();
-	*/
-	
-	/*
-	@ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
-	@JoinTable(name = "code", joinColumns = { 
-			@JoinColumn(name = "code_value", referencedColumnName = "auth_type", nullable = false) }, 
-			inverseJoinColumns = { @JoinColumn(name = "auth_type", referencedColumnName = "code_value", nullable = false) })
-	@WhereJoinTable(clause = "code_group='user_auth_type_code'")
-	*/
-	/*
-	@Transient
-	@ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
-	@JoinFormula(value="SELECT c.* FROM code c WHERE c.code_group='user_auth_type_code'")
-	*/
-	//@Formula(value="SELECT c.* FROM code c WHERE c.code_group='user_auth_type_code'")
 	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name="auth_type", referencedColumnName="code_id", insertable=false, updatable=false)
-	//@JoinTable(name = "code", joinColumns = { @JoinColumn(name = "code_id", referencedColumnName = "auth_type", nullable = false) })
-	//@WhereJoinTable(clause = "code_group='user_auth_type_code'")
 	private Code authTypeCode;// = new Code();
 	
 	
 	@ManyToMany(mappedBy="userList", fetch=FetchType.EAGER)
-	//@org.hibernate.annotations.Cascade(value=org.hibernate.annotations.CascadeType.DELETE)
 	@Fetch(FetchMode.SUBSELECT)
 	private List<Repository> repositoryList;
-	/*
-	@ManyToMany(fetch=FetchType.EAGER)
-	@org.hibernate.annotations.Cascade(value=org.hibernate.annotations.CascadeType.DELETE)
-	@Fetch(FetchMode.SUBSELECT)
-	@JoinTable(name = "repositories_users", joinColumns = { 
-			@JoinColumn(name = "user_seq", nullable = false, updatable = false) }, 
-			inverseJoinColumns = { @JoinColumn(name = "repository_seq", 
-					nullable = false, updatable = false) })
-					*/
-	/*
-	@ManyToMany(fetch=FetchType.EAGER, mappedBy = "userList")
-	@org.hibernate.annotations.Cascade(value=org.hibernate.annotations.CascadeType.DELETE)
-	@Fetch(FetchMode.SUBSELECT)
-	private List<Repository> repositoryList = new ArrayList<Repository>();
-	*/
+	
 	public User(){
 		
 	}

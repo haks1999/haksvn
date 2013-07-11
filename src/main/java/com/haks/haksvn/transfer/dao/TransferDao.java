@@ -32,7 +32,7 @@ public class TransferDao {
 				.setFirstResult((int)paging.getStart())
 				.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY)
 				.setMaxResults((int)paging.getLimit())
-				.add(Restrictions.eq("repositorySeq", search.getRepositorySeq()))
+				.add(Restrictions.eq("repositoryKey", search.getRepositoryKey()))
 				.addOrder(Order.desc("requestDate"))
 				.addOrder(Order.desc("transferSeq"));
 		
@@ -112,7 +112,7 @@ public class TransferDao {
 		return transferSource;
 	}
 	
-	public TransferSource retrieveLockedTransferSource(String path, int repositorySeq){
+	public TransferSource retrieveLockedTransferSource(String path, String repositoryKey){
 		Session session = sessionFactory.getCurrentSession();
 		
 		Criteria crit = session.createCriteria(TransferSource.class)
@@ -121,7 +121,7 @@ public class TransferDao {
 				//.add(Restrictions.ne("trc.codeId", CodeUtils.getTransferApprovedCodeId()))
 				//.add(Restrictions.ne("trc.codeId", CodeUtils.getTransferRejectCodeId()))
 				.add(Restrictions.ne("trc.codeId", CodeUtils.getTransferTransferedCodeId()))
-				.add(Restrictions.eq("tr.repositorySeq", repositorySeq))
+				.add(Restrictions.eq("tr.repositoryKey", repositoryKey))
 				.add(Restrictions.eq("path", path));
 		
 		return (TransferSource)crit.uniqueResult();

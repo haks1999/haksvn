@@ -58,12 +58,12 @@
 	function changeServerConnectType( connectType ){
 		if( connectType == 'server.connect.type.code.local' ){
 			$('#div_serverRemoteSettings').slideUp();
-			$("#frm_user input[name=authzPath]").rules("remove");
-			$("#frm_user input[name=passwdPath]").rules("remove");
+			$("#frm_repository input[name=authzPath]").rules("remove");
+			$("#frm_repository input[name=passwdPath]").rules("remove");
 		}else{
 			$('#div_serverRemoteSettings').slideDown();
-			$("#frm_user input[name=authzPath]").rules("add", {required:true});
-			$("#frm_user input[name=passwdPath]").rules("add", {required:true});
+			$("#frm_repository input[name=authzPath]").rules("add", {required:true});
+			$("#frm_repository input[name=passwdPath]").rules("add", {required:true});
 		}
 	};
 	
@@ -138,13 +138,47 @@
 	<div class="col w10 last">
 		<div class="content">
 			<form:form commandName="repository" class="w200" id="frm_repository" method="post">
-					<form:hidden path="repositorySeq" name="repositorySeq"/>
-					<c:if test="${repository.repositorySeq lt 1}" var="isNewRepository" />
 				<p><span class="strong">Repository Settings</span></p>
 				<p>
 					<form:label path="repositoryName" class="left">Repository Name</form:label>
 					<form:input class="text w_20" path="repositoryName"/>
 					<form:errors path="repositoryName" />
+					<span class="form-status"></span>
+				</p>
+				<p>
+					<c:if test="${empty repository.repositoryKey}" var="isNewRepository" />
+					<form:label path="repositoryKey" class="left">Repository Key</form:label>
+					<c:choose>
+						<c:when test="${isNewRepository}">
+							<form:input class="text w_10" path="repositoryKey"/>
+							<script type="text/javascript">
+								$(function() {
+									$("#frm_repository input[name=repositoryKey]").rules("add", {
+										required: true,
+										minlength: 5,
+										maxlength: 15,
+										alphabet: true,
+										remote:{
+						                      url: "<c:url value="/configuration/repositories/add/validateRepositoryKey/"/>",
+						                      data:{
+						                          repositoryKey: function(){
+						                              return $("#frm_repository input[name=repositoryKey]").val();
+						                          }
+						                      }
+						                    },
+										messages:{
+											remote: $.validator.format("<spring:message code="validation.duplicate" />")
+										}
+									});
+								});
+							</script>
+						</c:when>
+						<c:otherwise>
+							<form:input class="text w_10 readOnly" path="repositoryKey" readonly="true"/>
+						</c:otherwise>
+					</c:choose>
+					<form:errors path="repositoryKey" />
+					<span class="form-help"><spring:message code="helper.repository.repositoryKey" /></span>
 					<span class="form-status"></span>
 				</p>
 				

@@ -10,7 +10,7 @@ form p span font a{text-decoration:underline;cursor:pointer;}
 <script type="text/javascript">
 	
 	$(function() {
-		$('#frm_transferGroup').attr('action', '<c:url value="/transfer/requestGroup/list/${repositorySeq}/save" />');
+		$('#frm_transferGroup').attr('action', '<c:url value="/transfer/requestGroup/list/${repositoryKey}/save" />');
 		transformDateField();
 		setFormValidation();
 		if( Number('<c:out value="${transferGroup.transferGroupSeq}"/>') > 0) retrieveAddedRequestList();
@@ -80,7 +80,7 @@ form p span font a{text-decoration:underline;cursor:pointer;}
 		$("#tbl_approvedRequestList tfoot span:not(.loader)").removeClass('display-none').addClass('display-none');
 		$("#tbl_approvedRequestList tfoot span.loader").removeClass('display-none');
 		_gApprovedRequestPaging.sCode = "<spring:eval expression="T(com.haks.haksvn.common.code.util.CodeUtils).getTransferApprovedCodeId()"/>";
-		$.post( "<c:url value="/transfer/request/list"/>" + "/" + '<c:out value="${repositorySeq}" />',
+		$.post( "<c:url value="/transfer/request/list"/>" + "/" + '<c:out value="${repositoryKey}" />',
 				_gApprovedRequestPaging,
 				function(data) {
 					var transferList = data.model;
@@ -90,11 +90,11 @@ form p span font a{text-decoration:underline;cursor:pointer;}
 						//$(row).attr('transferSeq',transferList[inx].transferSeq);
 						$(row).data('transfer',transferList[inx]);
 						$(row).find(".transferSeq font a").text('req-'+transferList[inx].transferSeq);
-						$(row).find(".transferSeq a").attr("href",'<c:url value="/transfer/request/list"/>' + '/' + transferList[inx].repositorySeq + '/' +  transferList[inx].transferSeq);
+						$(row).find(".transferSeq a").attr("href",'<c:url value="/transfer/request/list"/>' + '/' + transferList[inx].repositoryKey + '/' +  transferList[inx].transferSeq);
 						$(row).children(".requestor").text(transferList[inx].requestUser.userName);
 						$(row).children(".approver").text(transferList[inx].approveUser.userName);
 						$(row).children(".description").text(transferList[inx].description);
-						$(row).attr('transferSeq',transferList[inx].transferSeq).attr('repositorySeq',transferList[inx].repositorySeq);
+						$(row).attr('transferSeq',transferList[inx].transferSeq).attr('repositoryKey',transferList[inx].repositoryKey);
 						$(row).removeClass("sample");
 						$('#tbl_approvedRequestList > tbody').append(row);
 					}
@@ -114,7 +114,7 @@ form p span font a{text-decoration:underline;cursor:pointer;}
 	function retrieveAddedRequestList(){
 		haksvn.block.on();
 		$.getJSON(
-				"<c:url value="/transfer/requestGroup/list/${repositorySeq}/${transferGroup.transferGroupSeq}/requests"/>",
+				"<c:url value="/transfer/requestGroup/list/${repositoryKey}/${transferGroup.transferGroupSeq}/requests"/>",
 				{},
 	            function(result){
 					for( var inx = 0 ; inx < result.length ; inx++){
@@ -153,7 +153,7 @@ form p span font a{text-decoration:underline;cursor:pointer;}
 			var requestDetail = $('#div_requestDetail').clone().removeClass('display-none').attr("id",elemId);
 			$(requestDetail).attr("transferSeq",transfer.transferSeq);
 			$(requestDetail).find(".transferSeq font a").text("req-"+transfer.transferSeq);
-			$(requestDetail).find(".transferSeq a").attr("href",'<c:url value="/transfer/request/list"/>' + '/' + transfer.repositorySeq + '/' +  transfer.transferSeq);
+			$(requestDetail).find(".transferSeq a").attr("href",'<c:url value="/transfer/request/list"/>' + '/' + transfer.repositoryKey + '/' +  transfer.transferSeq);
 			$(requestDetail).find(".requestor").text(transfer.requestUser.userName);
 			$(requestDetail).find(".approver").text(transfer.approveUser.userName);
 			$(requestDetail).find(".description").text(transfer.description);
@@ -215,13 +215,13 @@ form p span font a{text-decoration:underline;cursor:pointer;}
 	
 	function retrieveTransferSourceList(loadingElem, transferSeq){
 		$.getJSON(
-				"<c:url value="/transfer/request/list/${repositorySeq}/"/>" + transferSeq + "/sources",
+				"<c:url value="/transfer/request/list/${repositoryKey}/"/>" + transferSeq + "/sources",
 				{},
 	            function(result){
 					$(loadingElem).removeClass('loading').addClass('loaded');
 					for( var inx = 0 ; inx < result.length ; inx++){
 						var sourceElem = $(loadingElem).find(".sample").clone().removeClass("sample display-none");
-						$(sourceElem).find("a").attr("href", ("<c:url value="/source/browse/${repositorySeq}/" />" + result[inx].path + '?rev=' + result[inx].revision).replace("//", "/"));
+						$(sourceElem).find("a").attr("href", ("<c:url value="/source/browse/${repositoryKey}/" />" + result[inx].path + '?rev=' + result[inx].revision).replace("//", "/"));
 						$(sourceElem).find("font a").text(result[inx].path);
 						$(sourceElem).find(".type").text(result[inx].transferSourceTypeCode.codeName);
 						$(loadingElem).append(sourceElem);
@@ -251,8 +251,8 @@ form p span font a{text-decoration:underline;cursor:pointer;}
 					<form:input class="text w_20 readOnly ${isNewTransferGroup ?'visible-hidden':''}" path="transferGroupSeq" readonly="true"/>
 				</p>
 				<p>
-					<form:label path="repositorySeq" class="left">Repository</form:label>
-					<form:select path="repositorySeq" disabled="true" items="${repositoryList}" itemValue="repositorySeq" itemLabel="repositoryName"/>
+					<form:label path="repositoryKey" class="left">Repository</form:label>
+					<form:select path="repositoryKey" disabled="true" items="${repositoryList}" itemValue="repositoryKey" itemLabel="repositoryName"/>
 				</p>
 				<p>
 					<form:label path="transferGroupTypeCode.codeId" class="left">Type</form:label>
@@ -313,7 +313,7 @@ form p span font a{text-decoration:underline;cursor:pointer;}
 									$('#frm_transferGroup').append("<input type=\"hidden\" name=\"transferList[" + (requestCnt++) + "].transferSeq\" value=\"" + $(this).attr("transferSeq") + "\" />");
 								});
 								
-								$('#frm_transferGroup').attr('action', '<c:url value="/transfer/requestGroup/list" />' + '<c:out value="/${repositorySeq}/save"/>');
+								$('#frm_transferGroup').attr('action', '<c:url value="/transfer/requestGroup/list" />' + '<c:out value="/${repositoryKey}/save"/>');
 								$('#frm_transferGroup').submit();
 							};
 						</script>
@@ -353,7 +353,7 @@ form p span font a{text-decoration:underline;cursor:pointer;}
 									}else{
 										haksvn.block.on();
 										var queryString = $('#frm_transferGroup').serialize();
-										$.post('<c:url value="/transfer/requestGroup/list" />' + '<c:out value="/${repositorySeq}/transfer"/>',
+										$.post('<c:url value="/transfer/requestGroup/list" />' + '<c:out value="/${repositoryKey}/transfer"/>',
 											queryString,
 								            function(data){
 											haksvn.block.off();
@@ -368,11 +368,11 @@ form p span font a{text-decoration:underline;cursor:pointer;}
 											    modal: true,
 											    buttons: {
 											    	"Yes": function(){
-											    		location.href = "<c:url value="/transfer/tagging/list/${repositorySeq}/add"/>";
+											    		location.href = "<c:url value="/transfer/tagging/list/${repositoryKey}/add"/>";
 												    },
 											    	"No": function() {
 											    		var sCode = "<spring:eval expression="T(com.haks.haksvn.common.code.util.CodeUtils).getTransferTransferedCodeId()"/>";
-											    		location.href = "<c:url value="/transfer/requestGroup/list/${repositorySeq}"/>" + "?sCode=" + sCode;
+											    		location.href = "<c:url value="/transfer/requestGroup/list/${repositoryKey}"/>" + "?sCode=" + sCode;
 											        }
 											    }
 										    });
@@ -383,7 +383,7 @@ form p span font a{text-decoration:underline;cursor:pointer;}
 							<a class="button red mt ml" onclick="deleteTransferGroup()"><small class="icon cross"></small><span>Delete</span></a>
 							<script type="text/javascript" >
 								function deleteTransferGroup(){
-									$('#frm_transferGroup').attr('action', '<c:url value="/transfer/requestGroup/list" />' + '<c:out value="/${repositorySeq}/delete"/>');
+									$('#frm_transferGroup').attr('action', '<c:url value="/transfer/requestGroup/list" />' + '<c:out value="/${repositoryKey}/delete"/>');
 									$('#frm_transferGroup').submit();
 								};
 							</script>

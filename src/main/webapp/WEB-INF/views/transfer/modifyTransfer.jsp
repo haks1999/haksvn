@@ -46,7 +46,7 @@ form p span font a{text-decoration:underline;cursor:pointer;}
 	var _gRepoBranches = '<c:out value="${repository.branchesPath}"/>';
 	
 	$(function() {
-		$('#frm_transfer').attr('action', '<c:url value="/transfer/request/list/${repositorySeq}/save" />');
+		$('#frm_transfer').attr('action', '<c:url value="/transfer/request/list/${repositoryKey}/save" />');
 		transformDateField();
 		enableSearchSourceAutocomplete();
 		if( Number('<c:out value="${transfer.transferSeq}"/>') > 0) initTransferSourceList();
@@ -97,7 +97,7 @@ form p span font a{text-decoration:underline;cursor:pointer;}
 			source: function( request, response ) {
 						//if( autocompleteExtractLast(request.term).trim().length < 2 ) return;
 		          		$.postJSON( "<c:url value="/source/browse/search/dir"/>",
-		          					{repositorySeq:'<c:out value="${repository.repositorySeq}"/>',
+		          					{repositoryKey:'<c:out value="${repository.repositoryKey}"/>',
 		          						path:(function(){
 		          							var searchVal = $( "#txt_searchSource" ).val();
 		          							return (_gRootPath + '/' + searchVal).replace('//','/');
@@ -186,7 +186,7 @@ form p span font a{text-decoration:underline;cursor:pointer;}
 			onLazyRead: function(node){
 				$.getJSON(
 					"<c:url value="/source/browse/list"/>",
-					{repositorySeq: '<c:out value="${repositorySeq}" />', path:node.data.path},
+					{repositoryKey: '<c:out value="${repositoryKey}" />', path:node.data.path},
 		            function(result){
 		            	if( !node.data.fileChildren ) node.data.fileChildren = [];
 	                    res = [];
@@ -245,7 +245,7 @@ form p span font a{text-decoration:underline;cursor:pointer;}
 	function retrieveTransferSourceList(){
 		haksvn.block.on();
 		$.getJSON(
-				"<c:url value="/transfer/request/list/${repositorySeq}/${transfer.transferSeq}/sources"/>",
+				"<c:url value="/transfer/request/list/${repositoryKey}/${transfer.transferSeq}/sources"/>",
 				{},
 	            function(result){
 					for( var inx = 0 ; inx < result.length ; inx++){
@@ -309,13 +309,7 @@ form p span font a{text-decoration:underline;cursor:pointer;}
 		});
 		$(oElem).find("input.diff-prod").unbind("click").click(function(){
 			var srcD = $(oElem).data('transferSource');
-			/*
-			var param='?repositorySeq=' + '<c:out value="${repositorySeq}"/>'
-						+'&srcPath=' + _gRepoBranches+srcD.path.substr(_gRepoTrunk.length)
-						+'&path=' + srcD.path
-						+'&srcRev=' + srcD.revision + '&trgRev=-1';
-			*/
-			var param='?repositorySeq=' + '<c:out value="${repositorySeq}"/>'
+			var param='?repositoryKey=' + '<c:out value="${repositoryKey}"/>'
 						+'&srcPath=' + srcD.path
 						+'&path=' + _gRepoBranches+srcD.path.substr(_gRepoTrunk.length)
 						+'&srcRev=-1&trgRev=' + srcD.revision;
@@ -332,25 +326,25 @@ form p span font a{text-decoration:underline;cursor:pointer;}
 		var srcDetail = $('#' + transformPathToId(oPath));
 		$(srcDetail).find(".change-info").removeClass("loaded").children("div").not(".sample").remove();
 		$(srcDetail).find('.src-tail font.path a').text(oPath);
-		$(srcDetail).find('.src-tail a').attr("href",('<c:url value="/source/browse/${repositorySeq}/" />' + oPath + '?rev=' + rev).replace("//", "/"));
+		$(srcDetail).find('.src-tail a').attr("href",('<c:url value="/source/browse/${repositoryKey}/" />' + oPath + '?rev=' + rev).replace("//", "/"));
 		$(srcDetail).find('.src-header font.revision a').text('r' + rev);
-		$(srcDetail).find('.src-header a').attr("href",'<c:url value="/source/changes/${repositorySeq}" />' + '?rev=' + rev);
+		$(srcDetail).find('.src-header a').attr("href",'<c:url value="/source/changes/${repositoryKey}" />' + '?rev=' + rev);
 	};
 	
 	function createSourceListActionButton( row ){
 		var path = $(row).attr('path');
 		var rev = $(row).attr('rev');
 		$(row).find('ul li.browse').click(function(){
-			var win = window.open(('<c:url value="/source/browse/${repositorySeq}" />' + '/' + path + '?rev=' + rev).replace("//", "/"), '_blank');
+			var win = window.open(('<c:url value="/source/browse/${repositoryKey}" />' + '/' + path + '?rev=' + rev).replace("//", "/"), '_blank');
 			win.focus();
 		});
 		$(row).find('ul li.changes').click(function(){
-			var win = window.open(('<c:url value="/source/changes/${repositorySeq}" />' + '/' + path).replace("//", "/"), '_blank');
+			var win = window.open(('<c:url value="/source/changes/${repositoryKey}" />' + '/' + path).replace("//", "/"), '_blank');
 			win.focus();
 		});
 		$(row).find("td button.action").button().click(function() {
 	        	haksvn.block.on();
-	        	$.getJSON( "<c:url value="/transfer/request/list/check/${repository.repositorySeq}"/>",
+	        	$.getJSON( "<c:url value="/transfer/request/list/check/${repository.repositoryKey}"/>",
       						{path:path,del:_gToDelete}, 
       						function(data){
       							if( !data.isLocked){
@@ -417,7 +411,7 @@ form p span font a{text-decoration:underline;cursor:pointer;}
 		$.getJSON(
 				"<c:url value="/source/changes/search"/>",
 				{
-					repositorySeq: "<c:out value="${repositorySeq}"/>",
+					repositoryKey: "<c:out value="${repositoryKey}"/>",
 					path: oSrc.path,
 					rev: oSrc.revision
 				},
@@ -455,7 +449,7 @@ form p span font a{text-decoration:underline;cursor:pointer;}
 		$("#tbl_changeList tfoot").removeClass('display-none');
 	};
 	
-	var _gChangePaging = {start:-1,end:-1,limit:50,repositorySeq:'<c:out value="${repositorySeq}"/>'};
+	var _gChangePaging = {start:-1,end:-1,limit:50,repositoryKey:'<c:out value="${repositoryKey}"/>'};
 	function retrieveRepositoryChangeList( oPath ){
 		$("#tbl_changeList tfoot span:not(.loader)").removeClass('display-none').addClass('display-none');
 		$("#tbl_changeList tfoot span.loader").removeClass('display-none');
@@ -491,7 +485,7 @@ form p span font a{text-decoration:underline;cursor:pointer;}
 	function createRepositoryChangeListActionButton( row, oPath ){
 		var rev = $(row).attr('rev');
 		$(row).find('ul li.browse').click(function(){
-			var win = window.open(('<c:url value="/source/browse/${repositorySeq}" />' + '/' + oPath + '?rev=' + rev).replace("//", "/"), '_blank');
+			var win = window.open(('<c:url value="/source/browse/${repositoryKey}" />' + '/' + oPath + '?rev=' + rev).replace("//", "/"), '_blank');
 			win.focus();
 		});
 		$(row).find("td button.action").button().click(function() {
@@ -542,8 +536,8 @@ form p span font a{text-decoration:underline;cursor:pointer;}
 					<form:input class="text w_20 readOnly ${transfer.transferSeq < 1?'visible-hidden':''}" path="transferSeq" readonly="true"/>
 				</p>
 				<p>
-					<form:label path="repositorySeq" class="left">Repository</form:label>
-					<form:select path="repositorySeq"  disabled="true" items="${repositoryList}" itemValue="repositorySeq" itemLabel="repositoryName"/>
+					<form:label path="repositoryKey" class="left">Repository</form:label>
+					<form:select path="repositoryKey"  disabled="true" items="${repositoryList}" itemValue="repositoryKey" itemLabel="repositoryName"/>
 				</p>
 				<p>
 					<form:label path="transferTypeCode.codeId" class="left">Type</form:label>
@@ -583,7 +577,7 @@ form p span font a{text-decoration:underline;cursor:pointer;}
 					<form:hidden path="transferGroup.transferGroupSeq" />
 					<label class="left">Transfer Group</label>
 					<c:if test="${not empty transfer.transferGroup && transfer.transferGroup.transferGroupSeq > 0}">
-						<font class="path open-window"><a href="<c:url value="/transfer/requestGroup/list/${repository.repositorySeq}/${transfer.transferGroup.transferGroupSeq}"/>"><c:out value="group-${transfer.transferGroup.transferGroupSeq}"/></a></font>
+						<font class="path open-window"><a href="<c:url value="/transfer/requestGroup/list/${repository.repositoryKey}/${transfer.transferGroup.transferGroupSeq}"/>"><c:out value="group-${transfer.transferGroup.transferGroupSeq}"/></a></font>
 					</c:if>
 					<input type="text" class="text visible-hidden"/>
 				</p>
@@ -591,7 +585,7 @@ form p span font a{text-decoration:underline;cursor:pointer;}
 					<form:hidden path="revision" />
 					<label class="left">Commit revision</label>
 					<c:if test="${transfer.revision > 0 }">
-						<font class="path open-window"><a href="<c:url value="/source/changes/${repository.repositorySeq}?rev=${transfer.revision}"/>"><c:out value="r${transfer.revision}"/></a></font>
+						<font class="path open-window"><a href="<c:url value="/source/changes/${repository.repositoryKey}?rev=${transfer.revision}"/>"><c:out value="r${transfer.revision}"/></a></font>
 					</c:if>
 					<input type="text" class="text visible-hidden"/>
 				</p>
@@ -642,7 +636,7 @@ form p span font a{text-decoration:underline;cursor:pointer;}
 									    modal: true,
 									    buttons: {
 									    	"Yes": function(){
-									    		$('#frm_transfer').attr('action', '<c:url value="/transfer/request/list" />' + '<c:out value="/${repositorySeq}/request"/>');
+									    		$('#frm_transfer').attr('action', '<c:url value="/transfer/request/list" />' + '<c:out value="/${repositoryKey}/request"/>');
 												$('#frm_transfer').submit();
 										    },
 									    	"No": function() {
@@ -652,13 +646,13 @@ form p span font a{text-decoration:underline;cursor:pointer;}
 									    }
 								    });
 								}else{
-									$('#frm_transfer').attr('action', '<c:url value="/transfer/request/list" />' + '<c:out value="/${repositorySeq}/request"/>');
+									$('#frm_transfer').attr('action', '<c:url value="/transfer/request/list" />' + '<c:out value="/${repositoryKey}/request"/>');
 									$('#frm_transfer').submit();
 								}
 							};
 							
 							function deleteTransfer(){
-								$('#frm_transfer').attr('action', '<c:url value="/transfer/request/list" />' + '<c:out value="/${repositorySeq}/delete"/>');
+								$('#frm_transfer').attr('action', '<c:url value="/transfer/request/list" />' + '<c:out value="/${repositoryKey}/delete"/>');
 								$('#frm_transfer').submit();
 							};
 						</script>
@@ -670,7 +664,7 @@ form p span font a{text-decoration:underline;cursor:pointer;}
 							function approveTransfer(){
 								haksvn.block.on();
 								var queryString = $('#frm_transfer').serialize();
-								$.post('<c:url value="/transfer/request/list" />' + '<c:out value="/${repositorySeq}/approve"/>',
+								$.post('<c:url value="/transfer/request/list" />' + '<c:out value="/${repositoryKey}/approve"/>',
 									queryString,
 						            function(data){
 										haksvn.block.off();
@@ -686,11 +680,11 @@ form p span font a{text-decoration:underline;cursor:pointer;}
 										    buttons: {
 										    	"Yes": function(){
 										    		var sCode = "<spring:eval expression="T(com.haks.haksvn.common.code.util.CodeUtils).getTransferStandbyCodeId()"/>";
-										    		location.href = "<c:url value="/transfer/requestGroup/list/${repositorySeq}"/>" + "?sCode=" + sCode;
+										    		location.href = "<c:url value="/transfer/requestGroup/list/${repositoryKey}"/>" + "?sCode=" + sCode;
 											    },
 										    	"No": function() {
 										    		var sCode = "<spring:eval expression="T(com.haks.haksvn.common.code.util.CodeUtils).getTransferApprovedCodeId()"/>";
-										    		location.href = "<c:url value="/transfer/request/list/${repositorySeq}"/>" + "?sCode=" + sCode;
+										    		location.href = "<c:url value="/transfer/request/list/${repositoryKey}"/>" + "?sCode=" + sCode;
 										        }
 										    }
 									    });
@@ -699,7 +693,7 @@ form p span font a{text-decoration:underline;cursor:pointer;}
 							};
 							
 							function rejectTransfer(){
-								$('#frm_transfer').attr('action', '<c:url value="/transfer/request/list" />' + '<c:out value="/${repositorySeq}/reject"/>');
+								$('#frm_transfer').attr('action', '<c:url value="/transfer/request/list" />' + '<c:out value="/${repositoryKey}/reject"/>');
 								$('#frm_transfer').submit();
 							};
 						</script>
@@ -708,7 +702,7 @@ form p span font a{text-decoration:underline;cursor:pointer;}
 						<a class="button red mt ml" onclick="requestCancelTransfer()"><small class="icon minus"></small><span>Cancel Request</span></a>
 						<script type="text/javascript" >
 							function requestCancelTransfer(){
-								$('#frm_transfer').attr('action', '<c:url value="/transfer/request/list" />' + '<c:out value="/${repositorySeq}/requestCancel"/>');
+								$('#frm_transfer').attr('action', '<c:url value="/transfer/request/list" />' + '<c:out value="/${repositoryKey}/requestCancel"/>');
 								$('#frm_transfer').submit();
 							};
 						</script>
@@ -735,7 +729,7 @@ form p span font a{text-decoration:underline;cursor:pointer;}
 								});
 								
 								
-								$('#frm_transfer').attr('action', '<c:url value="/transfer/request/list" />' + '<c:out value="/${repositorySeq}/save"/>');
+								$('#frm_transfer').attr('action', '<c:url value="/transfer/request/list" />' + '<c:out value="/${repositoryKey}/save"/>');
 								$('#frm_transfer').submit();
 							};
 						</script>
@@ -744,7 +738,7 @@ form p span font a{text-decoration:underline;cursor:pointer;}
 						<a class="button red mt ml" onclick="approveCancelTransfer()"><small class="icon minus"></small><span>Cancel Approve</span></a>
 						<script type="text/javascript" >
 							function approveCancelTransfer(){
-								$('#frm_transfer').attr('action', '<c:url value="/transfer/request/list" />' + '<c:out value="/${repositorySeq}/approveCancel"/>');
+								$('#frm_transfer').attr('action', '<c:url value="/transfer/request/list" />' + '<c:out value="/${repositoryKey}/approveCancel"/>');
 								$('#frm_transfer').submit();
 							};
 						</script>

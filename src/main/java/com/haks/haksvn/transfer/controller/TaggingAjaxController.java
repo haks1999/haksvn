@@ -28,13 +28,13 @@ public class TaggingAjaxController {
     @Autowired
     private TaggingService taggingService;
     
-    @RequestMapping(value="/tagging/list/{repositorySeq}", method=RequestMethod.POST, headers = "Accept=application/json", produces="application/json")
+    @RequestMapping(value="/tagging/list/{repositoryKey}", method=RequestMethod.POST, headers = "Accept=application/json", produces="application/json")
     public @ResponseBody Paging<List<Tagging>> retrieveTaggingList(@ModelAttribute("paging") Paging<Tagging> paging,
 										    		@RequestParam(value = "tUser", required = false, defaultValue="") String taggingUserId,
 													@RequestParam(value = "tCode", required = false, defaultValue="") String taggingTypeCodeId,
-													@PathVariable int repositorySeq) throws HaksvnException {
+													@PathVariable String repositoryKey) throws HaksvnException {
     	
-    	Tagging tagging = Tagging.Builder.getBuilder().repositorySeq(repositorySeq)
+    	Tagging tagging = Tagging.Builder.getBuilder().repositoryKey(repositoryKey)
     			.taggingTypeCode(Code.Builder.getBuilder().codeId(taggingTypeCodeId).build())
     			.taggingUser(User.Builder.getBuilder().userId(taggingUserId).build()).build();
     	paging.setModel(tagging);
@@ -43,11 +43,11 @@ public class TaggingAjaxController {
     	return taggingListPaging;
     }
     
-    @RequestMapping(value="/tagging/list/{repositorySeq}/validate", method=RequestMethod.POST )
+    @RequestMapping(value="/tagging/list/{repositoryKey}/validate", method=RequestMethod.POST )
     public @ResponseBody Tagging validateTagging(	@RequestParam(value = "tagName", required = true) String tagName,
-													@PathVariable int repositorySeq) throws HaksvnException {
+													@PathVariable String repositoryKey) throws HaksvnException {
     	
-    	Tagging tagging = Tagging.Builder.getBuilder().repositorySeq(repositorySeq).tagName(tagName).build();
+    	Tagging tagging = Tagging.Builder.getBuilder().repositoryKey(repositoryKey).tagName(tagName).build();
     	
     	List<Tagging> taggingList = taggingService.retrieveTaggingListByTagName(tagging);
     	if( taggingList.size() > 0 ){
@@ -57,11 +57,11 @@ public class TaggingAjaxController {
     	}
     }
     
-    @RequestMapping(value="/tagging/list/{repositorySeq}/latest", method=RequestMethod.POST )
+    @RequestMapping(value="/tagging/list/{repositoryKey}/latest", method=RequestMethod.POST )
     public @ResponseBody Tagging retrieveLatestSyncTagging(	
-													@PathVariable int repositorySeq) throws HaksvnException {
+													@PathVariable String repositoryKey) throws HaksvnException {
     	
-    	Tagging tagging = Tagging.Builder.getBuilder().repositorySeq(repositorySeq).build();
+    	Tagging tagging = Tagging.Builder.getBuilder().repositoryKey(repositoryKey).build();
     	return taggingService.retrieveLatestSyncTagging(tagging);
     }
     

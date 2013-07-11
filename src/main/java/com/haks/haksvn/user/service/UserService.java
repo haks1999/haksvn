@@ -96,7 +96,7 @@ public class UserService {
 			repositoryService.saveRepositoryList(repositoryList);
 			if( changedToInActive ){
 				for( Repository repository : repositoryList ){
-					repositoryService.deleteRepositoryUser(repository.getRepositorySeq(), Arrays.asList(new String[]{user.getUserId()}));
+					repositoryService.deleteRepositoryUser(repository.getRepositoryKey(), Arrays.asList(new String[]{user.getUserId()}));
 				}
 			}
 		}
@@ -117,7 +117,7 @@ public class UserService {
 		User userToDelete = userDao.retrieveUserByUserSeq(user);
 		if( userToDelete.getRepositoryList() !=null && userToDelete.getRepositoryList().size() > 0 ){
 			for( Repository repository : userToDelete.getRepositoryList() ){
-				repositoryService.deleteRepositoryUser(repository.getRepositorySeq(), Arrays.asList(new String[]{userToDelete.getUserId()}));
+				repositoryService.deleteRepositoryUser(repository.getRepositoryKey(), Arrays.asList(new String[]{userToDelete.getUserId()}));
 			}
 		}
 		userDao.deleteUser(userToDelete);

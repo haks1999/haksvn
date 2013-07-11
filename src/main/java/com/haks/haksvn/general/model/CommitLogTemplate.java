@@ -3,15 +3,15 @@ package com.haks.haksvn.general.model;
 
 public class CommitLogTemplate {
 
-	private int repositorySeq;
+	private String repositoryKey;
 	private String template;
 	
-	public void setRepositorySeq(int repositorySeq){
-		this.repositorySeq = repositorySeq;
+	public void setRepositoryKey(String repositoryKey){
+		this.repositoryKey = repositoryKey;
 	}
 	
-	public int getRepositorySeq(){
-		return repositorySeq;
+	public String getRepositoryKey(){
+		return repositoryKey;
 	}
 	
 	public void setTemplate(String template){
@@ -38,8 +38,8 @@ public class CommitLogTemplate {
 			return commitLogTemplate;
 		}
 		
-		public Builder repositorySeq(int repositorySeq){
-			commitLogTemplate.setRepositorySeq(repositorySeq);
+		public Builder repositoryKey(String repositoryKey){
+			commitLogTemplate.setRepositoryKey(repositoryKey);
 			return this;
 		}
 		

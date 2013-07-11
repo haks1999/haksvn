@@ -10,9 +10,9 @@
 	});
 	    
 	function retrieveRepositoryUserList(){
-		var repositorySeq = $("#sel_repository > option:selected").val();
+		var repositoryKey = $("#sel_repository > option:selected").val();
 		$("#tbl_userList tbody tr:not(.sample)").remove();
-		$.getJSON( "<c:url value="/configuration/repositories/listUser"/>" + "/" + repositorySeq
+		$.getJSON( "<c:url value="/configuration/repositories/listUser"/>" + "/" + repositoryKey
 				,function(data) {
 					for( var inx = 0 ; inx < data.length ; inx++ ){
 						var row = $("#tbl_userList > tbody > .sample").clone();
@@ -30,8 +30,8 @@
 	
 	function delRepositoryUser(){
 		if($('#tbl_userList input[name="userId"]:checked').length < 1 ) return; 
-		var repositorySeq = $("#sel_repository > option:selected").val();
-		$.post("<c:url value="/configuration/repositories/listUser/delUser"/>" + "/" + repositorySeq,
+		var repositoryKey = $("#sel_repository > option:selected").val();
+		$.post("<c:url value="/configuration/repositories/listUser/delUser"/>" + "/" + repositoryKey,
 				$('#tbl_userList input[name="userId"]:checked').serialize(),
 	            function(data){
 					$().Message({type:data.type,text:data.text});
@@ -43,9 +43,9 @@
 	function addRepositoryUser(){
 		var selectedUsers = $("#div_searchUser .chzn-select").chosen().val();
 		if(selectedUsers.length < 1) return;
-		var repositorySeq = $("#sel_repository > option:selected").val();
+		var repositoryKey = $("#sel_repository > option:selected").val();
 		var userIds = {userId: selectedUsers, overwrite: $('#ckb_overwrite').is(':checked')};
-		$.post("<c:url value="/configuration/repositories/listUser/addUser"/>" + "/" + repositorySeq,
+		$.post("<c:url value="/configuration/repositories/listUser/addUser"/>" + "/" + repositoryKey,
 				$.param(userIds,true),
 	            function(data){
 					$().Message({type:data.type,text:data.text});
@@ -99,7 +99,7 @@
 						<label>Repository Name</label> 
 						<select id="sel_repository">
 							<c:forEach items="${repositoryList}" var="repository">
-								<option value="<c:out value="${repository.repositorySeq}"/>">
+								<option value="<c:out value="${repository.repositoryKey}"/>">
 									<c:out value="${repository.repositoryName}" />
 								</option>
 							</c:forEach>

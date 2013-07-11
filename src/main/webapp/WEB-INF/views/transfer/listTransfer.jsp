@@ -1,11 +1,11 @@
 <%@ include file="/WEB-INF/views/common/include/taglib.jspf"%>
 <script type="text/javascript">
 	$(function() {
-		$("#sel_repository option[value='<c:out value="${repositorySeq}" />']").attr('selected', 'selected');
+		$("#sel_repository option[value='<c:out value="${repositoryKey}" />']").attr('selected', 'selected');
 		$("#frm_transfer select[name='rUser'] option[value='<c:out value="${requestUserId}" />']").attr('selected', 'selected');
 		$("#frm_transfer select[name='sCode'] option[value='<c:out value="${transferStateCodeId}" />']").attr('selected', 'selected');
 		//$("#ipt_path").val('<c:out value="${path}" />');
-		if( '<c:out value="${repositorySeq}" />'.length > 0 ) retrieveTransferList();
+		if( '<c:out value="${repositoryKey}" />'.length > 0 ) retrieveTransferList();
 		
 		$("#sel_repository").change(changeRepository);
 	});
@@ -21,7 +21,7 @@
 		_paging.rUser = $("#frm_transfer select[name='rUser'] option:selected").val();
 		_paging.sCode = $("#frm_transfer select[name='sCode'] option:selected").val();
 		//_paging.path = $("#ipt_path").val();
-		$.post( "<c:url value="/transfer/request/list"/>" + "/" + '<c:out value="${repositorySeq}" />',
+		$.post( "<c:url value="/transfer/request/list"/>" + "/" + '<c:out value="${repositoryKey}" />',
 				_paging,
 				function(data) {
 					var transferList = data.model;
@@ -30,7 +30,7 @@
 						var row = $("#tbl_transferList > tbody > .sample").clone();
 						//$(row).find(".transferSeq a font").text('req-'+transferList[inx].transferSeq);
 						$(row).find(".transferSeq font a").text('req-'+transferList[inx].transferSeq);
-						$(row).find(".transferSeq a").attr("href",'<c:url value="/transfer/request/list/${repositorySeq}/"/>' + transferList[inx].transferSeq);
+						$(row).find(".transferSeq a").attr("href",'<c:url value="/transfer/request/list/${repositoryKey}/"/>' + transferList[inx].transferSeq);
 						$(row).children(".transferType").text(transferList[inx].transferTypeCode.codeName);
 						$(row).children(".transferState").text(transferList[inx].transferStateCode.codeName);
 						$(row).children(".requestor").text(transferList[inx].requestUser.userName);
@@ -68,7 +68,7 @@
 							<label for="sel_repository" class="w_120">Repository Name</label> 
 							<select id="sel_repository">
 								<c:forEach items="${repositoryList}" var="repository">
-									<option value="<c:out value="${repository.repositorySeq}"/>">
+									<option value="<c:out value="${repository.repositoryKey}"/>">
 										<c:out value="${repository.repositoryName}" />
 									</option>
 								</c:forEach>
@@ -134,7 +134,7 @@
 			</table>
 		</div>
 	</div>
-	<c:set var="createTransferPathLink" value="${pageContext.request.contextPath}/transfer/request/list/${repositorySeq}/add"/>
+	<c:set var="createTransferPathLink" value="${pageContext.request.contextPath}/transfer/request/list/${repositoryKey}/add"/>
 	<a href="<c:out value="${createTransferPathLink}"/>" class="button green right"><small class="icon plus"></small><span>Create</span></a>
 	<div class="clear"></div>
 </div>

@@ -30,8 +30,8 @@
 	}
 	
 </script>
-<c:set var="repoBrowsePathLink" value="${pageContext.request.contextPath}/source/browse/${repositorySeq}"/>
-<c:set var="repoChangesPathLink" value="${pageContext.request.contextPath}/source/changes/${repositorySeq}"/>
+<c:set var="repoBrowsePathLink" value="${pageContext.request.contextPath}/source/browse/${repositoryKey}"/>
+<c:set var="repoChangesPathLink" value="${pageContext.request.contextPath}/source/changes/${repositoryKey}"/>
 <c:set var="repoDiffPathLink" value="${pageContext.request.contextPath}/source/changes/diff"/>
 <jsp:useBean id="dateValue" class="java.util.Date" />
 <div class="content-page">
@@ -102,7 +102,7 @@
 									<span>
 										<c:out value="${newerLog.message}"/><br/>
 										<font class="path open-window"><a href="${repoBrowsePathLink}/${svnSource.path}?rev=${newerLog.revision}">View File</a></font>,&nbsp;
-										<font class="path open-window"><a href="${repoDiffPathLink}?repositorySeq=${repositorySeq}&trgRev=${svnSource.revision}&srcRev=${newerLog.revision}&path=${svnSource.path}">Diff</a></font>
+										<font class="path open-window"><a href="${repoDiffPathLink}?repositoryKey=${repositoryKey}&trgRev=${svnSource.revision}&srcRev=${newerLog.revision}&path=${svnSource.path}">Diff</a></font>
 									</span>
 								</p>
 								
@@ -130,7 +130,7 @@
 									<span>
 										<c:out value="${olderLog.message}"/><br/>
 										<font class="path open-window"><a href="${repoBrowsePathLink}/${svnSource.path}?rev=${olderLog.revision}">View File</a></font>,&nbsp;
-										<font class="path open-window"><a href="${repoDiffPathLink}?repositorySeq=${repositorySeq}&trgRev=${svnSource.revision}&srcRev=${olderLog.revision}&path=${svnSource.path}">Diff</a></font>
+										<font class="path open-window"><a href="${repoDiffPathLink}?repositoryKey=${repositoryKey}&trgRev=${svnSource.revision}&srcRev=${olderLog.revision}&path=${svnSource.path}">Diff</a></font>
 									</span>
 								</p>
 							</c:forEach>

@@ -37,9 +37,9 @@ public class RepositoryController {
         return "/repository/listRepository";
     }
     
-    @RequestMapping(value="/list/{repositorySeq}", method=RequestMethod.GET)
-    public String forwardRepositoryModifyPage(@PathVariable String repositorySeq, ModelMap model, HttpServletRequest req, final RedirectAttributes redirectAttributes) {
-    	Repository repository = repositoryService.retrieveRepositoryByRepositorySeq(Integer.valueOf(repositorySeq));
+    @RequestMapping(value="/list/{repositoryKey}", method=RequestMethod.GET)
+    public String forwardRepositoryModifyPage(@PathVariable String repositoryKey, ModelMap model, HttpServletRequest req, final RedirectAttributes redirectAttributes) {
+    	Repository repository = repositoryService.retrieveRepositoryByRepositoryKey(repositoryKey);
     	String authzTemplate = String.format(propertyService.retrievePropertyByPropertyKey("svn.authz.template.default").getPropertyValue());
     	if( repository.getAuthzTemplate() == null ) repository.setAuthzTemplate(authzTemplate);
     	repository.setAuthzTemplate(String.format(repository.getAuthzTemplate()));
@@ -78,9 +78,9 @@ public class RepositoryController {
     	}
     }
     
-    @RequestMapping(value={"/list/{repositorySeq}/delete"}, method=RequestMethod.POST)
-    public ModelAndView deleteRepository(@PathVariable String repositorySeq) throws Exception{
-   		repositoryService.deleteRepository(Repository.Builder.getBuilder(new Repository()).repositorySeq(Integer.parseInt(repositorySeq)).build());
+    @RequestMapping(value={"/list/{repositoryKey}/delete"}, method=RequestMethod.POST)
+    public ModelAndView deleteRepository(@PathVariable String repositoryKey) throws Exception{
+   		repositoryService.deleteRepository(Repository.Builder.getBuilder(new Repository()).repositoryKey(repositoryKey).build());
    		return new ModelAndView(new RedirectView("/configuration/repositories/list", true));
     		
     }

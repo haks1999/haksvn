@@ -1,7 +1,7 @@
 <%@ include file="/WEB-INF/views/common/include/taglib.jspf"%>
 <script type="text/javascript">
 	$(function() {
-		$("#sel_repository").val('<c:out value="${repositorySeq}" />');
+		$("#sel_repository").val('<c:out value="${repositoryKey}" />');
 		listRepositorySource();
 		$("#sel_repository").change(changeRepository);
 	});
@@ -24,7 +24,7 @@
 			onLazyRead: function(node){
 				$.getJSON(
 					"<c:url value="/source/browse/list"/>",
-					{repositorySeq: '<c:out value="${repositorySeq}" />', path:node.data.path},
+					{repositoryKey: '<c:out value="${repositoryKey}" />', path:node.data.path},
 		            function(result){
 		            	if( !node.data.fileChildren ) node.data.fileChildren = [];
 	                    res = [];
@@ -62,16 +62,16 @@
 		$("#tbl_sourceList tbody tr").not(".nodata").not(".sample").remove();
 		if( !sourceNodeList || sourceNodeList == null ) return;
 		$("#tbl_sourceList tbody tr[class~=nodata]").css('display',sourceNodeList.length < 1?'table-row':'none');
-		var repositorySeq = '<c:out value="${repositorySeq}" />';
+		var repositoryKey = '<c:out value="${repositoryKey}" />';
 		var path = '<c:out value="${path}" />';
 		var browseHrefRoot = '<c:url value="/source/browse"/>';
 		var changesHrefRoot = '<c:url value="/source/changes"/>';
 		for( var inx = 0 ; inx < sourceNodeList.length ; inx++ ){
 			var row = $("#tbl_sourceList > tbody > .sample").clone();
-			$(row).find(".name a").attr('href',(browseHrefRoot + "/" + repositorySeq + "/" + sourceNodeList[inx].path + "?rev=" + sourceNodeList[inx].revision).replace("//", "/"));
+			$(row).find(".name a").attr('href',(browseHrefRoot + "/" + repositoryKey + "/" + sourceNodeList[inx].path + "?rev=" + sourceNodeList[inx].revision).replace("//", "/"));
 			$(row).find(".name font a").text(sourceNodeList[inx].name);
 			$(row).children(".size").text(sourceNodeList[inx].formattedSize);
-			$(row).find(".revision a").attr('href',(changesHrefRoot + "/" + repositorySeq + "/" + path + "?rev=" + sourceNodeList[inx].revision).replace("//", "/").replace("/?","?"));
+			$(row).find(".revision a").attr('href',(changesHrefRoot + "/" + repositoryKey + "/" + path + "?rev=" + sourceNodeList[inx].revision).replace("//", "/").replace("/?","?"));
 			$(row).find(".revision font a").text('r'+sourceNodeList[inx].revision);
 			$(row).children(".date").text(haksvn.date.convertToEasyFormat(new Date(sourceNodeList[inx].date)));
 			$(row).children(".author").text(sourceNodeList[inx].author);
@@ -83,7 +83,7 @@
 	};
 	//SyntaxHighlighter.all();
 </script>
-<c:set var="repoBrowsePathLink" value="${pageContext.request.contextPath}/source/browse/${repositorySeq}"/>
+<c:set var="repoBrowsePathLink" value="${pageContext.request.contextPath}/source/browse/${repositoryKey}"/>
 <form id="frm_repository" action=""></form>
 <div class="content-page">
 	<h1></h1>
@@ -96,7 +96,7 @@
 						<label>Repository Name</label> 
 						<select id="sel_repository">
 							<c:forEach items="${repositoryList}" var="repository">
-								<option value="<c:out value="${repository.repositorySeq}"/>">
+								<option value="<c:out value="${repository.repositoryKey}"/>">
 									<c:out value="${repository.repositoryName}" />
 								</option>
 							</c:forEach>

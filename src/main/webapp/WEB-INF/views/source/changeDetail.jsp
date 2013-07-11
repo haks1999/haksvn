@@ -6,7 +6,7 @@
 	
 	function retrieveDiffWithPrevious(pmOpener, path, rev){
 		$.getJSON( "<c:url value="/source/changes/diff"/>",
-				{repositorySeq: '<c:out value="${repositorySeq}" />',
+				{repositoryKey: '<c:out value="${repositoryKey}" />',
 				path: path,
 				rev: rev},
 				function(data) {
@@ -39,8 +39,8 @@
 	};
 	
 </script>
-<c:set var="repoBrowsePathLink" value="${pageContext.request.contextPath}/source/browse/${repositorySeq}"/>
-<c:set var="repoChangesPathLink" value="${pageContext.request.contextPath}/source/changes/${repositorySeq}"/>
+<c:set var="repoBrowsePathLink" value="${pageContext.request.contextPath}/source/browse/${repositoryKey}"/>
+<c:set var="repoChangesPathLink" value="${pageContext.request.contextPath}/source/changes/${repositoryKey}"/>
 <c:set var="repoDiffPathLink" value="${pageContext.request.contextPath}/source/changes/diff"/>
 <div class="content-page">
 	<h1></h1>
@@ -130,7 +130,7 @@
 										<a href="${fn:replace(changedFullPath,'//','/')}"><c:out value="${changed.path}"/></a>
 									</font>
 									<font class="path font12 open-window">
-										<a href="${repoDiffPathLink}?repositorySeq=${repositorySeq}&trgRev=${svnSource.revision}&srcRev=-1&path=${changed.path}">Diff</a>
+										<a href="${repoDiffPathLink}?repositoryKey=${repositoryKey}&trgRev=${svnSource.revision}&srcRev=-1&path=${changed.path}">Diff</a>
 									</font>
 								</span>
 							</p>
