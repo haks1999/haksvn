@@ -54,6 +54,21 @@ padding-bottom: 2px;
 color: #a33;
 }
 
+form span.form-help{
+display:none;
+}
+
+form span.form-help div.info{
+width:auto;
+margin-top:10px;
+}
+
+form label.help{
+padding-bottom:2px;
+padding-left:20px;
+background:url('/haksvn/images/info.png') no-repeat 0px 0px;
+}
+
 div.fullsize{
 width:100%;
 height:100%;

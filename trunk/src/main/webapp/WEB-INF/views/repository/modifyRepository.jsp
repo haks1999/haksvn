@@ -146,25 +146,14 @@
 					<form:label path="repositoryName" class="left">Repository Name</form:label>
 					<form:input class="text w_20" path="repositoryName"/>
 					<form:errors path="repositoryName" />
-					<span class="form-help repository.repositoryName">
-						<label style="padding-bottom:2px;padding-left:20px;background:url('/haksvn/images/info.png') no-repeat"></label>
-						<div class="info" style="width:auto;">
-							<div class="tl"></div>
-							<div class="tr"></div>
-							<div class="desc">
-								<p>description</p>
-							</div>
-							<div class="bl"></div>
-							<div class="br"></div>
-						</div>
-					</span>
 					<span class="form-status"></span>
 				</p>
 				
 				<p>
 					<form:label path="repositoryLocation" class="left">Repository Location</form:label>
 					<form:input class="text w_30" path="repositoryLocation" />
-					<form:errors path="repositoryLocation" cssClass="field_error"/>
+					<form:errors path="repositoryLocation" />
+					<span class="form-help"><spring:message code="helper.repository.location" /></span>
 					<span class="form-status"></span>
 				</p>
 				<p>
@@ -182,18 +171,21 @@
 				<p>
 					<form:label path="trunkPath" class="left">Trunk Path</form:label>
 					<form:input class="text w_20" path="trunkPath" value="${isNewRepository? '/trunk':repository.trunkPath}"/>
+					<span class="form-help"><spring:message code="helper.repository.trunkPath" /></span>
 					<form:errors path="trunkPath" />
 					<span class="form-status"></span>
 				</p>
 				<p>
 					<form:label path="tagsPath" class="left">Tags Path</form:label>
 					<form:input class="text w_20" path="tagsPath" value="${isNewRepository? '/tags':repository.tagsPath}"/>
+					<span class="form-help"><spring:message code="helper.repository.tagsPath" /></span>
 					<form:errors path="tagsPath" />
 					<span class="form-status"></span>
 				</p>
 				<p>
 					<form:label path="branchesPath" class="left">Production Branch Path</form:label>
 					<form:input class="text w_20" path="branchesPath" value="${isNewRepository? '/branches/production':repository.branchesPath}"/>
+					<span class="form-help"><spring:message code="helper.repository.branchesPath" /></span>
 					<form:errors path="branchesPath" />
 					<span class="form-status"></span>
 				</p>
@@ -205,6 +197,8 @@
 					<c:if test="${repository.syncUser eq 'common.boolean.yn.code.y'}" var="syncUserYn" />
 					<label for="ckb_syncUser" class="left">Synchronize User</label>
 					<input id="ckb_syncUser" type="checkbox" class="plaincheckbox" ${syncUserYn? "checked":""} onclick="selectSynchrozingUser(this.checked)"/>
+					<input type="text" disabled class="text visible-hidden" style="width:1px;"/>
+					<span class="form-help"><spring:message code="helper.repository.syncUser" /></span>
 					<form:hidden path="syncUser" />
 				</p>
 				<div id="div_serverSettings" style="${syncUserYn? '' : 'display:none;'}">
@@ -237,6 +231,8 @@
 						<form:label path="authzTemplate" class="left">authz file template</form:label>
 						<form:hidden path="authzTemplate" />
 						<span class="underline italic link" onclick="openAuthzTemplateDialog()">Edit</span>
+						<input type="text" disabled class="text visible-hidden" style="width:1px;"/>
+						<span class="form-help"><spring:message code="helper.repository.authzTemplate" /></span>
 					</p>
 					<p>
 						<form:label path="passwdPath" class="left">passwd file path</form:label>

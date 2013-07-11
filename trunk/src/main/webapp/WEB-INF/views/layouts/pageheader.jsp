@@ -83,10 +83,27 @@
 			});
 		};
 		
+		function _setFormHelper(){
+			$("form span.form-help").each(function(){
+				var messageBody = $(this).html();
+				$(this).empty();
+				$(this).append( "<label class=\"help\"></label><div class=\"info display-none\"><div class=\"tl\"></div><div class=\"tr\"></div>"
+						+ "<div class=\"desc\"><p></p></div><div class=\"bl\"></div><div class=\"br\"></div></div>");
+				//$(this).find(".desc p").append(messageBody);
+				//$(this).append(messageBody);
+				$(this).find("label.help").click(function(){
+					$(this).parent().find("div.info").toggle();
+				});
+				//$(this).css("display","inline");
+				$(this).show();
+			});
+		};
+		
 		$(function() {
 			// IE -- http://stackoverflow.com/questions/7109120/add-blank-option-to-top-of-select-and-make-it-the-selected-option-in-ie
 			$('select.all').prepend("<option value=''>All</option>").val('');
 			_setLinkNewWindow();
+			_setFormHelper();
 		});
 	</script>
 </head>
