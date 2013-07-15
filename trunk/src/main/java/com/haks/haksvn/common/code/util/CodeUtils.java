@@ -47,6 +47,10 @@ public class CodeUtils {
 	}
 	
 	// transfer
+	public static String getTransferEmergencyTypeCodeId(){
+		return "transfer.type.code.emergency";
+	}
+	
 	public static String getTransferKeepCodeId(){
 		return "transfer.state.code.keep";
 	}
@@ -104,6 +108,18 @@ public class CodeUtils {
 	}
 	
 	// transfer group
+	public static String getTransferGroupNormalTypeCodeId(){
+		return "transfergroup.type.code.normal";
+	}
+	
+	public static String getTransferGroupScheduledTypeCodeId(){
+		return "transfergroup.type.code.scheduled";
+	}
+	
+	public static String getTransferGroupEmergencyTypeCodeId(){
+		return "transfergroup.type.code.emergency";
+	}
+	
 	public static String getTransferGroupStandbyCodeId(){
 		return "transfergroup.state.code.standby";
 	}
