@@ -48,15 +48,13 @@
 					_paging.start = data.start + taggingList.length;
 					for( var inx = 0 ; inx < taggingList.length ; inx++ ){
 						var row = $("#tbl_taggingList > tbody > .sample").clone();
-						$(row).find(".taggingSeq a").text('tagging-'+taggingList[inx].taggingSeq);
+						$(row).find(".taggingSeq font a").text('tagging-'+taggingList[inx].taggingSeq);
+						$(row).find(".taggingSeq a").attr("href",'<c:url value="/transfer/tagging/list/${repositoryKey}/"/>' + taggingList[inx].taggingSeq);
 						$(row).children(".taggingType").text(taggingList[inx].taggingTypeCode.codeName);
 						$(row).children(".tagger").text(taggingList[inx].taggingUser.userName);
 						$(row).children(".tagName").text(taggingList[inx].tagName);
 						$(row).children(".taggingDate").text(haksvn.date.convertToEasyFormat(new Date(taggingList[inx].taggingDate)));
 						$(row).attr('taggingSeq',taggingList[inx].taggingSeq).attr('repositoryKey',taggingList[inx].repositoryKey);
-						$(row).click(function(){
-							location.href = '<c:url value="/transfer/tagging/list"/>' + '/' + $(this).attr('repositoryKey') + '/' +  $(this).attr('taggingSeq');
-						});
 						$(row).removeClass("sample");
 						$('#tbl_taggingList > tbody').append(row);
 					}
@@ -108,10 +106,14 @@
 				<div class="bottom"><div></div></div>
 			</div>
 			
-			<div class="info-green" id="div_syncTaggingInfo">
-				Latest Tag synchronized with production branch: <font class="path open-window"><a></a></font>
+			<div id="div_syncTaggingInfo" class="info">
+				<div class="tl"></div>
+				<div class="tr"></div>
+				<div class="desc variable-help">Latest Tag synchronized with production branch: <font class="path open-window"><a></a></font></div>
+				<div class="bl"></div>
+				<div class="br"></div>
 			</div>
-			
+	
 			<table id="tbl_taggingList">
 				<thead>
 					<tr>
@@ -123,8 +125,8 @@
 					</tr>
 				</thead>
 				<tbody>
-					<tr class="sample clickable">
-						<td class="taggingSeq w_80"><font class="path"><a></a></font></td>
+					<tr class="sample">
+						<td class="taggingSeq w_80"><font class="path open-window"><a></a></font></td>
 						<td class="taggingType w_80"></td>
 						<td class="tagger w_90"></td>
 						<td class="tagName"></td>

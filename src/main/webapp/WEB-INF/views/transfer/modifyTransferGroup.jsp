@@ -257,10 +257,12 @@ form p span font a{text-decoration:underline;cursor:pointer;}
 				<p>
 					<form:label path="transferGroupTypeCode.codeId" class="left">Type</form:label>
 					<form:select path="transferGroupTypeCode.codeId" disabled="${not transferGroupStateAuth.isEditable}" items="${requestScope['transfergroup.type.code']}" itemValue="codeId" itemLabel="codeName"/>
+					<span class="form-help"><spring:message htmlEscape="true" code="helper.transferGroup.type" /></span>
 				</p>
 				<p>
 					<form:label path="transferGroupStateCode.codeId" class="left">State</form:label>
 					<form:select path="transferGroupStateCode.codeId" disabled="true" items="${requestScope['transfergroup.state.code']}" itemValue="codeId" itemLabel="codeName"/>
+					<span class="form-help"><spring:message htmlEscape="true" code="helper.transferGroup.state" /></span>
 				</p>
 				<p>
 					<form:label path="title" class="left">Title</form:label>

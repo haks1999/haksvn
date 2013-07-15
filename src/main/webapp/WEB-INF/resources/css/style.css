@@ -779,7 +779,8 @@ line-height:17px;
 /*----------------------TYPOGRAPH-------------------------*/
 
 /*------------------------LIST----------------------------*/
-ul,ol {font-size:12px;color:#bcbdbe;list-style-type: disc;margin:5px 0 0 20px;}
+ul{font-size:12px;color:#bcbdbe;list-style-type: disc;margin:5px 0 0 20px;}
+ol {font-size:12px;color:#bcbdbe;list-style-type: decimal;margin:5px 0 0 20px;}
 li {
 color:#666;
 padding:0 0 0 0px;

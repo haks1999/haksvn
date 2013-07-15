@@ -542,15 +542,18 @@ form p span font a{text-decoration:underline;cursor:pointer;}
 				<p>
 					<form:label path="transferTypeCode.codeId" class="left">Type</form:label>
 					<form:select path="transferTypeCode.codeId" disabled="${not transferStateAuth.isEditable}" items="${requestScope['transfer.type.code']}" itemValue="codeId" itemLabel="codeName"/>
+					<span class="form-help"><spring:message htmlEscape="true" code="helper.transfer.type" /></span>
 				</p>
 				<p>
 					<form:label path="transferStateCode.codeId" class="left">State</form:label>
 					<form:select path="transferStateCode.codeId" disabled="true" items="${requestScope['transfer.state.code']}" itemValue="codeId" itemLabel="codeName"/>
+					<span class="form-help"><spring:message htmlEscape="true" code="helper.transfer.state" /></span>
 				</p>
 				<p>
 					<form:label path="description" class="left">Description</form:label>
 					<form:textarea class="text" disabled="${not transferStateAuth.isEditable}" cols="50" rows="5" path="description"/>
 					<form:errors path="description" />
+					<span class="form-help"><spring:message htmlEscape="true" code="helper.transfer.description" /></span>
 					<span class="form-status"></span>
 				</p>
 				<p>
