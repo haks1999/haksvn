@@ -68,9 +68,9 @@ insert into properties (property_key, property_value) values ('commit.log.templa
 insert into properties (property_key, property_value) values ('application.version'					,'0.2.000');
 
 -- haks1999 // aW9fj8bm9Rt5
-insert into repositories (repository_key, repository_location, active, repository_name, svn_root, svn_name, trunk_path, tags_path, branches_path, auth_user_id, auth_user_passwd, sync_user ) values ('haksvngoogle','https://haksvn.googlecode.com/svn', 'common.boolean.yn.code.y', 'haksvn google repository', 'https://haksvn.googlecode.com/svn', 'svn', '/trunk', '/tags', '/branches/production', 'haks1999', 'nijy14K6p4n1oleemgofSw==','common.boolean.yn.code.n' );
+insert into repositories (repository_key, repository_location, active, repository_name, svn_root, svn_name, trunk_path, tags_path, branches_path, auth_user_id, auth_user_passwd, sync_user ) values ('HAKSVNG','https://haksvn.googlecode.com/svn', 'common.boolean.yn.code.y', 'haksvn google repository', 'https://haksvn.googlecode.com/svn', 'svn', '/trunk', '/tags', '/branches/production', 'haks1999', 'nijy14K6p4n1oleemgofSw==','common.boolean.yn.code.n' );
 -- haks1999 // haks1999
-insert into repositories (repository_key, repository_location, active, repository_name, svn_root, svn_name, trunk_path, tags_path, branches_path, auth_user_id, auth_user_passwd, sync_user, connect_type, server_ip, server_user_id, server_user_passwd, authz_path, passwd_path, passwd_type, authz_template) values ('haksvnlocal','https://localhost/svn/main/haksvn', 'common.boolean.yn.code.y', 'test local repository', 'https://localhost/svn/main', 'main', '/trunk', '/tags', '/branches/production', 'haks1999', 'ty0VNz1v8qkwfc8Cpz1NXA==','common.boolean.yn.code.y', 'server.connect.type.code.local', null, null, null, 'D:\MyDev\haks1999\repositories\authz', 'D:\MyDev\haks1999\repositories\htpasswd', 'svn.passwd.type.code.md5-apache', '[groups]%nsystem-admin=#system-admin#%ncommiter=#commiter#%nreviewer=#reviewer#%n%n[#svn_name#:/]%n@system-admin=rw%n%n[#svn_name#:#trunk_path#]%n@reviewer=rw%n@commiter=rw%n%n[#svn_name#:#branches_path#]%n@reviewer=r%n@commiter=r%n%n[#svn_name#:#tags_path#]%n@reviewer=rw%n@commiter=r' );
+insert into repositories (repository_key, repository_location, active, repository_name, svn_root, svn_name, trunk_path, tags_path, branches_path, auth_user_id, auth_user_passwd, sync_user, connect_type, server_ip, server_user_id, server_user_passwd, authz_path, passwd_path, passwd_type, authz_template) values ('HAKSVNL','https://localhost/svn/main/haksvn', 'common.boolean.yn.code.y', 'test local repository', 'https://localhost/svn/main', 'main', '/trunk', '/tags', '/branches/production', 'haks1999', 'ty0VNz1v8qkwfc8Cpz1NXA==','common.boolean.yn.code.y', 'server.connect.type.code.local', null, null, null, 'D:\MyDev\haks1999\repositories\authz', 'D:\MyDev\haks1999\repositories\htpasswd', 'svn.passwd.type.code.md5-apache', '[groups]%nsystem-admin=#system-admin#%ncommiter=#commiter#%nreviewer=#reviewer#%n%n[#svn_name#:/]%n@system-admin=rw%n%n[#svn_name#:#trunk_path#]%n@reviewer=rw%n@commiter=rw%n%n[#svn_name#:#branches_path#]%n@reviewer=r%n@commiter=r%n%n[#svn_name#:#tags_path#]%n@reviewer=rw%n@commiter=r' );
 
 insert into users(user_seq, user_id, user_name, active, email, user_passwd, auth_type) values (1,'admin','administrator','common.boolean.yn.code.y','admin@gmail.com','CinA5MJWDvBTvOJSvluE4g==', 'user.auth.type.code.system-admin');
 insert into users(user_seq, user_id, user_name, active, email, user_passwd, auth_type) values (2,'haks','seungrin.lee','common.boolean.yn.code.y','haks1999@gmail.com','HpY9T+GzO+pGi4KuzUuSjg==', 'user.auth.type.code.system-admin');
@@ -80,9 +80,9 @@ insert into users(user_seq, user_id, user_name, active, email, user_passwd, auth
 insert into users(user_seq, user_id, user_name, active, email, user_passwd, auth_type) values (6,'user02','test-user002','common.boolean.yn.code.y','user02@gmail.com','ej3AUzTKsETeEyDwsmeBbQ==', 'user.auth.type.code.commiter');
 insert into users(user_seq, user_id, user_name, active, email, user_passwd, auth_type) values (7,'user03','test-user003','common.boolean.yn.code.y','user03@gmail.com','MvglwVcxLRl64J1COgxx2g==', 'user.auth.type.code.commiter');
 
-insert into repositories_users(repository_key, user_seq) values ('haksvngoogle',1);
-insert into repositories_users(repository_key, user_seq) values ('haksvngoogle',2);
-insert into repositories_users(repository_key, user_seq) values ('haksvngoogle',3);
+insert into repositories_users(repository_key, user_seq) values ('HAKSVNG',1);
+insert into repositories_users(repository_key, user_seq) values ('HAKSVNG',2);
+insert into repositories_users(repository_key, user_seq) values ('HAKSVNG',3);
 
 insert into menu_authority(menu_seq, code_id) values ( 100, 'user.auth.type.code.system-admin');
 insert into menu_authority(menu_seq, code_id) values ( 110, 'user.auth.type.code.system-admin');

@@ -64,6 +64,10 @@
 		     return /^[a-zA-Z]+$/.test(value);
 		}, "<spring:message code="validation.alphabet" />");
 		
+		$.validator.addMethod("capital", function(value, element, params) {
+		     return /^[A-Z]+$/.test(value);
+		}, "<spring:message code="validation.capital" />");
+		
 		$.extend($.validator.messages, {
 		    date: "<spring:message code="validation.date" />",
 		    digits: "<spring:message code="validation.digits" />",

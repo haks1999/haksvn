@@ -32,7 +32,7 @@ public class Repository{
 	@Id
 	@Column(name = "repository_key",unique = true, nullable = false)
 	@Length(min=5, max=15)
-	@Pattern(regexp="^[a-zA-Z]+$")
+	@Pattern(regexp="^[A-Z]+$")
     private String repositoryKey;
 	
 	@Column(name = "repository_location",nullable = false)
