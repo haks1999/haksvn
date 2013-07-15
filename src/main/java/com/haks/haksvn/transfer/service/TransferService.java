@@ -20,6 +20,7 @@ import com.haks.haksvn.repository.service.SVNRepositoryService;
 import com.haks.haksvn.repository.util.RepositoryUtils;
 import com.haks.haksvn.transfer.dao.TransferDao;
 import com.haks.haksvn.transfer.model.Transfer;
+import com.haks.haksvn.transfer.model.TransferGroup;
 import com.haks.haksvn.transfer.model.TransferSource;
 import com.haks.haksvn.transfer.model.TransferStateAuth;
 import com.haks.haksvn.user.service.UserService;
@@ -38,6 +39,8 @@ public class TransferService {
 	private RepositoryService repositoryService;
 	@Autowired
 	private SVNRepositoryService svnRepositoryService;
+	@Autowired
+	private TransferGroupService transferGroupService;
 	
 	public Paging<List<Transfer>> retrieveTransferList(Paging<Transfer> paging){
 		repositoryService.checkRepositoryAccessRight(paging.getModel().getRepositoryKey());
@@ -184,6 +187,19 @@ public class TransferService {
 		transfer.setApproveDate(System.currentTimeMillis());
 		transfer.setApproveUser(userService.retrieveUserByUserId(ContextHolder.getLoginUser().getUserId()));
 		transfer = transferDao.updateTransfer(transfer);
+		
+		if( CodeUtils.getTransferEmergencyTypeCodeId().equals(transfer.getTransferTypeCode().getCodeId())){
+			String title = "Emergency RequestGroup by [req-" + transfer.getTransferSeq() + "]";
+			String description = "Automatically created by Emergency Request [req-" + transfer.getTransferSeq() + "]";
+			List<Transfer> transferList = new ArrayList<Transfer>(0);
+			transferList.add(Transfer.Builder.getBuilder().repositoryKey(transfer.getRepositoryKey()).transferSeq(transfer.getTransferSeq()).build());
+			TransferGroup createdTransferGroup = transferGroupService.saveTransferGroup(TransferGroup.Builder.getBuilder().
+					transferGroupTypeCode(codeService.retrieveCode(CodeUtils.getTransferGroupEmergencyTypeCodeId())).
+					repositoryKey(transfer.getRepositoryKey()).description(description).title(title).transferList(transferList).build());
+			TransferGroup transferGroupToTransfer = TransferGroup.Builder.getBuilder().repositoryKey(createdTransferGroup.getRepositoryKey())
+					.transferGroupSeq(createdTransferGroup.getTransferGroupSeq()).build();
+			transferGroupService.transferTransferGroup(transferGroupToTransfer);
+		}
 		return transfer;
 	}
 	

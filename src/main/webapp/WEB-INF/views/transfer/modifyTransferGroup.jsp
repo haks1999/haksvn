@@ -445,8 +445,10 @@ form p span font a{text-decoration:underline;cursor:pointer;}
 				<font class="path font12 open-window"><a></a></font>
 			</span>
 			<font class="default">requested by <b class="requestor"></b>, approved by <b class="approver"></b></font>
-			<font class="path italic remove"><a>Remove</a></font>
-			<font class="path italic cancel display-none"><a>Cancel</a></font>
+			<c:if test="${transferGroupStateAuth.isEditable}">
+				<font class="path italic remove"><a>Remove</a></font>
+				<font class="path italic cancel display-none"><a>Cancel</a></font>
+			</c:if>
 		</span>
 	</span>
 	

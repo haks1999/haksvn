@@ -68,7 +68,7 @@ public class TransferGroupStateAuth {
 			String loginUserAuthCode = transferGroupStateAuth.getLoginUserAuthCodeId();
 			
 			transferGroupStateAuth.setIsEditable(CodeUtils.isEditableTransferGroupState(stateCode) 
-					&& CodeUtils.isReviewer(loginUserAuthCode) || CodeUtils.isSystemAdmin(loginUserAuthCode));
+					&& (CodeUtils.isReviewer(loginUserAuthCode) || CodeUtils.isSystemAdmin(loginUserAuthCode)));
 			return transferGroupStateAuth;
 		}
 		

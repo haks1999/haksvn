@@ -665,34 +665,61 @@ form p span font a{text-decoration:underline;cursor:pointer;}
 						<a class="button red mt ml" onclick="rejectTransfer()"><small class="icon cross"></small><span>Reject</span></a>
 						<script type="text/javascript" >
 							function approveTransfer(){
-								haksvn.block.on();
-								var queryString = $('#frm_transfer').serialize();
-								$.post('<c:url value="/transfer/request/list" />' + '<c:out value="/${repositoryKey}/approve"/>',
-									queryString,
-						            function(data){
-										haksvn.block.off();
-										if( data.type != 'success'){
-											$().Message({type:data.type,text:data.text});
-											return;
-										}
-										$("#div_approveSuccessMessage").dialog({
-											title:'Approved Request',
-									      	resizable:false,
-									      	width:300,
-										    modal: true,
-										    buttons: {
-										    	"Yes": function(){
-										    		var sCode = "<spring:eval expression="T(com.haks.haksvn.common.code.util.CodeUtils).getTransferStandbyCodeId()"/>";
-										    		location.href = "<c:url value="/transfer/requestGroup/list/${repositoryKey}"/>" + "?sCode=" + sCode;
-											    },
-										    	"No": function() {
-										    		var sCode = "<spring:eval expression="T(com.haks.haksvn.common.code.util.CodeUtils).getTransferApprovedCodeId()"/>";
-										    		location.href = "<c:url value="/transfer/request/list/${repositoryKey}"/>" + "?sCode=" + sCode;
-										        }
-										    }
-									    });
-										
-						        },"json");
+								var isEmergencyType = $('#frm_transfer select[name="transferTypeCode.codeId"]').val() == "<spring:eval expression="T(com.haks.haksvn.common.code.util.CodeUtils).getTransferEmergencyTypeCodeId()"/>";
+								var callApprove = function(){
+									haksvn.block.on();
+									var queryString = $('#frm_transfer').serialize();
+									$.post('<c:url value="/transfer/request/list" />' + '<c:out value="/${repositoryKey}/approve"/>',
+										queryString,
+							            function(data){
+											haksvn.block.off();
+											if( data.type != 'success'){
+												$().Message({type:data.type,text:data.text});
+												return;
+											}
+											if( isEmergencyType ){
+												var sCode = "<spring:eval expression="T(com.haks.haksvn.common.code.util.CodeUtils).getTransferTransferedCodeId()"/>";
+												location.href = "<c:url value="/transfer/requestGroup/list/${repositoryKey}"/>" + "?sCode=" + sCode;
+												return;
+											}
+											$("#div_approveSuccessMessage").dialog({
+												title:'Approved Request',
+										      	resizable:false,
+										      	width:300,
+											    modal: true,
+											    buttons: {
+											    	"Yes": function(){
+											    		var sCode = "<spring:eval expression="T(com.haks.haksvn.common.code.util.CodeUtils).getTransferGroupStandbyCodeId()"/>";
+											    		location.href = "<c:url value="/transfer/requestGroup/list/${repositoryKey}"/>" + "?sCode=" + sCode;
+												    },
+											    	"No": function() {
+											    		var sCode = "<spring:eval expression="T(com.haks.haksvn.common.code.util.CodeUtils).getTransferApprovedCodeId()"/>";
+											    		location.href = "<c:url value="/transfer/request/list/${repositoryKey}"/>" + "?sCode=" + sCode;
+											        }
+											    }
+										    });
+											
+							        },"json");
+								};
+								
+								if(isEmergencyType){
+									$("#div_approveEmergencyMessage").dialog({
+										title:'Approved Emergency Request',
+								      	resizable:false,
+								      	width:400,
+									    modal: true,
+									    buttons: {
+									    	"Yes": function(){
+									    		callApprove();
+										    },
+									    	"No": function() {
+									    		$( this ).dialog( "close" );
+									        }
+									    }
+								    });
+								}else{
+									callApprove();
+								}
 							};
 							
 							function rejectTransfer(){
@@ -940,5 +967,15 @@ form p span font a{text-decoration:underline;cursor:pointer;}
   	</p>
   	<p>
   		Do you want to add this request to request group?
+  	</p>
+</div>
+
+<div id="div_approveEmergencyMessage" style="display:none;">
+	<p>
+    	<span class="ui-icon ui-icon-circle-check" style="float: left; margin: 0 7px 50px 0;"></span>
+    	<span>Emergency request will be transfered to production branch without [Stand by] step in Request group.</span>
+  	</p>
+  	<p>
+  		<b>Do you want to transfer this source list to production now?</b>
   	</p>
 </div>
