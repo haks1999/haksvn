@@ -157,7 +157,7 @@
 										required: true,
 										minlength: 5,
 										maxlength: 15,
-										alphabet: true,
+										capital: true,
 										remote:{
 						                      url: "<c:url value="/configuration/repositories/add/validateRepositoryKey/"/>",
 						                      data:{
