@@ -49,6 +49,7 @@
 				<p>
 					<form:label path="taggingTypeCode.codeId" class="left">Type</form:label>
 					<form:select path="taggingTypeCode.codeId" disabled="true" items="${requestScope['tagging.type.code']}" itemValue="codeId" itemLabel="codeName"/>
+					<span class="form-help"><spring:message htmlEscape="true" code="helper.tagging.type" /></span>
 				</p>
 				<p>
 					<form:label path="srcPath" class="left">Source Path</form:label>
@@ -64,12 +65,14 @@
 					<form:label path="tagName" class="left">Tag Name</form:label>
 					<form:input class="text w_20" disabled="${not taggingAuth.isCreatable}" path="tagName"/>
 					<form:errors path="tagName" />
+					<span class="form-help"><spring:message htmlEscape="true" code="helper.tagging.name" /></span>
 					<span class="form-status"></span>
 				</p>
 				<p>
 					<form:label path="description" class="left">Description</form:label>
 					<form:textarea class="text" disabled="${not taggingAuth.isCreatable}" cols="50" rows="5" path="description"/>
 					<form:errors path="description" />
+					<span class="form-help"><spring:message htmlEscape="true" code="helper.tagging.description" /></span>
 					<span class="form-status"></span>
 				</p>
 				<p>
