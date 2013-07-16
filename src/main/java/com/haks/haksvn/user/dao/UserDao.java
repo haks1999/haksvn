@@ -11,6 +11,7 @@ import org.hibernate.criterion.Restrictions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
+import com.haks.haksvn.common.code.util.CodeUtils;
 import com.haks.haksvn.common.crypto.util.CryptoUtils;
 import com.haks.haksvn.user.model.User;
 
@@ -48,7 +49,7 @@ public class UserDao {
 		Session session = sessionFactory.getCurrentSession();
 		User result = (User)session.createCriteria(User.class)
 				.add(Restrictions.eq("userId", user.getUserId()))
-				.add(Restrictions.eq("active", "common.boolean.yn.code.y"))
+				.add(Restrictions.eq("active", CodeUtils.getCommonCodeY()))
 				.uniqueResult();
 		return result;
 	}
@@ -57,7 +58,7 @@ public class UserDao {
 		Session session = sessionFactory.getCurrentSession();
 		User result = (User)session.createCriteria(User.class)
 				.add(Restrictions.eq("userId", user.getUserId()))
-				.add(Restrictions.eq("active", "common.boolean.yn.code.y"))
+				.add(Restrictions.eq("active", CodeUtils.getCommonCodeY()))
 				.add(Restrictions.eq("userPasswd", CryptoUtils.encodeAES(user.getUserPasswd())))
 				.uniqueResult();
 		return result;

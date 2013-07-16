@@ -7,10 +7,10 @@
 		<div class="content">
 			<table id="tbl_users">
 				<tr>
-					<th>ID</th>
+					<th width="100px">ID</th>
 					<th>Name</th>
 					<th>Email</th>
-					<th>Active</th>
+					<th width="50px">Active</th>
 				</tr>
 				<c:forEach items="${userList}" var="user">
 					<tr>

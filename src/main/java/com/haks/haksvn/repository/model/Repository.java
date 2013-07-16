@@ -103,6 +103,9 @@ public class Repository{
 	@Column(name = "authz_template", length=2000)
 	private String authzTemplate;
 	
+	@Column(name = "repository_order")
+	private int repositoryOrder;
+	
 	@ManyToMany(targetEntity = User.class, fetch=FetchType.EAGER)
 	//@org.hibernate.annotations.Cascade(value=org.hibernate.annotations.CascadeType.DELETE)
 	//@Cascade(org.hibernate.annotations.CascadeType.REPLICATE)
@@ -304,6 +307,14 @@ public class Repository{
 		this.authUserPasswdEncrypted = authUserPasswdEncrypted;
 	}
 	
+	public int getRepositoryOrder(){
+		return repositoryOrder;
+	}
+	
+	public void setRepositoryOrder(int repositoryOrder){
+		this.repositoryOrder = repositoryOrder;
+	}
+	
 	public static class Builder{
 		
 		private Repository repository;
@@ -422,6 +433,11 @@ public class Repository{
 		
 		public Builder authzTemplate(String authzTemplate){
 			repository.setAuthzTemplate(authzTemplate);
+			return this;
+		}
+		
+		public Builder repositoryOrder(int repositoryOrder){
+			repository.setRepositoryOrder(repositoryOrder);
 			return this;
 		}
 		
