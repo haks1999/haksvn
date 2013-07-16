@@ -36,6 +36,7 @@ import com.google.common.collect.Lists;
 import com.haks.haksvn.common.exception.HaksvnException;
 import com.haks.haksvn.repository.model.Repository;
 import com.haks.haksvn.repository.util.RepositoryUtils;
+import com.haks.haksvn.repository.util.SVNRepositoryLock;
 import com.haks.haksvn.repository.util.SVNRepositoryUtils;
 import com.haks.haksvn.source.model.SVNSource;
 import com.haks.haksvn.source.model.SVNSourceDiff;
@@ -399,6 +400,7 @@ public class SVNRepositoryDao {
 		ISVNEditor editor = null;
 		long newRevision = -1;
         try{
+        	SVNRepositoryLock.tryLock(repository.getRepositoryKey());
         	targetRepository = SVNRepositoryUtils.getUserAuthSVNRepository(repository);
         	
         	// copyclient 는 commit 을 묶어서 처리할 수 없음
@@ -518,6 +520,7 @@ public class SVNRepositoryDao {
         	e.printStackTrace();
         	throw new HaksvnException(e);
         }finally{
+        	SVNRepositoryLock.release(repository.getRepositoryKey());
         	try{
         		if(targetRepository!=null) targetRepository.closeSession();
         		if(targetRepositoryForModify!=null) targetRepositoryForModify.closeSession();
@@ -532,6 +535,7 @@ public class SVNRepositoryDao {
 	public void copyPathToPath(Repository repository, String srcPath, String destPath, String log){
 		SVNRepository targetRepository = null;
         try{
+        	SVNRepositoryLock.tryLock(repository.getRepositoryKey());
         	targetRepository = SVNRepositoryUtils.getUserAuthSVNRepository(repository);
         	
         	SVNClientManager svnClientManager = SVNClientManager.newInstance(SVNWCUtil.createDefaultOptions(false), targetRepository.getAuthenticationManager());
@@ -556,6 +560,7 @@ public class SVNRepositoryDao {
         	throw new HaksvnException(e);
         }finally{
         	try{
+        		SVNRepositoryLock.release(repository.getRepositoryKey());
         		if(targetRepository!=null) targetRepository.closeSession();
         	}catch(Exception e){
         		e.printStackTrace();
