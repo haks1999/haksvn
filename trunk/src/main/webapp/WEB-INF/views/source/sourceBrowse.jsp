@@ -135,10 +135,10 @@
 					<table id="tbl_sourceList">
 						<thead>
 							<tr>
-								<th width="300px">Filename</th>
+								<th>Filename</th>
 								<th width="100px">Size</th>
 								<th width="50px">Revision</th>
-								<th width="150px">Date</th>
+								<th width="100px">Date</th>
 								<th width="100px">Author</th>
 							</tr>
 						</thead>

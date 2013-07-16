@@ -37,6 +37,13 @@ public class RepositoryAjaxController {
 		return message;
     }
     
+    @RequestMapping(value="/list/changeOrder", method=RequestMethod.POST)
+    public @ResponseBody ResultMessage changeOrder(@RequestParam(value="repositoryList[]") List<Repository> repositoryList) throws HaksvnException {
+    	ResultMessage message = new ResultMessage("repository order changed success");
+		//svnRepositoryService.testInitalConnection(repository);
+		return message;
+    }
+    
     @RequestMapping(value="/listUser/{repositoryKey}", method=RequestMethod.GET)
     public @ResponseBody List<User> listRepositoryUser(@PathVariable String repositoryKey){
     	List<User> userList = repositoryService.retrieveRepositoryByRepositoryKey(repositoryKey).getUserList();

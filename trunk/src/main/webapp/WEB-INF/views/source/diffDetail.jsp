@@ -45,7 +45,7 @@
 								<c:set var="srcRevision" value="${svnSourceSrc.isCopied ? svnSourceSrc.copiedRevision:svnSourceSrc.revision}" />
 								<p style="width:500px;text-align:left;">
 									<font class="path open-window">
-										<a href="<c:out value="${srcBrowsePath}?rev=${srcRevision}" />" style="font-size:11px;font-family:Arial;">
+										<a href="<c:out value="${srcBrowsePath}?rev=${srcRevision}" />">
 											<c:out value="${svnSourceSrc.path}"/>
 										</a>
 									</font>
@@ -70,7 +70,7 @@
 								<c:set var="trgRevision" value="${svnSourceTrg.isCopied ? svnSourceTrg.copiedRevision:svnSourceTrg.revision}" />
 								<p style="width:500px;text-align:left;">
 									<font class="path open-window">
-										<a href="<c:out value="${trgBrowsePath}?rev=${trgRevision}" />" style="font-size:11px;font-family:Arial;">
+										<a href="<c:out value="${trgBrowsePath}?rev=${trgRevision}" />">
 											<c:out value="${svnSourceTrg.path}"/>
 										</a>
 									</font>

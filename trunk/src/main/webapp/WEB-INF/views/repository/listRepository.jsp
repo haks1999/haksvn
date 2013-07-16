@@ -1,22 +1,57 @@
 <%@ include file="/WEB-INF/views/common/include/taglib.jspf"%>
 <script type="text/javascript">
+	
+	$(function() {
+		$(".up,.down").click(function(){
+		    var row = $(this).parents("tr:first");
+		    if ($(this).is(".up")) {
+		        row.insertBefore(row.prev());
+		    }else{
+		        row.insertAfter(row.next());
+		    }
+		    //var repositories = [];
+		    var repositoryKeyList = [];
+		    var repositoryOrderList = [];
+		    var order = 1;
+		    $("table tbody tr").each(function(){
+		    	//repositories.push({repositoryKey:$(this).attr("class"),repositoryOrder:order++});
+		    	repositoryKeyList.push($(this).attr("class"));
+		    	repositoryOrderList.push(order++);
+		    });
+		    
+			$.post("<c:url value="/configuration/repositories/list/changeOrder"/>",
+				$.param({repositoryList:repositories}),
+	            function(data){
+					haksvn.block.off();
+					$().Message({type:data.type,text:data.text});
+	        },"json");
+		});
+	});
+
 </script>
 <div class="content-page">
 	<h1>Repositories</h1>
 	<div class="col w10 last">
 		<div class="content">
-			<table id="tbl_repositories">
+			<table>
 				<thead>
 					<tr>
+						<th width="80px">Order</th>
+						<th width="80px">Key</th>
 						<th>Name</th>
 						<th>Location</th>
-						<th>Sync User</th>
-						<th>Active</th>
+						<th width="80px">Sync User</th>
+						<th width="50px">Active</th>
 					</tr>
 				</thead>
 				<tbody>
 					<c:forEach items="${repositoryList}" var="repository">
-						<tr>
+						<tr class="${repository.repositoryKey}">
+							<td>
+								<a class="up">Up</a>
+           						<a class="down">Down</a>
+							</td>
+							<td><c:out value="${repository.repositoryKey}" /></td>
 							<td>
 								<font class="path"><a href="<c:url value="/configuration/repositories/list/${repository.repositoryKey}"/>"><c:out value="${repository.repositoryName}" /></a></font>
 							</td>

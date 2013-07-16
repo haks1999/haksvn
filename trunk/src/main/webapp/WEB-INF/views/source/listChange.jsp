@@ -113,8 +113,8 @@
 				<thead>
 					<tr>
 						<th width="100px">Revision</th>
-						<th width="500px">Commit Log Message</th>
-						<th width="150px">Date</th>
+						<th>Commit Log Message</th>
+						<th width="100px">Date</th>
 						<th width="100px">Author</th>
 					</tr>
 				</thead>
