@@ -83,7 +83,6 @@ width:100%;
 height:35px;
 background:#d0d0d0 url(../images/menu.png) repeat-x;
 position:relative;
-border-bottom:1px solid #767778;
 }
 
 #menu #left,#menu #right {
@@ -129,7 +128,7 @@ padding:0;
 }
 
 #menu ul li a {
-font-family:Arial, sans-serif;
+font-family:Arial;
 font-size:12px;
 display:block;
 float:left;
@@ -493,7 +492,7 @@ background-repeat:no-repeat;
 .box h2{font-size:14px;margin:0;padding:8px 0 7px 10px;}
 .box.header .head {background:url(../images/box_tl_h.png) no-repeat top left;position:absolute;top:0px;left:0px;}
 .box.header .head div {background:url(../images/box_tr_h.png) no-repeat top right;position:absolute;width:5px;top:0px;right:0px;}
-.box.header h2{background:#d0d0d0 url(../images/box_c.png) repeat-x top left;border-bottom:1px solid #b6b6b6;padding:10px 0 9px 10px;word-wrap:break-word;}
+.box.header h2{background:#d0d0d0 url(../images/box_c.png) repeat-x top left;padding:10px 0 9px 10px;word-wrap:break-word;}
 /*-------------------------BOXES--------------------------*/
 
 
@@ -599,7 +598,7 @@ textarea {
 -moz-border-radius:5px;
 -webkit-border-radius:5px;
 border-radius:5px;
-font-family: Lucida Grande, Verdana, Arial, sans-serif;
+font-family: Arial;
 font-size:12px;
 }
 
@@ -727,24 +726,23 @@ th.checkbox {width:0px}
 table tr:hover td {background:#e4e4e4;}
 
 table th {
-background:#d0d0d0 url(../images/box_c.png) repeat-x top left;
 font-size:13px;
 font-weight:400;
 color:#444;
 border-bottom:1px solid #999a9b;
+border-top:1px solid #999a9b;
 text-align:left;
-font-family:"Lucida Sans Unicode","Lucida Grande",Sans-Serif;
+font-family:Arial;
 line-height:19px;
 padding:8px;
 }
 
 table td {
-background:#f0f0f0;
 font-size:12px;
 border-top:1px solid transparent;
-border-bottom:1px solid #fff;
+border-bottom:1px solid #F7F7F7;
 color:#666;
-font-family:"Lucida Sans Unicode","Lucida Grande",Sans-Serif;
+font-family:Arial;
 line-height:19px;
 padding:8px;
 }
@@ -850,7 +848,7 @@ background:#d0d0d0;
 color:#444;
 border-bottom:1px solid #999a9b;
 text-align:left;
-font-family:"Lucida Sans Unicode","Lucida Grande",Sans-Serif;
+font-family:Arial;
 padding:8px;
 }
 
