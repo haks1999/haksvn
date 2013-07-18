@@ -3,12 +3,11 @@
  */
 ul.dynatree-container
 {
-	font-family: tahoma, arial, helvetica;
+	font-family: Arial;
 	font-size: 10pt; /* font size should not be too big */
 	white-space: nowrap;
 	padding: 3px;
 	margin: 0; /* issue 201 */
-	background-color: #f0f0f0;
 	border: 1px dotted #f0f0f0;
 	overflow: auto;
 	height: 100%; /* issue 263 */
@@ -299,7 +298,7 @@ ul.dynatree-container a
 	/* Set transparent border to prevent jumping when active node gets a border
 	   (we can do this, because this theme doesn't use vertical lines)
 	   */
-	border: 1px solid #f0f0f0; /* Note: 'transparent' would not work in IE6 */
+	border: 1px solid #fff; /* Note: 'transparent' would not work in IE6 */
 
 }
 

@@ -104,7 +104,7 @@ public class RepositoryService {
 		// exclude userList
 		String authUserPasswd = repository.getAuthUserPasswdEncrypted()? repository.getAuthUserPasswd():CryptoUtils.encodeAES(repository.getAuthUserPasswd());
 		Repository.Builder.getBuilder(repositoryInHibernate)
-			.active(repository.getActive())
+			.active(repository.getActive()).repositoryOrder(repository.getRepositoryOrder())
 			.authUserId(repository.getAuthUserId()).authUserPasswd(authUserPasswd)
 			.repositoryLocation(repository.getRepositoryLocation()).repositoryName(repository.getRepositoryName()).svnName(repository.getSvnName()).svnRoot(repository.getSvnRoot())
 			.tagsPath(repository.getTagsPath()).trunkPath(repository.getTrunkPath()).branchesPath(repository.getBranchesPath()).syncUser(repository.getSyncUser())
@@ -114,6 +114,14 @@ public class RepositoryService {
 		repositoryDao.updateRepository(repositoryInHibernate);
 		if(CodeUtils.isTrue(repositoryInHibernate.getSyncUser()) ) svnRepositoryService.initRepositoryUser(repositoryInHibernate);
 		return repositoryInHibernate;
+	}
+	
+	public void changeRepositoryOrder(List<Repository> repositoryList){
+		for( Repository repository : repositoryList ){
+			Repository repositoryInHibernate = repositoryDao.retrieveRepositoryByRepositoryKey(repository);
+			repositoryInHibernate.setRepositoryOrder(repository.getRepositoryOrder());
+			repositoryDao.updateRepository(repositoryInHibernate);
+		}
 	}
 	
 	public Repository addRepositoryUser(String repositoryKey, List<String> userIdList, boolean overwrite){
