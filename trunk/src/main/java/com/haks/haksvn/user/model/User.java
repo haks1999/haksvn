@@ -46,7 +46,7 @@ public class User implements Serializable{
 	
 	@Column(name = "user_name",nullable = false)
 	@NotEmpty
-	@Length(min=4, max=50)
+	@Length(min=3, max=50)
 	private String userName;
 	
 	@Column(name = "active",nullable = true)

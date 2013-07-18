@@ -1,10 +1,10 @@
 <%@ include file="/WEB-INF/views/common/include/taglib.jspf"%>
 <style>
 .sourceTreePanel{
-float:left;border:#999a9b 1px solid;height:250px;
+float:left;border:#999a9b 1px solid;height:250px;width:250px;
 }
-.sourceTreePanel > div{
-height:242px;width:250px;
+.sourceTreePanel #div_sourceTree{
+height:242px;
 }
 .sourceListPanel{
 float:left;width:440px;height:250px;overflow:auto;margin-left:5px;
@@ -146,7 +146,7 @@ form p span font a{text-decoration:underline;cursor:pointer;}
 	function openSearchSourceDialog( rootPath, toDelete ){
 		_gRootPath = rootPath;
 		_gToDelete = toDelete;
-		//setResizableSourceTreePanel();
+		setResizableSourceTreePanel();
 		listRepositorySource('');
 		$("#div_searchSource").dialog({
 			resizable:false,
@@ -171,7 +171,7 @@ form p span font a{text-decoration:underline;cursor:pointer;}
 	        minHeight:'250',
 	        maxHeight:'250',
 	        resize: function(event, ui) {
-	        	$(this).next(".sourceListPanel").width(440 + 245 - $(this).width());
+	        	$(this).next(".sourceListPanel").width(440 + 240 - $(this).width());
 	        }
 	    });	
 	};
@@ -179,7 +179,7 @@ form p span font a{text-decoration:underline;cursor:pointer;}
 	function destroySourceTree(){
 		$("#div_sourceTree").dynatree("destroy");
 		$("#div_sourceTree").children().remove();
-		//$("#div_sourceTreePanel").resizable("destory");
+		$("#div_sourceTreePanel").resizable("destroy");
 	};
 	
 	function searchSource(){
