@@ -12,7 +12,7 @@
 			rules: {
 				userId:{
 					required: true,
-					minlength: 4,
+					minlength: 3,
 					maxlength: 20,
 					remote:{
                       url: "<c:url value="/configuration/users/add/validateUserId/"/>",

@@ -2,10 +2,10 @@
 <script type="text/javascript">
 	$(function() {
 		$("#div_sourceTreePanel").resizable({
-	        minWidth: '200',
-	        maxWidth: '500',
-	        minHeight:'300',
-	        maxHeight:'500',
+	        minWidth: '300',
+	        maxWidth: '600',
+	        minHeight:'320',
+	        maxHeight:'600',
 	        resize: function(event, ui) {
 	        	$("#div_sourceListPanel").css("margin-left", ($(this).width() + 20) +"px"); 
 	        	$("#div_sourceTree").height(($(this).height()-8) + "px");
