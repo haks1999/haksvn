@@ -62,7 +62,12 @@
 							<form:input class="text w_10" path="userId"/>
 						</c:when>
 						<c:otherwise>
-							<form:input class="text w_10" path="userId" readonly="true" />
+							<form:input class="text w_10 readOnly" path="userId" readonly="true" />
+							<script type="text/javascript">
+								$(function() {
+									$("#frm_user input[name=userId]").rules("remove","remote");
+								});
+							</script>
 						</c:otherwise>
 					</c:choose>
 					<form:errors path="userId" />

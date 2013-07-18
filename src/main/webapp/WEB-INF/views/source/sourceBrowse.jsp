@@ -1,14 +1,24 @@
 <%@ include file="/WEB-INF/views/common/include/taglib.jspf"%>
 <script type="text/javascript">
 	$(function() {
+		$("#div_sourceTreePanel").resizable({
+	        minWidth: '200',
+	        maxWidth: '500',
+	        minHeight:'300',
+	        maxHeight:'500',
+	        resize: function(event, ui) {
+	        	$("#div_sourceListPanel").css("margin-left", ($(this).width() + 20) +"px"); 
+	        	$("#div_sourceTree").height(($(this).height()-8) + "px");
+	        }
+	    });
+		
 		$("#sel_repository").val('<c:out value="${repositoryKey}" />');
 		listRepositorySource();
 		$("#sel_repository").change(changeRepository);
 	});
 	
 	function changeRepository(){
-		frm_repository.action = "<c:url value="/source/browse"/>" + "/" + $("#sel_repository > option:selected").val();
-		frm_repository.submit();
+		location.href = "<c:url value="/source/browse"/>" + "/" + $("#sel_repository > option:selected").val();
 	}
 	
 	function listRepositorySource(){
@@ -84,7 +94,6 @@
 	//SyntaxHighlighter.all();
 </script>
 <c:set var="repoBrowsePathLink" value="${pageContext.request.contextPath}/source/browse/${repositoryKey}"/>
-<form id="frm_repository" action=""></form>
 <div class="content-page">
 	<h1></h1>
 	<div class="col w10 last">
@@ -119,19 +128,12 @@
 				</p>
 			</div>
 			
-			<div class="box header" style="position:absolute;display:block;width:300px;float:left;margin-right:-370px;left:10px;">
-				<div class="head"><div></div></div>
-				<h2>
-					Repository Tree
-				</h2>
-				<div class="desc">
-					<div id="div_sourceTree" style="height:300px;" ></div>
-				</div>
-				<div class="bottom"><div></div></div>
+			<div id="div_sourceTreePanel" class="ui-widget-content" style="float:left;border:#999a9b 1px solid;height:320px;width:300px;position:absolute;margin-right:-370px;left:10px;">
+				<div id="div_sourceTree" style="height:312px;" ></div>
 			</div>
 			
 			<div style="float:left; width:100%;z-index:-1;">
-				<div style="margin-left:320px;min-height:350px;">
+				<div id="div_sourceListPanel" style="margin-left:320px;min-height:320px;">
 					<table id="tbl_sourceList">
 						<thead>
 							<tr>

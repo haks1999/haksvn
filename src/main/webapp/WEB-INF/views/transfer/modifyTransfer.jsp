@@ -16,14 +16,14 @@ height:300px;overflow-x:hidden;overflow-y:auto;
 form p span font a{text-decoration:underline;cursor:pointer;}
 
 .sourceListPanel .ui-menu { position: absolute; width: 100px; }
-.sourceListPanel .ui-button .ui-button-text{font-family:Verdana,Arial,sans-serif;font-size:10px;}
+.sourceListPanel .ui-button .ui-button-text{font-size:10px;}
 .sourceListPanel .ui-button-text-only .ui-button-text{padding:.4em .4em}
 .sourceListPanel .ui-button-icon-only .ui-button-text{padding:.4em .4em}
 .sourceListPanel .ui-menu {z-index:1;}
 .sourceListPanel .ui-menu .ui-menu-item A{font-size:10px;}
 
 .changeListPanel .ui-menu { position: absolute; width: 100px; }
-.changeListPanel .ui-button .ui-button-text{font-family:Verdana,Arial,sans-serif;font-size:10px;}
+.changeListPanel .ui-button .ui-button-text{font-size:10px;}
 .changeListPanel .ui-button-text-only .ui-button-text{padding:.4em .4em}
 .changeListPanel .ui-button-icon-only .ui-button-text{padding:.4em .4em}
 .changeListPanel .ui-menu {z-index:1;}
@@ -146,6 +146,7 @@ form p span font a{text-decoration:underline;cursor:pointer;}
 	function openSearchSourceDialog( rootPath, toDelete ){
 		_gRootPath = rootPath;
 		_gToDelete = toDelete;
+		//setResizableSourceTreePanel();
 		listRepositorySource('');
 		$("#div_searchSource").dialog({
 			resizable:false,
@@ -163,9 +164,22 @@ form p span font a{text-decoration:underline;cursor:pointer;}
 		$( "#txt_searchSource" ).focus();
 	};
 	
+	function setResizableSourceTreePanel(){
+		$("#div_sourceTreePanel").resizable({
+	        minWidth: '250',
+	        maxWidth: '400',
+	        minHeight:'250',
+	        maxHeight:'250',
+	        resize: function(event, ui) {
+	        	$(this).next(".sourceListPanel").width(440 + 245 - $(this).width());
+	        }
+	    });	
+	};
+	
 	function destroySourceTree(){
 		$("#div_sourceTree").dynatree("destroy");
 		$("#div_sourceTree").children().remove();
+		//$("#div_sourceTreePanel").resizable("destory");
 	};
 	
 	function searchSource(){
@@ -848,7 +862,7 @@ form p span font a{text-decoration:underline;cursor:pointer;}
 		
 		<div>
 	
-	  		<div class="sourceTreePanel">
+	  		<div id="div_sourceTreePanel" class="sourceTreePanel ui-widget-content" >
 	  			<div id="div_sourceTree"></div>
 	  		</div>
 	  		

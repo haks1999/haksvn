@@ -9,18 +9,14 @@
 		    }else{
 		        row.insertAfter(row.next());
 		    }
-		    //var repositories = [];
-		    var repositoryKeyList = [];
-		    var repositoryOrderList = [];
+		    var repositories = [];
 		    var order = 1;
 		    $("table tbody tr").each(function(){
-		    	//repositories.push({repositoryKey:$(this).attr("class"),repositoryOrder:order++});
-		    	repositoryKeyList.push($(this).attr("class"));
-		    	repositoryOrderList.push(order++);
+		    	repositories.push({repositoryKey:$(this).attr("class"),repositoryOrder:order++});
 		    });
 		    
 			$.post("<c:url value="/configuration/repositories/list/changeOrder"/>",
-				$.param({repositoryList:repositories}),
+				{repositoryList:haksvn.json.stringfy(repositories)},
 	            function(data){
 					haksvn.block.off();
 					$().Message({type:data.type,text:data.text});
@@ -48,8 +44,8 @@
 					<c:forEach items="${repositoryList}" var="repository">
 						<tr class="${repository.repositoryKey}">
 							<td>
-								<a class="up">Up</a>
-           						<a class="down">Down</a>
+								<font class="path"><a class="up">Up</a></font>
+           						<font class="path"><a class="down">Down</a></font>
 							</td>
 							<td><c:out value="${repository.repositoryKey}" /></td>
 							<td>
