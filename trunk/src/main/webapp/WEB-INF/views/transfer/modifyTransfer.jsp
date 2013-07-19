@@ -143,12 +143,13 @@ form p span font a{text-decoration:underline;cursor:pointer;}
 	
 	var _gRootPath = '';
 	var _gToDelete = false;
-	function openSearchSourceDialog( rootPath, toDelete ){
+	
+	function openSearchSourceByNameDialog( rootPath, toDelete ){
 		_gRootPath = rootPath;
 		_gToDelete = toDelete;
 		setResizableSourceTreePanel();
 		listRepositorySource('');
-		$("#div_searchSource").dialog({
+		$("#div_searchSourceByName").dialog({
 			resizable:false,
 			height: 470,
 		    width: 750,
@@ -235,20 +236,96 @@ form p span font a{text-decoration:underline;cursor:pointer;}
 	
 	
 	function retrieveSourceList(sourceNodeList){
-		$("#tbl_sourceList tbody tr").not(".nodata").not(".sample").remove();
+		$("#tbl_sourceListByName tbody tr").not(".nodata").not(".sample").remove();
 		if( !sourceNodeList || sourceNodeList == null ) return;
-		$("#tbl_sourceList tbody tr[class~=nodata]").css('display',sourceNodeList.length < 1?'table-row':'none');
+		$("#tbl_sourceListByName tbody tr[class~=nodata]").css('display',sourceNodeList.length < 1?'table-row':'none');
 		for( var inx = 0 ; inx < sourceNodeList.length ; inx++ ){
-			var row = $("#tbl_sourceList > tbody > .sample").clone();
+			var row = $("#tbl_sourceListByName > tbody > .sample").clone();
 			$(row).attr('path',sourceNodeList[inx].path).attr('rev',sourceNodeList[inx].revision);
 			createSourceListActionButton(row);
 			$(row).find(".name").text(sourceNodeList[inx].name);
 			$(row).removeClass("sample");
 			$(row).css('display','');
-			$('#tbl_sourceList > tbody').append(row);
+			$('#tbl_sourceListByName > tbody').append(row);
 		}
 		$( "#txt_searchSource" ).focus();
 	};
+	
+	function openSearchSourceByRevisionDialog( rootPath ){
+		initRepositoryChangeListByRevision();
+		$("#div_searchSourceByRevision").dialog({
+			resizable:false,
+			height: 470,
+		    width: 750,
+		    modal: true,
+		    buttons: {
+		    	"Close": function() {
+		            $( this ).dialog( "close" );
+		        }
+		    }
+	    });
+		retrieveRepositoryChangeListByRevision( rootPath );
+	};
+
+	
+	
+	
+	function initRepositoryChangeListByRevision(){
+		_gChangeByRevisionPaging.start=-1;
+		_gChangeByRevisionPaging.end=-1;
+		$("#tbl_changeListByRevision tbody tr:not(.sample)").remove();
+		$("#tbl_changeListByRevision tfoot").removeClass('display-none');
+	};
+	
+	var _gChangeByRevisionPaging = {start:-1,end:-1,limit:10,repositoryKey:'<c:out value="${repositoryKey}"/>'};
+	function retrieveRepositoryChangeListByRevision( oPath ){
+		$("#tbl_changeListByRevision tfoot span:not(.loader)").removeClass('display-none').addClass('display-none');
+		$("#tbl_changeListByRevision tfoot span.loader").removeClass('display-none');
+		_gChangeByRevisionPaging.path = oPath;
+		$.getJSON( "<c:url value="/source/changes/list"/>",
+				_gChangeByRevisionPaging,
+				function(data) {
+					var model = data.model;
+					_gChangeByRevisionPaging.start = data.end;
+					for( var inx = 0 ; inx < model.length ; inx++ ){
+						var row = $("#tbl_changeListByRevision > tbody > .sample").clone();
+						//$(row).attr('rev',model[inx].revision);
+						$(row).find(".revision").text('r'+model[inx].revision);
+						//$(row).children(".message").text(model[inx].message);
+						$(row).children(".date").text(haksvn.date.convertToEasyFormat(new Date(model[inx].date)));
+						$(row).children(".author").text(model[inx].author);
+						$(row).removeClass("sample");
+						//createRepositoryChangeListActionButton(row, oPath);
+						$('#tbl_changeListByRevision > tbody').append(row);
+					}
+					
+					if( model.length < 1 ){
+						$("#tbl_changeListByRevision tfoot span:not(.nodata)").removeClass('display-none').addClass('display-none');
+						$("#tbl_changeListByRevision tfoot span.nodata").removeClass('display-none');
+					}else if( !data.hasNext ){
+						$("#tbl_changeListByRevision tfoot").removeClass('display-none').addClass('display-none');
+					}else{
+						$("#tbl_changeListByRevision tfoot span:not(.showmore)").removeClass('display-none').addClass('display-none');
+						$("#tbl_changeListByRevision tfoot span.showmore").removeClass('display-none');
+					}
+		});
+	};
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+
 	
 	function initTransferSourceList(){
 		$("[id^='div_transferSourceDetail_']").remove();	
@@ -620,8 +697,9 @@ form p span font a{text-decoration:underline;cursor:pointer;}
 						<c:if test="${transferStateAuth.isEditable}">
 							<span style="display:block;">
 								<select style="border-width:1px;padding:0px;">
-									<option value="openSearchSourceDialog('<c:out value="${repository.trunkPath}" />',false)">transfer to production, by name</option>
-									<option value="openSearchSourceDialog('<c:out value="${repository.branchesPath}" />',true)">delete from production, by name</option>
+									<option value="openSearchSourceByNameDialog('<c:out value="${repository.trunkPath}" />',false)">transfer to production, by name</option>
+									<option value="openSearchSourceByRevisionDialog('<c:out value="${repository.trunkPath}" />')">transfer to production, by revision</option>
+									<option value="openSearchSourceByNameDialog('<c:out value="${repository.branchesPath}" />',true)">delete from production, by name</option>
 								</select>
 								<input type="button" value="Search & Add" onclick="eval($(this).parent().children('select').val())"/>
 							</span>
@@ -844,7 +922,7 @@ form p span font a{text-decoration:underline;cursor:pointer;}
 	
 </div>
 
-<div id="div_searchSource" title="Search Source" style="display:none;">
+<div id="div_searchSourceByName" title="Search Source" style="display:none;">
 	<div class="module text">
 		<div>
 			<div class="box">
@@ -867,7 +945,7 @@ form p span font a{text-decoration:underline;cursor:pointer;}
 	  		</div>
 	  		
 	  		<div class="sourceListPanel">
-	  			<table id="tbl_sourceList" class="compact">
+	  			<table id="tbl_sourceListByName" class="compact">
 	  				<thead>
 	  					<tr>
 	  						<th class="w_130">Action</th>
@@ -885,6 +963,75 @@ form p span font a{text-decoration:underline;cursor:pointer;}
 								  	<ul>
 								    	<li class="browse"><a>View Source</a></li>
 								    	<li class="changes"><a>View Revisions</a></li>
+								  	</ul>
+								</div>
+							</td>
+							<td class="name"></td>
+						</tr>
+						<tr class="nodata">
+							<td colspan="2" style="display:table-cell;">No files in the selected directory.</td>
+						</tr>
+					</tbody>
+				</table>
+	  		</div>
+  		
+		</div>
+	</div>
+</div>
+
+<div id="div_searchSourceByRevision" title="Search Source" style="display:none;">
+	<div class="module text">
+		<div>
+	
+	  		<div id="div_sourceChangePanel" class="sourceTreePanel" >
+	  			
+	  			<table id="tbl_changeListByRevision" class="compact">
+	  				<thead>
+	  					<tr>
+	  						<th>Revision</th>
+	  						<th>Author</th>
+	  						<th>Date</th>
+	  					</tr>
+	  				</thead>
+					<tbody>
+						<tr class="sample">
+							<td class="revision"></td>
+							<td class="author"></td>
+							<td class="date"></td>
+						</tr>
+					</tbody>
+					<tfoot>
+						<tr>
+							<td colspan="3" style="text-align:center;">
+								<span class="showmore display-none"><font class="path"><a onclick="retrieveRepositoryChangeListByRevision('<c:out value="${repository.trunkPath}" />')">Show More</a></font></span>
+								<span class="loader display-none"><img src="<c:url value="/images/ajax-loader.gif"/>" /></span>
+								<span class="nodata">no data</span>
+							</td>
+						</tr>
+					</tfoot>
+				</table>
+				
+				
+	  		</div>
+	  		
+	  		<div class="sourceListPanel">
+	  			<table id="tbl_sourceListByRevision" class="compact">
+	  				<thead>
+	  					<tr>
+	  						<th class="w_130">Action</th>
+	  						<th>File path</th>
+	  					</tr>
+	  				</thead>
+					<tbody>
+						<tr class="sample">
+							<td>
+								<div>
+								  	<div>
+								    	<button class="action">Add To Req</button>
+								    	<button>Select an action</button>
+								  	</div>
+								  	<ul>
+								    	<li class="browse"><a>View Source</a></li>
 								  	</ul>
 								</div>
 							</td>
