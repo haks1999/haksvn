@@ -8,6 +8,7 @@ public class SVNSourceLogChanged {
 	private String path;
 	private char type;
 	private String typeName;
+	private String nodeType;
 	
 	public SVNSourceLogChanged(){
 		
@@ -44,6 +45,14 @@ public class SVNSourceLogChanged {
 	public void setTypeName(String typeName){
 		this.typeName = typeName;
 	}
+	
+	public String getNodeType(){
+		return nodeType;
+	}
+	
+	public void setNodeType(String nodeType){
+		this.nodeType = nodeType;
+	}
 
 	public static class Builder{
 		
@@ -68,6 +77,11 @@ public class SVNSourceLogChanged {
 		
 		public Builder type(char type){
 			svnSourceLogChanged.setType(type);
+			return this;
+		}
+		
+		public Builder nodeType(String nodeType){
+			svnSourceLogChanged.setNodeType(nodeType);
 			return this;
 		}
 	}
