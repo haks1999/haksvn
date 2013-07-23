@@ -40,6 +40,10 @@ form p span font a{text-decoration:underline;cursor:pointer;}
 
 #tbl_changeList .revision{color:#800000;font-size:12px;text-align:center;}
 #tbl_changeList .message{font-family:"Malgun Gothic";font-size:10px;}
+
+#div_sourceChangePanel{height:300px;overflow-y:scroll;}
+#div_sourceChangePanel table th{border-top:0px;}
+#tbl_sourceListByRevision td.filePath{word-break:break-all;}
 </style>
 <script type="text/javascript">
 	var _gRepoTrunk = '<c:out value="${repository.trunkPath}"/>';
@@ -289,12 +293,15 @@ form p span font a{text-decoration:underline;cursor:pointer;}
 					_gChangeByRevisionPaging.start = data.end;
 					for( var inx = 0 ; inx < model.length ; inx++ ){
 						var row = $("#tbl_changeListByRevision > tbody > .sample").clone();
-						//$(row).attr('rev',model[inx].revision);
 						$(row).find(".revision").text('r'+model[inx].revision);
-						//$(row).children(".message").text(model[inx].message);
+						
 						$(row).children(".date").text(haksvn.date.convertToEasyFormat(new Date(model[inx].date)));
 						$(row).children(".author").text(model[inx].author);
 						$(row).removeClass("sample");
+						$(row).data("oSrc",{path:oPath, revision: model[inx].revision});
+						$(row).click(function(){
+							retrieveSourceListByRevision($(this).data("oSrc"));
+						});
 						//createRepositoryChangeListActionButton(row, oPath);
 						$('#tbl_changeListByRevision > tbody').append(row);
 					}
@@ -311,21 +318,100 @@ form p span font a{text-decoration:underline;cursor:pointer;}
 		});
 	};
 	
+	function retrieveSourceListByRevision(oSrc){
+		$("#tbl_sourceListByRevision tbody tr").not(".sample").remove();
+		$("#tbl_sourceListByRevision tfoot").show();
+		$("#tbl_sourceListByRevision tfoot .loader").show();
+		$("#tbl_sourceListByRevision tfoot .nodata").hide();
+		if( oSrc.path.indexOf("/") == 0 ){
+			oSrc.path = oSrc.path.replace("/","");
+		}
+		$.getJSON(
+				"<c:url value="/source/changes/search"/>",
+				{
+					repositoryKey: "<c:out value="${repositoryKey}"/>",
+					path: oSrc.path,
+					rev: oSrc.revision
+				},
+	            function(result){
+					$("#tbl_sourceListByRevision tfoot .loader").hide();
+					var fileToShow = false;
+					for( var inx = 0 ; inx < result.log.changedList.length ; inx++ ){
+						if( result.log.changedList[inx].nodeType != 'file' ) continue;
+						if( result.log.changedList[inx].type != 'A' && result.log.changedList[inx].type != 'M') continue;
+						fileToShow = true;
+						var row = $("#tbl_sourceListByRevision tbody .sample").clone();
+						$(row).find(".filePath").text(result.log.changedList[inx].path);
+						$(row).attr("rev",result.log.revision);
+						$(row).attr("path",result.log.changedList[inx].path);
+						$(row).removeClass("sample");
+						createSourceListByRevisionActionButton(row, result.log.changedList[inx].path);
+						$('#tbl_sourceListByRevision tbody').append(row);
+					}
+					
+					if( !fileToShow ){
+						$("#tbl_sourceListByRevision tfoot .nodata").show();
+					}else{
+						$("#tbl_sourceListByRevision tfoot").hide();
+					}
+				});
+	};
+	
+	function createSourceListByRevisionActionButton( row ){
+		var path = $(row).attr('path');
+		var rev = $(row).attr('rev');
+		$(row).find('ul li.browse').click(function(){
+			var win = window.open(('<c:url value="/source/browse/${repositoryKey}" />' + '/' + path + '?rev=' + rev).replace("//", "/"), '_blank');
+			win.focus();
+		});
+		$(row).find("td button.action").button().click(function() {
+			addSourceToRequestPanel(path, rev, false);
+	    	}).next().button({
+				text: false,
+	          	icons: {
+	            	primary: "ui-icon-triangle-1-s"
+	          	}
+	        }).click(function() {
+	        	var menu = $( this ).parent().next().show().position({
+	            	my: "left top",
+	            	at: "left bottom",
+	            	of: this
+	          	});
+	          	$( document ).one( "click", function() {
+	            	menu.hide();
+	          	});
+	          	return false;
+	        }).parent().buttonset().next().hide().menu();
+	};
 	
 	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-
+	function addSourceToRequestPanel(path, rev, del){
+		haksvn.block.on();
+    	$.getJSON( "<c:url value="/transfer/request/list/check/${repository.repositoryKey}"/>",
+						{path:path,del:del}, 
+						function(data){
+							if( !data.isLocked){
+								data.transferSourceSeq = 0;
+								data.revision = rev;
+								addToTransferSourceList(data);
+								haksvn.block.off();
+								return;
+							}
+							haksvn.block.off();
+							$('#div_lockMessage .transferSeq').text('req-'+data.transfer.transferSeq);
+							$('#div_lockMessage .reuqestUserId').text(data.transfer.requestUser.userName+'('+data.transfer.requestUser.userId+')');
+    					$( "#div_lockMessage" ).dialog({
+    				      	modal: true,
+    				      	title:'Locking Infomation',
+    				      	resizable:false,
+    				      	buttons: {
+    				        	Ok: function() {
+    				          		$( this ).dialog( "close" );
+    				        	}
+    				      	}
+    				    });
+  		});
+	}
 	
 	function initTransferSourceList(){
 		$("[id^='div_transferSourceDetail_']").remove();	
@@ -434,33 +520,7 @@ form p span font a{text-decoration:underline;cursor:pointer;}
 			win.focus();
 		});
 		$(row).find("td button.action").button().click(function() {
-	        	haksvn.block.on();
-	        	$.getJSON( "<c:url value="/transfer/request/list/check/${repository.repositoryKey}"/>",
-      						{path:path,del:_gToDelete}, 
-      						function(data){
-      							if( !data.isLocked){
-      								data.transferSourceSeq = 0;
-      								data.revision = rev;
-      								addToTransferSourceList(data);
-      								haksvn.block.off();
-      								return;
-      							}
-      							haksvn.block.off();
-      							$('#div_lockMessage .transferSeq').text('req-'+data.transfer.transferSeq);
-      							$('#div_lockMessage .reuqestUserId').text(data.transfer.requestUser.userName+'('+data.transfer.requestUser.userId+')');
-            					$( "#div_lockMessage" ).dialog({
-            				      	modal: true,
-            				      	title:'Locking Infomation',
-            				      	resizable:false,
-            				      	buttons: {
-            				        	Ok: function() {
-            				          		$( this ).dialog( "close" );
-            				        	}
-            				      	}
-            				    });
-    	  		});
-	        	
-	        	
+				addSourceToRequestPanel( path, rev, _gToDelete);
 	    	}).next().button({
 				text: false,
 	          	icons: {
@@ -983,18 +1043,17 @@ form p span font a{text-decoration:underline;cursor:pointer;}
 	<div class="module text">
 		<div>
 	
-	  		<div id="div_sourceChangePanel" class="sourceTreePanel" >
-	  			
+	  		<div id="div_sourceChangePanel" class="sourceTreePanel">
 	  			<table id="tbl_changeListByRevision" class="compact">
 	  				<thead>
-	  					<tr>
-	  						<th>Revision</th>
-	  						<th>Author</th>
-	  						<th>Date</th>
-	  					</tr>
+	  				   <tr>
+	  					  <th>Revision</th>
+	  					  <th>Author</th>
+	  					  <th>Date</th>
+	  				  </tr>
 	  				</thead>
 					<tbody>
-						<tr class="sample">
+						<tr class="sample clickable">
 							<td class="revision"></td>
 							<td class="author"></td>
 							<td class="date"></td>
@@ -1010,15 +1069,13 @@ form p span font a{text-decoration:underline;cursor:pointer;}
 						</tr>
 					</tfoot>
 				</table>
-				
-				
 	  		</div>
 	  		
-	  		<div class="sourceListPanel">
+	  		<div class="sourceListPanel" style="height:300px;">
 	  			<table id="tbl_sourceListByRevision" class="compact">
 	  				<thead>
 	  					<tr>
-	  						<th class="w_130">Action</th>
+	  						<th width="100px">Action</th>
 	  						<th>File path</th>
 	  					</tr>
 	  				</thead>
@@ -1035,12 +1092,17 @@ form p span font a{text-decoration:underline;cursor:pointer;}
 								  	</ul>
 								</div>
 							</td>
-							<td class="name"></td>
-						</tr>
-						<tr class="nodata">
-							<td colspan="2" style="display:table-cell;">No files in the selected directory.</td>
+							<td class="filePath"></td>
 						</tr>
 					</tbody>
+					<tfoot>
+						<tr>
+							<td colspan="2" style="text-align:center;">
+								<span class="loader display-none"><img src="<c:url value="/images/ajax-loader.gif"/>" /></span>
+								<span class="nodata">no Files in selected change</span>
+							</td>
+						</tr>
+					</tfoot>
 				</table>
 	  		</div>
   		

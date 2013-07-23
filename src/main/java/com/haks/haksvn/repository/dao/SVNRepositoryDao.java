@@ -41,6 +41,7 @@ import com.haks.haksvn.repository.util.SVNRepositoryUtils;
 import com.haks.haksvn.source.model.SVNSource;
 import com.haks.haksvn.source.model.SVNSourceDiff;
 import com.haks.haksvn.source.model.SVNSourceLog;
+import com.haks.haksvn.source.model.SVNSourceLogChanged;
 import com.haks.haksvn.source.model.SVNSourceTransfer;
 
 @Component
@@ -352,7 +353,14 @@ public class SVNRepositoryDao {
         	svnSource.setNewerLogs(SVNRepositoryUtils.transform(newerLogList, new ArrayList<SVNSourceLog>(0),svnSource.getPath(), repository));
         	svnSource.setOlderLogs(SVNRepositoryUtils.transform(olderLogList, new ArrayList<SVNSourceLog>(0),svnSource.getPath(), repository));
         	svnSource.setLog(SVNRepositoryUtils.transform(curLog, new ArrayList<SVNSourceLog>(0),svnSource.getPath(), repository).get(0));
-            
+        	
+        	// curLog 는 nodetype 을 명시해준다. request 에서 search by revision 시 사용됨
+        	for( SVNSourceLogChanged svnSourceLogChanged: svnSource.getLog().getChangedList()){
+        		svnSourceLogChanged.setNodeType(targetRepository.checkPath(RepositoryUtils.getRelativeRepositoryPath(repository,svnSourceLogChanged.getPath()), svnSource.getRevision()).toString());
+        	}
+        	
+        	
+        	
         }catch (Exception e) {
         	e.printStackTrace();
         	throw new HaksvnException(e);
