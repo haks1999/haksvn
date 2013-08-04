@@ -1,7 +1,10 @@
 <%@ include file="/WEB-INF/views/common/include/taglib.jspf"%>
+<style type="text/css">
+
+</style>
 <script type="text/javascript">
 	$(function() {
-		$('.logDate').text('Date: ' + haksvn.date.convertToComplexFullFormat(new Date(Number('<c:out value="${svnSource.log.date}"/>'))));
+		$('.logDate').text(haksvn.date.convertToComplexFullFormat(new Date(Number('<c:out value="${svnSource.log.date}"/>'))));
 	});
 	
 	function retrieveDiffWithPrevious(pmOpener, path, rev){
@@ -70,14 +73,25 @@
 							<span>Revision <c:out value="r${svnSource.log.revision}"/></span>
 						</p>
 						<p>
-							<span>Author: <c:out value="${svnSource.log.author}"/></span>
+							<span><b>Author: </b><c:out value="${svnSource.log.author}"/></span>
 						</p>
 						<p>
-							<span class="logDate"></span>
+							<span><b>Date: </b><span class="logDate"></span></span>
+						</p>
+						<p class="mt10 mr10 mb10 ml10" style="margin:10px;">
+							<span class="pre font-consolas"><c:out value="${svnSource.log.message}"/></span>
 						</p>
 						<hr/>
 						<p>
-							<span class="pre"><c:out value="${svnSource.log.message}"/></span>
+							<span><b>Review Scores: </b>+3</span>
+						</p>
+						<ul class="ml20">
+							<li><span class="display-inlineblock">Positive: </span><span class="display-inlineblock italic">haks1999, admin, user001, user002, user003, user004, user0123, asdasdd</span></li>
+							<li><span class="display-inlineblock">Neutral: </span><span class="display-inlineblock italic">haks1999, admin, user001, user002, user003, user004, user0123, asdasdd</span></li>
+							<li><span class="display-inlineblock">Negative: </span><span class="display-inlineblock italic">haks1999, admin, user001, user002, user003, user004, user0123, asdasdd</span></li>
+						</ul>
+						<p>
+							<input type="button" value="review"/><input type="button" value="comment"/>
 						</p>
 					</div>
 				</div>
