@@ -9,9 +9,9 @@
 	        resize: function(event, ui) {
 	        	$("#div_sourceListPanel").css("margin-left", ($(this).width() + 20) +"px"); 
 	        	$("#div_sourceTree").height(($(this).height()-8) + "px");
+	        	$(".content-page:first").height($(this).height() + 100 + "px");
 	        }
 	    });
-		
 		$("#sel_repository").val('<c:out value="${repositoryKey}" />');
 		listRepositorySource();
 		$("#sel_repository").change(changeRepository);
