@@ -81,18 +81,6 @@
 						<p class="mt10 mr10 mb10 ml10" style="margin:10px;">
 							<span class="pre font-consolas"><c:out value="${svnSource.log.message}"/></span>
 						</p>
-						<hr/>
-						<p>
-							<span><b>Review Scores: </b>+3</span>
-						</p>
-						<ul class="ml20">
-							<li><span class="display-inlineblock">Positive: </span><span class="display-inlineblock italic">haks1999, admin, user001, user002, user003, user004, user0123, asdasdd</span></li>
-							<li><span class="display-inlineblock">Neutral: </span><span class="display-inlineblock italic">haks1999, admin, user001, user002, user003, user004, user0123, asdasdd</span></li>
-							<li><span class="display-inlineblock">Negative: </span><span class="display-inlineblock italic">haks1999, admin, user001, user002, user003, user004, user0123, asdasdd</span></li>
-						</ul>
-						<p>
-							<input type="button" value="review"/><input type="button" value="comment"/>
-						</p>
 					</div>
 				</div>
 				<div class="bottom"><div></div></div>
@@ -153,6 +141,70 @@
 						</c:forEach>
 						
 					</div>
+					
+					<div id="div_syncTaggingInfo" class="info mt50">
+						<div class="tl"></div>
+						<div class="tr"></div>
+						<div class="desc variable-help">
+							<p>
+								<b>Review Scores: </b>+3
+							</p>
+							<ul class="ml20">
+								<li><span class="display-inlineblock w_80 font12">Positive: </span><span class="display-inlineblock italic font12">haks1999, admin, user001, user002, user003, user004, user0123, asdasdd</span></li>
+								<li><span class="display-inlineblock w_80 font12">Neutral: </span><span class="display-inlineblock italic font12">haks1999, admin, user001, user002, user003, user004, user0123, asdasdd</span></li>
+								<li><span class="display-inlineblock w_80 font12">Negative: </span><span class="display-inlineblock italic font12">haks1999, admin, user001, user002, user003, user004, user0123, asdasdd</span></li>
+							</ul>
+						</div>
+						<div class="bl"></div>
+						<div class="br"></div>
+					</div>
+					
+					<hr/>
+					<div>
+						<p><font class="default">Comment by <b class="requestor">Admin(adminsss)</b>, <b class="approver">2013/08/05</b></font></p>
+						<pre class="ml20">
+						[Tagging ID]: tagging-1
+[Tagging User]: administrator(admin)
+[Description]:
+20130805_01 
+						</pre>
+					</div>
+					<hr/>
+					<div>
+						<p><font class="default">Comment by <b class="requestor">Admin(adminsss)</b>, <b class="approver">2013/08/05</b></font></p>
+						<pre class="ml20">
+negarive
+						</pre>
+					</div>
+					<hr/>
+										<div>
+										
+						<p><font class="default">Comment by <b class="requestor">Admin(adminsss)</b>, <b class="approver">2013/08/05</b></font></p>
+						<pre class="ml20">
+good change
+						</pre>
+					</div>
+					
+					<hr/>
+					<h1>Your Review</h1>
+					<form:form commandName="review" id="frm_review" method="post" modelAttribute="review" >
+						<p>
+							<form:label path="comment" class="left">Comment</form:label>
+							<form:textarea class="text" cols="50" rows="5" path="comment"/>
+							<form:errors path="comment" />
+							<span class="form-status"></span>
+						</p>
+						<p>
+							<form:label path="score" class="left">Score</form:label>
+							<form:radiobutton path="score" value="1"/>Positive 
+							<form:radiobutton path="score" value="0"/>Neutral
+							<form:radiobutton path="score" value="-1"/>Negative
+							<input type="text" class="text visible-hidden"/>
+						</p>
+						<input type="submit"/>
+					</form:form>
+					
+					
 				</div>
 			</div>
 		

@@ -684,7 +684,7 @@ form p span font a{text-decoration:underline;cursor:pointer;}
 				<p><span class="strong">Detail</span></p>
 				<p>
 					<form:label path="transferSeq" class="left">Transfer Seq</form:label>
-					<form:input class="text w_20 readOnly ${transfer.transferSeq < 1?'visible-hidden':''}" path="transferSeq" readonly="true"/>
+					<form:input class="text w_120 readOnly ${transfer.transferSeq < 1?'visible-hidden':''}" path="transferSeq" readonly="true"/>
 				</p>
 				<p>
 					<form:label path="repositoryKey" class="left">Repository</form:label>
@@ -711,21 +711,21 @@ form p span font a{text-decoration:underline;cursor:pointer;}
 					<form:hidden path="requestUser.userId" />
 					<form:hidden path="requestUser.userName" />
 					<label class="left">Request User</label>
-					<input type="text" class="text w_30 readOnly" readonly value="${transfer.requestUser.userName}(${transfer.requestUser.userId})"/>
+					<input type="text" class="text w_150 readOnly" readonly value="${transfer.requestUser.userName}(${transfer.requestUser.userId})"/>
 				</p>
 				<p>
 					<form:hidden path="requestDate" />
 					<label class="left">Request Date</label>
-					<input type="text" class="text w_30 readOnly requestDate" readonly/>
+					<input type="text" class="text w_150 readOnly requestDate" readonly/>
 				</p>
 				<p>
 					<label class="left">Approve User</label>
-					<input type="text" class="text w_30 readOnly" readonly value="${transfer.approveUser.userName}(${transfer.approveUser.userId})"/>
+					<input type="text" class="text w_150 readOnly" readonly value="${transfer.approveUser.userName}(${transfer.approveUser.userId})"/>
 				</p>
 				<p>
 					<form:hidden path="approveDate" />
 					<label class="left">Approve Date</label>
-					<input type="text" class="text w_30 readOnly approveDate" readonly/>
+					<input type="text" class="text w_150 readOnly approveDate" readonly/>
 				</p>
 				<p>
 					<form:hidden path="transferGroup.transferGroupSeq" />
@@ -990,7 +990,7 @@ form p span font a{text-decoration:underline;cursor:pointer;}
 				<div class="desc">
 					<p>
 						<label>Path</label> 
-						<input id="txt_searchSource" class="text w_40" type="text" />
+						<input id="txt_searchSource" class="text w_500" type="text" />
 						<button id="btn_searchSource">Search</button>
 					</p>
 				</div>

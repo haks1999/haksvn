@@ -78,7 +78,7 @@
 						</p>
 						<p>
 							<label for="title" class="w_120">Group Title</label>
-							<input id="ipt_title" name="title" type="text" class="text w_30"/>
+							<input id="ipt_title" name="title" type="text" class="text w_500"/>
 							<a class="button right form_submit yellow"><small class="icon looking_glass"></small><span>Search</span></a>
 						</p>
 					</form>

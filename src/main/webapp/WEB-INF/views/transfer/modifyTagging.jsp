@@ -40,7 +40,7 @@
 			<form:form commandName="tagging" class="w200" id="frm_tagging" method="post">
 				<p>
 					<form:label path="taggingSeq" class="left">Tagging Seq</form:label>
-					<form:input class="text w_20 readOnly ${tagging.taggingSeq < 1?'visible-hidden':''}" path="taggingSeq" readonly="true"/>
+					<form:input class="text w_120 readOnly ${tagging.taggingSeq < 1?'visible-hidden':''}" path="taggingSeq" readonly="true"/>
 				</p>
 				<p>
 					<form:label path="repositoryKey" class="left">Repository</form:label>
@@ -53,17 +53,17 @@
 				</p>
 				<p>
 					<form:label path="srcPath" class="left">Source Path</form:label>
-					<form:hidden class="text w_20" disabled="true" path="srcPath"/>
+					<form:hidden class="text w_200" disabled="true" path="srcPath"/>
 					<font class="path ${not empty tagging.srcPath?'open-window':'' }"><a href="${repoBrowsePathLink}${tagging.srcPath}"><c:out value="${tagging.srcPath}"/></a></font><input type="text" class="text visible-hidden"/>
 				</p>
 				<p>
 					<form:label path="destPath" class="left">Destination Path</form:label>
-					<form:hidden class="text w_20" disabled="true" path="destPath"/>
+					<form:hidden class="text w_200" disabled="true" path="destPath"/>
 					<font class="path ${not empty tagging.destPath?'open-window':'' }"><a href="${repoBrowsePathLink}${tagging.destPath}"><c:out value="${tagging.destPath}"/></a></font><input type="text" class="text visible-hidden"/>
 				</p>
 				<p>
 					<form:label path="tagName" class="left">Tag Name</form:label>
-					<form:input class="text w_20" disabled="${not taggingAuth.isCreatable}" path="tagName"/>
+					<form:input class="text w_120" disabled="${not taggingAuth.isCreatable}" path="tagName"/>
 					<form:errors path="tagName" />
 					<span class="form-help"><spring:message htmlEscape="true" code="helper.tagging.name" /></span>
 					<span class="form-status"></span>
@@ -79,12 +79,12 @@
 					<form:hidden path="taggingUser.userId" />
 					<form:hidden path="taggingUser.userName" />
 					<label class="left">Tagging User</label>
-					<input type="text" class="text w_30 readOnly" readonly value="${tagging.taggingUser.userName}(${tagging.taggingUser.userId})"/>
+					<input type="text" class="text w_150 readOnly" readonly value="${tagging.taggingUser.userName}(${tagging.taggingUser.userId})"/>
 				</p>
 				<p>
 					<form:hidden path="taggingDate" />
 					<label class="left">Tagging Date</label>
-					<input type="text" class="text w_30 readOnly taggingDate" readonly/>
+					<input type="text" class="text w_150 readOnly taggingDate" readonly/>
 				</p>
 				<p>
 					<label class="left"></label>
