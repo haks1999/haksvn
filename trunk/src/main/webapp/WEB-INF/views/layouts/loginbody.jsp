@@ -38,11 +38,11 @@ $(function() {
 							<p style="text-align:center;padding-bottom:10px;">Simple Subversion Repository Management</p>
 							<p>
 								<label class="left">User ID</label>
-								<input type="text" class="text w_20" name="userId"/>
+								<input type="text" class="text w_230" name="userId"/>
 							</p>
 							<p>
 								<label class="left">Password</label>
-								<input type="password" class="text w_20" name="userPasswd"/>
+								<input type="password" class="text w_230" name="userPasswd"/>
 							</p>
 							<p>
 								<label class="left"></label>

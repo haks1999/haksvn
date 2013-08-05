@@ -266,7 +266,7 @@ form p span font a{text-decoration:underline;cursor:pointer;}
 				</p>
 				<p>
 					<form:label path="title" class="left">Title</form:label>
-					<form:input class="text w_30" disabled="${not transferGroupStateAuth.isEditable}" path="title"/>
+					<form:input class="text w_200" disabled="${not transferGroupStateAuth.isEditable}" path="title"/>
 					<form:errors path="title" />
 					<span class="form-status"></span>
 				</p>
@@ -280,12 +280,12 @@ form p span font a{text-decoration:underline;cursor:pointer;}
 					<form:hidden path="transferUser.userId" />
 					<form:hidden path="transferUser.userName" />
 					<label class="left">Transfer User</label>
-					<input type="text" class="text w_30 readOnly" readonly value="${transferGroup.transferUser.userName}(${transferGroup.transferUser.userId})"/>
+					<input type="text" class="text w_150 readOnly" readonly value="${transferGroup.transferUser.userName}(${transferGroup.transferUser.userId})"/>
 				</p>
 				<p>
 					<form:hidden path="transferDate" />
 					<label class="left">Transfer Date</label>
-					<input type="text" class="text w_30 readOnly transferDate" readonly/>
+					<input type="text" class="text w_150 readOnly transferDate" readonly/>
 				</p>
 				<hr/>
 				<p>
@@ -406,7 +406,7 @@ form p span font a{text-decoration:underline;cursor:pointer;}
 			<table id="tbl_approvedRequestList" class="compact">
 				<thead>
 					<tr>
-						<th class="checkbox w_20"></th>
+						<th class="w_20"></th>
 						<th class="w_50">Seq</th>
 						<th class="w_80">Requestor</th>
 						<th class="w_80">Approver</th>

@@ -18,6 +18,7 @@ import com.haks.haksvn.repository.model.Repository;
 import com.haks.haksvn.repository.service.RepositoryService;
 import com.haks.haksvn.source.model.SVNSource;
 import com.haks.haksvn.source.model.SVNSourceDiff;
+import com.haks.haksvn.source.service.ReviewService;
 import com.haks.haksvn.source.service.SourceService;
 import com.haks.haksvn.source.util.SourceUrlRewriteUtils;
 import com.haks.haksvn.source.util.SourceUtils;
@@ -31,6 +32,8 @@ public class SourceController {
     private RepositoryService repositoryService;
 	@Autowired
     private SourceService sourceService;
+	@Autowired
+	private ReviewService reviewService;
     
 	@RequestMapping(value="/browse", method=RequestMethod.GET)
     public ModelAndView forwardSourceBrowsePage( ModelMap model ) {
@@ -148,6 +151,7 @@ public class SourceController {
 		model.addAttribute("svnSource", svnSource);
 		model.addAttribute("repositoryKey", repositoryKey );
 		model.addAttribute("path", svnSource.getPath());
+		model.addAttribute("review", reviewService.retrieveReviewByReviewId(repositoryKey, revision));
         return "/source/changeDetail";
     }
 	
