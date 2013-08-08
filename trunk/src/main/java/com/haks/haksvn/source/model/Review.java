@@ -11,14 +11,6 @@ public class Review {
 	
 	private String comment;
 	
-	//private List<ReviewComment> reviewCommentList;
-	
-	//private List<ReviewScore> reviewScorePositiveList;
-	
-	//private List<ReviewScore> reviewScoreNeutralList;
-	
-	//private List<ReviewScore> reviewScoreNegativeList;
-
 	public ReviewId getReviewId(){
 		return reviewId;
 	}
@@ -43,40 +35,6 @@ public class Review {
 		this.comment = comment;
 	}
 
-	/*
-	public List<ReviewComment> getReviewCommentList() {
-		return reviewCommentList;
-	}
-
-	public void setReviewCommentList(List<ReviewComment> reviewCommentList) {
-		this.reviewCommentList = reviewCommentList;
-	}
-
-	public List<ReviewScore> getReviewScorePositiveList() {
-		return reviewScorePositiveList;
-	}
-
-	public void setReviewScorePositiveList(List<ReviewScore> reviewScorePositiveList) {
-		this.reviewScorePositiveList = reviewScorePositiveList;
-	}
-
-	public List<ReviewScore> getReviewScoreNeutralList() {
-		return reviewScoreNeutralList;
-	}
-
-	public void setReviewScoreNeutralList(List<ReviewScore> reviewScoreNeutralList) {
-		this.reviewScoreNeutralList = reviewScoreNeutralList;
-	}
-
-	public List<ReviewScore> getReviewScoreNegativeList() {
-		return reviewScoreNegativeList;
-	}
-
-	public void setReviewScoreNegativeList(List<ReviewScore> reviewScoreNegativeList) {
-		this.reviewScoreNegativeList = reviewScoreNegativeList;
-	}
-	*/
-	
 	public static class Builder{
 		
 		private Review review;
@@ -97,6 +55,11 @@ public class Review {
 			return review;
 		}
 		
+		public Builder reviewId(ReviewId reviewId){
+			review.setReviewId(reviewId);
+			return this;
+		}
+		
 		public Builder score(int score){
 			review.setScore(score);
 			return this;
@@ -106,27 +69,5 @@ public class Review {
 			review.setComment(comment);
 			return this;
 		}
-		
-		/*
-		public Builder reviewCommentList(List<ReviewComment> reviewCommentList){
-			review.setReviewCommentList(reviewCommentList);
-			return this;
-		}
-		
-		public Builder reviewScorePositiveList(List<ReviewScore> reviewScorePositiveList){
-			review.setReviewScorePositiveList(reviewScorePositiveList);
-			return this;
-		}
-		
-		public Builder reviewScoreNeutralList(List<ReviewScore> reviewScoreNeutralList){
-			review.setReviewScoreNeutralList(reviewScoreNeutralList);
-			return this;
-		}
-		
-		public Builder reviewScoreNegativeList(List<ReviewScore> reviewScoreNegativeList){
-			review.setReviewScoreNegativeList(reviewScoreNegativeList);
-			return this;
-		}
-		*/
 	} 
 }

@@ -1,17 +1,24 @@
 package com.haks.haksvn.source.service;
 
+import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.commons.lang.math.NumberUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.haks.haksvn.common.code.service.CodeService;
+import com.haks.haksvn.common.code.util.CodeUtils;
+import com.haks.haksvn.common.security.util.ContextHolder;
 import com.haks.haksvn.source.dao.ReviewDao;
 import com.haks.haksvn.source.model.Review;
 import com.haks.haksvn.source.model.ReviewComment;
 import com.haks.haksvn.source.model.ReviewId;
 import com.haks.haksvn.source.model.ReviewScore;
+import com.haks.haksvn.source.model.ReviewSummary;
+import com.haks.haksvn.user.service.UserService;
 
 @Service
 @Transactional(rollbackFor=Exception.class,propagation=Propagation.REQUIRED)
@@ -19,12 +26,63 @@ public class ReviewService {
 
 	@Autowired
 	private ReviewDao reviewDao;
+	@Autowired
+	private UserService userService;
+	@Autowired
+	private CodeService codeService;
 	
-	public Review retrieveReviewByReviewId(String repositoryKey, long revision){
-		ReviewId reviewId = ReviewId.Builder.getBuilder().repositoryKey(repositoryKey).revision(revision).build();
-		List<ReviewScore> reviewScoreList = reviewDao.retrieveReviewScoreListByReviewId(reviewId);
-		List<ReviewComment> reviewCommentList = reviewDao.retrieveReviewCommentListByReviewId(reviewId);
-		//return Review.Builder.getBuilder().reviewCommentList(reviewCommentList).reviewScorePositiveList(reviewScoreList).score(5).build();
-		return Review.Builder.getBuilder().score(0).build();
+	public ReviewSummary retrieveReviewSummary(String repositoryKey, long revision){
+		List<ReviewScore> reviewScoreList = reviewDao.retrieveReviewScoreListByRevision(repositoryKey, revision);
+		int totalScore = 0;
+		List<ReviewScore> reviewScorePositiveList = new ArrayList<ReviewScore>(0);
+		List<ReviewScore> reviewScoreNeutralList = new ArrayList<ReviewScore>(0);
+		List<ReviewScore> reviewScoreNegativeList = new ArrayList<ReviewScore>(0);
+		int positiveScore = NumberUtils.toInt(codeService.retrieveCode(CodeUtils.getPositiveReviewScoreCodeId()).getCodeValue());
+		int negativeScore = NumberUtils.toInt(codeService.retrieveCode(CodeUtils.getNegativeReviewScoreCodeId()).getCodeValue());
+		for( ReviewScore reviewScore : reviewScoreList ){
+			totalScore += reviewScore.getScore();
+			if( reviewScore.getScore() == positiveScore ){
+				reviewScorePositiveList.add(reviewScore);
+			}else if ( reviewScore.getScore() == negativeScore ){
+				reviewScoreNegativeList.add(reviewScore);
+			}else{
+				reviewScoreNeutralList.add(reviewScore);
+			}
+		}
+		
+		List<ReviewComment> reviewCommentList = reviewDao.retrieveReviewCommentListByRevision(repositoryKey, revision);
+		
+		ReviewSummary reviewSummary = ReviewSummary.Builder.getBuilder().isReviewed(reviewScoreList.size() > 0)
+			.totalScore(totalScore)
+			.reviewCommentList(reviewCommentList)
+			.reviewScoreNegativeList(reviewScoreNegativeList)
+			.reviewScoreNeutralList(reviewScoreNeutralList)
+			.reviewScorePositiveList(reviewScorePositiveList).build();
+		return reviewSummary;
+	}
+	
+	public Review retrieveYourReview(String repositoryKey, long revision){
+		return retrieveReviewByReviewId(ReviewId.Builder.getBuilder().repositoryKey(repositoryKey).revision(revision).reviewer(userService.retrieveUserByUserId(ContextHolder.getLoginUser().getUserId())).build());
+	}
+	
+	public Review retrieveReviewByReviewId(ReviewId reviewId){
+		ReviewScore reviewScore = reviewDao.retrieveReviewScoreByReviewId(reviewId);
+		int score = (reviewScore != null ) ? reviewScore.getScore():0;
+		return Review.Builder.getBuilder().score(score).build();
+	}
+	
+	public void saveReview(Review review){
+		if( review.getComment() != null && review.getComment().length() > 0 ){
+			reviewDao.saveReviewComment(ReviewComment.Builder.getBuilder()
+					.comment(review.getComment()).commentDate(System.currentTimeMillis())
+					.repositoryKey(review.getReviewId().getRepositoryKey()).reviewCommentSeq(0)
+					.reviewer(review.getReviewId().getReviewer())
+					.revision(review.getReviewId().getRevision()).build());
+		}
+		reviewDao.saveReviewScore(ReviewScore.Builder.getBuilder().reviewId(review.getReviewId()).score(review.getScore()).build());
+	}
+	
+	public void deleteReviewComment(ReviewComment reviewComment){
+		reviewDao.deleteRevieComment(reviewComment);
 	}
 }

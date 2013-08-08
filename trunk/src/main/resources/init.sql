@@ -17,6 +17,7 @@ insert into menu (menu_seq, menu_name, menu_url, parent_menu_seq, menu_order, me
 insert into menu (menu_seq, menu_name, menu_url, parent_menu_seq, menu_order, menu_level, view_type) values (200, 	'Source'			, '/source'									,200	,200, 1, 'menu.view.type.code.default');
 insert into menu (menu_seq, menu_name, menu_url, parent_menu_seq, menu_order, menu_level, view_type) values (210, 	'Browse'			, '/source/browse'							,200	,100, 2, 'menu.view.type.code.default');
 insert into menu (menu_seq, menu_name, menu_url, parent_menu_seq, menu_order, menu_level, view_type) values (220, 	'Changes'			, '/source/changes'							,200	,200, 2, 'menu.view.type.code.default');
+insert into menu (menu_seq, menu_name, menu_url, parent_menu_seq, menu_order, menu_level, view_type) values (230,		'Review'			, '/source/review'							,200	,300, 2, 'menu.view.type.code.invisible');
 insert into menu (menu_seq, menu_name, menu_url, parent_menu_seq, menu_order, menu_level, view_type) values (300, 	'Configuration'		, '/configuration'							,300	,300, 1, 'menu.view.type.code.default');
 insert into menu (menu_seq, menu_name, menu_url, parent_menu_seq, menu_order, menu_level, view_type) values (310, 	'General'			, '/configuration/general/commitLog'		,300	,100, 2, 'menu.view.type.code.leftmenu');
 insert into menu (menu_seq, menu_name, menu_url, parent_menu_seq, menu_order, menu_level, view_type) values (311, 	'Commit_Log'		, '/configuration/general/commitLog'		,310	,100, 3, 'menu.view.type.code.leftmenu');
@@ -31,6 +32,7 @@ insert into menu (menu_seq, menu_name, menu_url, parent_menu_seq, menu_order, me
 
 insert into code (code_id, code_group, code_name, code_value, code_order) values ('menu.view.type.code.default'		,'menu.view.type.code'			,'default'		,'00'	,10 );
 insert into code (code_id, code_group, code_name, code_value, code_order) values ('menu.view.type.code.leftmenu'		,'menu.view.type.code'			,'leftmenu'		,'01'	,20 );
+insert into code (code_id, code_group, code_name, code_value, code_order) values ('menu.view.type.code.invisible'		,'menu.view.type.code'			,'invisible'	,'02'	,30 );
 insert into code (code_id, code_group, code_name, code_value, code_order) values ('transfer.type.code.normal'			,'transfer.type.code'			,'Normal'		,'00'	,10 );
 insert into code (code_id, code_group, code_name, code_value, code_order) values ('transfer.type.code.emergency'		,'transfer.type.code'			,'Emergency'	,'01'	,20 );
 insert into code (code_id, code_group, code_name, code_value, code_order) values ('transfer.state.code.keep'			,'transfer.state.code'			,'Keep'			,'00'	,10 );
@@ -61,11 +63,14 @@ insert into code (code_id, code_group, code_name, code_value, code_order) values
 insert into code (code_id, code_group, code_name, code_value, code_order) values ('svn.passwd.type.code.md5-apache'	,'svn.passwd.type.code'			,'MD5(Apache)'	,'20'	,20 );
 insert into code (code_id, code_group, code_name, code_value, code_order) values ('log.template.type.code.request'	,'log.template.type.code'		,'Request'		,'10'	,10 );
 insert into code (code_id, code_group, code_name, code_value, code_order) values ('log.template.type.code.tagging'	,'log.template.type.code'		,'Tagging'		,'20'	,20 );
+insert into code (code_id, code_group, code_name, code_value, code_order) values ('review.score.code.positive'		,'review.score.code'			,'Positive'		,'1'	,10 );
+insert into code (code_id, code_group, code_name, code_value, code_order) values ('review.score.code.neutral'			,'review.score.code'			,'Neutral'		,'0'	,20 );
+insert into code (code_id, code_group, code_name, code_value, code_order) values ('review.score.code.negative'		,'review.score.code'			,'Negative'		,'-1'	,30 );
 
 insert into properties (property_key, property_value) values ('svn.authz.template.default'			,'[groups]%nsystem-admin=#system-admin#%ncommiter=#commiter#%nreviewer=#reviewer#%n%n[#svn_name#:/]%n@system-admin=rw%n@reviewer=r%n@commiter=r%n%n[#svn_name#:#trunk_path#]%n@reviewer=rw%n@commiter=rw%n%n[#svn_name#:#branches_path#]%n%n[#svn_name#:#tags_path#]%n@reviewer=rw%n');
 insert into properties (property_key, property_value) values ('commit.log.template.request.default'	,'[Request Group ID]: #request-group-id#%n[Request ID]: #request-id#%n[Request User]: #request-user-name#(#request-user-id#)%n[Approve User]: #approve-user-name#(#approve-user-id#)%n[Transfer User]: #transfer-user-name#(#transfer-user-id#)%n[Description]:%n#description#');
 insert into properties (property_key, property_value) values ('commit.log.template.tagging.default'	,'[Tagging ID]: #tagging-id#%n[Tagging User]: #tagging-user-name#(#tagging-user-id#)%n[Description]:%n#description#');
-insert into properties (property_key, property_value) values ('application.version'					,'0.2.1');
+insert into properties (property_key, property_value) values ('application.version'					,'0.2.2');
 
 -- haks1999 // aW9fj8bm9Rt5
 insert into repositories (repository_key, repository_location, active, repository_name, svn_root, svn_name, trunk_path, tags_path, branches_path, auth_user_id, auth_user_passwd, sync_user, repository_order ) values ('HAKSVNG','https://haksvn.googlecode.com/svn', 'common.boolean.yn.code.y', 'haksvn google repository', 'https://haksvn.googlecode.com/svn', 'svn', '/trunk', '/tags', '/branches/production', 'haks1999', 'nijy14K6p4n1oleemgofSw==','common.boolean.yn.code.n', 1 );
@@ -91,6 +96,7 @@ insert into menu_authority(menu_seq, code_id) values ( 130, 'user.auth.type.code
 insert into menu_authority(menu_seq, code_id) values ( 200, 'user.auth.type.code.system-admin');
 insert into menu_authority(menu_seq, code_id) values ( 210, 'user.auth.type.code.system-admin');
 insert into menu_authority(menu_seq, code_id) values ( 220, 'user.auth.type.code.system-admin');
+insert into menu_authority(menu_seq, code_id) values ( 230, 'user.auth.type.code.system-admin');
 insert into menu_authority(menu_seq, code_id) values ( 300, 'user.auth.type.code.system-admin');
 insert into menu_authority(menu_seq, code_id) values ( 310, 'user.auth.type.code.system-admin');
 insert into menu_authority(menu_seq, code_id) values ( 311, 'user.auth.type.code.system-admin');
@@ -110,6 +116,7 @@ insert into menu_authority(menu_seq, code_id) values ( 130, 'user.auth.type.code
 insert into menu_authority(menu_seq, code_id) values ( 200, 'user.auth.type.code.reviewer');
 insert into menu_authority(menu_seq, code_id) values ( 210, 'user.auth.type.code.reviewer');
 insert into menu_authority(menu_seq, code_id) values ( 220, 'user.auth.type.code.reviewer');
+insert into menu_authority(menu_seq, code_id) values ( 230, 'user.auth.type.code.reviewer');
 
 insert into menu_authority(menu_seq, code_id) values ( 100, 'user.auth.type.code.commiter');
 insert into menu_authority(menu_seq, code_id) values ( 110, 'user.auth.type.code.commiter');
@@ -118,4 +125,5 @@ insert into menu_authority(menu_seq, code_id) values ( 130, 'user.auth.type.code
 insert into menu_authority(menu_seq, code_id) values ( 200, 'user.auth.type.code.commiter');
 insert into menu_authority(menu_seq, code_id) values ( 210, 'user.auth.type.code.commiter');
 insert into menu_authority(menu_seq, code_id) values ( 220, 'user.auth.type.code.commiter');
+insert into menu_authority(menu_seq, code_id) values ( 230, 'user.auth.type.code.commiter');
 

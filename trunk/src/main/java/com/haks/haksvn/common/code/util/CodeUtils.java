@@ -12,6 +12,32 @@ public class CodeUtils {
 		return getCommonCodeY().equals(flag);
 	}
 	
+	// menu
+	public static String getDefaultMenuViewTypeCodeId(){
+		return "menu.view.type.code.default";
+	}
+	
+	public static String getLeftMenuMenuViewTypeCodeId(){
+		return "menu.view.type.code.leftmenu";
+	}
+	
+	public static String getInvisibleMenuViewTypeCodeId(){
+		return "menu.view.type.code.invisible";
+	}
+	
+	// review
+	public static String getPositiveReviewScoreCodeId(){
+		return "review.score.code.positive";
+	}
+	
+	public static String getNeutralReviewScoreCodeId(){
+		return "review.score.code.neutral";
+	}
+	
+	public static String getNegativeReviewScoreCodeId(){
+		return "review.score.code.negative";
+	}
+	
 	// user
 	public static String getSystemAdminCodeId(){
 		return "user.auth.type.code.system-admin";

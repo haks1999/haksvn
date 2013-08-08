@@ -28,7 +28,7 @@ public class ReviewComment {
 	private long revision;
 	
 	@ManyToOne(fetch = FetchType.EAGER)
-	@JoinColumn(name="reviewer", referencedColumnName="user_id", insertable=false, updatable=false)
+	@JoinColumn(name="reviewer", referencedColumnName="user_id")
 	private User reviewer;
 	
 	@Column(name="comment")
