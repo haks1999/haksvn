@@ -147,43 +147,51 @@
 						<div class="tr"></div>
 						<div class="desc variable-help">
 							<p>
-								<b>Review Scores: </b>+3
+								<b>Review Scores: </b><c:out value="${reviewSummary.totalScore}"/>
 							</p>
 							<ul class="ml20">
-								<li><span class="display-inlineblock w_80 font12">Positive: </span><span class="display-inlineblock italic font12">haks1999, admin, user001, user002, user003, user004, user0123, asdasdd</span></li>
-								<li><span class="display-inlineblock w_80 font12">Neutral: </span><span class="display-inlineblock italic font12">haks1999, admin, user001, user002, user003, user004, user0123, asdasdd</span></li>
-								<li><span class="display-inlineblock w_80 font12">Negative: </span><span class="display-inlineblock italic font12">haks1999, admin, user001, user002, user003, user004, user0123, asdasdd</span></li>
+								<li>
+									<span class="display-inlineblock w_80 font12">Positive: </span>
+									<span class="display-inlineblock italic font12">
+										<c:forEach items="${reviewSummary.reviewScorePositiveList}" var="reviewScorePositive" varStatus="loop">
+											<c:out value="${reviewScorePositive.reviewId.reviewer.userId}(${reviewScorePositive.reviewId.reviewer.userName})"/><c:if test="${!loop.last}">, </c:if>
+										</c:forEach>
+									</span>
+								</li>
+								<li>
+									<span class="display-inlineblock w_80 font12">Neutral: </span>
+									<span class="display-inlineblock italic font12">
+										<c:forEach items="${reviewSummary.reviewScoreNeutralList}" var="reviewScoreNeutral" varStatus="loop">
+											<c:out value="${reviewScoreNeutral.reviewId.reviewer.userId}(${reviewScoreNeutral.reviewId.reviewer.userName})"/><c:if test="${!loop.last}">, </c:if>
+										</c:forEach>
+									</span>
+								</li>
+								<li>
+									<span class="display-inlineblock w_80 font12">Negative: </span>
+									<span class="display-inlineblock italic font12">
+										<c:forEach items="${reviewSummary.reviewScoreNegativeList}" var="reviewScoreNegative" varStatus="loop">
+											<c:out value="${reviewScoreNegative.reviewId.reviewer.userId}(${reviewScoreNegative.reviewId.reviewer.userName})"/><c:if test="${!loop.last}">, </c:if>
+										</c:forEach>
+									</span>
+								</li>
 							</ul>
 						</div>
 						<div class="bl"></div>
 						<div class="br"></div>
 					</div>
 					
-					<hr/>
-					<div>
-						<p><font class="default">Comment by <b class="requestor">Admin(adminsss)</b>, <b class="approver">2013/08/05</b></font></p>
-						<pre class="ml20">
-						[Tagging ID]: tagging-1
-[Tagging User]: administrator(admin)
-[Description]:
-20130805_01 
-						</pre>
-					</div>
-					<hr/>
-					<div>
-						<p><font class="default">Comment by <b class="requestor">Admin(adminsss)</b>, <b class="approver">2013/08/05</b></font></p>
-						<pre class="ml20">
-negarive
-						</pre>
-					</div>
-					<hr/>
-										<div>
-										
-						<p><font class="default">Comment by <b class="requestor">Admin(adminsss)</b>, <b class="approver">2013/08/05</b></font></p>
-						<pre class="ml20">
-good change
-						</pre>
-					</div>
+					<jsp:useBean id="commentDate" class="java.util.Date" />
+					<c:forEach items="${reviewSummary.reviewCommentList}" var="reviewComment" varStatus="loop">
+						<jsp:setProperty name="commentDate" property="time" value="${reviewComment.commentDate}" />
+						<hr/>
+						<div class="mb20">
+							<p>
+								<font class="default">Comment by <b class="reviewer"><c:out value="${reviewComment.reviewer.userId}(${reviewComment.reviewer.userName})"/></b>, <b class="commentDate"><fmt:formatDate pattern="yyyy-MM-dd HH:mm:ss" value="${commentDate}" /></b></font>
+								<font class="path"><a>delete</a></font>
+							</p>
+							<pre class="ml20"><c:out value="${reviewComment.comment}"/></pre>
+						</div>
+					</c:forEach>
 					
 					<hr/>
 					<h1>Your Review</h1>
@@ -196,12 +204,23 @@ good change
 						</p>
 						<p>
 							<form:label path="score" class="left">Score</form:label>
-							<form:radiobutton path="score" value="1"/>Positive 
-							<form:radiobutton path="score" value="0"/>Neutral
-							<form:radiobutton path="score" value="-1"/>Negative
+							<c:forEach items="${requestScope['review.score.code']}" var="reviewScoreCode">
+								<form:radiobutton path="score" value="${reviewScoreCode.codeValue}"/><c:out value="${reviewScoreCode.codeName}"/>
+							</c:forEach>  
 							<input type="text" class="text visible-hidden"/>
 						</p>
-						<input type="submit"/>
+						<input type="button" value="submit" onclick="saveReview()"/>
+						<script type="text/javascript">
+							function saveReview(){
+								var queryString = $('#frm_review').serialize();
+								$.post("<c:url value="/source/review/${repositoryKey}/${svnSource.log.revision}"/>",
+									queryString,
+						            function(data){
+										haksvn.block.off();
+										//$().Message({type:data.type,text:data.text});
+						        },"json");	
+							};
+						</script>
 					</form:form>
 					
 					

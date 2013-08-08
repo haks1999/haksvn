@@ -12,6 +12,7 @@ import org.springframework.stereotype.Repository;
 
 import com.googlecode.ehcache.annotations.Cacheable;
 import com.haks.haksvn.common.code.model.Code;
+import com.haks.haksvn.common.code.util.CodeUtils;
 import com.haks.haksvn.common.menu.model.Menu;
 import com.haks.haksvn.common.security.model.LoginUser;
 import com.haks.haksvn.common.security.util.ContextHolder;
@@ -30,6 +31,7 @@ public class MenuDao {
 				.createAlias("menuAuthorityList", "code")
 				.add(Restrictions.eq("code.codeId", ContextHolder.getLoginUser().getAuthTypeCodeId()))
 				.add(Restrictions.eq("parentMenuSeq", menu.getMenuSeq()))
+				.add(Restrictions.ne("viewType", CodeUtils.getInvisibleMenuViewTypeCodeId()))
 				.add(Restrictions.neProperty("parentMenuSeq", "menuSeq"))
 				.addOrder(Order.asc("menuOrder"))
 				.list();

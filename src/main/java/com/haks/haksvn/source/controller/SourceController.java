@@ -151,7 +151,8 @@ public class SourceController {
 		model.addAttribute("svnSource", svnSource);
 		model.addAttribute("repositoryKey", repositoryKey );
 		model.addAttribute("path", svnSource.getPath());
-		model.addAttribute("review", reviewService.retrieveReviewByReviewId(repositoryKey, revision));
+		model.addAttribute("review", reviewService.retrieveYourReview(repositoryKey, revision));
+		model.addAttribute("reviewSummary", reviewService.retrieveReviewSummary(repositoryKey, revision));
         return "/source/changeDetail";
     }
 	

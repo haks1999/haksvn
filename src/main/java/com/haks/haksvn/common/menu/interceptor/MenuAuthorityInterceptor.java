@@ -51,7 +51,8 @@ public class MenuAuthorityInterceptor extends HandlerInterceptorAdapter implemen
 	private boolean hasAuth(String url, String authCode ){
 		if( !MENU_URL_AUTH_MAPPING.containsKey(url)) addAuthMapping(url);
 		if( !MENU_URL_AUTH_MAPPING.containsKey(url)) throw new HaksvnException("do not have permission to access this url - " + url);
-		return MENU_URL_AUTH_MAPPING.get(url).contains(authCode);
+		if( !MENU_URL_AUTH_MAPPING.get(url).contains(authCode)) throw new HaksvnException("do not have permission to access this url - " + url);
+		return true;
 	}
 	
 	private void addAuthMapping(String url){

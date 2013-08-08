@@ -18,6 +18,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 
+import com.haks.haksvn.common.code.util.CodeUtils;
 import com.haks.haksvn.common.menu.model.MenuNode;
 import com.haks.haksvn.common.menu.service.MenuService;
 
@@ -44,7 +45,7 @@ public class MenuInterceptor extends HandlerInterceptorAdapter {
 	}
 	
 	// dynamic list 는 rest 방식으로 뒤에 뭐가 많이 붙는 케이스
-	private final String[] dynamicMenuRestPathList = {"/source/browse","/source/changes"};
+	private final String[] dynamicMenuRestPathList = {"/source/browse","/source/changes", "/source/review"};
 	private String transUrlToMenuPath(HttpServletRequest request){
 		String level[] = splitUrlByLevel(request);
 		String viewPath = "/"+level[1]+"/"+level[2] + ((level.length > 3 ) ? ("/" + level[3]):"");
@@ -68,7 +69,7 @@ public class MenuInterceptor extends HandlerInterceptorAdapter {
 	public void postHandle(HttpServletRequest request,
 							HttpServletResponse response, Object handler, ModelAndView mv)
 											throws Exception {
-		
+
 		if(mv == null || mv.getViewName() == null || "".equals(mv.getViewName())) return;
 		
 		setTilesContent(mv.getViewName(), request, response);
@@ -82,7 +83,7 @@ public class MenuInterceptor extends HandlerInterceptorAdapter {
         String selectedMenuNameLevel1 = "";
         String selectedMenuNameLevel2 = "";
         String selectedMenuNameLevel3 = "";
-		if("menu.view.type.code.default".equals(menuService.retireveViewType(viewPath))){
+		if(CodeUtils.getDefaultMenuViewTypeCodeId().equals(menuService.retireveViewType(viewPath))){
 			for( MenuNode menuLevel1 : menuList ){
 				for( MenuNode menuLevel2 : menuLevel1.getSubMenuList() ){
 					String[] splitedMenuNames = menuLevel2.getMenuUrl().split("/");
@@ -96,7 +97,7 @@ public class MenuInterceptor extends HandlerInterceptorAdapter {
 				}
 			}
 		}
-		else if("menu.view.type.code.leftmenu".equals(menuService.retireveViewType(viewPath))){
+		else if(CodeUtils.getLeftMenuMenuViewTypeCodeId().equals(menuService.retireveViewType(viewPath))){
 			viewName = "mainleftmenu";
 			for( MenuNode menuLevel1 : menuList ){
 				for( MenuNode menuLevel2 : menuLevel1.getSubMenuList() ){
