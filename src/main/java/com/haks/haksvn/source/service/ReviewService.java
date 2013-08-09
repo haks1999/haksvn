@@ -14,6 +14,7 @@ import com.haks.haksvn.common.code.util.CodeUtils;
 import com.haks.haksvn.common.security.util.ContextHolder;
 import com.haks.haksvn.source.dao.ReviewDao;
 import com.haks.haksvn.source.model.Review;
+import com.haks.haksvn.source.model.ReviewAuth;
 import com.haks.haksvn.source.model.ReviewComment;
 import com.haks.haksvn.source.model.ReviewId;
 import com.haks.haksvn.source.model.ReviewScore;
@@ -72,6 +73,7 @@ public class ReviewService {
 	}
 	
 	public void saveReview(Review review){
+		if( !ReviewAuth.Builder.getBuilder().build().getIsCreatable() ) throw 
 		if( review.getComment() != null && review.getComment().length() > 0 ){
 			reviewDao.saveReviewComment(ReviewComment.Builder.getBuilder()
 					.comment(review.getComment()).commentDate(System.currentTimeMillis())

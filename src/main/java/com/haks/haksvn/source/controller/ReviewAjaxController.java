@@ -38,7 +38,7 @@ public class ReviewAjaxController {
 		return message;
     }
 	
-	@RequestMapping(value={"/review/{repositoryKey}/{revision}/{reviewCommentSeq}"}, method=RequestMethod.DELETE)
+	@RequestMapping(value={"/review/{repositoryKey}/{revision}/comment/{reviewCommentSeq}"}, method=RequestMethod.DELETE)
     public @ResponseBody ResultMessage saveReview(@PathVariable String repositoryKey,
     												@PathVariable long revision,
     												@PathVariable int reviewCommentSeq) throws Exception{

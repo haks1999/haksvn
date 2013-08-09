@@ -41,6 +41,17 @@
 		$('a.opened').trigger('click');
 	};
 	
+	function deleteReviewComment(reviewCommentSeq){
+		$.ajax( {
+			type:'DELETE',
+			url:"<c:url value="/source/review/${repositoryKey}/${svnSource.log.revision}/comment/"/>" + reviewCommentSeq,
+			success: function(data){
+				location.reload();
+			}
+		});
+		
+	}
+	
 </script>
 <c:set var="repoBrowsePathLink" value="${pageContext.request.contextPath}/source/browse/${repositoryKey}"/>
 <c:set var="repoChangesPathLink" value="${pageContext.request.contextPath}/source/changes/${repositoryKey}"/>
@@ -116,8 +127,8 @@
 					</div>
 					<div>
 						<p>
-							<span><font class="path"><a onclick="expandAllChanged()" style="text-decoration:underline;cursor:pointer;">expand all</a></font></span>
-							<span><font class="path"><a onclick="collapseAllChanged()" style="text-decoration:underline;cursor:pointer;">collapse all</a></font></span>
+							<span><font class="path"><a onclick="expandAllChanged()">expand all</a></font></span>
+							<span><font class="path"><a onclick="collapseAllChanged()">collapse all</a></font></span>
 						</p>
 						
 						<c:forEach var="changed" items="${svnSource.log.changedList}">
@@ -187,42 +198,43 @@
 						<div class="mb20">
 							<p>
 								<font class="default">Comment by <b class="reviewer"><c:out value="${reviewComment.reviewer.userId}(${reviewComment.reviewer.userName})"/></b>, <b class="commentDate"><fmt:formatDate pattern="yyyy-MM-dd HH:mm:ss" value="${commentDate}" /></b></font>
-								<font class="path"><a>delete</a></font>
+								<font style="float:right;" class="path"><a onclick="deleteReviewComment('<c:out value="${reviewComment.reviewCommentSeq}"/>')">delete</a></font>
 							</p>
 							<pre class="ml20"><c:out value="${reviewComment.comment}"/></pre>
 						</div>
 					</c:forEach>
 					
-					<hr/>
-					<h1>Your Review</h1>
-					<form:form commandName="review" id="frm_review" method="post" modelAttribute="review" >
-						<p>
-							<form:label path="comment" class="left">Comment</form:label>
-							<form:textarea class="text" cols="50" rows="5" path="comment"/>
-							<form:errors path="comment" />
-							<span class="form-status"></span>
-						</p>
-						<p>
-							<form:label path="score" class="left">Score</form:label>
-							<c:forEach items="${requestScope['review.score.code']}" var="reviewScoreCode">
-								<form:radiobutton path="score" value="${reviewScoreCode.codeValue}"/><c:out value="${reviewScoreCode.codeName}"/>
-							</c:forEach>  
-							<input type="text" class="text visible-hidden"/>
-						</p>
-						<input type="button" value="submit" onclick="saveReview()"/>
-						<script type="text/javascript">
-							function saveReview(){
-								var queryString = $('#frm_review').serialize();
-								$.post("<c:url value="/source/review/${repositoryKey}/${svnSource.log.revision}"/>",
-									queryString,
-						            function(data){
-										haksvn.block.off();
-										//$().Message({type:data.type,text:data.text});
-						        },"json");	
-							};
-						</script>
-					</form:form>
-					
+					<c:if test="${reviewAuth.isCreatable}">
+						<hr/>
+						<h1>Your Review</h1>
+						<form:form commandName="review" id="frm_review" method="post" modelAttribute="review" >
+							<p>
+								<form:label path="comment" class="left">Comment</form:label>
+								<form:textarea class="text" cols="50" rows="5" path="comment"/>
+								<form:errors path="comment" />
+								<span class="form-status"></span>
+							</p>
+							<p>
+								<form:label path="score" class="left">Score</form:label>
+								<c:forEach items="${requestScope['review.score.code']}" var="reviewScoreCode">
+									<form:radiobutton path="score" value="${reviewScoreCode.codeValue}"/><c:out value="${reviewScoreCode.codeName}"/>
+								</c:forEach>  
+								<input type="text" class="text visible-hidden"/>
+							</p>
+							<input type="button" value="submit" onclick="saveReview()"/>
+							<script type="text/javascript">
+								function saveReview(){
+									var queryString = $('#frm_review').serialize();
+									$.post("<c:url value="/source/review/${repositoryKey}/${svnSource.log.revision}"/>",
+										queryString,
+							            function(data){
+											haksvn.block.off();
+											//$().Message({type:data.type,text:data.text});
+							        },"json");	
+								};
+							</script>
+						</form:form>
+					</c:if>
 					
 				</div>
 			</div>
