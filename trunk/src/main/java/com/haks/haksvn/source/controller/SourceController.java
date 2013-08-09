@@ -16,6 +16,7 @@ import org.springframework.web.servlet.view.RedirectView;
 
 import com.haks.haksvn.repository.model.Repository;
 import com.haks.haksvn.repository.service.RepositoryService;
+import com.haks.haksvn.source.model.ReviewAuth;
 import com.haks.haksvn.source.model.SVNSource;
 import com.haks.haksvn.source.model.SVNSourceDiff;
 import com.haks.haksvn.source.service.ReviewService;
@@ -152,6 +153,7 @@ public class SourceController {
 		model.addAttribute("repositoryKey", repositoryKey );
 		model.addAttribute("path", svnSource.getPath());
 		model.addAttribute("review", reviewService.retrieveYourReview(repositoryKey, revision));
+		model.addAttribute("reviewAuth", ReviewAuth.Builder.getBuilder().build());
 		model.addAttribute("reviewSummary", reviewService.retrieveReviewSummary(repositoryKey, revision));
         return "/source/changeDetail";
     }

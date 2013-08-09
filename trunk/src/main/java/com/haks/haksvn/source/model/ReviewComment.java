@@ -9,6 +9,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 
 import com.haks.haksvn.user.model.User;
 
@@ -36,6 +37,9 @@ public class ReviewComment {
 	
 	@Column(name="comment_date")
 	private long commentDate;
+	
+	@Transient
+	private boolean isEditable = false;
 
 	public int getReviewCommentSeq() {
 		return reviewCommentSeq;
@@ -85,6 +89,14 @@ public class ReviewComment {
 		this.commentDate = commentDate;
 	}
 	
+	public boolean getIsEditable(){
+		return isEditable;
+	}
+	
+	public void setIsEditable(boolean isEditable){
+		this.isEditable = isEditable;
+	}
+	
 	public static class Builder{
 		
 		private ReviewComment reviewComment;
@@ -132,6 +144,11 @@ public class ReviewComment {
 		
 		public Builder commentDate(long commentDate){
 			reviewComment.setCommentDate(commentDate);
+			return this;
+		}
+		
+		public Builder isEditable(boolean isEditable){
+			reviewComment.setIsEditable(isEditable);
 			return this;
 		}
 	} 
