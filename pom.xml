@@ -184,6 +184,13 @@
         	<version>4.0.3</version>
     	</dependency>
     	
+    	<!-- Java Mail API -->
+	    <dependency>
+		    <groupId>javax.mail</groupId>
+		    <artifactId>mail</artifactId>
+		    <version>1.4.3</version>
+	    </dependency>
+    
 		<!-- Logging -->
 		<dependency>
 			<groupId>org.slf4j</groupId>
