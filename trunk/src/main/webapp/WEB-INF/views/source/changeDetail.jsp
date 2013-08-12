@@ -1,6 +1,15 @@
 <%@ include file="/WEB-INF/views/common/include/taglib.jspf"%>
 <style type="text/css">
-
+#slider_score .ui-slider-range { background: #ddf8cc; }
+#slider_score.ui-widget-content{background: #ffd8d8;}
+#slider_score .ui-slider-handle {
+    text-decoration: none;
+    font-weight: bold;
+    width: 25px;
+    text-align: center;
+    line-height:15px;
+    font-size:12px;
+}
 </style>
 <script type="text/javascript">
 	$(function() {
@@ -40,17 +49,6 @@
 	function collapseAllChanged(){
 		$('a.opened').trigger('click');
 	};
-	
-	function deleteReviewComment(reviewCommentSeq){
-		$.ajax( {
-			type:'DELETE',
-			url:"<c:url value="/source/review/${repositoryKey}/${svnSource.log.revision}/comment/"/>" + reviewCommentSeq,
-			success: function(data){
-				location.reload();
-			}
-		});
-		
-	}
 	
 </script>
 <c:set var="repoBrowsePathLink" value="${pageContext.request.contextPath}/source/browse/${repositoryKey}"/>
@@ -158,34 +156,69 @@
 						<div class="tr"></div>
 						<div class="desc variable-help">
 							<p>
-								<b>Review Scores: </b><c:out value="${reviewSummary.totalScore}"/>
+								<b class="mr10">Review Score</b>
+								<c:choose>
+									<c:when test="${reviewSummary.isReviewed}">
+										<c:if test="${reviewSummary.totalScore > 0}">
+											<img src="<c:url value="/images/plus_green_square.png"/>"/>
+										</c:if>
+										<c:if test="${reviewSummary.totalScore < 0}">
+											<img src="<c:url value="/images/minus_red_square.png"/>"/>
+										</c:if>
+										<span id="slider_score" class="display-inlineblock w_80 ml5" style="margin-bottom:-2px;"></span>
+										<script type="text/javascript">
+											$(function() {
+												var totalScore = Number("<c:out value="${reviewSummary.totalScore}"/>");
+											    $( "#slider_score" ).slider({
+											    	range: "min",
+											      	disabled:true,
+											      	max: 1,
+											      	min:-1,
+											     	value: totalScore,
+											     	create: function(){
+											     		var slider = $( this ).data().slider;
+											     	    slider.element.find( ".ui-slider-handle" ).text( (totalScore>0?"+":"") + totalScore);
+											     	}
+											    });
+											});
+										</script>
+									</c:when>
+									<c:otherwise>
+										<span class="italic">No one did not reviewed yet.</span>
+									</c:otherwise>
+								</c:choose>
 							</p>
-							<ul class="ml20">
-								<li>
-									<span class="display-inlineblock w_80 font12">Positive: </span>
-									<span class="display-inlineblock italic font12">
-										<c:forEach items="${reviewSummary.reviewScorePositiveList}" var="reviewScorePositive" varStatus="loop">
-											<c:out value="${reviewScorePositive.reviewId.reviewer.userId}(${reviewScorePositive.reviewId.reviewer.userName})"/><c:if test="${!loop.last}">, </c:if>
-										</c:forEach>
-									</span>
-								</li>
-								<li>
-									<span class="display-inlineblock w_80 font12">Neutral: </span>
-									<span class="display-inlineblock italic font12">
-										<c:forEach items="${reviewSummary.reviewScoreNeutralList}" var="reviewScoreNeutral" varStatus="loop">
-											<c:out value="${reviewScoreNeutral.reviewId.reviewer.userId}(${reviewScoreNeutral.reviewId.reviewer.userName})"/><c:if test="${!loop.last}">, </c:if>
-										</c:forEach>
-									</span>
-								</li>
-								<li>
-									<span class="display-inlineblock w_80 font12">Negative: </span>
-									<span class="display-inlineblock italic font12">
-										<c:forEach items="${reviewSummary.reviewScoreNegativeList}" var="reviewScoreNegative" varStatus="loop">
-											<c:out value="${reviewScoreNegative.reviewId.reviewer.userId}(${reviewScoreNegative.reviewId.reviewer.userName})"/><c:if test="${!loop.last}">, </c:if>
-										</c:forEach>
-									</span>
-								</li>
-							</ul>
+							<c:if test="${reviewSummary.isReviewed}">
+								<ul class="ml20">
+									<li>
+										<span class="display-inlineblock w_80 font12">Positive: </span>
+										<span class="display-inlineblock italic font12">
+											<c:forEach items="${reviewSummary.reviewScorePositiveList}" var="reviewScorePositive" varStatus="loop">
+												<c:out value="${reviewScorePositive.reviewId.reviewer.userId}(${reviewScorePositive.reviewId.reviewer.userName})"/><c:if test="${!loop.last}">, </c:if>
+											</c:forEach>
+											<c:if test="${fn:length(reviewSummary.reviewScorePositiveList) == 0}">N/A</c:if>
+										</span>
+									</li>
+									<li>
+										<span class="display-inlineblock w_80 font12">Neutral: </span>
+										<span class="display-inlineblock italic font12">
+											<c:forEach items="${reviewSummary.reviewScoreNeutralList}" var="reviewScoreNeutral" varStatus="loop">
+												<c:out value="${reviewScoreNeutral.reviewId.reviewer.userId}(${reviewScoreNeutral.reviewId.reviewer.userName})"/><c:if test="${!loop.last}">, </c:if>
+											</c:forEach>
+											<c:if test="${fn:length(reviewSummary.reviewScoreNeutralList) == 0}">N/A</c:if>
+										</span>
+									</li>
+									<li>
+										<span class="display-inlineblock w_80 font12">Negative: </span>
+										<span class="display-inlineblock italic font12">
+											<c:forEach items="${reviewSummary.reviewScoreNegativeList}" var="reviewScoreNegative" varStatus="loop">
+												<c:out value="${reviewScoreNegative.reviewId.reviewer.userId}(${reviewScoreNegative.reviewId.reviewer.userName})"/><c:if test="${!loop.last}">, </c:if>
+											</c:forEach>
+											<c:if test="${fn:length(reviewSummary.reviewScoreNegativeList) == 0}">N/A</c:if>
+										</span>
+									</li>
+								</ul>
+							</c:if>
 						</div>
 						<div class="bl"></div>
 						<div class="br"></div>
@@ -198,7 +231,20 @@
 						<div class="mb20">
 							<p>
 								<font class="default">Comment by <b class="reviewer"><c:out value="${reviewComment.reviewer.userId}(${reviewComment.reviewer.userName})"/></b>, <b class="commentDate"><fmt:formatDate pattern="yyyy-MM-dd HH:mm:ss" value="${commentDate}" /></b></font>
-								<font style="float:right;" class="path"><a onclick="deleteReviewComment('<c:out value="${reviewComment.reviewCommentSeq}"/>')">delete</a></font>
+								<c:if test="${reviewComment.reviewCommentAuth.isDeletable}">
+									<font style="float:right;" class="path"><a onclick="deleteReviewComment('<c:out value="${reviewComment.reviewCommentSeq}"/>')">delete</a></font>
+									<script type="text/javascript">
+										function deleteReviewComment(reviewCommentSeq){
+											$.ajax( {
+												type:'DELETE',
+												url:"<c:url value="/source/review/${repositoryKey}/${svnSource.log.revision}/comment/"/>" + reviewCommentSeq,
+												success: function(data){
+													location.reload();
+												}
+											});
+										}
+									</script>
+								</c:if>
 							</p>
 							<pre class="ml20"><c:out value="${reviewComment.comment}"/></pre>
 						</div>
@@ -210,7 +256,7 @@
 						<form:form commandName="review" id="frm_review" method="post" modelAttribute="review" >
 							<p>
 								<form:label path="comment" class="left">Comment</form:label>
-								<form:textarea class="text" cols="50" rows="5" path="comment"/>
+								<form:textarea class="text" cols="100" rows="3" path="comment"/>
 								<form:errors path="comment" />
 								<span class="form-status"></span>
 							</p>
@@ -228,8 +274,7 @@
 									$.post("<c:url value="/source/review/${repositoryKey}/${svnSource.log.revision}"/>",
 										queryString,
 							            function(data){
-											haksvn.block.off();
-											//$().Message({type:data.type,text:data.text});
+											location.reload();
 							        },"json");	
 								};
 							</script>

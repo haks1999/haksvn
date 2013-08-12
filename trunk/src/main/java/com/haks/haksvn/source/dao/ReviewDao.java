@@ -53,6 +53,11 @@ public class ReviewDao {
 		session.delete(reviewComment);
 	}
 	
+	public ReviewComment retrieveReviewComment(int reviewCommentSeq){
+		Session session = sessionFactory.getCurrentSession();
+		return (ReviewComment)session.get(ReviewComment.class, reviewCommentSeq);
+	}
+	
 	public void saveReviewScore(ReviewScore reviewScore){
 		Session session = sessionFactory.getCurrentSession();
 		session.saveOrUpdate(reviewScore);
