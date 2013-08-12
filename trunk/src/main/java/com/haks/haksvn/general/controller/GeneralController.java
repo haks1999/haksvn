@@ -5,9 +5,12 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
+import com.haks.haksvn.general.model.MailConfiguration;
+import com.haks.haksvn.general.service.GeneralService;
 import com.haks.haksvn.repository.model.Repository;
 import com.haks.haksvn.repository.service.RepositoryService;
 
@@ -17,6 +20,8 @@ public class GeneralController {
      
     @Autowired
     private RepositoryService repositoryService;
+    @Autowired
+    private GeneralService generalService;
     
     @RequestMapping(value="/commitLog", method=RequestMethod.GET)
     public String forwardCommitLogPage( ModelMap model ) {
@@ -25,6 +30,18 @@ public class GeneralController {
         return "/general/modifyCommitLog";
     }
     
+    @RequestMapping(value="/mail", method=RequestMethod.GET)
+    public String forwardMailConfigurationPage( ModelMap model ) {
+    	model.addAttribute("mailConfiguration", generalService.retrieveMailConfiguration());
+        return "/general/modifyMail";
+    }
     
+    @RequestMapping(value="/mail", method=RequestMethod.POST)
+    public String saveMailConfiguration(ModelMap model, 
+    								@ModelAttribute("mailConfiguration") MailConfiguration mailConfiguration) {
+    	generalService.saveMailConfiguration(mailConfiguration);
+    	model.addAttribute("mailConfiguration", mailConfiguration );
+        return "/general/modifyMail";
+    }
     
 }
