@@ -39,7 +39,7 @@ public class ReviewComment {
 	private long commentDate;
 	
 	@Transient
-	private boolean isEditable = false;
+	private ReviewCommentAuth reviewCommentAuth;
 
 	public int getReviewCommentSeq() {
 		return reviewCommentSeq;
@@ -89,12 +89,12 @@ public class ReviewComment {
 		this.commentDate = commentDate;
 	}
 	
-	public boolean getIsEditable(){
-		return isEditable;
+	public ReviewCommentAuth  getReviewCommentAuth(){
+		return reviewCommentAuth;
 	}
 	
-	public void setIsEditable(boolean isEditable){
-		this.isEditable = isEditable;
+	public void setReviewCommentAuth(ReviewCommentAuth reviewCommentAuth){
+		this.reviewCommentAuth = reviewCommentAuth;
 	}
 	
 	public static class Builder{
@@ -147,8 +147,8 @@ public class ReviewComment {
 			return this;
 		}
 		
-		public Builder isEditable(boolean isEditable){
-			reviewComment.setIsEditable(isEditable);
+		public Builder reviewCommentAuth(){
+			reviewComment.setReviewCommentAuth(ReviewCommentAuth.Builder.getBuilder().reviewerId(reviewComment.getReviewer().getUserId()).build());
 			return this;
 		}
 	} 

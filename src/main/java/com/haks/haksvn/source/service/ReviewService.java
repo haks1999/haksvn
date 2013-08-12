@@ -11,11 +11,14 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.haks.haksvn.common.code.service.CodeService;
 import com.haks.haksvn.common.code.util.CodeUtils;
+import com.haks.haksvn.common.exception.HaksvnException;
 import com.haks.haksvn.common.security.util.ContextHolder;
+import com.haks.haksvn.repository.service.RepositoryService;
 import com.haks.haksvn.source.dao.ReviewDao;
 import com.haks.haksvn.source.model.Review;
 import com.haks.haksvn.source.model.ReviewAuth;
 import com.haks.haksvn.source.model.ReviewComment;
+import com.haks.haksvn.source.model.ReviewCommentAuth;
 import com.haks.haksvn.source.model.ReviewId;
 import com.haks.haksvn.source.model.ReviewScore;
 import com.haks.haksvn.source.model.ReviewSummary;
@@ -31,8 +34,11 @@ public class ReviewService {
 	private UserService userService;
 	@Autowired
 	private CodeService codeService;
+	@Autowired
+	private RepositoryService repositoryService;
 	
 	public ReviewSummary retrieveReviewSummary(String repositoryKey, long revision){
+		repositoryService.checkRepositoryAccessRight(repositoryKey);
 		List<ReviewScore> reviewScoreList = reviewDao.retrieveReviewScoreListByRevision(repositoryKey, revision);
 		int totalScore = 0;
 		List<ReviewScore> reviewScorePositiveList = new ArrayList<ReviewScore>(0);
@@ -52,6 +58,9 @@ public class ReviewService {
 		}
 		
 		List<ReviewComment> reviewCommentList = reviewDao.retrieveReviewCommentListByRevision(repositoryKey, revision);
+		for( ReviewComment reviewComment : reviewCommentList ){
+			reviewComment.setReviewCommentAuth(ReviewCommentAuth.Builder.getBuilder().reviewerId(reviewComment.getReviewer().getUserId()).build());
+		}
 		
 		ReviewSummary reviewSummary = ReviewSummary.Builder.getBuilder().isReviewed(reviewScoreList.size() > 0)
 			.totalScore(totalScore)
@@ -73,7 +82,8 @@ public class ReviewService {
 	}
 	
 	public void saveReview(Review review){
-		if( !ReviewAuth.Builder.getBuilder().build().getIsCreatable() ) throw 
+		repositoryService.checkRepositoryAccessRight(review.getReviewId().getRepositoryKey());
+		if( !ReviewAuth.Builder.getBuilder().build().getIsCreatable() ) throw new HaksvnException("Insufficient privileges.");
 		if( review.getComment() != null && review.getComment().length() > 0 ){
 			reviewDao.saveReviewComment(ReviewComment.Builder.getBuilder()
 					.comment(review.getComment()).commentDate(System.currentTimeMillis())
@@ -85,6 +95,9 @@ public class ReviewService {
 	}
 	
 	public void deleteReviewComment(ReviewComment reviewComment){
+		reviewComment = reviewDao.retrieveReviewComment(reviewComment.getReviewCommentSeq());
+		repositoryService.checkRepositoryAccessRight(reviewComment.getRepositoryKey());
+		if(!ReviewCommentAuth.Builder.getBuilder().reviewerId(reviewComment.getReviewer().getUserId()).build().getIsDeletable()) throw new HaksvnException("Insufficient privileges.");
 		reviewDao.deleteRevieComment(reviewComment);
 	}
 }
