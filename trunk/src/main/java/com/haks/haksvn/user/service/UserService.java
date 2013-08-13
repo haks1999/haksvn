@@ -1,5 +1,6 @@
 package com.haks.haksvn.user.service;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -106,6 +107,21 @@ public class UserService {
 	public List<User> retrieveActiveUserByUserIdOrUserName(String searchString){
 		List<User> userList = userDao.retrieveActiveUserByUserIdOrUserName(searchString);
 		return userList;
+		
+	}
+	
+	public List<User> retrieveRepositoryActiveUserByUserIdOrUserName(String searchString, String repositoryKey){
+		// hibernate 쿼리를 못 짜서 아래와 같이 이중 for loop 로 만듦. 수정 필요
+		List<User> userList = userDao.retrieveActiveUserByUserIdOrUserName(searchString);
+		List<User> repoUserList = new ArrayList<User>(0);
+		for( User user: userList ){
+			for( Repository repository: user.getRepositoryList() ){
+				if( repository.getRepositoryKey().equals(repositoryKey)){
+					repoUserList.add(user);
+				}
+			}
+		}
+		return repoUserList;
 		
 	}
 	

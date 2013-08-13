@@ -15,6 +15,10 @@
 				port: {
 					required: true,
 					number: true
+				},
+				replyto: {
+					required: true,
+					email: true
 				}
 			}
 		});
@@ -38,15 +42,21 @@
 		<div class="content">
 			<form:form commandName="mailConfiguration" class="w200" id="frm_mail" method="post">
 				<p>
-					<form:label path="host" class="left">SMPT Host</form:label>
-					<form:input class="text w_10" path="host"/>
+					<form:label path="host" class="left">SMTP Host</form:label>
+					<form:input class="text w_200" path="host"/>
 					<form:errors path="host" />
 					<span class="form-status"></span>
 				</p>
 				<p>
-					<form:label path="port" class="left">SMPT Port</form:label>
+					<form:label path="port" class="left">SMTP Port</form:label>
 					<form:input class="text w_10" path="port"/>
 					<form:errors path="port" />
+					<span class="form-status"></span>
+				</p>
+				<p>
+					<form:label path="replyto" class="left">Reply To Address</form:label>
+					<form:input class="text w_200" path="replyto"/>
+					<form:errors path="replyto" />
 					<span class="form-status"></span>
 				</p>
 				<p>

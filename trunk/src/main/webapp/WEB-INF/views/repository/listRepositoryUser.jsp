@@ -57,12 +57,13 @@
 	function openSearchUserDialog(){
 		
 		$("#div_searchUser .chzn-select").val('').trigger("liszt:updated");
+		$("#div_searchUser .chzn-container li.search-choice").remove();
 		$.getJSON( "<c:url value="/common/users/find/"/>",
 				{searchString: ""}, 
 				function(data){
 					$("#div_searchUser .chzn-select option").remove();
 					for( var inx = 0 ; inx < data.length ; inx++ ){
-						$("#div_searchUser .chzn-select").append("<option value=\"" +  data[inx].userId + "\">" + data[inx].userName + "(" + data[inx].userName + ")" + "</option>");
+						$("#div_searchUser .chzn-select").append("<option value=\"" +  data[inx].userId + "\">" + data[inx].userName + "(" + data[inx].userId + ")" + "</option>");
 					}
 					$("#div_searchUser .chzn-select").chosen({width:"100%"});
 		    	}

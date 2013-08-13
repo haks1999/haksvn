@@ -30,6 +30,10 @@ public class PropertyUtils {
 		return "mail.smtp.port";
 	}
 	
+	public static String getMailSmtpReplytoKey(){
+		return "mail.smtp.replyto";
+	}
+	
 	public static String getMailSmtpSslEnabledKey(){
 		return "mail.smtp.ssl.enabled";
 	}
@@ -46,4 +50,19 @@ public class PropertyUtils {
 		return "mail.smtp.auth.password";
 	}
 	
+	public static String getMailTemplateReviewRequestSubjectKey(){
+		return "mail.template.review.request.subject.default";
+	}
+	
+	public static String getMailTemplateReviewRequestSubjectKey(String repositoryKey){
+		return "mail.template.review.request.subject." + repositoryKey;
+	}
+	
+	public static String getMailTemplateReviewRequestTextKey(){
+		return "mail.template.review.request.text.default";
+	}
+	
+	public static String getMailTemplateReviewRequestTextKey(String repositoryKey){
+		return "mail.template.review.request.text." + repositoryKey;
+	}
 }

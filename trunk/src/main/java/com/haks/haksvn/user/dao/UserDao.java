@@ -84,7 +84,7 @@ public class UserDao {
 		or.add(Restrictions.like("userName","%" + searchString + "%"))
 			.add(Restrictions.like("userId","%" + searchString + "%"));
 		criteria.add(or)
-			.add(Restrictions.eq("active", "common.boolean.yn.code.y"))
+			.add(Restrictions.eq("active", CodeUtils.getCommonCodeY()))
 			.addOrder(Order.asc("userName"));
 		
 		@SuppressWarnings("unchecked") List<User> result = criteria.list();

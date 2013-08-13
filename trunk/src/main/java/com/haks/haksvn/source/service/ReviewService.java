@@ -13,6 +13,11 @@ import com.haks.haksvn.common.code.service.CodeService;
 import com.haks.haksvn.common.code.util.CodeUtils;
 import com.haks.haksvn.common.exception.HaksvnException;
 import com.haks.haksvn.common.security.util.ContextHolder;
+import com.haks.haksvn.general.model.MailConfiguration;
+import com.haks.haksvn.general.model.MailMessage;
+import com.haks.haksvn.general.model.MailTemplate;
+import com.haks.haksvn.general.service.GeneralService;
+import com.haks.haksvn.general.util.MailTemplateUtils;
 import com.haks.haksvn.repository.service.RepositoryService;
 import com.haks.haksvn.source.dao.ReviewDao;
 import com.haks.haksvn.source.model.Review;
@@ -36,6 +41,8 @@ public class ReviewService {
 	private CodeService codeService;
 	@Autowired
 	private RepositoryService repositoryService;
+	@Autowired
+	private GeneralService generalService;
 	
 	public ReviewSummary retrieveReviewSummary(String repositoryKey, long revision){
 		repositoryService.checkRepositoryAccessRight(repositoryKey);
@@ -99,5 +106,23 @@ public class ReviewService {
 		repositoryService.checkRepositoryAccessRight(reviewComment.getRepositoryKey());
 		if(!ReviewCommentAuth.Builder.getBuilder().reviewerId(reviewComment.getReviewer().getUserId()).build().getIsDeletable()) throw new HaksvnException("Insufficient privileges.");
 		reviewDao.deleteRevieComment(reviewComment);
+	}
+	
+	public void requestReview(ReviewId reviewId, String[] userIdList){
+		repositoryService.checkRepositoryAccessRight(reviewId.getRepositoryKey());
+		
+		MailTemplate mailTemplate = generalService.retrieveMailTemplate(reviewId.getRepositoryKey(), CodeUtils.getMailTemplateReviewRequestCodeId());
+		
+		MailConfiguration mailConfiguration = generalService.retrieveMailConfiguration();
+		MailMessage mailMessage = new MailMessage();
+		mailMessage.setFrom(mailConfiguration.getReplyto());
+		mailMessage.setSubject(MailTemplateUtils.createRequestReviewSubject(reviewId, mailTemplate.getSubject()));
+		mailMessage.setText(MailTemplateUtils.createRequestReviewText(reviewId, mailTemplate.getText()));
+		List<String> userMailList = new ArrayList<String>(userIdList.length); 
+		for( String userId : userIdList ){
+			userMailList.add(userService.retrieveUserByUserId(userId).getEmail());
+		}
+		mailMessage.setTo(userMailList.toArray(new String[userMailList.size()]));
+		generalService.sendMail(mailConfiguration, mailMessage);
 	}
 }

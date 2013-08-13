@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.haks.haksvn.common.message.model.ResultMessage;
@@ -45,6 +46,16 @@ public class ReviewAjaxController {
 		ResultMessage message = new ResultMessage("Review comment deleted");
 		reviewService.deleteReviewComment(ReviewComment.Builder.getBuilder().reviewCommentSeq(reviewCommentSeq).build());
 		return message;
+    }
+	
+	@RequestMapping(value="/review/{repositoryKey}/{revision}/request", method=RequestMethod.POST)
+    public @ResponseBody ResultMessage addRepositoryUser(@PathVariable String repositoryKey,
+    												@PathVariable long revision,
+    												@RequestParam(value = "userId", required = true) String[] userIdList){
+    	
+    	ResultMessage message = new ResultMessage("send mail success");
+    	reviewService.requestReview(ReviewId.Builder.getBuilder().repositoryKey(repositoryKey).revision(revision).build(), userIdList);
+    	return message;
     }
 	
 	@ExceptionHandler(Exception.class)

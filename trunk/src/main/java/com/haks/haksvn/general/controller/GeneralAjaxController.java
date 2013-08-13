@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import com.haks.haksvn.common.message.model.DefaultMessage;
 import com.haks.haksvn.common.message.model.ResultMessage;
 import com.haks.haksvn.general.model.CommitLogTemplate;
+import com.haks.haksvn.general.model.MailTemplate;
 import com.haks.haksvn.general.service.GeneralService;
 
 @Controller
@@ -46,7 +47,27 @@ public class GeneralAjaxController {
     	return new ResultMessage("save success");
     }
     
+    @RequestMapping(value="/mailTemplate/{repositoryKey}", method=RequestMethod.GET)
+    public @ResponseBody MailTemplate retrieveMailTemplate(
+    												@RequestParam(value = "template", required = true) String mailTemplateTypeCodeId,
+													@PathVariable String repositoryKey){
+    	return generalService.retrieveMailTemplate(repositoryKey, mailTemplateTypeCodeId);
+    }
     
+    @RequestMapping(value="/mailTemplate/default", method=RequestMethod.GET)
+    public @ResponseBody MailTemplate retrieveDefaultMailTemplate(
+    												@RequestParam(value = "template", required = true) String mailTemplateTypeCodeId){
+    	return generalService.retrieveDefaultMailTemplate(mailTemplateTypeCodeId);
+    }
+    
+    @RequestMapping(value="/mailTemplate/{repositoryKey}", method=RequestMethod.POST)
+    public @ResponseBody DefaultMessage saveMailTemplate(
+													@PathVariable String repositoryKey,
+													@RequestParam(value = "template", required = true) String mailTemplateTypeCodeId,
+													@ModelAttribute("mailTemplate") MailTemplate mailTemplate){
+    	generalService.saveMailTemplate(mailTemplate, mailTemplateTypeCodeId);
+    	return new ResultMessage("save success");
+    }
     
     @ExceptionHandler(Exception.class)
     public void exceptionHandler(Exception e, HttpServletResponse response) throws Exception{

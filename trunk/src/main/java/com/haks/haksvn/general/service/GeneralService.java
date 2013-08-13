@@ -14,6 +14,8 @@ import com.haks.haksvn.common.property.service.PropertyService;
 import com.haks.haksvn.common.property.util.PropertyUtils;
 import com.haks.haksvn.general.model.CommitLogTemplate;
 import com.haks.haksvn.general.model.MailConfiguration;
+import com.haks.haksvn.general.model.MailMessage;
+import com.haks.haksvn.general.model.MailTemplate;
 
 @Service
 @Transactional(rollbackFor=Exception.class,propagation=Propagation.REQUIRED)
@@ -50,6 +52,7 @@ public class GeneralService {
 		Property hostProp = propertyService.retrievePropertyByPropertyKey(PropertyUtils.getMailSmtpHostKey());
 		Property portProp = propertyService.retrievePropertyByPropertyKey(PropertyUtils.getMailSmtpPortKey());
 		Property sslEnabledProp = propertyService.retrievePropertyByPropertyKey(PropertyUtils.getMailSmtpSslEnabledKey());
+		Property replyto = propertyService.retrievePropertyByPropertyKey(PropertyUtils.getMailSmtpReplytoKey());
 		
 		if( authEnabledProp != null ) mailConfiguration.setAuthEnabled(Boolean.valueOf(authEnabledProp.getPropertyValue()));
 		if( passwordProp != null ) mailConfiguration.setPassword(passwordProp.getPropertyValue());
@@ -57,6 +60,7 @@ public class GeneralService {
 		if( hostProp != null ) mailConfiguration.setHost(hostProp.getPropertyValue());
 		if( portProp != null ) mailConfiguration.setPort(portProp.getPropertyValue());
 		if( sslEnabledProp != null ) mailConfiguration.setSslEnabled(Boolean.valueOf(sslEnabledProp.getPropertyValue()));
+		if( replyto != null ) mailConfiguration.setReplyto(replyto.getPropertyValue());
 		
 		return mailConfiguration;
 	}
@@ -68,24 +72,51 @@ public class GeneralService {
 		propertyService.saveProperty(PropertyUtils.getMailSmtpHostKey(), mailConfiguration.getHost());
 		propertyService.saveProperty(PropertyUtils.getMailSmtpPortKey(), mailConfiguration.getPort());
 		propertyService.saveProperty(PropertyUtils.getMailSmtpSslEnabledKey(), String.valueOf(mailConfiguration.getSslEnabled()));
+		propertyService.saveProperty(PropertyUtils.getMailSmtpReplytoKey(), mailConfiguration.getReplyto());
 	}
 	
-	public void sendMail(MailConfiguration mailConfiguration){
+	public void sendMail(MailConfiguration mailConfiguration, MailMessage mailMessage){
 		JavaMailSenderImpl mailSenderImpl = new JavaMailSenderImpl();
-		mailSenderImpl.setHost("localhost");
-		mailSenderImpl.setUsername("haks1999");
-		mailSenderImpl.setPassword("haks1999");
-		//Properties javaMailProperties = new Properties();
-		//javaMailProperties.setProperty("mail.smtp.auth", "true");
-		//javaMailProperties.setProperty("mail.smtp.starttls.enable", "false");
-		//mailSenderImpl.setJavaMailProperties(javaMailProperties);
+		mailSenderImpl.setHost( mailConfiguration.getHost());
+		mailSenderImpl.setPort(Integer.valueOf(mailConfiguration.getPort()));
+		java.util.Properties javaMailProperties = new java.util.Properties();
+		javaMailProperties.setProperty("mail.smtp.auth", String.valueOf(mailConfiguration.getAuthEnabled()));
+		javaMailProperties.setProperty("mail.smtp.ssl.enable", String.valueOf(mailConfiguration.getSslEnabled()));
+		mailSenderImpl.setJavaMailProperties(javaMailProperties);
+		if( mailConfiguration.getAuthEnabled() ){
+			mailSenderImpl.setUsername( mailConfiguration.getUsername());
+			mailSenderImpl.setPassword( mailConfiguration.getPassword());
+		}
+		if( mailConfiguration.getSslEnabled() ){
+			mailSenderImpl.setProtocol("smtps");
+		}
 		MailSender mailSender = mailSenderImpl;
-		
 		SimpleMailMessage message = new SimpleMailMessage();
-		message.setFrom("haks1999@gmail.com");
-		message.setTo("haks1999@lgcns.com");
-		message.setSubject("without auth test");
-		message.setText("from here dlek");
+		message.setFrom( mailMessage.getFrom());
+		message.setTo(mailMessage.getTo());
+		message.setSubject(mailMessage.getSubject());
+		message.setText(mailMessage.getText());
 		mailSender.send(message);	
 	}
+	
+	public MailTemplate retrieveDefaultMailTemplate(String mailTemplateCodeId){
+		//boolean isReviewRequestType = CodeUtils.isMailTemplateReviewRequest(mailTemplateCodeId);
+		Property subjectProp = propertyService.retrievePropertyByPropertyKey(PropertyUtils.getMailTemplateReviewRequestSubjectKey());
+		Property textProp = propertyService.retrievePropertyByPropertyKey(PropertyUtils.getMailTemplateReviewRequestTextKey());
+		return MailTemplate.Builder.getBuilder().subject(subjectProp.getPropertyValue().replaceAll("%n", "\r")).text(textProp.getPropertyValue().replaceAll("%n", "\r")).build();
+	}
+	
+	public MailTemplate retrieveMailTemplate(String repositoryKey, String mailTemplateCodeId){
+		Property subjectProp = propertyService.retrievePropertyByPropertyKey(PropertyUtils.getMailTemplateReviewRequestSubjectKey(repositoryKey));
+		Property textProp = propertyService.retrievePropertyByPropertyKey(PropertyUtils.getMailTemplateReviewRequestTextKey(repositoryKey));
+		if( subjectProp == null ) subjectProp = propertyService.retrievePropertyByPropertyKey(PropertyUtils.getMailTemplateReviewRequestSubjectKey());
+		if( textProp == null ) textProp = propertyService.retrievePropertyByPropertyKey(PropertyUtils.getMailTemplateReviewRequestTextKey());
+		return MailTemplate.Builder.getBuilder().repositoryKey(repositoryKey).subject(subjectProp.getPropertyValue().replaceAll("%n", "\r")).text(textProp.getPropertyValue().replaceAll("%n", "\r")).build();
+	}
+	
+	public void saveMailTemplate(MailTemplate mailTemplate, String templateCodeId){
+		propertyService.saveProperty(PropertyUtils.getMailTemplateReviewRequestSubjectKey(mailTemplate.getRepositoryKey()), mailTemplate.getSubject().replaceAll("\r", "%n"));
+		propertyService.saveProperty(PropertyUtils.getMailTemplateReviewRequestTextKey(mailTemplate.getRepositoryKey()), mailTemplate.getText().replaceAll("\r", "%n"));
+	}
+	
 }
