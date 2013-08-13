@@ -50,6 +50,49 @@
 		$('a.opened').trigger('click');
 	};
 	
+	function openSearchUserDialog(){
+		$("#div_searchUser select").val('').trigger("liszt:updated");
+		$("#div_searchUser .chzn-container li.search-choice").remove();
+		$.getJSON( "<c:url value="/common/users/find/${repositoryKey}"/>",
+				{searchString: ""}, 
+				function(data){
+					$("#div_searchUser .chosen-select option").remove();
+					for( var inx = 0 ; inx < data.length ; inx++ ){
+						$("#div_searchUser .chosen-select").append("<option value=\"" +  data[inx].userId + "\">" + data[inx].userName + "(" + data[inx].userId + ")" + "</option>");
+					}
+					$("#div_searchUser .chosen-select").chosen({width:'380px'});
+		    	}
+		);
+		
+		$("#div_searchUser").dialog({
+			resizable: false,
+			height: 300,
+			width: 450,
+		    modal: true,
+		    buttons: {
+		          "Request": function() {
+		        	  requestReviewToUsers();
+		              $( this ).dialog( "close" );
+		          },
+		          Cancel: function() {
+		              $( this ).dialog( "close" );
+		          }
+		        }
+	    });
+	};
+	
+	function requestReviewToUsers(){
+		var selectedUsers = $("#div_searchUser .chosen-select").chosen().val();
+		if(selectedUsers.length < 1) return;
+		var userIds = {userId: selectedUsers};
+		$.post("<c:url value="/source/review/${repositoryKey}/${svnSource.log.revision}/request"/>",
+				$.param(userIds,true),
+	            function(data){
+					$().Message({type:data.type,text:data.text});
+	        },"json");
+	};
+	
+	
 </script>
 <c:set var="repoBrowsePathLink" value="${pageContext.request.contextPath}/source/browse/${repositoryKey}"/>
 <c:set var="repoChangesPathLink" value="${pageContext.request.contextPath}/source/changes/${repositoryKey}"/>
@@ -157,6 +200,7 @@
 						<div class="desc variable-help">
 							<p>
 								<b class="mr10">Review Score</b>
+								<font style="float:right;" class="path"><a onclick="openSearchUserDialog()">Request Review</a></font>
 								<c:choose>
 									<c:when test="${reviewSummary.isReviewed}">
 										<c:if test="${reviewSummary.totalScore > 0}">
@@ -291,4 +335,12 @@
 	</div>
 	
 	<div class="clear"></div>
+</div>
+
+<div id="div_searchUser" title="Search User" style="display:none;">
+	<div class="module text">
+		<p>Select users to review this change</p>
+		<select data-placeholder="Find Users" class="chosen-select" multiple>
+        </select>
+	</div>
 </div>

@@ -217,5 +217,13 @@ public class CodeUtils {
 	public static boolean isLogTemplateTagging(String code){
 		return getLogTemplateTaggingCodeId().equals(code);
 	}
-		
+	
+	// mail template
+	public static String getMailTemplateReviewRequestCodeId(){
+		return "mail.template.type.code.review.request";
+	}
+	
+	public static boolean isMailTemplateReviewRequest(String code){
+		return getMailTemplateReviewRequestCodeId().equals(code);
+	}
 }

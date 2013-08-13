@@ -24,14 +24,14 @@ public class GeneralController {
     private GeneralService generalService;
     
     @RequestMapping(value="/commitLog", method=RequestMethod.GET)
-    public String forwardCommitLogPage( ModelMap model ) {
+    public String forwardToCommitLogPage( ModelMap model ) {
     	List<Repository> repositoryList = repositoryService.retrieveRepositoryList();
     	model.addAttribute("repositoryList", repositoryList );
         return "/general/modifyCommitLog";
     }
     
     @RequestMapping(value="/mail", method=RequestMethod.GET)
-    public String forwardMailConfigurationPage( ModelMap model ) {
+    public String forwardToMailConfigurationPage( ModelMap model ) {
     	model.addAttribute("mailConfiguration", generalService.retrieveMailConfiguration());
         return "/general/modifyMail";
     }
@@ -42,6 +42,13 @@ public class GeneralController {
     	generalService.saveMailConfiguration(mailConfiguration);
     	model.addAttribute("mailConfiguration", mailConfiguration );
         return "/general/modifyMail";
+    }
+    
+    @RequestMapping(value="/mailTemplate", method=RequestMethod.GET)
+    public String forwardToMailTemplatePage( ModelMap model ) {
+    	List<Repository> repositoryList = repositoryService.retrieveRepositoryList();
+    	model.addAttribute("repositoryList", repositoryList );
+        return "/general/modifyMailTemplate";
     }
     
 }

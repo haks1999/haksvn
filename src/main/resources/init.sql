@@ -23,7 +23,8 @@ insert into menu (menu_seq, menu_name, menu_url, parent_menu_seq, menu_order, me
 insert into menu (menu_seq, menu_name, menu_url, parent_menu_seq, menu_order, menu_level, view_type) values (300, 	'Configuration'		, '/configuration'							,300	,300, 1, 'menu.view.type.code.default');
 insert into menu (menu_seq, menu_name, menu_url, parent_menu_seq, menu_order, menu_level, view_type) values (310, 	'General'			, '/configuration/general/commitLog'		,300	,100, 2, 'menu.view.type.code.leftmenu');
 insert into menu (menu_seq, menu_name, menu_url, parent_menu_seq, menu_order, menu_level, view_type) values (311, 	'Commit_Log'		, '/configuration/general/commitLog'		,310	,100, 3, 'menu.view.type.code.leftmenu');
-insert into menu (menu_seq, menu_name, menu_url, parent_menu_seq, menu_order, menu_level, view_type) values (312, 	'Mail'				, '/configuration/general/mail'				,310	,200, 3, 'menu.view.type.code.leftmenu');
+insert into menu (menu_seq, menu_name, menu_url, parent_menu_seq, menu_order, menu_level, view_type) values (312, 	'SMTP'				, '/configuration/general/mail'				,310	,200, 3, 'menu.view.type.code.leftmenu');
+insert into menu (menu_seq, menu_name, menu_url, parent_menu_seq, menu_order, menu_level, view_type) values (313, 	'Mail_Template'		, '/configuration/general/mailTemplate'		,310	,300, 3, 'menu.view.type.code.leftmenu');
 --insert into menu (menu_seq, menu_name, menu_url, parent_menu_seq, menu_order, menu_level, view_type) values (312, 	'Data_Management'	, '/configuration/general/dataManagement'	,310	,200, 3, 'menu.view.type.code.leftmenu');
 insert into menu (menu_seq, menu_name, menu_url, parent_menu_seq, menu_order, menu_level, view_type) values (320, 	'Users'				, '/configuration/users/list'				,300	,200, 2, 'menu.view.type.code.leftmenu');
 insert into menu (menu_seq, menu_name, menu_url, parent_menu_seq, menu_order, menu_level, view_type) values (321, 	'List'				, '/configuration/users/list'				,320	,100, 3, 'menu.view.type.code.leftmenu');
@@ -66,6 +67,7 @@ insert into code (code_id, code_group, code_name, code_value, code_order) values
 insert into code (code_id, code_group, code_name, code_value, code_order) values ('svn.passwd.type.code.md5-apache'	,'svn.passwd.type.code'			,'MD5(Apache)'	,'20'	,20 );
 insert into code (code_id, code_group, code_name, code_value, code_order) values ('log.template.type.code.request'	,'log.template.type.code'		,'Request'		,'10'	,10 );
 insert into code (code_id, code_group, code_name, code_value, code_order) values ('log.template.type.code.tagging'	,'log.template.type.code'		,'Tagging'		,'20'	,20 );
+insert into code (code_id, code_group, code_name, code_value, code_order) values ('mail.template.type.code.review.request'	,'mail.template.type.code'		,'Review Request'		,'10'	,10 );
 insert into code (code_id, code_group, code_name, code_value, code_order) values ('review.score.code.positive'		,'review.score.code'			,'Positive'		,'1'	,10 );
 insert into code (code_id, code_group, code_name, code_value, code_order) values ('review.score.code.neutral'			,'review.score.code'			,'Neutral'		,'0'	,20 );
 insert into code (code_id, code_group, code_name, code_value, code_order) values ('review.score.code.negative'		,'review.score.code'			,'Negative'		,'-1'	,30 );
@@ -74,6 +76,8 @@ insert into properties (property_key, property_value) values ('svn.authz.templat
 insert into properties (property_key, property_value) values ('commit.log.template.request.default'	,'[Request Group ID]: #request-group-id#%n[Request ID]: #request-id#%n[Request User]: #request-user-name#(#request-user-id#)%n[Approve User]: #approve-user-name#(#approve-user-id#)%n[Transfer User]: #transfer-user-name#(#transfer-user-id#)%n[Description]:%n#description#');
 insert into properties (property_key, property_value) values ('commit.log.template.tagging.default'	,'[Tagging ID]: #tagging-id#%n[Tagging User]: #tagging-user-name#(#tagging-user-id#)%n[Description]:%n#description#');
 insert into properties (property_key, property_value) values ('application.version'					,'0.2.2');
+insert into properties (property_key, property_value) values ('mail.template.review.request.subject.default'	,'[#repository-key#] request for review r#revision#');
+insert into properties (property_key, property_value) values ('mail.template.review.request.text.default'		,'There is a review request about this change.%n%nhttp://localhost:8080/haksvn/source/changes/#repository-key#?rev=#revision#');
 
 
 -- haks1999 // aW9fj8bm9Rt5
@@ -105,6 +109,7 @@ insert into menu_authority(menu_seq, code_id) values ( 300, 'user.auth.type.code
 insert into menu_authority(menu_seq, code_id) values ( 310, 'user.auth.type.code.system-admin');
 insert into menu_authority(menu_seq, code_id) values ( 311, 'user.auth.type.code.system-admin');
 insert into menu_authority(menu_seq, code_id) values ( 312, 'user.auth.type.code.system-admin');
+insert into menu_authority(menu_seq, code_id) values ( 313, 'user.auth.type.code.system-admin');
 insert into menu_authority(menu_seq, code_id) values ( 320, 'user.auth.type.code.system-admin');
 insert into menu_authority(menu_seq, code_id) values ( 321, 'user.auth.type.code.system-admin');
 insert into menu_authority(menu_seq, code_id) values ( 322, 'user.auth.type.code.system-admin');

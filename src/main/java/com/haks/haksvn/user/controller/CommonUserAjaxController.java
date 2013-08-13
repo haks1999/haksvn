@@ -5,6 +5,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -29,6 +30,14 @@ public class CommonUserAjaxController {
     @RequestMapping(value="/find", params ={"searchString"})
     public @ResponseBody List<User> listActiveUserByUserIdOrUserName(@RequestParam(value = "searchString", required = true) String searchString) {
     	List<User> userList = userService.retrieveActiveUserByUserIdOrUserName(searchString);
+    	return userList;
+    }
+    
+    @RequestMapping(value="/find/{repositoryKey}", params ={"searchString"})
+    public @ResponseBody List<User> listRepositoryActiveUserByUserIdOrUserName(
+    								@PathVariable String repositoryKey,
+    								@RequestParam(value = "searchString", required = true) String searchString) {
+    	List<User> userList = userService.retrieveRepositoryActiveUserByUserIdOrUserName(searchString, repositoryKey);
     	return userList;
     }
     

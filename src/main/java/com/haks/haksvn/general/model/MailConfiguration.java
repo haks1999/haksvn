@@ -11,6 +11,7 @@ public class MailConfiguration {
 	private boolean authEnabled = false;
 	private String username = "";
 	private String password = "";
+	private String replyto = "";
 	
 	public String getPort() {
 		return port;
@@ -47,6 +48,14 @@ public class MailConfiguration {
 	}
 	public void setPassword(String password) {
 		this.password = password;
+	}
+	
+	public String getReplyto(){
+		return replyto;
+	}
+	
+	public void setReplyto(String replyto){
+		this.replyto = replyto;
 	}
 	
 	
