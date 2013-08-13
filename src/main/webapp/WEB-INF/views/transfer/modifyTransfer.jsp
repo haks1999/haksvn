@@ -195,9 +195,11 @@ form p span font a{text-decoration:underline;cursor:pointer;}
 	function listRepositorySource( searchPath ){
 		$("#div_sourceTree").dynatree({
 			onClick: function(node, event) {
-				if(node.data.isFolder) node.expand();
+				if( node.getEventTargetType(event) == 'title'){
+					node.expand(true);
+				}
 				retrieveSourceList(node.data.fileChildren);
-				return true;
+				node.activate();
 		      },
             clickFolderMode: 1,
             selectMode: 1,
