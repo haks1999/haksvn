@@ -24,11 +24,14 @@
 	function listRepositorySource(){
 		$("#div_sourceTree").dynatree({
 			onClick: function(node, event) {
-				if(node.data.isFolder) node.expand();
+				if( node.getEventTargetType(event) == 'title'){
+					node.expand(true);
+				}
 				retrieveSourceList(node.data.fileChildren);
-				return true;
+				node.activate();
 		      },
             clickFolderMode: 1,
+            autoFocus: true,
             selectMode: 1,
 	        children:[{title:'[SVN]',path:'<c:out value="${path}" />',isLazy:true,isFolder:true, expand:true}],
 			onLazyRead: function(node){
