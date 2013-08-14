@@ -2,9 +2,11 @@ package com.haks.haksvn.source.dao;
 
 import java.util.List;
 
+import org.hibernate.Criteria;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.criterion.Order;
+import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
@@ -31,6 +33,15 @@ public class ReviewDao {
 	public ReviewScore retrieveReviewScoreByReviewId(ReviewId reviewId){
 		Session session = sessionFactory.getCurrentSession();
 		return (ReviewScore)session.get(ReviewScore.class, reviewId);
+	}
+	
+	public Integer retrieveReviewScoreSum(String repositoryKey, long revision){
+		Session session = sessionFactory.getCurrentSession();
+		Criteria criteria = session.createCriteria(ReviewScore.class)
+				.add(Restrictions.eq("reviewId.repositoryKey", repositoryKey))
+				.add(Restrictions.eq("reviewId.revision", revision));
+		criteria.setProjection(Projections.sum("score"));
+		return (Integer) criteria.uniqueResult();
 	}
 	
 	public List<ReviewComment> retrieveReviewCommentListByRevision(String repositoryKey, long revision){

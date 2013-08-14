@@ -116,6 +116,7 @@
 						<th>Commit Log Message</th>
 						<th width="100px">Date</th>
 						<th width="100px">Author</th>
+						<th class="score">Score</th>
 					</tr>
 				</thead>
 				<tbody>
@@ -126,11 +127,12 @@
 						<td class="message"></td>
 						<td class="date"></td>
 						<td class="author"></td>
+						<td class="score neutral">-3</td>
 					</tr>
 				</tbody>
 				<tfoot>
 					<tr>
-						<td colspan="4" style="text-align:center;">
+						<td colspan="5" style="text-align:center;">
 							<span class="showmore display-none"><font class="path"><a onclick="retrieveRepositoryChangeList()">Show More</a></font></span>
 							<span class="loader display-none"><img src="<c:url value="/images/ajax-loader.gif"/>" /></span>
 							<span class="nodata">no data</span>

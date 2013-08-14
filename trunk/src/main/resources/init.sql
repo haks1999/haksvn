@@ -1,4 +1,4 @@
-delete from review_comment;
+delete from review_comment;;
 delete from review_score;
 delete from transfer_source;
 delete from transfer;

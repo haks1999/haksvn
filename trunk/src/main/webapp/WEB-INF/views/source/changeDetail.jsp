@@ -101,7 +101,7 @@
 	<h1></h1>
 	<div class="col w10 last">
 		<div class="content">
-			<div class="box" style="position:absolute;display:block;width:300px;float:left;margin-right:-370px;left:10px;">
+			<div class="box" style="position:absolute; display:block;width:300px;float:left;margin-right:-370px;left:10px;">
 				<div class="head"><div></div></div>
 				<div class="desc">
 					<p>
