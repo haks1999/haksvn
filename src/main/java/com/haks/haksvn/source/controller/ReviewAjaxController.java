@@ -21,7 +21,7 @@ import com.haks.haksvn.source.service.ReviewService;
 import com.haks.haksvn.user.service.UserService;
 
 @Controller
-@RequestMapping(value="/source")
+@RequestMapping(value="/source/review")
 public class ReviewAjaxController {
 
 	@Autowired
@@ -29,7 +29,7 @@ public class ReviewAjaxController {
 	@Autowired
 	private UserService userService;
     
-	@RequestMapping(value={"/review/{repositoryKey}/{revision}"}, method=RequestMethod.POST)
+	@RequestMapping(value={"/{repositoryKey}/{revision}"}, method=RequestMethod.POST)
     public @ResponseBody ResultMessage saveReview(@PathVariable String repositoryKey,
     												@PathVariable long revision,
     												@ModelAttribute("review") Review review) throws Exception{
@@ -39,7 +39,7 @@ public class ReviewAjaxController {
 		return message;
     }
 	
-	@RequestMapping(value={"/review/{repositoryKey}/{revision}/comment/{reviewCommentSeq}"}, method=RequestMethod.DELETE)
+	@RequestMapping(value={"/{repositoryKey}/{revision}/comment/{reviewCommentSeq}"}, method=RequestMethod.DELETE)
     public @ResponseBody ResultMessage saveReview(@PathVariable String repositoryKey,
     												@PathVariable long revision,
     												@PathVariable int reviewCommentSeq) throws Exception{
@@ -48,7 +48,7 @@ public class ReviewAjaxController {
 		return message;
     }
 	
-	@RequestMapping(value="/review/{repositoryKey}/{revision}/request", method=RequestMethod.POST)
+	@RequestMapping(value="/{repositoryKey}/{revision}/request", method=RequestMethod.POST)
     public @ResponseBody ResultMessage addRepositoryUser(@PathVariable String repositoryKey,
     												@PathVariable long revision,
     												@RequestParam(value = "userId", required = true) String[] userIdList){

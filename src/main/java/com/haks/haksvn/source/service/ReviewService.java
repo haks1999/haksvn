@@ -88,6 +88,10 @@ public class ReviewService {
 		return Review.Builder.getBuilder().score(score).build();
 	}
 	
+	public int retrieveReviewScoreSum(String repositoryKey, long revision){
+		return reviewDao.retrieveReviewScoreSum(repositoryKey, revision);
+	}
+	
 	public void saveReview(Review review){
 		repositoryService.checkRepositoryAccessRight(review.getReviewId().getRepositoryKey());
 		if( !ReviewAuth.Builder.getBuilder().build().getIsCreatable() ) throw new HaksvnException("Insufficient privileges.");

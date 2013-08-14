@@ -330,6 +330,31 @@ background: #eee;
 border: 1px solid #888;
 border-width: 0 1px 0 1px;
 }
+table th.score{
+width:80px;
+text-align:center;
+}
+table td.score{
+background-repeat:no-repeat;
+background-position:center center;
+text-align:center;
+vertical-align:middle;
+}
+table tr:hover td.score{
+background-repeat:no-repeat;
+background-position:center center;
+text-align:center;
+vertical-align:middle;
+}
+table td.score.positive{
+background-image:url(../images/rounded_rec_green_2450.png);
+}
+table td.score.negative{
+background-image:url(../images/rounded_rec_red_2450.png);
+}
+table td.score.neutral{
+background-image:url(../images/rounded_rec_gray_2450.png);
+}
 table.compact{
 table-layout: fixed;
 }
