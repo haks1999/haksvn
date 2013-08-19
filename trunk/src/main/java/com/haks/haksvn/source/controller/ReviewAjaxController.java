@@ -1,5 +1,7 @@
 package com.haks.haksvn.source.controller;
 
+import java.util.List;
+
 import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,16 +14,19 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.haks.haksvn.common.exception.HaksvnException;
 import com.haks.haksvn.common.message.model.ResultMessage;
+import com.haks.haksvn.common.paging.model.Paging;
 import com.haks.haksvn.common.security.util.ContextHolder;
 import com.haks.haksvn.source.model.Review;
 import com.haks.haksvn.source.model.ReviewComment;
 import com.haks.haksvn.source.model.ReviewId;
+import com.haks.haksvn.source.model.ReviewRequest;
 import com.haks.haksvn.source.service.ReviewService;
 import com.haks.haksvn.user.service.UserService;
 
 @Controller
-@RequestMapping(value="/source/review")
+@RequestMapping(value="/source")
 public class ReviewAjaxController {
 
 	@Autowired
@@ -29,7 +34,7 @@ public class ReviewAjaxController {
 	@Autowired
 	private UserService userService;
     
-	@RequestMapping(value={"/{repositoryKey}/{revision}"}, method=RequestMethod.POST)
+	@RequestMapping(value={"/review/{repositoryKey}/{revision}"}, method=RequestMethod.POST)
     public @ResponseBody ResultMessage saveReview(@PathVariable String repositoryKey,
     												@PathVariable long revision,
     												@ModelAttribute("review") Review review) throws Exception{
@@ -39,7 +44,7 @@ public class ReviewAjaxController {
 		return message;
     }
 	
-	@RequestMapping(value={"/{repositoryKey}/{revision}/comment/{reviewCommentSeq}"}, method=RequestMethod.DELETE)
+	@RequestMapping(value={"/review/{repositoryKey}/{revision}/comment/{reviewCommentSeq}"}, method=RequestMethod.DELETE)
     public @ResponseBody ResultMessage saveReview(@PathVariable String repositoryKey,
     												@PathVariable long revision,
     												@PathVariable int reviewCommentSeq) throws Exception{
@@ -48,7 +53,7 @@ public class ReviewAjaxController {
 		return message;
     }
 	
-	@RequestMapping(value="/{repositoryKey}/{revision}/request", method=RequestMethod.POST)
+	@RequestMapping(value="/review/{repositoryKey}/{revision}/request", method=RequestMethod.POST)
     public @ResponseBody ResultMessage addRepositoryUser(@PathVariable String repositoryKey,
     												@PathVariable long revision,
     												@RequestParam(value = "userId", required = true) String[] userIdList){
@@ -56,6 +61,18 @@ public class ReviewAjaxController {
     	ResultMessage message = new ResultMessage("send mail success");
     	reviewService.requestReview(ReviewId.Builder.getBuilder().repositoryKey(repositoryKey).revision(revision).build(), userIdList);
     	return message;
+    }
+	
+	@RequestMapping(value="/reviewRequest/list/{repositoryKey}", method=RequestMethod.POST)
+    public @ResponseBody Paging<List<ReviewRequest>> retrieveReviewRequestList(@ModelAttribute("paging") Paging<ReviewRequest> paging,
+										    		//@RequestParam(value = "tUser", required = false, defaultValue="") String taggingUserId,
+													//@RequestParam(value = "tCode", required = false, defaultValue="") String taggingTypeCodeId,
+													@PathVariable String repositoryKey) throws HaksvnException {
+    	ReviewRequest reviewRequest = ReviewRequest.Builder.getBuilder().repositoryKey(repositoryKey).build();
+    	paging.setModel(reviewRequest);
+    	
+    	Paging<List<ReviewRequest>> reviewRequestListPaging = reviewService.retrieveReviewRequestList(paging);
+    	return reviewRequestListPaging;
     }
 	
 	@ExceptionHandler(Exception.class)

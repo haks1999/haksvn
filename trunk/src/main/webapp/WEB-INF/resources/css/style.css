@@ -722,7 +722,7 @@ display:none;
 /*-------------------------TABLE--------------------------*/
 table {width:100%;}
 th.checkbox {width:0px}
-table tr:hover td {background:#e4e4e4;}
+table tr:hover td {background-color:#e4e4e4;}
 
 table th {
 font-size:13px;

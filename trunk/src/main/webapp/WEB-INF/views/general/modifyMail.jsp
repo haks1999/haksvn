@@ -37,9 +37,9 @@
 	};
 </script>
 <div class="content-page">
-	<h1>Mail Configuration</h1>
 	<div class="col w10 last">
 		<div class="content">
+			<h1>Mail Configuration</h1>
 			<form:form commandName="mailConfiguration" class="w200" id="frm_mail" method="post">
 				<p>
 					<form:label path="host" class="left">SMTP Host</form:label>
@@ -92,5 +92,13 @@
 			</form:form>
 		</div>
 	</div>
+	<!-- 
+	<hr/>
+	<div class="col w10 last">
+		<div class="content">
+			<h1>Mail Notification</h1>
+		</div>
+	</div>
+	-->
 	<div class="clear"></div>
 </div>

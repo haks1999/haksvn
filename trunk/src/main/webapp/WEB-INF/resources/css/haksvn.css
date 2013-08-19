@@ -340,12 +340,6 @@ background-position:center center;
 text-align:center;
 vertical-align:middle;
 }
-table tr:hover td.score{
-background-repeat:no-repeat;
-background-position:center center;
-text-align:center;
-vertical-align:middle;
-}
 table td.score.positive{
 background-image:url(../images/rounded_rec_green_2450.png);
 }
