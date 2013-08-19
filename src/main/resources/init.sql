@@ -1,5 +1,7 @@
 delete from review_comment;;
 delete from review_score;
+delete from review_request;
+delete from review_request_users;
 delete from transfer_source;
 delete from transfer;
 delete from transfer_group;
@@ -19,7 +21,8 @@ insert into menu (menu_seq, menu_name, menu_url, parent_menu_seq, menu_order, me
 insert into menu (menu_seq, menu_name, menu_url, parent_menu_seq, menu_order, menu_level, view_type) values (200, 	'Source'			, '/source'									,200	,200, 1, 'menu.view.type.code.default');
 insert into menu (menu_seq, menu_name, menu_url, parent_menu_seq, menu_order, menu_level, view_type) values (210, 	'Browse'			, '/source/browse'							,200	,100, 2, 'menu.view.type.code.default');
 insert into menu (menu_seq, menu_name, menu_url, parent_menu_seq, menu_order, menu_level, view_type) values (220, 	'Changes'			, '/source/changes'							,200	,200, 2, 'menu.view.type.code.default');
-insert into menu (menu_seq, menu_name, menu_url, parent_menu_seq, menu_order, menu_level, view_type) values (230,		'Review'			, '/source/review'							,200	,300, 2, 'menu.view.type.code.invisible');
+insert into menu (menu_seq, menu_name, menu_url, parent_menu_seq, menu_order, menu_level, view_type) values (230,		'Review_Request'	, '/source/reviewRequest/list'				,200	,300, 2, 'menu.view.type.code.default');
+insert into menu (menu_seq, menu_name, menu_url, parent_menu_seq, menu_order, menu_level, view_type) values (240,		'Review'			, '/source/review'							,200	,400, 2, 'menu.view.type.code.invisible');
 insert into menu (menu_seq, menu_name, menu_url, parent_menu_seq, menu_order, menu_level, view_type) values (300, 	'Configuration'		, '/configuration'							,300	,300, 1, 'menu.view.type.code.default');
 insert into menu (menu_seq, menu_name, menu_url, parent_menu_seq, menu_order, menu_level, view_type) values (310, 	'General'			, '/configuration/general/commitLog'		,300	,100, 2, 'menu.view.type.code.leftmenu');
 insert into menu (menu_seq, menu_name, menu_url, parent_menu_seq, menu_order, menu_level, view_type) values (311, 	'Commit_Log'		, '/configuration/general/commitLog'		,310	,100, 3, 'menu.view.type.code.leftmenu');

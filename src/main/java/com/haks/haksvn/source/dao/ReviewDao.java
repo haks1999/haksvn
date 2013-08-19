@@ -11,8 +11,10 @@ import org.hibernate.criterion.Restrictions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
+import com.haks.haksvn.common.paging.model.Paging;
 import com.haks.haksvn.source.model.ReviewComment;
 import com.haks.haksvn.source.model.ReviewId;
+import com.haks.haksvn.source.model.ReviewRequest;
 import com.haks.haksvn.source.model.ReviewScore;
 import com.haks.haksvn.source.model.ReviewSummarySimple;
 
@@ -80,5 +82,42 @@ public class ReviewDao {
 		Session session = sessionFactory.getCurrentSession();
 		session.saveOrUpdate(reviewScore);
 	}
+	
+	public Paging<List<ReviewRequest>> retrieveReviewRequestList(Paging<ReviewRequest> paging ){
+		Session session = sessionFactory.getCurrentSession();
+		ReviewRequest search = paging.getModel();
+		Criteria crit = session.createCriteria(ReviewRequest.class,"t_reveiw_request")
+				.setFirstResult((int)paging.getStart())
+				.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY)
+				.setMaxResults((int)paging.getLimit())
+				.add(Restrictions.eq("repositoryKey", search.getRepositoryKey()))
+				.addOrder(Order.desc("requestDate"))
+				.addOrder(Order.desc("reviewRequestSeq"));
+		/*
+		if( search.getRequestUser() != null ){
+			String requestUserId = search.getRequestUser().getUserId();
+			if( requestUserId != null && requestUserId.length() > 0 ){
+				
+				crit.createAlias("t_transfer.requestUser", "t_user")
+					.add(Restrictions.eq("t_user.userId", requestUserId));
+			}
+		}
+		if( search.getTransferStateCode() != null ){
+			String transferStateCode = search.getTransferStateCode().getCodeId();
+			if( transferStateCode != null && transferStateCode.length() > 0 ){
+				crit.createAlias("t_transfer.transferStateCode", "t_code")
+					.add(Restrictions.eq("t_code.codeId", transferStateCode));
+			}
+		}
+		*/
+		
+		@SuppressWarnings("unchecked") List<ReviewRequest> result = (List<ReviewRequest>)crit.list();
+		Paging<List<ReviewRequest>> resultPaging = new Paging<List<ReviewRequest>>();
+		resultPaging.setModel(result);
+		Paging.Builder.getBuilder(resultPaging).limit(paging.getLimit()).start(paging.getStart());
+		
+		return resultPaging;
+	}
+	
 	
 }

@@ -12,6 +12,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.haks.haksvn.common.code.service.CodeService;
 import com.haks.haksvn.common.code.util.CodeUtils;
 import com.haks.haksvn.common.exception.HaksvnException;
+import com.haks.haksvn.common.paging.model.Paging;
 import com.haks.haksvn.common.security.util.ContextHolder;
 import com.haks.haksvn.general.model.MailConfiguration;
 import com.haks.haksvn.general.model.MailMessage;
@@ -26,6 +27,7 @@ import com.haks.haksvn.source.model.ReviewAuth;
 import com.haks.haksvn.source.model.ReviewComment;
 import com.haks.haksvn.source.model.ReviewCommentAuth;
 import com.haks.haksvn.source.model.ReviewId;
+import com.haks.haksvn.source.model.ReviewRequest;
 import com.haks.haksvn.source.model.ReviewScore;
 import com.haks.haksvn.source.model.ReviewSummary;
 import com.haks.haksvn.source.model.ReviewSummarySimple;
@@ -133,5 +135,10 @@ public class ReviewService {
 		}
 		mailMessage.setTo(userMailList.toArray(new String[userMailList.size()]));
 		generalService.sendMail(mailConfiguration, mailMessage);
+	}
+	
+	public Paging<List<ReviewRequest>> retrieveReviewRequestList(Paging<ReviewRequest> paging){
+		repositoryService.checkRepositoryAccessRight(paging.getModel().getRepositoryKey());
+		return reviewDao.retrieveReviewRequestList(paging);
 	}
 }
