@@ -32,6 +32,12 @@
 						$(row).children(".message").text(model[inx].message);
 						$(row).children(".date").text(haksvn.date.convertToEasyFormat(new Date(model[inx].date)));
 						$(row).children(".author").text(model[inx].author);
+						if( model[inx].reviewSummarySimple.isReviewed){
+							var totalScore = model[inx].reviewSummarySimple.totalScore;
+							var isPositive = totalScore > 0;
+							$(row).children(".score").text((isPositive?"+":"")+totalScore)
+								.removeClass("neutral").addClass(isPositive?"positive":"negative");	
+						}
 						$(row).removeClass("sample");
 						$('#tbl_changeList > tbody').append(row);
 					}
@@ -127,7 +133,7 @@
 						<td class="message"></td>
 						<td class="date"></td>
 						<td class="author"></td>
-						<td class="score neutral">-3</td>
+						<td class="score neutral">N/A</td>
 					</tr>
 				</tbody>
 				<tfoot>

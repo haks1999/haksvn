@@ -20,6 +20,7 @@ import com.haks.haksvn.common.paging.model.NextPaging;
 import com.haks.haksvn.repository.dao.LocalRepositoryFileDao;
 import com.haks.haksvn.repository.dao.SVNRepositoryDao;
 import com.haks.haksvn.repository.model.Repository;
+import com.haks.haksvn.source.cache.ReviewSummarySimpleCache;
 import com.haks.haksvn.source.model.SVNSource;
 import com.haks.haksvn.source.model.SVNSourceDiff;
 import com.haks.haksvn.source.model.SVNSourceLog;
@@ -37,6 +38,9 @@ public class SVNRepositoryService {
 	
 	@Autowired
 	private SVNRepositoryDao svnRepositoryDao;
+	
+	@Autowired
+	private ReviewSummarySimpleCache reviewSummarySimpleCache;
 	
 	
 	public boolean testInitalConnection( Repository repository ){
@@ -152,6 +156,9 @@ public class SVNRepositoryService {
 		boolean hasNext = logList.size() > paging.getLimit();
 		long end = hasNext?logList.get(paging.getLimit()).getRevision():0;
 		if( hasNext ) svnSource.getOlderLogs().remove(logList.size()-1);
+		for( SVNSourceLog svnSourceLog :  svnSource.getOlderLogs() ){
+			svnSourceLog.setReviewSummarySimple(reviewSummarySimpleCache.get(repository.getRepositoryKey(),svnSourceLog.getRevision()));
+		}
 		NextPaging<List<SVNSourceLog>> resultPaging = new NextPaging<List<SVNSourceLog>>(svnSource.getOlderLogs());
 		NextPaging.Builder.getBuilder(resultPaging).limit(paging.getLimit()).start(paging.getStart()).end(end).hasNext(hasNext);
 		

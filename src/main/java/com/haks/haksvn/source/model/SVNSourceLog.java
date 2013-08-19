@@ -12,6 +12,7 @@ public class SVNSourceLog {
 	private long date;
 	private String message;
 	private List<SVNSourceLogChanged> changedList;
+	private ReviewSummarySimple reviewSummarySimple;
 	
 	public SVNSourceLog(){
 		
@@ -63,6 +64,14 @@ public class SVNSourceLog {
 	public void setChangedList(List<SVNSourceLogChanged> changedList){
 		this.changedList = changedList;
 	}
+	
+	public ReviewSummarySimple getReviewSummarySimple(){
+		return reviewSummarySimple;
+	}
+	
+	public void setReviewSummarySimple(ReviewSummarySimple reviewSummarySimple){
+		this.reviewSummarySimple = reviewSummarySimple;
+	}
 
 	public static class Builder{
 		
@@ -102,6 +111,11 @@ public class SVNSourceLog {
 		
 		public Builder changedList(List<SVNSourceLogChanged> changedList){
 			svnSourceLog.setChangedList(changedList);
+			return this;
+		}
+		
+		public Builder reviewSummarySimple(ReviewSummarySimple reviewSummarySimple){
+			svnSourceLog.setReviewSummarySimple(reviewSummarySimple);
 			return this;
 		}
 		

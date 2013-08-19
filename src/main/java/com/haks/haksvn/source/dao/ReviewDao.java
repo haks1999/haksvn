@@ -14,6 +14,7 @@ import org.springframework.stereotype.Repository;
 import com.haks.haksvn.source.model.ReviewComment;
 import com.haks.haksvn.source.model.ReviewId;
 import com.haks.haksvn.source.model.ReviewScore;
+import com.haks.haksvn.source.model.ReviewSummarySimple;
 
 @Repository
 public class ReviewDao {
@@ -35,13 +36,19 @@ public class ReviewDao {
 		return (ReviewScore)session.get(ReviewScore.class, reviewId);
 	}
 	
-	public Integer retrieveReviewScoreSum(String repositoryKey, long revision){
+	public ReviewSummarySimple retrieveReviewSummarySimple(String repositoryKey, long revision){
+		ReviewSummarySimple reviewSummarySimple = new ReviewSummarySimple();
 		Session session = sessionFactory.getCurrentSession();
 		Criteria criteria = session.createCriteria(ReviewScore.class)
 				.add(Restrictions.eq("reviewId.repositoryKey", repositoryKey))
 				.add(Restrictions.eq("reviewId.revision", revision));
-		criteria.setProjection(Projections.sum("score"));
-		return (Integer) criteria.uniqueResult();
+		@SuppressWarnings("unchecked") List<ReviewScore> reviewScoreList = criteria.list();
+		reviewSummarySimple.setIsReviewed(reviewScoreList != null && reviewScoreList.size() > 0);
+		if( reviewSummarySimple.getIsReviewed() ){
+			criteria.setProjection(Projections.sum("score"));
+			reviewSummarySimple.setTotalScore(((Long)criteria.uniqueResult()).intValue());
+		}
+		return reviewSummarySimple;
 	}
 	
 	public List<ReviewComment> retrieveReviewCommentListByRevision(String repositoryKey, long revision){
