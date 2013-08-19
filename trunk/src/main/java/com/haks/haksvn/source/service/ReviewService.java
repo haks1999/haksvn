@@ -19,6 +19,7 @@ import com.haks.haksvn.general.model.MailTemplate;
 import com.haks.haksvn.general.service.GeneralService;
 import com.haks.haksvn.general.util.MailTemplateUtils;
 import com.haks.haksvn.repository.service.RepositoryService;
+import com.haks.haksvn.source.cache.ReviewSummarySimpleCache;
 import com.haks.haksvn.source.dao.ReviewDao;
 import com.haks.haksvn.source.model.Review;
 import com.haks.haksvn.source.model.ReviewAuth;
@@ -27,6 +28,7 @@ import com.haks.haksvn.source.model.ReviewCommentAuth;
 import com.haks.haksvn.source.model.ReviewId;
 import com.haks.haksvn.source.model.ReviewScore;
 import com.haks.haksvn.source.model.ReviewSummary;
+import com.haks.haksvn.source.model.ReviewSummarySimple;
 import com.haks.haksvn.user.service.UserService;
 
 @Service
@@ -43,6 +45,8 @@ public class ReviewService {
 	private RepositoryService repositoryService;
 	@Autowired
 	private GeneralService generalService;
+	@Autowired
+	private ReviewSummarySimpleCache reviewSummarySimpleCache;
 	
 	public ReviewSummary retrieveReviewSummary(String repositoryKey, long revision){
 		repositoryService.checkRepositoryAccessRight(repositoryKey);
@@ -88,8 +92,8 @@ public class ReviewService {
 		return Review.Builder.getBuilder().score(score).build();
 	}
 	
-	public int retrieveReviewScoreSum(String repositoryKey, long revision){
-		return reviewDao.retrieveReviewScoreSum(repositoryKey, revision);
+	public ReviewSummarySimple retrieveReviewSummarySimple(String repositoryKey, long revision){
+		return reviewDao.retrieveReviewSummarySimple(repositoryKey, revision);
 	}
 	
 	public void saveReview(Review review){
@@ -103,6 +107,7 @@ public class ReviewService {
 					.revision(review.getReviewId().getRevision()).build());
 		}
 		reviewDao.saveReviewScore(ReviewScore.Builder.getBuilder().reviewId(review.getReviewId()).score(review.getScore()).build());
+		reviewSummarySimpleCache.update(review.getReviewId().getRepositoryKey(), review.getReviewId().getRevision());
 	}
 	
 	public void deleteReviewComment(ReviewComment reviewComment){
