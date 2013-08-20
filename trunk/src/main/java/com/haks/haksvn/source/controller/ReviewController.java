@@ -2,8 +2,6 @@ package com.haks.haksvn.source.controller;
 
 import java.util.List;
 
-import javax.servlet.http.HttpServletRequest;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
@@ -16,27 +14,13 @@ import org.springframework.web.servlet.view.RedirectView;
 
 import com.haks.haksvn.repository.model.Repository;
 import com.haks.haksvn.repository.service.RepositoryService;
-import com.haks.haksvn.source.model.ReviewAuth;
-import com.haks.haksvn.source.model.SVNSource;
-import com.haks.haksvn.source.model.SVNSourceDiff;
-import com.haks.haksvn.source.service.ReviewService;
-import com.haks.haksvn.source.service.SourceService;
-import com.haks.haksvn.source.util.SourceUrlRewriteUtils;
-import com.haks.haksvn.source.util.SourceUtils;
 
 @Controller
 @RequestMapping(value="/source")
 public class ReviewController {
-         
 
 	@Autowired
     private RepositoryService repositoryService;
-	@Autowired
-    private SourceService sourceService;
-	@Autowired
-	private ReviewService reviewService;
-    
-	
 	
 	@RequestMapping(value="/reviewRequest/list", method=RequestMethod.GET)
     public ModelAndView forwardReviewRequestListPage( ModelMap model ) {
@@ -49,11 +33,21 @@ public class ReviewController {
     	}
     }
 	
-	@RequestMapping(value={"/reviewRequest/list/{repositoryKey}"}, method=RequestMethod.GET)
+	@RequestMapping(value={"/reviewRequest/list/{repositoryKey}"}, method=RequestMethod.GET )
     public String forwardReviewRequestListPage( ModelMap model,
+					    		@RequestParam(value = "rUser", required = false, defaultValue="") String reviwerId,
+								@RequestParam(value = "qUser", required = false, defaultValue="") String requestorId,
     							@PathVariable String repositoryKey) {
 		
         List<Repository> repositoryList = repositoryService.retrieveAccesibleActiveRepositoryList();
+        for( Repository repository : repositoryList ){
+        	if( repository.getRepositoryKey().equals(repositoryKey) ){
+        		model.addAttribute("userList", repository.getUserList());
+        		break;
+        	}
+        }
+        model.addAttribute("reviewerId", reviwerId);
+        model.addAttribute("requestorId", requestorId);
     	model.addAttribute("repositoryList", repositoryList );
     	model.addAttribute("repositoryKey", repositoryKey );
     	

@@ -3,7 +3,7 @@
 	$(function() {
 		$("#frm_mail").attr("action","<c:url value="/configuration/general/mail"/>");
 		setFormValidation();
-		selectAuthEnabled($("#frm_mail input[name=authEnabled]").val());
+		selectAuthEnabled($("#frm_mail input[name=authEnabled]").attr("checked"));
    	});
 	
 	function setFormValidation(){

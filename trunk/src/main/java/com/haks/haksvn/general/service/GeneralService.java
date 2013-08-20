@@ -61,7 +61,7 @@ public class GeneralService {
 		if( portProp != null ) mailConfiguration.setPort(portProp.getPropertyValue());
 		if( sslEnabledProp != null ) mailConfiguration.setSslEnabled(Boolean.valueOf(sslEnabledProp.getPropertyValue()));
 		if( replyto != null ) mailConfiguration.setReplyto(replyto.getPropertyValue());
-		
+
 		return mailConfiguration;
 	}
 	
@@ -82,14 +82,21 @@ public class GeneralService {
 		java.util.Properties javaMailProperties = new java.util.Properties();
 		javaMailProperties.setProperty("mail.smtp.auth", String.valueOf(mailConfiguration.getAuthEnabled()));
 		javaMailProperties.setProperty("mail.smtp.ssl.enable", String.valueOf(mailConfiguration.getSslEnabled()));
+		if( mailConfiguration.getSslEnabled() ){
+			mailSenderImpl.setProtocol("smtps");
+			javaMailProperties.setProperty("mail.smtps.auth", "true");
+			javaMailProperties.setProperty("mail.smtp.starttls.enable", "true");
+			javaMailProperties.setProperty("mail.transport.protocol", "smtps");
+			//javaMailProperties.setProperty("mail.smtp.socketFactory.class", "javax.net.ssl.SSLSocketFactory");
+			//javaMailProperties.setProperty("mail.smtp.socketFactory.fallback", "false");
+			
+		}
 		mailSenderImpl.setJavaMailProperties(javaMailProperties);
 		if( mailConfiguration.getAuthEnabled() ){
 			mailSenderImpl.setUsername( mailConfiguration.getUsername());
 			mailSenderImpl.setPassword( mailConfiguration.getPassword());
 		}
-		if( mailConfiguration.getSslEnabled() ){
-			mailSenderImpl.setProtocol("smtps");
-		}
+		
 		MailSender mailSender = mailSenderImpl;
 		SimpleMailMessage message = new SimpleMailMessage();
 		message.setFrom( mailMessage.getFrom());

@@ -93,23 +93,21 @@ public class ReviewDao {
 				.add(Restrictions.eq("repositoryKey", search.getRepositoryKey()))
 				.addOrder(Order.desc("requestDate"))
 				.addOrder(Order.desc("reviewRequestSeq"));
-		/*
-		if( search.getRequestUser() != null ){
-			String requestUserId = search.getRequestUser().getUserId();
-			if( requestUserId != null && requestUserId.length() > 0 ){
-				
-				crit.createAlias("t_transfer.requestUser", "t_user")
-					.add(Restrictions.eq("t_user.userId", requestUserId));
+		if( search.getRequestor() != null ){
+			String requestorId = search.getRequestor().getUserId();
+			if( requestorId != null && requestorId.length() > 0 ){
+				crit.createAlias("t_reveiw_request.requestor", "t_quser")
+					.add(Restrictions.eq("t_quser.userId", requestorId));
 			}
 		}
-		if( search.getTransferStateCode() != null ){
-			String transferStateCode = search.getTransferStateCode().getCodeId();
-			if( transferStateCode != null && transferStateCode.length() > 0 ){
-				crit.createAlias("t_transfer.transferStateCode", "t_code")
-					.add(Restrictions.eq("t_code.codeId", transferStateCode));
+		if( search.getReviewers() != null && search.getReviewers().size() > 0){
+			// 일단 한 명 기준으로
+			String reviewerId = search.getReviewers().get(0).getUserId();
+			if( reviewerId != null && reviewerId.length() > 0 ){
+				crit.createAlias("t_reveiw_request.reviewers", "t_ruser")
+					.add(Restrictions.eq("t_ruser.userId", reviewerId));
 			}
 		}
-		*/
 		
 		@SuppressWarnings("unchecked") List<ReviewRequest> result = (List<ReviewRequest>)crit.list();
 		Paging<List<ReviewRequest>> resultPaging = new Paging<List<ReviewRequest>>();
@@ -119,5 +117,9 @@ public class ReviewDao {
 		return resultPaging;
 	}
 	
+	public void saveReviewRequest(ReviewRequest reviewRequest){
+		Session session = sessionFactory.getCurrentSession();
+		session.saveOrUpdate(reviewRequest);
+	}
 	
 }

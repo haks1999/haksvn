@@ -339,7 +339,7 @@
 
 <div id="div_searchUser" title="Search User" style="display:none;">
 	<div class="module text">
-		<p>Select users to review this change</p>
+		<p>Select users for request review this change</p>
 		<select data-placeholder="Find Users" class="chosen-select" multiple>
         </select>
 	</div>
