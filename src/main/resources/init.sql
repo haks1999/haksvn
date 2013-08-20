@@ -108,6 +108,7 @@ insert into menu_authority(menu_seq, code_id) values ( 200, 'user.auth.type.code
 insert into menu_authority(menu_seq, code_id) values ( 210, 'user.auth.type.code.system-admin');
 insert into menu_authority(menu_seq, code_id) values ( 220, 'user.auth.type.code.system-admin');
 insert into menu_authority(menu_seq, code_id) values ( 230, 'user.auth.type.code.system-admin');
+insert into menu_authority(menu_seq, code_id) values ( 240, 'user.auth.type.code.system-admin');
 insert into menu_authority(menu_seq, code_id) values ( 300, 'user.auth.type.code.system-admin');
 insert into menu_authority(menu_seq, code_id) values ( 310, 'user.auth.type.code.system-admin');
 insert into menu_authority(menu_seq, code_id) values ( 311, 'user.auth.type.code.system-admin');
@@ -129,6 +130,7 @@ insert into menu_authority(menu_seq, code_id) values ( 200, 'user.auth.type.code
 insert into menu_authority(menu_seq, code_id) values ( 210, 'user.auth.type.code.reviewer');
 insert into menu_authority(menu_seq, code_id) values ( 220, 'user.auth.type.code.reviewer');
 insert into menu_authority(menu_seq, code_id) values ( 230, 'user.auth.type.code.reviewer');
+insert into menu_authority(menu_seq, code_id) values ( 240, 'user.auth.type.code.reviewer');
 
 insert into menu_authority(menu_seq, code_id) values ( 100, 'user.auth.type.code.commiter');
 insert into menu_authority(menu_seq, code_id) values ( 110, 'user.auth.type.code.commiter');
@@ -138,4 +140,5 @@ insert into menu_authority(menu_seq, code_id) values ( 200, 'user.auth.type.code
 insert into menu_authority(menu_seq, code_id) values ( 210, 'user.auth.type.code.commiter');
 insert into menu_authority(menu_seq, code_id) values ( 220, 'user.auth.type.code.commiter');
 insert into menu_authority(menu_seq, code_id) values ( 230, 'user.auth.type.code.commiter');
+insert into menu_authority(menu_seq, code_id) values ( 240, 'user.auth.type.code.commiter');
 

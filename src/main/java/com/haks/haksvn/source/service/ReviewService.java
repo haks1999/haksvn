@@ -31,6 +31,7 @@ import com.haks.haksvn.source.model.ReviewRequest;
 import com.haks.haksvn.source.model.ReviewScore;
 import com.haks.haksvn.source.model.ReviewSummary;
 import com.haks.haksvn.source.model.ReviewSummarySimple;
+import com.haks.haksvn.user.model.User;
 import com.haks.haksvn.user.service.UserService;
 
 @Service
@@ -122,19 +123,28 @@ public class ReviewService {
 	public void requestReview(ReviewId reviewId, String[] userIdList){
 		repositoryService.checkRepositoryAccessRight(reviewId.getRepositoryKey());
 		
-		MailTemplate mailTemplate = generalService.retrieveMailTemplate(reviewId.getRepositoryKey(), CodeUtils.getMailTemplateReviewRequestCodeId());
+		List<User> reviewers = new ArrayList<User>(0);
+		for( String userId : userIdList ){
+			reviewers.add(userService.retrieveUserByUserId(userId));
+		}
+		ReviewRequest reviewRequest = ReviewRequest.Builder.getBuilder().repositoryKey(reviewId.getRepositoryKey())
+				.requestDate(System.currentTimeMillis()).requestor(userService.retrieveUserByUserId(ContextHolder.getLoginUser().getUserId()))
+				.reviewers(reviewers).reviewRequestSeq(0).revision(reviewId.getRevision()).build();
+		reviewDao.saveReviewRequest(reviewRequest);
 		
+		MailTemplate mailTemplate = generalService.retrieveMailTemplate(reviewId.getRepositoryKey(), CodeUtils.getMailTemplateReviewRequestCodeId());
 		MailConfiguration mailConfiguration = generalService.retrieveMailConfiguration();
 		MailMessage mailMessage = new MailMessage();
 		mailMessage.setFrom(mailConfiguration.getReplyto());
 		mailMessage.setSubject(MailTemplateUtils.createRequestReviewSubject(reviewId, mailTemplate.getSubject()));
 		mailMessage.setText(MailTemplateUtils.createRequestReviewText(reviewId, mailTemplate.getText()));
 		List<String> userMailList = new ArrayList<String>(userIdList.length); 
-		for( String userId : userIdList ){
-			userMailList.add(userService.retrieveUserByUserId(userId).getEmail());
+		for( User reviewer : reviewers ){
+			userMailList.add(reviewer.getEmail());
 		}
 		mailMessage.setTo(userMailList.toArray(new String[userMailList.size()]));
 		generalService.sendMail(mailConfiguration, mailMessage);
+		
 	}
 	
 	public Paging<List<ReviewRequest>> retrieveReviewRequestList(Paging<ReviewRequest> paging){
