@@ -1,4 +1,10 @@
 <%@ include file="/WEB-INF/views/common/include/taglib.jspf"%>
+<style type="text/css">
+input[type="radio"] {
+  vertical-align: middle;
+  font-style: italic;
+}
+</style>
 <script type="text/javascript">
 	$(function() {
 		$("#frm_mail").attr("action","<c:url value="/configuration/general/mail"/>");
@@ -92,13 +98,29 @@
 			</form:form>
 		</div>
 	</div>
-	<!-- 
 	<hr/>
 	<div class="col w10 last">
 		<div class="content">
 			<h1>Mail Notification</h1>
+				<form class="w200" method="post" action="<c:url value="/configuration/general/mailNotice" />">
+					<c:forEach items="${requestScope['mail.notice.type.code']}" var="mailNotice">
+						<p>
+							<label class="left"><c:out value="${mailNotice.codeName}"/></label>
+							<input type="radio" name="<c:out value="${mailNotice.codeId}"/>"  value="true"  <c:if test="${mailNotice.codeValue}">checked="checked"</c:if> /><span class="text italic">Enabled</span>
+							<input type="radio" name="<c:out value="${mailNotice.codeId}"/>"  value="false" <c:if test="${!mailNotice.codeValue}">checked="checked"</c:if> /><span class="text italic">Disabled</span>
+							<input type="text" class="text visible-hidden"/>
+						</p>
+					</c:forEach>
+					<p>
+						<label class="left"></label>
+						<span class="text italic">Notification Detail </span><span class="form-help"><spring:message htmlEscape="true" code="helper.general.mailNoticeType" /></span>
+					</p>
+					<p>
+						<label class="left"></label>
+						<a class="button green mt ml form_submit"><small class="icon check"></small><span>Confirm</span></a>
+					</p>
+				</form>
 		</div>
 	</div>
-	-->
 	<div class="clear"></div>
 </div>

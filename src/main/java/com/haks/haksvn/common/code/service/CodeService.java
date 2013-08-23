@@ -33,6 +33,10 @@ public class CodeService {
 		return codeDao.retrieveCode(codeId);
 	}
 	
+	public void saveCode(Code code){
+		codeDao.saveCode(code);
+	}
+	
 	public List<CodeGroup> retrieveCodeGroupList(){
 		List<Code> codeList = codeDao.retrieveCodeList();
 		Map<String,List<Code>> codeGroupMap = new HashMap<String,List<Code>>();
@@ -53,4 +57,5 @@ public class CodeService {
 		return codeGroupList;
 		
 	}
+	
 }
