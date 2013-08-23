@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import com.googlecode.ehcache.annotations.Cacheable;
+import com.googlecode.ehcache.annotations.TriggersRemove;
 import com.haks.haksvn.common.code.model.Code;
 
 @Repository
@@ -46,6 +47,12 @@ public class CodeDao {
 	public Code retrieveCode(String codeId){
 		Session session = sessionFactory.getCurrentSession();
 		return (Code)session.get(Code.class, codeId);
+	}
+	
+	@TriggersRemove(cacheName="codeCache", removeAll=true)
+	public void saveCode(Code code){
+		Session session = sessionFactory.getCurrentSession();
+		session.saveOrUpdate(code);
 	}
 	
 }

@@ -1,5 +1,7 @@
 package com.haks.haksvn.general.service;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.MailSender;
 import org.springframework.mail.SimpleMailMessage;
@@ -8,6 +10,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.haks.haksvn.common.code.model.Code;
+import com.haks.haksvn.common.code.service.CodeService;
 import com.haks.haksvn.common.code.util.CodeUtils;
 import com.haks.haksvn.common.property.model.Property;
 import com.haks.haksvn.common.property.service.PropertyService;
@@ -24,6 +28,9 @@ public class GeneralService {
 	
 	@Autowired
 	private PropertyService propertyService;
+	
+	@Autowired
+	private CodeService codeService;
 	
 	public CommitLogTemplate retrieveDefaultCommitLogTemplate(String logTemplateCodeId){
 		boolean isRequestType = CodeUtils.isLogTemplateRequest(logTemplateCodeId);
@@ -73,6 +80,14 @@ public class GeneralService {
 		propertyService.saveProperty(PropertyUtils.getMailSmtpPortKey(), mailConfiguration.getPort());
 		propertyService.saveProperty(PropertyUtils.getMailSmtpSslEnabledKey(), String.valueOf(mailConfiguration.getSslEnabled()));
 		propertyService.saveProperty(PropertyUtils.getMailSmtpReplytoKey(), mailConfiguration.getReplyto());
+	}
+	
+	public void saveMailNoticeConfiguration(List<Code> mailNoticeConfList){
+		for( Code mailNoticeConf : mailNoticeConfList ){
+			Code mailNoticeConfInHibernate = codeService.retrieveCode(mailNoticeConf.getCodeId());
+			mailNoticeConfInHibernate.setCodeValue(mailNoticeConf.getCodeValue());
+			codeService.saveCode(mailNoticeConfInHibernate);
+		}
 	}
 	
 	public void sendMail(MailConfiguration mailConfiguration, MailMessage mailMessage){
