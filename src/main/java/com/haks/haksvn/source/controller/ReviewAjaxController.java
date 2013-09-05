@@ -56,7 +56,7 @@ public class ReviewAjaxController {
     }
 	
 	@RequestMapping(value="/review/{repositoryKey}/{revision}/request", method=RequestMethod.POST)
-    public @ResponseBody ResultMessage addRepositoryUser(@PathVariable String repositoryKey,
+    public @ResponseBody ResultMessage requestReview(@PathVariable String repositoryKey,
     												@PathVariable long revision,
     												@RequestParam(value = "userId", required = true) String[] userIdList){
     	
