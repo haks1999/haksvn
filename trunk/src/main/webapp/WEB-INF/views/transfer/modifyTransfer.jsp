@@ -720,31 +720,55 @@ form p span font a{text-decoration:underline;cursor:pointer;}
 					<label class="left">Request Date</label>
 					<input type="text" class="text w_150 readOnly requestDate" readonly/>
 				</p>
-				<p>
-					<label class="left">Approve User</label>
-					<input type="text" class="text w_150 readOnly" readonly value="${transfer.approveUser.userName}(${transfer.approveUser.userId})"/>
-				</p>
-				<p>
-					<form:hidden path="approveDate" />
-					<label class="left">Approve Date</label>
-					<input type="text" class="text w_150 readOnly approveDate" readonly/>
-				</p>
-				<p>
-					<form:hidden path="transferGroup.transferGroupSeq" />
-					<label class="left">Transfer Group</label>
-					<c:if test="${not empty transfer.transferGroup && transfer.transferGroup.transferGroupSeq > 0}">
-						<font class="path open-window"><a href="<c:url value="/transfer/requestGroup/list/${repository.repositoryKey}/${transfer.transferGroup.transferGroupSeq}"/>"><c:out value="group-${transfer.transferGroup.transferGroupSeq}"/></a></font>
-					</c:if>
-					<input type="text" class="text visible-hidden"/>
-				</p>
-				<p>
-					<form:hidden path="revision" />
-					<label class="left">Commit revision</label>
-					<c:if test="${transfer.revision > 0 }">
-						<font class="path open-window"><a href="<c:url value="/source/changes/${repository.repositoryKey}?rev=${transfer.revision}"/>"><c:out value="r${transfer.revision}"/></a></font>
-					</c:if>
-					<input type="text" class="text visible-hidden"/>
-				</p>
+				<c:if test="${!transferStateAuth.isEditable}">
+					<p>
+						<label class="left">Approve User</label>
+						<input type="text" class="text w_150 readOnly" readonly value="${transfer.approveUser.userName}(${transfer.approveUser.userId})"/>
+					</p>
+					<p>
+						<form:hidden path="approveDate" />
+						<label class="left">Approve Date</label>
+						<input type="text" class="text w_150 readOnly approveDate" readonly/>
+					</p>
+					<p>
+						<form:hidden path="transferGroup.transferGroupSeq" />
+						<label class="left">Transfer Group</label>
+						<c:if test="${not empty transfer.transferGroup && transfer.transferGroup.transferGroupSeq > 0}">
+							<font class="path open-window"><a href="<c:url value="/transfer/requestGroup/list/${repository.repositoryKey}/${transfer.transferGroup.transferGroupSeq}"/>"><c:out value="group-${transfer.transferGroup.transferGroupSeq}"/></a></font>
+						</c:if>
+						<input type="text" class="text visible-hidden"/>
+					</p>
+					<p>
+						<form:hidden path="revision" />
+						<label class="left">Commit revision</label>
+						<c:if test="${transfer.revision > 0 }">
+							<font class="path open-window"><a href="<c:url value="/source/changes/${repository.repositoryKey}?rev=${transfer.revision}"/>"><c:out value="r${transfer.revision}"/></a></font>
+						</c:if>
+						<input type="text" class="text visible-hidden"/>
+					</p>
+				</c:if>
+				<c:if test="${transferStateAuth.isEditable}">
+					<p>
+						<label class="left">Notice to</label>
+						<select id="sel_noticeUsers" data-placeholder="Find Users" class="chosen-select" multiple></select>
+					</p>
+					<script type="text/javascript">
+						$(function() {
+							$("#sel_noticeUsers").val('').trigger("liszt:updated");
+							$("#frm_transfer .chzn-container li.search-choice").remove();
+							$.getJSON( "<c:url value="/common/users/find/${repositoryKey}"/>",
+									{searchString: ""}, 
+									function(data){
+										$("#frm_transfer .chosen-select option").remove();
+										for( var inx = 0 ; inx < data.length ; inx++ ){
+											$("#frm_transfer .chosen-select").append("<option value=\"" +  data[inx].userId + "\">" + data[inx].userName + "(" + data[inx].userId + ")" + "</option>");
+										}
+										$("#frm_transfer .chosen-select").chosen({width:'380px'});
+							    	}
+							);
+					   	});
+					</script>
+				</c:if>
 				<hr/>
 				<p>
 					<span class="strong">Sources</span>

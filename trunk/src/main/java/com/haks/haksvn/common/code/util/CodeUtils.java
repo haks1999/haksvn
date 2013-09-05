@@ -226,4 +226,9 @@ public class CodeUtils {
 	public static boolean isMailTemplateReviewRequest(String code){
 		return getMailTemplateReviewRequestCodeId().equals(code);
 	}
+	
+	// mail notice
+	public static String getMailNoticeReviewRequestCodeId(){
+		return "mail.notice.type.code.review.request";
+	}
 }

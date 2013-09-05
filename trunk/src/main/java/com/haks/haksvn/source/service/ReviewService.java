@@ -132,19 +132,20 @@ public class ReviewService {
 				.reviewers(reviewers).reviewRequestSeq(0).revision(reviewId.getRevision()).build();
 		reviewDao.saveReviewRequest(reviewRequest);
 		
-		MailTemplate mailTemplate = generalService.retrieveMailTemplate(reviewId.getRepositoryKey(), CodeUtils.getMailTemplateReviewRequestCodeId());
-		MailConfiguration mailConfiguration = generalService.retrieveMailConfiguration();
-		MailMessage mailMessage = new MailMessage();
-		mailMessage.setFrom(mailConfiguration.getReplyto());
-		mailMessage.setSubject(MailTemplateUtils.createRequestReviewSubject(reviewId, mailTemplate.getSubject()));
-		mailMessage.setText(MailTemplateUtils.createRequestReviewText(reviewId, mailTemplate.getText()));
-		List<String> userMailList = new ArrayList<String>(userIdList.length); 
-		for( User reviewer : reviewers ){
-			userMailList.add(reviewer.getEmail());
+		if(Boolean.valueOf(codeService.retrieveCode(CodeUtils.getMailNoticeReviewRequestCodeId()).getCodeValue())){
+			MailTemplate mailTemplate = generalService.retrieveMailTemplate(reviewId.getRepositoryKey(), CodeUtils.getMailTemplateReviewRequestCodeId());
+			MailConfiguration mailConfiguration = generalService.retrieveMailConfiguration();
+			MailMessage mailMessage = new MailMessage();
+			mailMessage.setFrom(mailConfiguration.getReplyto());
+			mailMessage.setSubject(MailTemplateUtils.createRequestReviewSubject(reviewId, mailTemplate.getSubject()));
+			mailMessage.setText(MailTemplateUtils.createRequestReviewText(reviewId, mailTemplate.getText()));
+			List<String> userMailList = new ArrayList<String>(userIdList.length); 
+			for( User reviewer : reviewers ){
+				userMailList.add(reviewer.getEmail());
+			}
+			mailMessage.setTo(userMailList.toArray(new String[userMailList.size()]));
+			generalService.sendMail(mailConfiguration, mailMessage);
 		}
-		mailMessage.setTo(userMailList.toArray(new String[userMailList.size()]));
-		generalService.sendMail(mailConfiguration, mailMessage);
-		
 	}
 	
 	public Paging<List<ReviewRequest>> retrieveReviewRequestList(Paging<ReviewRequest> paging){
