@@ -71,6 +71,10 @@ insert into code (code_id, code_group, code_name, code_value, code_order) values
 insert into code (code_id, code_group, code_name, code_value, code_order) values ('log.template.type.code.request'	,'log.template.type.code'		,'Request'		,'10'	,10 );
 insert into code (code_id, code_group, code_name, code_value, code_order) values ('log.template.type.code.tagging'	,'log.template.type.code'		,'Tagging'		,'20'	,20 );
 insert into code (code_id, code_group, code_name, code_value, code_order) values ('mail.template.type.code.review.request'	,'mail.template.type.code'		,'Review Request'		,'10'	,10 );
+insert into code (code_id, code_group, code_name, code_value, code_order) values ('mail.template.type.code.transfer.request'	,'mail.template.type.code'		,'Transfer Request'		,'20'	,20 );
+insert into code (code_id, code_group, code_name, code_value, code_order) values ('mail.template.type.code.transfer.reject'	,'mail.template.type.code'		,'Transfer Reject'		,'30'	,30 );
+insert into code (code_id, code_group, code_name, code_value, code_order) values ('mail.template.type.code.transfer.approve'	,'mail.template.type.code'		,'Transfer Approve'		,'40'	,40 );
+insert into code (code_id, code_group, code_name, code_value, code_order) values ('mail.template.type.code.transfer.complete'	,'mail.template.type.code'		,'Transfer Compelte'	,'50'	,50 );
 insert into code (code_id, code_group, code_name, code_value, code_order) values ('mail.notice.type.code.review.request'	,'mail.notice.type.code'		,'Review Request'		,'false'	,10 );
 insert into code (code_id, code_group, code_name, code_value, code_order) values ('mail.notice.type.code.transfer.request'	,'mail.notice.type.code'		,'Transfer Request'		,'false'	,20 );
 insert into code (code_id, code_group, code_name, code_value, code_order) values ('mail.notice.type.code.transfer.reject'	,'mail.notice.type.code'		,'Transfer Reject'		,'false'	,30 );
@@ -86,6 +90,14 @@ insert into properties (property_key, property_value) values ('commit.log.templa
 insert into properties (property_key, property_value) values ('application.version'					,'0.2.2');
 insert into properties (property_key, property_value) values ('mail.template.review.request.subject.default'	,'[#repository-key#] request for review r#revision#');
 insert into properties (property_key, property_value) values ('mail.template.review.request.text.default'		,'There is a review request about this change.%n%nhttp://localhost:8080/haksvn/source/changes/#repository-key#?rev=#revision#');
+insert into properties (property_key, property_value) values ('mail.template.transfer.request.subject.default'	,'[#repository-key#] request for transfer approval req-#request-seq#');
+insert into properties (property_key, property_value) values ('mail.template.transfer.request.text.default'		,'There is a transfer request.%n%nhttp://localhost:8080/haksvn/transfer/request/list/#repository-key#/#request-seq#');
+insert into properties (property_key, property_value) values ('mail.template.transfer.reject.subject.default'	,'[#repository-key#] request for transfer has been rejected req-#request-seq#');
+insert into properties (property_key, property_value) values ('mail.template.transfer.reject.text.default'		,'There is a rejected request.%n%nhttp://localhost:8080/haksvn/transfer/request/list/#repository-key#/#request-seq#');
+insert into properties (property_key, property_value) values ('mail.template.transfer.approve.subject.default'	,'[#repository-key#] request for transfer has been approved req-#request-seq#');
+insert into properties (property_key, property_value) values ('mail.template.transfer.approve.text.default'		,'request has been approved.%n%nhttp://localhost:8080/haksvn/transfer/request/list/#repository-key#/#request-seq#');
+insert into properties (property_key, property_value) values ('mail.template.transfer.complete.subject.default'	,'[#repository-key#] transfer complete reqGroup-#request-group-seq#');
+insert into properties (property_key, property_value) values ('mail.template.transfer.complete.text.default'		,'transfer has been completed.%n%nhttp://localhost:8080/haksvn/transfer/requestGroup/list/#repository-key#/#request-group-seq#');
 
 
 -- haks1999 // aW9fj8bm9Rt5

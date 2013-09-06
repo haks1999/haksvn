@@ -90,27 +90,46 @@ public class GeneralService {
 		}
 	}
 	
+	private String[] getMailTemplateProperyKeyByCodeId(String repositoryKey, String mailTemplateCodeId ){
+		if( mailTemplateCodeId.equals(CodeUtils.getMailTemplateReviewRequestCodeId()) ){
+			return new String[]{PropertyUtils.getMailTemplateReviewRequestSubjectKey(repositoryKey),PropertyUtils.getMailTemplateReviewRequestTextKey(repositoryKey)};
+		}else if( mailTemplateCodeId.equals(CodeUtils.getMailTemplateTransferRequestCodeId()) ){
+			return new String[]{PropertyUtils.getMailTemplateTransferRequestSubjectKey(repositoryKey),PropertyUtils.getMailTemplateTransferRequestTextKey(repositoryKey)};
+		}else if( mailTemplateCodeId.equals(CodeUtils.getMailTemplateTransferRejectCodeId()) ){
+			return new String[]{PropertyUtils.getMailTemplateTransferRejectSubjectKey(repositoryKey),PropertyUtils.getMailTemplateTransferRejectTextKey(repositoryKey)};
+		}else if( mailTemplateCodeId.equals(CodeUtils.getMailTemplateTransferApproveCodeId()) ){
+			return new String[]{PropertyUtils.getMailTemplateTransferApproveSubjectKey(repositoryKey),PropertyUtils.getMailTemplateTransferApproveTextKey(repositoryKey)};
+		}else if( mailTemplateCodeId.equals(CodeUtils.getMailTemplateTransferCompleteCodeId()) ){
+			return new String[]{PropertyUtils.getMailTemplateTransferCompleteSubjectKey(repositoryKey),PropertyUtils.getMailTemplateTransferCompleteTextKey(repositoryKey)};
+		}else{
+			return new String[]{"",""};
+		}
+	}
 	
 	public MailTemplate retrieveDefaultMailTemplate(String mailTemplateCodeId){
-		//boolean isReviewRequestType = CodeUtils.isMailTemplateReviewRequest(mailTemplateCodeId);
-		Property subjectProp = propertyService.retrievePropertyByPropertyKey(PropertyUtils.getMailTemplateReviewRequestSubjectKey());
-		Property textProp = propertyService.retrievePropertyByPropertyKey(PropertyUtils.getMailTemplateReviewRequestTextKey());
+		String[] propKeyArr = getMailTemplateProperyKeyByCodeId("",mailTemplateCodeId);
+		Property subjectProp = propertyService.retrievePropertyByPropertyKey(propKeyArr[0]);
+		Property textProp = propertyService.retrievePropertyByPropertyKey(propKeyArr[1]);
 		return MailTemplate.Builder.getBuilder().subject(subjectProp.getPropertyValue().replaceAll("%n", "\r")).text(textProp.getPropertyValue().replaceAll("%n", "\r")).build();
 	}
 	
 	public MailTemplate retrieveMailTemplate(String repositoryKey, String mailTemplateCodeId){
-		Property subjectProp = propertyService.retrievePropertyByPropertyKey(PropertyUtils.getMailTemplateReviewRequestSubjectKey(repositoryKey));
-		Property textProp = propertyService.retrievePropertyByPropertyKey(PropertyUtils.getMailTemplateReviewRequestTextKey(repositoryKey));
-		if( subjectProp == null ) subjectProp = propertyService.retrievePropertyByPropertyKey(PropertyUtils.getMailTemplateReviewRequestSubjectKey());
-		if( textProp == null ) textProp = propertyService.retrievePropertyByPropertyKey(PropertyUtils.getMailTemplateReviewRequestTextKey());
+		String[] propKeyArr = getMailTemplateProperyKeyByCodeId(repositoryKey,mailTemplateCodeId);
+		Property subjectProp = propertyService.retrievePropertyByPropertyKey(propKeyArr[0]);
+		Property textProp = propertyService.retrievePropertyByPropertyKey(propKeyArr[1]);
+		if( subjectProp == null || textProp == null ){
+			propKeyArr = getMailTemplateProperyKeyByCodeId("",mailTemplateCodeId);
+			subjectProp = propertyService.retrievePropertyByPropertyKey(propKeyArr[0]);
+			textProp = propertyService.retrievePropertyByPropertyKey(propKeyArr[1]);
+		}
 		return MailTemplate.Builder.getBuilder().repositoryKey(repositoryKey).subject(subjectProp.getPropertyValue().replaceAll("%n", "\r")).text(textProp.getPropertyValue().replaceAll("%n", "\r")).build();
 	}
 	
 	public void saveMailTemplate(MailTemplate mailTemplate, String templateCodeId){
-		propertyService.saveProperty(PropertyUtils.getMailTemplateReviewRequestSubjectKey(mailTemplate.getRepositoryKey()), mailTemplate.getSubject().replaceAll("\r", "%n"));
-		propertyService.saveProperty(PropertyUtils.getMailTemplateReviewRequestTextKey(mailTemplate.getRepositoryKey()), mailTemplate.getText().replaceAll("\r", "%n"));
+		String[] propKeyArr = getMailTemplateProperyKeyByCodeId(mailTemplate.getRepositoryKey(),templateCodeId);
+		propertyService.saveProperty(propKeyArr[0], mailTemplate.getSubject().replaceAll("\r", "%n"));
+		propertyService.saveProperty(propKeyArr[1], mailTemplate.getText().replaceAll("\r", "%n"));
 	}
-	
 	
 	public void sendMail(MailConfiguration mailConfiguration, MailMessage mailMessage){
 		JavaMailSenderImpl mailSenderImpl = new JavaMailSenderImpl();
