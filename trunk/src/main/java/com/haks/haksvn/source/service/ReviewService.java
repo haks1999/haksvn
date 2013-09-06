@@ -137,8 +137,8 @@ public class ReviewService {
 			MailConfiguration mailConfiguration = generalService.retrieveMailConfiguration();
 			MailMessage mailMessage = new MailMessage();
 			mailMessage.setFrom(mailConfiguration.getReplyto());
-			mailMessage.setSubject(MailTemplateUtils.createRequestReviewSubject(reviewId, mailTemplate.getSubject()));
-			mailMessage.setText(MailTemplateUtils.createRequestReviewText(reviewId, mailTemplate.getText()));
+			mailMessage.setSubject(MailTemplateUtils.createReviewRequestSubject(reviewId, mailTemplate.getSubject()));
+			mailMessage.setText(MailTemplateUtils.createReviewRequestText(reviewId, mailTemplate.getText()));
 			List<String> userMailList = new ArrayList<String>(userIdList.length); 
 			for( User reviewer : reviewers ){
 				userMailList.add(reviewer.getEmail());

@@ -227,8 +227,56 @@ public class CodeUtils {
 		return getMailTemplateReviewRequestCodeId().equals(code);
 	}
 	
+	public static String getMailTemplateTransferRequestCodeId(){
+		return "mail.template.type.code.transfer.request";
+	}
+	
+	public static boolean isMailTemplateTransferRequest(String code){
+		return getMailTemplateTransferRequestCodeId().equals(code);
+	}
+	
+	public static String getMailTemplateTransferRejectCodeId(){
+		return "mail.template.type.code.transfer.reject";
+	}
+	
+	public static boolean isMailTemplateTransferReject(String code){
+		return getMailTemplateTransferRejectCodeId().equals(code);
+	}
+	
+	public static String getMailTemplateTransferApproveCodeId(){
+		return "mail.template.type.code.transfer.approve";
+	}
+	
+	public static boolean isMailTemplateTransferApprove(String code){
+		return getMailTemplateTransferApproveCodeId().equals(code);
+	}
+	
+	public static String getMailTemplateTransferCompleteCodeId(){
+		return "mail.template.type.code.transfer.complete";
+	}
+	
+	public static boolean isMailTemplateTransferComplete(String code){
+		return getMailTemplateTransferCompleteCodeId().equals(code);
+	}
+	
 	// mail notice
 	public static String getMailNoticeReviewRequestCodeId(){
 		return "mail.notice.type.code.review.request";
+	}
+	
+	public static String getMailNoticeTransferRequestCodeId(){
+		return "mail.notice.type.code.transfer.request";
+	}
+	
+	public static String getMailNoticeTransferRejectCodeId(){
+		return "mail.notice.type.code.transfer.reject";
+	}
+	
+	public static String getMailNoticeTransferApproveCodeId(){
+		return "mail.notice.type.code.transfer.approve";
+	}
+	
+	public static String getMailNoticeTransferCompleteCodeId(){
+		return "mail.notice.type.code.transfer.complete";
 	}
 }

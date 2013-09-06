@@ -14,6 +14,11 @@ import com.haks.haksvn.common.code.util.CodeUtils;
 import com.haks.haksvn.common.exception.HaksvnException;
 import com.haks.haksvn.common.paging.model.Paging;
 import com.haks.haksvn.common.security.util.ContextHolder;
+import com.haks.haksvn.general.model.MailConfiguration;
+import com.haks.haksvn.general.model.MailMessage;
+import com.haks.haksvn.general.model.MailTemplate;
+import com.haks.haksvn.general.service.GeneralService;
+import com.haks.haksvn.general.util.MailTemplateUtils;
 import com.haks.haksvn.repository.model.Repository;
 import com.haks.haksvn.repository.service.RepositoryService;
 import com.haks.haksvn.repository.service.SVNRepositoryService;
@@ -23,6 +28,7 @@ import com.haks.haksvn.transfer.model.Transfer;
 import com.haks.haksvn.transfer.model.TransferGroup;
 import com.haks.haksvn.transfer.model.TransferSource;
 import com.haks.haksvn.transfer.model.TransferStateAuth;
+import com.haks.haksvn.user.model.User;
 import com.haks.haksvn.user.service.UserService;
 
 @Service
@@ -41,6 +47,8 @@ public class TransferService {
 	private SVNRepositoryService svnRepositoryService;
 	@Autowired
 	private TransferGroupService transferGroupService;
+	@Autowired
+	private GeneralService generalService;
 	
 	public Paging<List<Transfer>> retrieveTransferList(Paging<Transfer> paging){
 		repositoryService.checkRepositoryAccessRight(paging.getModel().getRepositoryKey());
@@ -154,7 +162,7 @@ public class TransferService {
 		return transferDao.deleteTransfer(transfer);
 	}
 	
-	public Transfer requestTransfer(Transfer transfer){
+	public Transfer requestTransfer(Transfer transfer, String[] noticeUserIdList){
 		transfer = transferDao.retrieveTransferByTransferSeq(transfer.getTransferSeq());
 		repositoryService.checkRepositoryAccessRight(transfer.getRepositoryKey());
 		if( !TransferStateAuth.Builder.getBuilder().transfer(transfer).build().getIsRequestable() ){
@@ -162,7 +170,32 @@ public class TransferService {
 		}
 		transfer.setTransferStateCode(Code.Builder.getBuilder().codeId(CodeUtils.getTransferRequestCodeId()).build());
 		transfer.setRequestDate(System.currentTimeMillis());
-		return transferDao.updateTransfer(transfer);
+		transferDao.updateTransfer(transfer);
+		
+		if( Boolean.valueOf(codeService.retrieveCode(CodeUtils.getMailNoticeTransferRequestCodeId()).getCodeValue()) ){
+			sendTransferRquestNotice(transfer, noticeUserIdList);
+		}
+		return transfer;
+	}
+	
+	private void sendTransferRquestNotice(Transfer transfer, String[] noticeUserIdList){
+		MailTemplate mailTemplate = generalService.retrieveMailTemplate(transfer.getRepositoryKey(), CodeUtils.getMailTemplateTransferRequestCodeId());
+		MailConfiguration mailConfiguration = generalService.retrieveMailConfiguration();
+		MailMessage mailMessage = new MailMessage();
+		mailMessage.setFrom(mailConfiguration.getReplyto());
+		mailMessage.setSubject(MailTemplateUtils.createTransferRequestSubject(transfer, mailTemplate.getSubject()));
+		mailMessage.setText(MailTemplateUtils.createTransferRequestText(transfer, mailTemplate.getText()));
+		
+		List<User> noticeUserList = new ArrayList<User>(0);
+		for( String userId : noticeUserIdList ){
+			noticeUserList.add(userService.retrieveUserByUserId(userId));
+		}
+		List<String> userMailList = new ArrayList<String>(noticeUserIdList.length); 
+		for( User noticeUser : noticeUserList ){
+			userMailList.add(noticeUser.getEmail());
+		}
+		mailMessage.setTo(userMailList.toArray(new String[userMailList.size()]));
+		generalService.sendMail(mailConfiguration, mailMessage);
 	}
 	
 	public Transfer requestCancelTransfer(Transfer transfer){

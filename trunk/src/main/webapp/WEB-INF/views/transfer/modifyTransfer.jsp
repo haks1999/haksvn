@@ -747,14 +747,15 @@ form p span font a{text-decoration:underline;cursor:pointer;}
 						<input type="text" class="text visible-hidden"/>
 					</p>
 				</c:if>
-				<c:if test="${transferStateAuth.isEditable}">
+				<c:if test="${transferStateAuth.isRequestable && useMailNoticeRequest}">
 					<p>
 						<label class="left">Notice to</label>
-						<select id="sel_noticeUsers" data-placeholder="Find Users" class="chosen-select" multiple></select>
+						<input name="noticeUserList" type="hidden" />
+						<select id="sel_noticeUserList" data-placeholder="Find Users" class="chosen-select" multiple></select>
 					</p>
 					<script type="text/javascript">
 						$(function() {
-							$("#sel_noticeUsers").val('').trigger("liszt:updated");
+							$("#sel_noticeUserList").val('').trigger("liszt:updated");
 							$("#frm_transfer .chzn-container li.search-choice").remove();
 							$.getJSON( "<c:url value="/common/users/find/${repositoryKey}"/>",
 									{searchString: ""}, 
@@ -763,7 +764,10 @@ form p span font a{text-decoration:underline;cursor:pointer;}
 										for( var inx = 0 ; inx < data.length ; inx++ ){
 											$("#frm_transfer .chosen-select").append("<option value=\"" +  data[inx].userId + "\">" + data[inx].userName + "(" + data[inx].userId + ")" + "</option>");
 										}
-										$("#frm_transfer .chosen-select").chosen({width:'380px'});
+										$("#frm_transfer .chosen-select").chosen({width:'380px'})
+											.change(function(){
+												$("#frm_transfer input[name=noticeUserList]").val($("#frm_transfer .chosen-select").chosen().val());
+											});
 							    	}
 							);
 					   	});

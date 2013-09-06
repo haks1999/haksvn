@@ -17,6 +17,8 @@ import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.springframework.web.servlet.view.RedirectView;
 
+import com.haks.haksvn.common.code.service.CodeService;
+import com.haks.haksvn.common.code.util.CodeUtils;
 import com.haks.haksvn.common.security.util.ContextHolder;
 import com.haks.haksvn.repository.model.Repository;
 import com.haks.haksvn.repository.service.RepositoryService;
@@ -32,6 +34,8 @@ public class TransferController {
     private RepositoryService repositoryService;
 	@Autowired
 	private TransferService transferService;
+	@Autowired
+	private CodeService codeService;
     
 	@RequestMapping(value="/request/list", method=RequestMethod.GET)
     public ModelAndView forwardTransferListPage( ModelMap model, RedirectAttributes redirectAttributes ) {
@@ -87,6 +91,7 @@ public class TransferController {
 		model.addAttribute("repository", repositoryService.retrieveRepositoryByRepositoryKey(repositoryKey));
 		model.addAttribute("transfer", transfer);
 		model.addAttribute("transferStateAuth", TransferStateAuth.Builder.getBuilder().transfer(transfer).build());
+		model.addAttribute("useMailNoticeRequest", codeService.retrieveCode(CodeUtils.getMailNoticeTransferRequestCodeId()).getCodeValue());
 		transfer.setSourceList(null);	// lazy loading
     	return "/transfer/modifyTransfer";
     }
@@ -126,8 +131,9 @@ public class TransferController {
 	@RequestMapping(value={"/request/list/{repositoryKey}/request"}, method=RequestMethod.POST)
     public ModelAndView requestTransfer(ModelMap model, 
     									@ModelAttribute("transfer") Transfer transfer, 
-    									@PathVariable String repositoryKey){
-    	transfer = transferService.requestTransfer(transfer);
+    									@PathVariable String repositoryKey,
+    									@RequestParam(value = "noticeUserList", required = false) String[] noticeUserIdList){
+    	transfer = transferService.requestTransfer(transfer, noticeUserIdList);
     	String param = "?rUser=" + ContextHolder.getLoginUser().getUserId() + "&sCode=" + transfer.getTransferStateCode().getCodeId();
     	return new ModelAndView(new RedirectView("/transfer/request/list/" + transfer.getRepositoryKey() + param, true));
     }
