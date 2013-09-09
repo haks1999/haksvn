@@ -172,7 +172,8 @@ public class TransferService {
 		transfer.setRequestDate(System.currentTimeMillis());
 		transferDao.updateTransfer(transfer);
 		
-		if( Boolean.valueOf(codeService.retrieveCode(CodeUtils.getMailNoticeTransferRequestCodeId()).getCodeValue()) ){
+		if( Boolean.valueOf(codeService.retrieveCode(CodeUtils.getMailNoticeTransferRequestCodeId()).getCodeValue()) 
+				&& noticeUserIdList.length > 0){
 			sendTransferRquestNotice(transfer, noticeUserIdList);
 		}
 		return transfer;
@@ -221,6 +222,10 @@ public class TransferService {
 		transfer.setApproveUser(userService.retrieveUserByUserId(ContextHolder.getLoginUser().getUserId()));
 		transfer = transferDao.updateTransfer(transfer);
 		
+		if( Boolean.valueOf(codeService.retrieveCode(CodeUtils.getMailNoticeTransferApproveCodeId()).getCodeValue())){
+			sendTransferApproveNotice(transfer);
+		}
+		
 		if( CodeUtils.getTransferEmergencyTypeCodeId().equals(transfer.getTransferTypeCode().getCodeId())){
 			String title = "Emergency RequestGroup by [req-" + transfer.getTransferSeq() + "]";
 			String description = "Automatically created by Emergency Request [req-" + transfer.getTransferSeq() + "]";
@@ -235,6 +240,19 @@ public class TransferService {
 		}
 		return transfer;
 	}
+	
+	private void sendTransferApproveNotice(Transfer transfer){
+		MailTemplate mailTemplate = generalService.retrieveMailTemplate(transfer.getRepositoryKey(), CodeUtils.getMailTemplateTransferApproveCodeId());
+		MailConfiguration mailConfiguration = generalService.retrieveMailConfiguration();
+		MailMessage mailMessage = new MailMessage();
+		mailMessage.setFrom(mailConfiguration.getReplyto());
+		mailMessage.setSubject(MailTemplateUtils.createTransferApproveSubject(transfer, mailTemplate.getSubject()));
+		mailMessage.setText(MailTemplateUtils.createTransferApproveText(transfer, mailTemplate.getText()));
+		mailMessage.setTo(new String[]{userService.retrieveUserByUserId(transfer.getRequestUser().getUserId()).getEmail()});
+		generalService.sendMail(mailConfiguration, mailMessage);
+	}
+	
+	
 	
 	public Transfer approveCancelTransfer(Transfer transfer){
 		transfer = transferDao.retrieveTransferByTransferSeq(transfer.getTransferSeq());
@@ -258,7 +276,22 @@ public class TransferService {
 		transfer.setTransferStateCode(Code.Builder.getBuilder().codeId(CodeUtils.getTransferRejectCodeId()).build());
 		transfer.setApproveDate(System.currentTimeMillis());
 		transfer.setApproveUser(userService.retrieveUserByUserId(ContextHolder.getLoginUser().getUserId()));
-		return transferDao.updateTransfer(transfer);
+		transfer = transferDao.updateTransfer(transfer);
+		if( Boolean.valueOf(codeService.retrieveCode(CodeUtils.getMailNoticeTransferRejectCodeId()).getCodeValue())){
+			sendTransferRejectNotice(transfer);
+		}
+		return transfer;
+	}
+	
+	private void sendTransferRejectNotice(Transfer transfer){
+		MailTemplate mailTemplate = generalService.retrieveMailTemplate(transfer.getRepositoryKey(), CodeUtils.getMailTemplateTransferRejectCodeId());
+		MailConfiguration mailConfiguration = generalService.retrieveMailConfiguration();
+		MailMessage mailMessage = new MailMessage();
+		mailMessage.setFrom(mailConfiguration.getReplyto());
+		mailMessage.setSubject(MailTemplateUtils.createTransferRejectSubject(transfer, mailTemplate.getSubject()));
+		mailMessage.setText(MailTemplateUtils.createTransferRejectText(transfer, mailTemplate.getText()));
+		mailMessage.setTo(new String[]{userService.retrieveUserByUserId(transfer.getRequestUser().getUserId()).getEmail()});
+		generalService.sendMail(mailConfiguration, mailMessage);
 	}
 	
 }

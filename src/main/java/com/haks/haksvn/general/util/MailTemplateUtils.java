@@ -2,6 +2,7 @@ package com.haks.haksvn.general.util;
 
 import com.haks.haksvn.source.model.ReviewId;
 import com.haks.haksvn.transfer.model.Transfer;
+import com.haks.haksvn.transfer.model.TransferGroup;
 
 public class MailTemplateUtils {
 	
@@ -25,5 +26,32 @@ public class MailTemplateUtils {
 
 	public static String createTransferRequestText(Transfer transfer, String mailTemplate){
 		return createTransferRequestSubject(transfer, mailTemplate);
+	}
+	
+	public static String createTransferRejectSubject(Transfer transfer, String mailTemplate){
+		return createTransferRequestSubject(transfer, mailTemplate);
+	}
+
+	public static String createTransferRejectText(Transfer transfer, String mailTemplate){
+		return createTransferRequestSubject(transfer, mailTemplate);
+	}
+	
+	public static String createTransferApproveSubject(Transfer transfer, String mailTemplate){
+		return createTransferRequestSubject(transfer, mailTemplate);
+	}
+
+	public static String createTransferApproveText(Transfer transfer, String mailTemplate){
+		return createTransferRequestSubject(transfer, mailTemplate);
+	}
+	
+	public static String createTransferCompleteSubject(TransferGroup transferGroup, String mailTemplate){
+		mailTemplate = mailTemplate.replaceAll("#repository-key#", transferGroup.getRepositoryKey());
+		mailTemplate = mailTemplate.replaceAll("#request-group-seq#", String.valueOf(transferGroup.getTransferGroupSeq()));
+		mailTemplate = mailTemplate.replaceAll("%n", "\n");
+		return mailTemplate;
+	}
+
+	public static String createTransferCompleteText(TransferGroup transferGroup, String mailTemplate){
+		return createTransferCompleteSubject(transferGroup, mailTemplate);
 	}
 }
