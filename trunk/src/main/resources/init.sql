@@ -74,7 +74,7 @@ insert into code (code_id, code_group, code_name, code_value, code_order) values
 insert into code (code_id, code_group, code_name, code_value, code_order) values ('mail.template.type.code.transfer.request'	,'mail.template.type.code'		,'Transfer Request'		,'20'	,20 );
 insert into code (code_id, code_group, code_name, code_value, code_order) values ('mail.template.type.code.transfer.reject'	,'mail.template.type.code'		,'Transfer Reject'		,'30'	,30 );
 insert into code (code_id, code_group, code_name, code_value, code_order) values ('mail.template.type.code.transfer.approve'	,'mail.template.type.code'		,'Transfer Approve'		,'40'	,40 );
-insert into code (code_id, code_group, code_name, code_value, code_order) values ('mail.template.type.code.transfer.complete'	,'mail.template.type.code'		,'Transfer Compelte'	,'50'	,50 );
+insert into code (code_id, code_group, code_name, code_value, code_order) values ('mail.template.type.code.transfer.complete'	,'mail.template.type.code'		,'Transfer Complete'	,'50'	,50 );
 insert into code (code_id, code_group, code_name, code_value, code_order) values ('mail.notice.type.code.review.request'	,'mail.notice.type.code'		,'Review Request'		,'false'	,10 );
 insert into code (code_id, code_group, code_name, code_value, code_order) values ('mail.notice.type.code.transfer.request'	,'mail.notice.type.code'		,'Transfer Request'		,'false'	,20 );
 insert into code (code_id, code_group, code_name, code_value, code_order) values ('mail.notice.type.code.transfer.reject'	,'mail.notice.type.code'		,'Transfer Reject'		,'false'	,30 );

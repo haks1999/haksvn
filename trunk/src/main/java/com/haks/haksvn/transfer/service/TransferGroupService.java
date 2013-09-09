@@ -1,7 +1,9 @@
 package com.haks.haksvn.transfer.service;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -13,7 +15,11 @@ import com.haks.haksvn.common.code.util.CodeUtils;
 import com.haks.haksvn.common.exception.HaksvnException;
 import com.haks.haksvn.common.paging.model.Paging;
 import com.haks.haksvn.common.security.util.ContextHolder;
+import com.haks.haksvn.general.model.MailConfiguration;
+import com.haks.haksvn.general.model.MailMessage;
+import com.haks.haksvn.general.model.MailTemplate;
 import com.haks.haksvn.general.service.GeneralService;
+import com.haks.haksvn.general.util.MailTemplateUtils;
 import com.haks.haksvn.repository.model.Repository;
 import com.haks.haksvn.repository.service.RepositoryService;
 import com.haks.haksvn.repository.service.SVNRepositoryService;
@@ -23,6 +29,7 @@ import com.haks.haksvn.transfer.model.Transfer;
 import com.haks.haksvn.transfer.model.TransferGroup;
 import com.haks.haksvn.transfer.model.TransferSource;
 import com.haks.haksvn.transfer.util.TransferUtils;
+import com.haks.haksvn.user.model.User;
 import com.haks.haksvn.user.service.UserService;
 
 @Service
@@ -98,7 +105,32 @@ public class TransferGroupService {
 		
 		// 최종 revision 을 가져 온 후 최종 update
 		transferGroupDao.saveTransferGroup(currentTransferGroup);
+		if( Boolean.valueOf(codeService.retrieveCode(CodeUtils.getMailNoticeTransferCompleteCodeId()).getCodeValue())){
+			sendTransferCompleteNotice(currentTransferGroup);
+		}
 		return currentTransferGroup;
+	}
+	
+	private void sendTransferCompleteNotice(TransferGroup transferGroup){
+		MailTemplate mailTemplate = generalService.retrieveMailTemplate(transferGroup.getRepositoryKey(), CodeUtils.getMailTemplateTransferCompleteCodeId());
+		MailConfiguration mailConfiguration = generalService.retrieveMailConfiguration();
+		MailMessage mailMessage = new MailMessage();
+		mailMessage.setFrom(mailConfiguration.getReplyto());
+		mailMessage.setSubject(MailTemplateUtils.createTransferCompleteSubject(transferGroup, mailTemplate.getSubject()));
+		mailMessage.setText(MailTemplateUtils.createTransferCompleteText(transferGroup, mailTemplate.getText()));
+		
+		List<User> noticeUserList = new ArrayList<User>(0);
+		noticeUserList.add(userService.retrieveUserByUserId(transferGroup.getTransferUser().getUserId()));
+		for( Transfer transfer : transferGroup.getTransferList()){
+			noticeUserList.add(userService.retrieveUserByUserId(transfer.getRequestUser().getUserId()));
+			noticeUserList.add(userService.retrieveUserByUserId(transfer.getApproveUser().getUserId()));
+		}
+		Set<String> userMailSet = new HashSet<String>(0); 
+		for( User noticeUser : noticeUserList ){
+			userMailSet.add(noticeUser.getEmail());
+		}
+		mailMessage.setTo(userMailSet.toArray(new String[userMailSet.size()]));
+		generalService.sendMail(mailConfiguration, mailMessage);
 	}
 	
 	
