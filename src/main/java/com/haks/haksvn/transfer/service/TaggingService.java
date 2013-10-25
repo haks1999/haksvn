@@ -78,7 +78,8 @@ public class TaggingService {
 		Tagging destTagging = Tagging.Builder.getBuilder().taggingUser(userService.retrieveUserByUserId(ContextHolder.getLoginUser().getUserId()))
 			.taggingSeq(0).destPath(repository.getBranchesPath()).srcPath(srcTagging.getDestPath())
 			.taggingDate(System.currentTimeMillis()).repositoryKey(tagging.getRepositoryKey())
-			.tagName("[Restore]" + srcTagging.getTagName() + "(" + System.currentTimeMillis() + ")")
+			//.tagName("[Restore]" + srcTagging.getTagName() + "(" + System.currentTimeMillis() + ")")
+			.tagName("[Restore]" + srcTagging.getTagName() )
 			.description("Restore From [" + srcTagging.getTagName() + "(tagging-" + srcTagging.getTaggingSeq() + ")] by Haksvn")
 			.taggingTypeCode(codeService.retrieveCode(CodeUtils.getTaggingRestoreCodeId())).build();
 		destTagging = taggingDao.addTagging(destTagging);
