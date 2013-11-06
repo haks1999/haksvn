@@ -67,12 +67,16 @@ public class SVNRepositoryUtils {
 	
 	public static List<SVNSourceLog> transform(List<SVNLogEntry> svnLogEntryList, List<SVNSourceLog> svnSourceLogList, String path, Repository repository){
 		ListIterator<SVNLogEntry> reverseEntries = svnLogEntryList.listIterator(svnLogEntryList.size());
+		String abstractRoot = ("/" + repository.getRepositoryLocation().substring(repository.getSvnRoot().length())).replaceAll("//", "/");
+		boolean existAbstractRoot = abstractRoot.length() > 1;
 		while( reverseEntries.hasPrevious()){
 			SVNLogEntry svnLogEntry = reverseEntries.previous();
 			ArrayList<SVNSourceLogChanged> changedList = new ArrayList<SVNSourceLogChanged>(0);
         	for( Map.Entry<String, SVNLogEntryPath> elem : ((Map<String,SVNLogEntryPath>)svnLogEntry.getChangedPaths()).entrySet() ){
         		String changedPath = elem.getValue().getPath();
-        		
+        		if( existAbstractRoot && changedPath.startsWith(abstractRoot)){
+        			changedPath = changedPath.substring(abstractRoot.length());
+        		}
         		if( !changedPath.startsWith(repository.getTagsPath()) || !changedPath.startsWith(repository.getTrunkPath()) || !changedPath.startsWith(repository.getBranchesPath())){
         			if( changedPath.indexOf(repository.getTagsPath()) > -1 ){
         				changedPath = changedPath.substring(changedPath.indexOf(repository.getTagsPath()));

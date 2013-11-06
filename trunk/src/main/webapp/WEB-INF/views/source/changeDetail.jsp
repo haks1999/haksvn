@@ -228,7 +228,7 @@
 										</script>
 									</c:when>
 									<c:otherwise>
-										<span class="italic">No one did not reviewed yet.</span>
+										<span class="italic">No one did not review yet.</span>
 									</c:otherwise>
 								</c:choose>
 							</p>
