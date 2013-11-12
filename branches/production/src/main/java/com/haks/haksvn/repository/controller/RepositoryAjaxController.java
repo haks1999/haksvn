@@ -37,34 +37,29 @@ public class RepositoryAjaxController {
 		return message;
     }
     
-    @RequestMapping(value="/listUser/{repositoryKey}", method=RequestMethod.GET)
-    public @ResponseBody List<User> listRepositoryUser(@PathVariable String repositoryKey){
-    	List<User> userList = repositoryService.retrieveRepositoryByRepositoryKey(repositoryKey).getUserList();
+    @RequestMapping(value="/listUser/{repositorySeq}", method=RequestMethod.GET)
+    public @ResponseBody List<User> listRepositoryUser(@PathVariable int repositorySeq){
+    	List<User> userList = repositoryService.retrieveRepositoryByRepositorySeq(repositorySeq).getUserList();
     	return userList;
     }
     
-    @RequestMapping(value="/listUser/addUser/{repositoryKey}", method=RequestMethod.POST)
-    public @ResponseBody ResultMessage addRepositoryUser(@PathVariable String repositoryKey,
+    @RequestMapping(value="/listUser/addUser/{repositorySeq}", method=RequestMethod.POST)
+    public @ResponseBody ResultMessage addRepositoryUser(@PathVariable int repositorySeq,
     												@RequestParam(value = "userId", required = true) String[] userIdList,
     												@RequestParam(value = "overwrite", required = false) boolean overwrite){
     	
     	ResultMessage message = new ResultMessage("users added");
-    	repositoryService.addRepositoryUser(repositoryKey,Arrays.asList(userIdList),overwrite);
+    	repositoryService.addRepositoryUser(Integer.valueOf(repositorySeq),Arrays.asList(userIdList),overwrite);
     	return message;
     }
     
-    @RequestMapping(value="/listUser/delUser/{repositoryKey}", method=RequestMethod.POST)
-    public @ResponseBody ResultMessage delRepositoryUser(@PathVariable String repositoryKey,
+    @RequestMapping(value="/listUser/delUser/{repositorySeq}", method=RequestMethod.POST)
+    public @ResponseBody ResultMessage delRepositoryUser(@PathVariable int repositorySeq,
     													@RequestParam(value = "userId", required = true) String[] userIdList){
     	
     	ResultMessage message = new ResultMessage("users removed");
-    	repositoryService.deleteRepositoryUser(repositoryKey,Arrays.asList(userIdList));
+    	repositoryService.deleteRepositoryUser(Integer.valueOf(repositorySeq),Arrays.asList(userIdList));
     	return message;
-    }
-    
-    @RequestMapping(value="/add/validateRepositoryKey", params ={"repositoryKey"})
-    public @ResponseBody String validateRepositoryKey(@RequestParam(value = "repositoryKey", required = true) String repositoryKey) {
-    	return String.valueOf(repositoryService.retrieveRepositoryByRepositoryKey(repositoryKey) == null);
     }
     
     @ExceptionHandler(HaksvnException.class)
