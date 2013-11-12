@@ -3,9 +3,6 @@ package com.haks.haksvn.repository.controller;
 import java.util.Arrays;
 import java.util.List;
 
-import org.codehaus.jackson.map.DeserializationConfig;
-import org.codehaus.jackson.map.ObjectMapper;
-import org.codehaus.jackson.type.TypeReference;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -37,16 +34,6 @@ public class RepositoryAjaxController {
     public @ResponseBody ResultMessage testConnection(@ModelAttribute("repository") Repository repository) throws HaksvnException {
     	ResultMessage message = new ResultMessage("connection test success");
 		svnRepositoryService.testInitalConnection(repository);
-		return message;
-    }
-    
-    @RequestMapping(value="/list/changeOrder", method=RequestMethod.POST)
-    public @ResponseBody ResultMessage changeOrder(@RequestParam(value = "repositoryList") String repositoryListJson) throws Exception {
-    	ResultMessage message = new ResultMessage("repository order changed success");
-    	ObjectMapper mapper = new ObjectMapper();
-		mapper.configure(DeserializationConfig.Feature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-   		List<Repository> repositoryList = mapper.readValue(repositoryListJson, new TypeReference<List<Repository>>(){});
-   		repositoryService.changeRepositoryOrder(repositoryList);
 		return message;
     }
     
