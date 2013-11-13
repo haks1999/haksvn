@@ -59,7 +59,7 @@
 
  해당 passwd를 가지는 svn 계정을 생성해줌
 
- haksvn=ee4c36d4db45150c3f86dcb2f331f618 
+ haksvn=뭐시기뭐시기
 
 6. haksvn에도 해당 패스워드로 다시 저장
 
