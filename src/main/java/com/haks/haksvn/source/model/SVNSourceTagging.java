@@ -8,8 +8,6 @@ public class SVNSourceTagging {
 	private String srcPath;
 	private String destPath;
 	private String log;
-	private long srcRevision;
-	private long destRevision;
 	
 	public SVNSourceTagging(){
 		
@@ -32,22 +30,6 @@ public class SVNSourceTagging {
 	}
 	public void setLog(String log) {
 		this.log = log;
-	}
-	
-	public long getSrcRevision(){
-		return srcRevision;
-	}
-	
-	public void setSrcRevision(long srcRevision){
-		this.srcRevision = srcRevision;
-	}
-	
-	public long getDestRevision(){
-		return destRevision;
-	}
-	
-	public void setDestRevision(long destRevision){
-		this.destRevision = destRevision;
 	}
 	
 	public static class Builder{
@@ -82,16 +64,6 @@ public class SVNSourceTagging {
 		
 		public Builder log(String log){
 			svnSourceTagging.setLog(log);
-			return this;
-		}
-		
-		public Builder srcRevision(long srcRevision){
-			svnSourceTagging.setSrcRevision(srcRevision);
-			return this;
-		}
-		
-		public Builder destRevision(long destRevision){
-			svnSourceTagging.setDestRevision(destRevision);
 			return this;
 		}
 		

@@ -50,14 +50,8 @@ public class Tagging {
 	@Column(name = "src_path")
 	private String srcPath;
 	
-	@Column(name = "src_revision")
-	private long srcRevision;
-	
 	@Column(name = "dest_path")
 	private String destPath;
-	
-	@Column(name = "dest_revision")
-	private long destRevision;
 	
 	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name="taggingType", referencedColumnName="code_id")
@@ -131,28 +125,12 @@ public class Tagging {
 		this.srcPath = srcPath;
 	}
 	
-	public long getSrcRevision(){
-		return srcRevision;
-	}
-	
-	public void setSrcRevision(long srcRevision){
-		this.srcRevision = srcRevision;
-	}
-	
 	public String getDestPath(){
 		return destPath;
 	}
 	
 	public void setDestPath(String destPath){
 		this.destPath = destPath;
-	}
-	
-	public long getDestRevision(){
-		return destRevision;
-	}
-	
-	public void setDestRevision(long destRevision){
-		this.destRevision = destRevision;
 	}
 
 
@@ -226,18 +204,8 @@ public class Tagging {
 			return this;
 		}
 		
-		public Builder srcRevision(long srcRevision){
-			tagging.setSrcRevision(srcRevision);
-			return this;
-		}
-		
 		public Builder destPath(String destPath){
 			tagging.setDestPath(destPath);
-			return this;
-		}
-		
-		public Builder destRevision(long destRevision){
-			tagging.setDestRevision(destRevision);
 			return this;
 		}
 		

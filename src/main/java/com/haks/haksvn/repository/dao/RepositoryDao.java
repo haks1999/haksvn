@@ -50,9 +50,9 @@ public class RepositoryDao {
 		
 		@SuppressWarnings("unchecked") List<com.haks.haksvn.repository.model.Repository> result = 
 					session.createCriteria(com.haks.haksvn.repository.model.Repository.class)
-				.add(Restrictions.eq("active", CodeUtils.getCommonCodeY()))
-				.addOrder(Order.asc("repositoryOrder"))
-				.createCriteria("userList")
+					.add(Restrictions.eq("active", CodeUtils.getCommonCodeY()))
+					.addOrder(Order.asc("repositoryOrder"))
+					.createCriteria("userList")
 				.add(Restrictions.eq("userId", userId))
 				.list();
 		
@@ -65,9 +65,9 @@ public class RepositoryDao {
 		
 		com.haks.haksvn.repository.model.Repository result = 
 					(com.haks.haksvn.repository.model.Repository)session.createCriteria(com.haks.haksvn.repository.model.Repository.class)
-				.add(Restrictions.eq("active", CodeUtils.getCommonCodeY()))
-				.add(Restrictions.eq("repositoryKey", repositoryKey))
-				.createCriteria("userList")
+					.add(Restrictions.eq("active", CodeUtils.getCommonCodeY()))
+					.add(Restrictions.eq("repositoryKey", repositoryKey))
+					.createCriteria("userList")
 				.add(Restrictions.eq("userId", userId))
 				.uniqueResult();
 		
