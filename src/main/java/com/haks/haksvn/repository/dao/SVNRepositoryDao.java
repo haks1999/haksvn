@@ -17,6 +17,7 @@ import org.tmatesoft.svn.core.SVNDepth;
 import org.tmatesoft.svn.core.SVNDirEntry;
 import org.tmatesoft.svn.core.SVNException;
 import org.tmatesoft.svn.core.SVNLogEntry;
+import org.tmatesoft.svn.core.SVNLogEntryPath;
 import org.tmatesoft.svn.core.SVNNodeKind;
 import org.tmatesoft.svn.core.SVNProperties;
 import org.tmatesoft.svn.core.SVNProperty;
@@ -42,6 +43,7 @@ import com.haks.haksvn.source.model.SVNSource;
 import com.haks.haksvn.source.model.SVNSourceDiff;
 import com.haks.haksvn.source.model.SVNSourceLog;
 import com.haks.haksvn.source.model.SVNSourceLogChanged;
+import com.haks.haksvn.source.model.SVNSourceTagging;
 import com.haks.haksvn.source.model.SVNSourceTransfer;
 
 @Component
@@ -540,7 +542,7 @@ public class SVNRepositoryDao {
 	}
 	
 	// srcPath,destPath 는 /trunk~, /branches~ 다 붙여서
-	public void copyPathToPath(Repository repository, String srcPath, String destPath, String log){
+	public SVNSourceTagging copyPathToPath(Repository repository, final SVNSourceTagging svnSourceTagging){
 		SVNRepository targetRepository = null;
         try{
         	SVNRepositoryLock.tryLock(repository.getRepositoryKey());
@@ -549,19 +551,25 @@ public class SVNRepositoryDao {
         	SVNClientManager svnClientManager = SVNClientManager.newInstance(SVNWCUtil.createDefaultOptions(false), targetRepository.getAuthenticationManager());
         	
         	final SVNURL location = targetRepository.getLocation();
-    		final SVNURL srcURL = SVNURL.parseURIEncoded(location + srcPath);
-    		final SVNURL destURL = SVNURL.parseURIEncoded(location + destPath);
+    		final SVNURL srcURL = SVNURL.parseURIEncoded(location + svnSourceTagging.getSrcPath());
+    		final SVNURL destURL = SVNURL.parseURIEncoded(location + svnSourceTagging.getDestPath());
     		
+    		targetRepository.log(new String[]{RepositoryUtils.getRelativeRepositoryPath(repository, svnSourceTagging.getSrcPath())}, -1, 0, false, true, 1, new ISVNLogEntryHandler() { 
+                public void handleLogEntry(SVNLogEntry entry) throws SVNException { 
+                	svnSourceTagging.setSrcRevision(entry.getRevision());
+                } 
+            });
     		// delete existing tag path
-    		SVNNodeKind nodeKind = targetRepository.checkPath(RepositoryUtils.getRelativeRepositoryPath(repository, destPath), -1);
+    		SVNNodeKind nodeKind = targetRepository.checkPath(RepositoryUtils.getRelativeRepositoryPath(repository, svnSourceTagging.getDestPath()), -1);
     		if( nodeKind != SVNNodeKind.NONE){
     			final SVNCommitClient commitClient = svnClientManager.getCommitClient();
-            	commitClient.doDelete(new SVNURL[]{destURL}, "<<--DELETE EXISTING TAG FOR TAGGING-->>\n" + log );
+            	commitClient.doDelete(new SVNURL[]{destURL}, "<<--DELETE EXISTING TAG FOR TAGGING-->>\n" + svnSourceTagging.getLog() );
     		}
         	
     		final SVNCopyClient copyClient = svnClientManager.getCopyClient();
     		final SVNCopySource source = new SVNCopySource(SVNRevision.HEAD, SVNRevision.HEAD, srcURL);
-    		copyClient.doCopy(new SVNCopySource[] { source }, destURL, false, false, false, log, null);
+    		SVNCommitInfo commitInfo = copyClient.doCopy(new SVNCopySource[] { source }, destURL, false, false, false, svnSourceTagging.getLog(), null);
+    		svnSourceTagging.setDestRevision(commitInfo.getNewRevision());
     		
         }catch (Exception e) {
         	e.printStackTrace();
@@ -574,6 +582,7 @@ public class SVNRepositoryDao {
         		e.printStackTrace();
         	}
         }
+        return svnSourceTagging;
 	}
 	
 }

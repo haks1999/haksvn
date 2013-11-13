@@ -75,7 +75,8 @@ public class RetrieveFileLogTest {
     	String url = "https://haksvn.googlecode.com/svn";
 		String name = "haks1999";
 		String password = "aW9fj8bm9Rt5--";
-        String[] filePath = {"/tags/0.0.0-20130122/pom.xml"};
+        //String[] filePath = {"**/src/main/java/com/haks/haksvn/repository/dao/SVNRepositoryDao.java"};
+		String[] filePath = {""};
         long startRevision = 0;
         long endRevision = -1;//HEAD (the latest) revision
         /*
@@ -177,26 +178,59 @@ public class RetrieveFileLogTest {
             
             final List<SVNLogEntry> tempList = new ArrayList<SVNLogEntry>();
             //filePath = new String[]{"/trunk/src/main/java/com/haks/haksvn/repository/service/SVNRepositoryService.java"};
-            
-            repository.log(filePath, 2, -1, true, true, 3, new ISVNLogEntryHandler() { 
+            /*
+            repository.log(filePath, 181, 231, true, true, -1, new ISVNLogEntryHandler() { 
                 public void handleLogEntry(SVNLogEntry entry) throws SVNException { 
                 	tempList.add(entry); 
                 } 
             });
+            */
             
+            repository.log(new String[]{"/branches/production/src/main/java/com/haks/haksvn/repository/dao/SVNRepositoryDao.java"}, 1, -1, true, false, -1, true, null, new ISVNLogEntryHandler() { 
+                public void handleLogEntry(SVNLogEntry entry) throws SVNException { 
+                	//tempList.add(entry);
+                	Map<String,SVNLogEntryPath> map = entry.getChangedPaths();
+                	boolean printSum = false;
+                	System.out.println("revision: " + entry.getRevision());
+                	System.out.println("has children: " + entry.hasChildren());
+                	for( Map.Entry<String, SVNLogEntryPath> elem : map.entrySet() ){
+                		
+                		//if(elem.getValue().getCopyPath() != null &&  elem.getValue().getCopyPath().indexOf("/src/main/java/com/haks/haksvn/repository/dao/SVNRepositoryDao.java") > -1) {
+                		if(elem.getValue().getCopyPath() != null){
+                			if( !printSum ){
+                				System.out.println("-----------------------------------------------------");
+                            	System.out.println("revision: " + entry.getRevision());
+                            	System.out.println("author: " + entry.getAuthor());
+                            	System.out.println("date: " + entry.getDate());
+                            	System.out.println("log message: " + entry.getMessage());
+                            	printSum = true;
+                			}
+                        	System.out.println("copiedPath: " + elem.getValue().getCopyPath());
+                        	System.out.println("changedpaths : " + elem.getKey() + ", " + elem.getValue().getType() + ", " + elem.getValue().getCopyPath() + ", " + elem.getValue().getCopyRevision());
+                        	
+                		}
+                	}
+                } 
+            });
+            /*
             for( SVNLogEntry svnLogEntry : tempList ){
-            	System.out.println("---------------------------------------------");
-            	System.out.println("revision: " + svnLogEntry.getRevision());
-            	System.out.println("author: " + svnLogEntry.getAuthor());
-            	System.out.println("date: " + svnLogEntry.getDate());
-            	System.out.println("log message: " + svnLogEntry.getMessage());
-            	
             	Map<String,SVNLogEntryPath> map = svnLogEntry.getChangedPaths();
             	for( Map.Entry<String, SVNLogEntryPath> elem : map.entrySet() ){
-            		System.out.println( "changedpaths : " + elem.getKey() + ", " + elem.getValue().getType() + ", " + elem.getValue().getPath());
+            		
+            		if(elem.getValue().getCopyPath() != null &&  elem.getValue().getCopyPath().indexOf("/src/main/java/com/haks/haksvn/repository/dao/SVNRepositoryDao.java") > -1) {
+            			System.out.println("-----------------------------------------------------");
+                    	System.out.println("revision: " + svnLogEntry.getRevision());
+                    	System.out.println("author: " + svnLogEntry.getAuthor());
+                    	System.out.println("date: " + svnLogEntry.getDate());
+                    	System.out.println("log message: " + svnLogEntry.getMessage());
+                    	System.out.println("copiedPath: " + elem.getValue().getCopyPath());
+                    	System.out.println("changedpaths : " + elem.getKey() + ", " + elem.getValue().getType() + ", " + elem.getValue().getPath() + ", " + elem.getValue().getCopyRevision());
+                    	
+            		}
             	}
             	
             }
+            */
             
             System.exit(1);
 

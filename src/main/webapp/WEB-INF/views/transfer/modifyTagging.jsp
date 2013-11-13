@@ -33,6 +33,7 @@
 	
 </script>
 <c:set var="repoBrowsePathLink" value="${pageContext.request.contextPath}/source/browse/${repositoryKey}"/>
+<c:set var="repoChangesPathLink" value="${pageContext.request.contextPath}/source/changes/${repositoryKey}"/>
 <div class="content-page">
 	<h1>Tagging Information</h1>
 	<div class="col w10 last">
@@ -52,14 +53,21 @@
 					<span class="form-help"><spring:message htmlEscape="true" code="helper.tagging.type" /></span>
 				</p>
 				<p>
-					<form:label path="srcPath" class="left">Source Path</form:label>
-					<form:hidden class="text w_200" disabled="true" path="srcPath"/>
-					<font class="path ${not empty tagging.srcPath?'open-window':'' }"><a href="${repoBrowsePathLink}${tagging.srcPath}"><c:out value="${tagging.srcPath}"/></a></font><input type="text" class="text visible-hidden"/>
+					<form:label path="srcPath" class="left">Source</form:label>
+					<c:if test="${not empty tagging.srcPath}">
+						<font class="path open-window"><a href="${repoBrowsePathLink}${tagging.srcPath}"><c:out value="${tagging.srcPath}"/></a></font>
+						<font class="path open-window"><a href="${repoChangesPathLink}?rev=${tagging.srcRevision}"><c:out value="r${tagging.srcRevision}"/></a></font>
+					</c:if>
+					<input type="text" class="text visible-hidden"/>
 				</p>
 				<p>
-					<form:label path="destPath" class="left">Destination Path</form:label>
+					<form:label path="destPath" class="left">Destination</form:label>
 					<form:hidden class="text w_200" disabled="true" path="destPath"/>
-					<font class="path ${not empty tagging.destPath?'open-window':'' }"><a href="${repoBrowsePathLink}${tagging.destPath}"><c:out value="${tagging.destPath}"/></a></font><input type="text" class="text visible-hidden"/>
+					<c:if test="${not empty tagging.destPath}">
+						<font class="path open-window"><a href="${repoBrowsePathLink}${tagging.destPath}"><c:out value="${tagging.destPath}"/></a></font>
+						<font class="path open-window"><a href="${repoChangesPathLink}?rev=${tagging.destRevision}"><c:out value="r${tagging.destRevision}"/></a></font>
+					</c:if>
+					<input type="text" class="text visible-hidden"/>
 				</p>
 				<p>
 					<form:label path="tagName" class="left">Tag Name</form:label>
