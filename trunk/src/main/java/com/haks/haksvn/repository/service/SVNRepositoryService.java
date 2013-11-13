@@ -215,9 +215,8 @@ public class SVNRepositoryService {
 		return svnRepositoryDao.transferSourceList(repository, svnSourceTransferList, log);
 	}
 	
-	public void tagging(Repository repository, SVNSourceTagging svnSourceTagging ){
-		svnRepositoryDao.copyPathToPath(repository, svnSourceTagging.getSrcPath(), svnSourceTagging.getDestPath(), svnSourceTagging.getLog());
-		
+	public SVNSourceTagging tagging(Repository repository, SVNSourceTagging svnSourceTagging ){
+		return svnRepositoryDao.copyPathToPath(repository, svnSourceTagging);
 	}
 	
 }

@@ -90,7 +90,7 @@ form p span font a{text-decoration:underline;cursor:pointer;}
 						//$(row).attr('transferSeq',transferList[inx].transferSeq);
 						$(row).data('transfer',transferList[inx]);
 						$(row).find(".transferSeq font a").text('req-'+transferList[inx].transferSeq);
-						$(row).find(".transferSeq a").attr("href",'<c:url value="/transfer/request/list"/>' + '/' + transferList[inx].repositoryKey + '/' +  transferList[inx].transferSeq);
+						$(row).find(".transferSeq a").attr("href",'<c:url value="/transfer/request/list/"/>' + transferList[inx].repositoryKey + '/' +  transferList[inx].transferSeq);
 						$(row).children(".requestor").text(transferList[inx].requestUser.userName);
 						$(row).children(".approver").text(transferList[inx].approveUser.userName);
 						$(row).children(".description").text(transferList[inx].description);
@@ -157,6 +157,12 @@ form p span font a{text-decoration:underline;cursor:pointer;}
 			$(requestDetail).find(".requestor").text(transfer.requestUser.userName);
 			$(requestDetail).find(".approver").text(transfer.approveUser.userName);
 			$(requestDetail).find(".description").text(transfer.description);
+			if( transfer.revision && transfer.revision > 0 ){
+				$(requestDetail).find(".revision").removeClass("display-none");
+				$(requestDetail).find(".revision font a").text("r" + transfer.revision);
+				$(requestDetail).find(".revision a").attr("href",'<c:url value="/source/changes/"/>' + transfer.repositoryKey + '?rev=' +  transfer.revision);
+			}
+			
 			$("#spn_requestsToTran").append(requestDetail);
 			changeCurrentTransferListCount(1);
 			validTransferGroupForm.form();
@@ -455,6 +461,9 @@ form p span font a{text-decoration:underline;cursor:pointer;}
 	<div class="box display-none requestDetail">
 		<div class="head"><div></div></div>
 		<div class="desc">
+			<span class="revision display-none">
+				request transfer commit revision : <font class="path font12 open-window"><a></a></font>
+			</span>
 			<pre class="description"></pre>
 			<ul class="requestSourceList">
 				<li class="sample display-none"><span class="type"></span><font class="path open-window"><a></a></font></li>

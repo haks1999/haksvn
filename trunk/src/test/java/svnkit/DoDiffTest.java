@@ -23,9 +23,10 @@ public class DoDiffTest {
 		//String url = "https://haksvn.googlecode.com/svn";
 		//String name = "haks1999";
 		//String password = "aW9fj8bm9Rt5--";
-		String url = "http://165.243.31.35:81/svn/Embedded/Advanced_Analytics_Repository";
+		String url = "https://haksvn.googlecode.com/svn";
 		String name = "haks1999";
-		String password = "haks1999";
+		String password = "aW9fj8bm9Rt5--";
+        
 		;
 		//String path = "/trunk/src/main/java/com/haks/haksvn/source/controller/SourceController.java";
 		//String path="/trunk/src/main/java/com/haks/haksvn/repository/dao/SVNRepositoryDao.java";
@@ -42,9 +43,11 @@ public class DoDiffTest {
 		//long rev1 = 108;
 		//long rev2 = 2;
 		
-		String path="/trunk/com.lgcns.aa.root/com.lgcns.aa.ui/com.lgcns.aa.sra/src/main/webapp/pages/workflow/app/controller/Common.js";
-		long rev1 = 4602;
-		long rev2 = 4532;
+		//String path="/trunk/com.lgcns.aa.root/com.lgcns.aa.ui/com.lgcns.aa.sra/src/main/webapp/pages/workflow/app/controller/Common.js";
+		
+		String path = "/trunk/src/main/java/com/haks/haksvn/repository/dao/SVNRepositoryDao.java";
+		long rev1 = 0;
+		long rev2 = -1;
 
 		//SVNRepository repository = SVNRepositoryFactory.create(SVNURL.parseURIDecoded(url));
 		ISVNAuthenticationManager authManager = SVNWCUtil.createDefaultAuthenticationManager(name, password);
@@ -78,7 +81,8 @@ public class DoDiffTest {
 		
 		
 		// 아래 코드는 정상 작동함
-		diffClient.doDiff(repositorySVNURL, SVNRevision.create(rev2), repositorySVNURL, SVNRevision.create(rev1), SVNDepth.FILES, true, baos);
+		//diffClient.doDiff(repositorySVNURL, SVNRevision.create(rev2), repositorySVNURL, SVNRevision.create(rev1), SVNDepth.FILES, true, baos);
+		diffClient.doGetMergedMergeInfo(repositorySVNURL, SVNRevision.create(181));
 		
 		
 		String str = baos.toString("utf-8");
