@@ -56,19 +56,16 @@ public class TaggingService {
 			throw new HaksvnException("Insufficient privileges.");
 		}
 		
+		Tagging.Builder.getBuilder(tagging).taggingUser(userService.retrieveUserByUserId(ContextHolder.getLoginUser().getUserId()))
+			.destPath(repository.getTagsPath() + "/" + tagging.getTagName())
+			.srcPath(repository.getBranchesPath()).taggingDate(System.currentTimeMillis()).taggingTypeCode(codeService.retrieveCode(CodeUtils.getTaggingCreateCodeId()));
+		tagging = taggingDao.addTagging(tagging);
+		
 		SVNSourceTagging svnSourceTagging = SVNSourceTagging.Builder.getBuilder()
-				.srcPath(repository.getBranchesPath()).destPath(repository.getTagsPath() + "/" + tagging.getTagName())
+				.srcPath(tagging.getSrcPath()).destPath(tagging.getDestPath())
 				.log(TransferUtils.createTaggingCommitLog(tagging, generalService.retrieveCommitLogTemplate(tagging.getRepositoryKey(), CodeUtils.getLogTemplateTaggingCodeId()).getTemplate())).build();
 		
-		svnSourceTagging = svnRepositoryService.tagging(repository, svnSourceTagging);
-
-		Tagging.Builder.getBuilder(tagging).taggingUser(userService.retrieveUserByUserId(ContextHolder.getLoginUser().getUserId()))
-			.destPath(svnSourceTagging.getDestPath())
-			.srcPath(svnSourceTagging.getSrcPath()).taggingDate(System.currentTimeMillis()).taggingTypeCode(codeService.retrieveCode(CodeUtils.getTaggingCreateCodeId()))
-			.srcRevision(svnSourceTagging.getSrcRevision()).destRevision(svnSourceTagging.getDestRevision());
-		
-		tagging = taggingDao.addTagging(tagging);
-	
+		svnRepositoryService.tagging(repository, svnSourceTagging);
 		return tagging;
 	}
 	
