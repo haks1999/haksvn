@@ -58,6 +58,15 @@ public class TaggingDao {
 		return taggingList;
 	}
 	
+	public List<Tagging> retrieveTaggingListByTaggingDate(String repositoryKey, long startDate, long endDate){
+		Session session = sessionFactory.getCurrentSession();
+		@SuppressWarnings("unchecked") List<Tagging> taggingList= session.createCriteria(Tagging.class)
+				.add(Restrictions.eq("repositoryKey", repositoryKey))
+				.add(Restrictions.between("taggingDate", startDate, endDate))
+				.addOrder(Order.desc("taggingDate")).list();
+		return taggingList;
+	}
+	
 	public Tagging retrieveLatestSyncTagging(Tagging tagging){
 		Session session = sessionFactory.getCurrentSession();
 		@SuppressWarnings("unchecked") List<Tagging> taggingList= session.createCriteria(Tagging.class)
@@ -73,7 +82,7 @@ public class TaggingDao {
 		return (Tagging)session.get(Tagging.class, taggingSeq );
 	}
 	
-	public Tagging addTagging(Tagging tagging){
+	public Tagging saveTagging(Tagging tagging){
 		Session session = sessionFactory.getCurrentSession();
 		session.saveOrUpdate(tagging);
 		return tagging;
