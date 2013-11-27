@@ -55,20 +55,20 @@ public class TaggingService {
 		if( !TaggingAuth.Builder.getBuilder().tagging(tagging).build().getIsCreatable() ){
 			throw new HaksvnException("Insufficient privileges.");
 		}
-		
+		Tagging.Builder.getBuilder(tagging).taggingUser(userService.retrieveUserByUserId(ContextHolder.getLoginUser().getUserId()))
+		.destPath(repository.getTagsPath() + "/" + tagging.getTagName())
+		.srcPath(repository.getBranchesPath()).taggingDate(System.currentTimeMillis()).taggingTypeCode(codeService.retrieveCode(CodeUtils.getTaggingCreateCodeId()));
+	
+		tagging = taggingDao.saveTagging(tagging);
+	
 		SVNSourceTagging svnSourceTagging = SVNSourceTagging.Builder.getBuilder()
-				.srcPath(repository.getBranchesPath()).destPath(repository.getTagsPath() + "/" + tagging.getTagName())
+				.srcPath(tagging.getSrcPath()).destPath(tagging.getDestPath())
 				.log(TransferUtils.createTaggingCommitLog(tagging, generalService.retrieveCommitLogTemplate(tagging.getRepositoryKey(), CodeUtils.getLogTemplateTaggingCodeId()).getTemplate())).build();
 		
 		svnSourceTagging = svnRepositoryService.tagging(repository, svnSourceTagging);
 
-		Tagging.Builder.getBuilder(tagging).taggingUser(userService.retrieveUserByUserId(ContextHolder.getLoginUser().getUserId()))
-			.destPath(svnSourceTagging.getDestPath())
-			.srcPath(svnSourceTagging.getSrcPath()).taggingDate(System.currentTimeMillis()).taggingTypeCode(codeService.retrieveCode(CodeUtils.getTaggingCreateCodeId()))
-			.srcRevision(svnSourceTagging.getSrcRevision()).destRevision(svnSourceTagging.getDestRevision());
-		
-		tagging = taggingDao.addTagging(tagging);
-	
+		Tagging.Builder.getBuilder(tagging).srcRevision(svnSourceTagging.getSrcRevision()).destRevision(svnSourceTagging.getDestRevision());
+		tagging = taggingDao.saveTagging(tagging);
 		return tagging;
 	}
 	
@@ -85,12 +85,15 @@ public class TaggingService {
 			.tagName("[Restore]" + srcTagging.getTagName() )
 			.description("Restore From [" + srcTagging.getTagName() + "(tagging-" + srcTagging.getTaggingSeq() + ")] by Haksvn")
 			.taggingTypeCode(codeService.retrieveCode(CodeUtils.getTaggingRestoreCodeId())).build();
-		destTagging = taggingDao.addTagging(destTagging);
+		destTagging = taggingDao.saveTagging(destTagging);
 		
 		SVNSourceTagging svnSourceTagging = SVNSourceTagging.Builder.getBuilder()
 				.srcPath(destTagging.getSrcPath()).destPath(destTagging.getDestPath())
 				.log(TransferUtils.createTaggingCommitLog(destTagging, generalService.retrieveCommitLogTemplate(srcTagging.getRepositoryKey(), CodeUtils.getLogTemplateTaggingCodeId()).getTemplate())).build();
-		svnRepositoryService.tagging(repository, svnSourceTagging);
+		svnSourceTagging = svnRepositoryService.tagging(repository, svnSourceTagging);
+		
+		Tagging.Builder.getBuilder(destTagging).srcRevision(svnSourceTagging.getSrcRevision()).destRevision(svnSourceTagging.getDestRevision()).build();
+		destTagging = taggingDao.saveTagging(destTagging);
 		return destTagging;
 	}
 	
@@ -100,6 +103,10 @@ public class TaggingService {
 	
 	public Tagging retrieveLatestSyncTagging(Tagging tagging){
 		return taggingDao.retrieveLatestSyncTagging(tagging);
+	}
+	
+	public List<Tagging> retrieveTaggingListByTaggingDate(String repositoryKey, long startDate, long endDate){
+		return taggingDao.retrieveTaggingListByTaggingDate(repositoryKey, startDate, endDate);
 	}
 	
 }
