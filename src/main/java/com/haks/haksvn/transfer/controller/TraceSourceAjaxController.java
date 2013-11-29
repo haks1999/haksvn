@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.haks.haksvn.transfer.model.TraceSourceBasket;
 import com.haks.haksvn.transfer.service.TraceSourceService;
 
 @Controller
@@ -21,14 +22,20 @@ public class TraceSourceAjaxController {
 	@Autowired
 	private TraceSourceService traceSourceService;
     
-	
-	
 	// transfer source 검색 시 자동 완성을 위한 path 검색
 	@RequestMapping(value="/traceSource/list/search/path", method=RequestMethod.POST ,params ={"repositoryKey","path"})
     public @ResponseBody List<String> searchTransferSourcePathList(@RequestParam(value = "repositoryKey", required = true) String repositoryKey
     												,@RequestParam(value = "path", required = true) String path){
     	List<String> transferSourcePathList = traceSourceService.retrieveTransferSourceListByPath(repositoryKey, path);
     	return transferSourcePathList;
+    }
+	
+	@RequestMapping(value="/traceSource/list/trace", method=RequestMethod.GET ,params ={"repositoryKey","path","limit"})
+    public @ResponseBody TraceSourceBasket retrieveTraceSourceList(@RequestParam(value = "repositoryKey", required = true) String repositoryKey
+    												,@RequestParam(value = "path", required = true) String path
+    												,@RequestParam(value = "limit", required = true) int limit){
+    	TraceSourceBasket basket = traceSourceService.retrieveTraceSourceListByPath(repositoryKey, path, limit);
+    	return basket;
     }
 	
 	
