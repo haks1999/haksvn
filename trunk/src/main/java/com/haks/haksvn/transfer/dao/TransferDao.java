@@ -9,8 +9,6 @@ import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.criterion.Order;
-import org.hibernate.criterion.ProjectionList;
-import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
@@ -71,23 +69,6 @@ public class TransferDao {
 		Paging.Builder.getBuilder(resultPaging).limit(paging.getLimit()).start(paging.getStart());
 		
 		return resultPaging;
-	}
-	
-	// group by 되어 일단 path 만 나온다.
-	@SuppressWarnings("unchecked")
-	public List<String> retrieveTransferSourcePathListByPath(String repositoryKey, String path, int limit){
-		Session session = sessionFactory.getCurrentSession();
-		
-		Criteria crit = session.createCriteria(TransferSource.class,"t_transferSource")
-				.createAlias("t_transferSource.transfer", "t_transfer")
-				.add(Restrictions.eq("t_transfer.repositoryKey", repositoryKey))
-				.add(Restrictions.like("t_transferSource.path", "%"+path+"%").ignoreCase())
-				.setMaxResults( limit )
-				.addOrder(Order.asc("path"));
-		ProjectionList proj = Projections.projectionList();
-		proj.add(Projections.groupProperty("path"));
-		crit.setProjection(proj);
-		return (List<String>)crit.list();
 	}
 	
 	public Transfer addTransfer(Transfer transfer){

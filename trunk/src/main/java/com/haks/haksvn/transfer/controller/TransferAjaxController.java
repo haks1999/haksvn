@@ -6,6 +6,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -82,6 +83,18 @@ public class TransferAjaxController {
     	ResultMessage message = new ResultMessage("Approve success");
     	transfer = transferService.approveTransfer(transfer);
     	return message;
+    }
+    
+    // 동일 url 인 경우 json 파라미터로 ajax 여부 판별
+    // contentNegotication 을 쓰기에는 ajax 요청이랑 forward 요청이랑 내용이 조금 틀림
+    @RequestMapping(value="/request/list/{repositoryKey}/{transferSeq}", params = {"json"})
+    public @ResponseBody Transfer forwardTransferDetailPage(ModelMap model, 
+    										@PathVariable String repositoryKey,
+    										@PathVariable int transferSeq) {
+		Transfer transfer = transferService.retrieveTransferDetail(Transfer.Builder.getBuilder().repositoryKey(repositoryKey).transferSeq(transferSeq).build());
+		transfer.setSourceList(null);	// lazy loading
+		transfer.setTransferGroup(null);
+    	return transfer;
     }
     
     
