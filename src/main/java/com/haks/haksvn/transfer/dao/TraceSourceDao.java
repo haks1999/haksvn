@@ -50,7 +50,7 @@ public class TraceSourceDao {
 						" inner join transfer tr on (tg.transfer_group_seq = tr.transfer_group_seq) " + 
 						" inner join transfer_source ts on (tr.transfer_seq = ts.transfer_seq) " + 
 						" where transfer_group_state  = 'transfergroup.state.code.transfered' " +
-						" and ts.path = :path " + 
+						" and ts.path like '%'||:path||'%' " + 
 						" order by tg.transfer_date desc" )
 						.addScalar("transferSeq", StandardBasicTypes.INTEGER )
 						.addScalar("transferGroupSeq", StandardBasicTypes.INTEGER )

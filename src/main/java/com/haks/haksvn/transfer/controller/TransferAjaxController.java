@@ -88,7 +88,7 @@ public class TransferAjaxController {
     // 동일 url 인 경우 json 파라미터로 ajax 여부 판별
     // contentNegotication 을 쓰기에는 ajax 요청이랑 forward 요청이랑 내용이 조금 틀림
     @RequestMapping(value="/request/list/{repositoryKey}/{transferSeq}", params = {"json"})
-    public @ResponseBody Transfer forwardTransferDetailPage(ModelMap model, 
+    public @ResponseBody Transfer retrieveTransferDetail(ModelMap model, 
     										@PathVariable String repositoryKey,
     										@PathVariable int transferSeq) {
 		Transfer transfer = transferService.retrieveTransferDetail(Transfer.Builder.getBuilder().repositoryKey(repositoryKey).transferSeq(transferSeq).build());

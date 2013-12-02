@@ -68,10 +68,12 @@
 	};
 	
 	
-	
+	var _gSearchPath = '';
 	function retrieveTraceSourceList(){
-		$("#tbl_transferList tfoot span:not(.loading)").removeClass('display-none').addClass('display-none');
-		$("#tbl_transferList tfoot span.loader").removeClass('display-none');
+		haksvn.block.on();
+		jsPlumb.reset();
+		_gSearchPath = $('#txt_searchSource').val();
+		$("#tbl_traceSourceList tbody tr:not(.sample)").remove();
 		$.get( "<c:url value="/transfer/traceSource/list/trace"/>",
 				{repositoryKey: '<c:out value="${repositoryKey}" />',
 				path: $('#txt_searchSource').val(),
@@ -82,37 +84,24 @@
 					var tagElemList = data.tagElemList;
 					var maxSize = (function(){
 						var elemArr = [trunkElemList.length,branchElemList.length,tagElemList.length];
-						elemArr.sort();
+						elemArr.sort(function(a,b){return a-b;});
 						return elemArr[elemArr.length-1];
 					})();
 					for( var inx = 0 ; inx < maxSize ; inx++ ){
 						var row = $("#tbl_traceSourceList > tbody > .sample").clone();
-						if(trunkElemList[inx]) $(row).find(".trunk").text(trunkElemList[inx].revision).attr("id",trunkElemList[inx].id).removeClass("display-none");
-						if(branchElemList[inx]) $(row).find(".branch").text(branchElemList[inx].revision).attr("id",branchElemList[inx].id).removeClass("display-none");
-						if(tagElemList[inx]) $(row).find(".tag").text(tagElemList[inx].name).attr("id",tagElemList[inx].id).removeClass("display-none");
+						if(trunkElemList[inx]) $(row).find(".trunk").text(trunkElemList[inx].revision).attr("id",trunkElemList[inx].id).removeClass("display-none").attr("revision",trunkElemList[inx].revision);
+						if(branchElemList[inx]) $(row).find(".branch").text(branchElemList[inx].revision).attr("id",branchElemList[inx].id).removeClass("display-none").attr("revision",branchElemList[inx].revision);
+						if(tagElemList[inx]) $(row).find(".tag").text(tagElemList[inx].name).attr("id",tagElemList[inx].id).removeClass("display-none").attr("name",tagElemList[inx].name);
 						$(row).removeClass("sample");
 						$('#tbl_traceSourceList > tbody').append(row);
 					}
-					
+					haksvn.block.off();
 					
 					var outBoundConnector = {				
 							paintStyle:{lineWidth:2,strokeStyle:"#056"},
 							hoverPaintStyle:{strokeStyle:"#D16954"},
 							endpoint:"Blank",
 							anchor:"Continuous"
-							/*,
-							overlays:[
-							          ["Label", {													   					
-								cssClass:"l1 component label",
-								location:0.7,
-								events:{
-									"click":function(label, evt) {
-										alert("clicked on label for connection " + label.component.id);
-									}
-								}
-							}], 
-							["PlainArrow", {location:1, width:10, length:8} ]]
-							*/
 						};
 					var anchor = {
 						lmrm : ["RightMiddle", "LeftMiddle"],
@@ -121,9 +110,11 @@
 					var outBoundConnectList = data.outBoundConnectList;
 					for( var inx=  0 ; inx < outBoundConnectList.length ; inx++ ){
 						var anchorType = (outBoundConnectList[inx].srcId.indexOf("tag") < 0)? anchor.lmrm:anchor.rmlm; 
-						var labelSeq = (outBoundConnectList[inx].srcId.indexOf("trunk") > -1)? outBoundConnectList[inx].transferSeq:outBoundConnectList[inx].taggingSeq;
-						var labelText = (outBoundConnectList[inx].srcId.indexOf("trunk") > -1)? ("req-"+labelSeq):("tag-"+labelSeq);
+						var isTransferRequest = (outBoundConnectList[inx].srcId.indexOf("trunk") > -1);
+						var labelSeq = (isTransferRequest)? outBoundConnectList[inx].transferSeq:outBoundConnectList[inx].taggingSeq;
+						var labelText = (isTransferRequest)? ("req-"+labelSeq):("tag-"+labelSeq);
 						var labelCssClass = "connLabel" + (labelText.length > 6?" long":"");
+						console.log( "srcid: " + outBoundConnectList[inx].srcId + ", destId: " + outBoundConnectList[inx].destId);
 						var conn = jsPlumb.connect({
 							source:outBoundConnectList[inx].srcId,
 							target:outBoundConnectList[inx].destId,
@@ -132,17 +123,12 @@
 								["Label", {													   					
 									cssClass:labelCssClass,
 									location:0.8,
-									label:labelText,
-									events:{
-									"click":function(label, evt) {
-										//alert("clicked on label for connection " + label.component.id);
-										}
-									}
+									label:labelText
 								}], 
 								["PlainArrow", {location:1, width:10, length:8} ]]
 						}, outBoundConnector);
 						conn.traceId = labelSeq;
-						//conn.seq = 
+						conn.isTransferRequest = isTransferRequest;
 					}
 					outBoundConnector.connector = "StateMachine";
 					var branchInBoundConnector = outBoundConnector;
@@ -163,71 +149,139 @@
 						}, inboundConnector);
 					}
 					
-					jsPlumb.bind("click", function(connection, originalEvent){
-						//retrieveTransferSourceList(1);
-						//var traceTooltip = $('#qtip-' + connection.traceId);
-						//if( traceTooltip.length < 1 ){
-						var	traceTooltip = $(connection).qtip({
-								content: {
-									text: function(event, api) {
-							            $.ajax({ url: "<c:url value="/transfer/request/list/${repositoryKey}/1"/>" + "?json=1" })
-							                .done(function(json) {
-							                    api.set('content.text', "<b>bold</b>: not bold");
-							                })
-							                .fail(function(xhr, status, error) {
-							                    api.set('content.text', status + ': ' + error);
-							                });
+					jsPlumb.bind("click", retrieveAndViewConnectionDetail);
+					//$("#tbl_traceSourceList tbody td .trunk").click(".trunk")
+					retrieveAndViewElemDetail();
+		});
+	};
+	
+	function retrieveAndViewElemDetail(){
+		$("#tbl_traceSourceList tbody td .trunk").click(function(event){
+			var tooltipData = {
+				url: "<c:url value="/source/changes/search"/>" + "?repositoryKey=<c:out value="${repositoryKey}"/>" + "&path=" + escape(_gSearchPath) + "&rev=" + $(this).attr("revision"),
+				title: "test"	
+			};
+			var	traceTooltip = $(this).qtip({
+				content: {
+					text: function(event, api) {
+			            $.ajax({ url: tooltipData.url })
+			                .done(function(json) {
+			                    api.set('content.text', generateTooltipContentForRevision(json));
+			                })
+			                .fail(function(xhr, status, error) {
+			                    api.set('content.text', status + ': ' + error);
+			                });
 
-							            return 'Loading...';
-							        },
-							        title: 'I have a button to my right!',
-							        button: 'Close'
-								},
-						        position: {
-						        	my: 'bottom left',
-									at: 'top center',
-						            target: 'mouse',
-						            //viewport: $('#tbl_traceSourceList'),
-						            //viewport: $(window),
-						            adjust: {
-										mouse: false,
-										scroll: false
-									}
-						        },
-						        show: false,
-						        hide: false
-							}).qtip('api');
-						//}
-						
-						
-					
-						traceTooltip.reposition(originalEvent).show(originalEvent);
-						/*
-						traceTooltip.set({
-							//'content.title': connection.testId,
-							//'content.text': connection.testId
-							content:{
-								title : connection.testId,
-								text : connection.testId
-							}
-						})
-						.reposition(originalEvent).show(originalEvent);
-						*/
-					});
+			            return 'Loading...';
+			        },
+			        title: tooltipData.title,
+			        button: 'Close'
+				},
+		        position: {
+		        	my: 'bottom left',
+					at: 'top center',
+		            target: 'mouse',
+		            adjust: {
+						mouse: false,
+						scroll: false
+					}
+		        },
+		        show: false,
+		        hide: false,
+		        style: {
+		            classes: 'qtip-light qtip-shadow qtip-shadow qtip-rounded'
+		        }
+			}).qtip('api');
+	
+			traceTooltip.reposition(event).show(event);
 		});
 	};
 	
 	
-	function retrieveTransferSourceList(transferSeq){
-		$.getJSON(
-				"<c:url value="/transfer/request/list/${repositoryKey}/"/>" + transferSeq,
-				{json:1},
-	            function(result){
-					alert( result );
-				});
+	function retrieveAndViewConnectionDetail(connection, originalEvent){
+		var tooltipData = connection.isTransferRequest?generateTooltipDataForTransfer(connection):generateTooltipDataForTagging(connection);
+		var	traceTooltip = $(connection).qtip({
+				content: {
+					text: function(event, api) {
+			            $.ajax({ url: tooltipData.url })
+			                .done(function(json) {
+			                    api.set('content.text', connection.isTransferRequest?generateTooltipContentForTransfer(json):generateTooltipContentForTagging(json));
+			                })
+			                .fail(function(xhr, status, error) {
+			                    api.set('content.text', status + ': ' + error);
+			                });
+
+			            return 'Loading...';
+			        },
+			        title: tooltipData.title,
+			        button: 'Close'
+				},
+		        position: {
+		        	my: 'bottom left',
+					at: 'top center',
+		            target: 'mouse',
+		            adjust: {
+						mouse: false,
+						scroll: false
+					}
+		        },
+		        show: false,
+		        hide: false,
+		        style: {
+		            classes: 'qtip-shadow qtip-shadow qtip-rounded'
+		        }
+			}).qtip('api');
+	
+		traceTooltip.reposition(originalEvent).show(originalEvent);
 	};
 	
+	function generateTooltipDataForTransfer(connection){
+		var transferSeq = connection.traceId;
+		var url = "<c:url value="/transfer/request/list/${repositoryKey}/"/>" + transferSeq + "?json=1";
+		var titleElem = $("#div_tipTitle").clone();
+		titleElem.removeAttr("id").find("b").text("Transfer Info: ");
+		titleElem.find("font a").text( "req-" + transferSeq);
+		titleElem.find("a").attr("href","<c:url value="/transfer/request/list/${repositoryKey}/"/>" + transferSeq);
+		var title = titleElem.html();
+		return {url:url, title:title};
+	};
 	
+	function generateTooltipContentForTransfer(result){
+		var contentElem = $("#div_tipTransferContent").clone();
+		contentElem.removeAttr("id").find("span.type").text(result.transferTypeCode.codeName);
+		contentElem.find("span.state").text(result.transferStateCode.codeName);
+		contentElem.find("span.requested").text(result.requestUser.userName + "(" + result.requestUser.userId + "), " + haksvn.date.convertToEasyFormat(new Date(result.requestDate)));
+		contentElem.find("span.approved").text(result.approveUser.userName + "(" + result.approveUser.userId + "), " + haksvn.date.convertToEasyFormat(new Date(result.approveDate)));
+		contentElem.find("span.description").text(result.description);
+		return $(contentElem).wrap('<div>').parent().html();
+	};
+	
+	function generateTooltipDataForTagging(connection){
+		var taggingSeq = connection.traceId;
+		var url = "<c:url value="/transfer/tagging/list/${repositoryKey}/"/>" + taggingSeq + "?json=1";
+		var titleElem = $("#div_tipTitle").clone();
+		titleElem.removeAttr("id").find("b").text("Tagging Info: ");
+		titleElem.find("font a").text( "tagging-" + taggingSeq);
+		titleElem.find("a").attr("href","<c:url value="/transfer/tagging/list/${repositoryKey}/"/>" + taggingSeq);
+		var title = titleElem.html();
+		return {url:url, title:title};
+	};
+	
+	function generateTooltipContentForTagging(result){
+		var contentElem = $("#div_tipTaggingContent").clone();
+		contentElem.removeAttr("id").find("span.type").text(result.taggingTypeCode.codeName);
+		contentElem.find("span.tagged").text(result.taggingUser.userName + "(" + result.taggingUser.userId + "), " + haksvn.date.convertToEasyFormat(new Date(result.taggingDate)));
+		contentElem.find("span.description").text(result.description);
+		return $(contentElem).wrap('<div>').parent().html();
+	};
+	
+	function generateTooltipContentForRevision(result){
+		var contentElem = $("#div_tipRevisionContent").clone();
+		contentElem.removeAttr("id").find("span.author").text(result.log.author);
+		contentElem.find("span.commited").text(result.log.author + ", " + haksvn.date.convertToEasyFormat(new Date(result.log.date)));
+		contentElem.find("pre.message").text(result.log.message);
+		return $(contentElem).wrap('<div>').parent().html();
+	};
 </script>
 
 <style type="text/css">
@@ -242,6 +296,13 @@ vertical-align:middle;
 width: 100px;
 margin:5px;
 padding:8px;
+}
+th div.elem{
+text-align:center;
+vertical-align:middle;
+width: 100px;
+margin:0 5px 0 5px;
+padding:0 8px 0 8px;
 }
 td div.trunk{
 background-image:url(/haksvn/images/rounded_rec_blue_trace.png);
@@ -269,6 +330,18 @@ background-image:url(/haksvn/images/rounded_rec_white_conn.png);
 .connLabel.long{
 line-height:8px;
 }
+
+.tooltipContent p,.tooltipContent pre{
+font-size: 11px;
+margin:0px 0px 2px 0px;
+}
+
+form p label.options{
+font-style:italic;font-size:12px;line-height:20px;
+}
+form p label.options input{
+vertical-align: bottom;
+}
 </style>
 <div class="content-page">
 	<div class="col w10 last">
@@ -286,9 +359,20 @@ line-height:8px;
 									</option>
 								</c:forEach>
 							</select>
-							<label for="path" class="w_50">Path</label> 
+							<label for="path" class="w_60">Path</label> 
 							<input id="txt_searchSource" class="text w_600" type="text" name="path"/>
 							<a id="btn_searchTrace" class="button right yellow"><small class="icon looking_glass"></small><span>Trace</span></a>
+						</p>
+						<p>
+							<label class="w_120">Options</label> 
+							<label for="trunkCommit" class="options">
+								<input id="ckb_trunkCommit" type="checkbox" name="trunkCommit"/>
+								Include Trunk Commits
+							</label> 
+							<label for="onlyComplete" class="options">
+								<input id="ckb_onlyComplete" type="checkbox" name="onlyComplete" checked="checked"/>
+								Only Completed Requets
+							</label> 
 						</p>
 					</form>
 				</div>
@@ -298,20 +382,44 @@ line-height:8px;
 			<table id="tbl_traceSourceList">
 				<thead>
 					<tr>
-						<th class="w_80">trunk</th>
-						<th class="w_80">branch</th>
-						<th class="w_70">tag</th>
+						<th><div class="elem">trunk</div></th>
+						<th><div class="elem">branch</div></th>
+						<th><div class="elem">tags</div></th>
 					</tr>
 				</thead>
 				<tbody>
 					<tr class="sample">
-						<td class="w_80"><div class="elem trunk display-none"></div></td>
-						<td class="w_80"><div class="elem branch display-none"></div></td>
-						<td class="w_70"><div class="elem tag display-none"></div></td>
+						<td><div class="elem trunk display-none"></div></td>
+						<td><div class="elem branch display-none"></div></td>
+						<td><div class="elem tag display-none"></div></td>
 					</tr>
 				</tbody>
 			</table>
+			
 		</div>
 	</div>
 	<div class="clear"></div>
+</div>
+
+<div class="display-none">
+	<div id="div_tipTitle">
+		<b></b><font class="path open-window"><a href=""></a></font>
+	</div>
+	<div id="div_tipTransferContent" class="tooltipContent">
+		<p><b>Type: </b><span class="type"></span></p>
+		<p><b>State: </b><span class="state"></span></p>
+		<p><b>Requested: </b><span class="requested"></span></p>
+		<p><b>Appproved: </b><span class="approved"></span></p>
+		<p><b>description: </b><span class="description"></span></p>
+	</div>
+	<div id="div_tipTaggingContent" class="tooltipContent">
+		<p><b>Type: </b><span class="type"></span></p>
+		<p><b>Tagged: </b><span class="tagged"></span></p>
+		<p><b>description: </b><span class="description"></span></p>
+	</div>
+	<div id="div_tipRevisionContent" class="tooltipContent">
+		<p><b>Commited: </b><span class="commited"></span></p>
+		<p><b>Commit Message: </b></p>
+		<pre class="message"></pre>
+	</div>
 </div>
