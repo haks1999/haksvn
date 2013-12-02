@@ -6,6 +6,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -65,6 +66,13 @@ public class TaggingAjaxController {
     	return taggingService.retrieveLatestSyncTagging(tagging);
     }
     
+    @RequestMapping(value="/tagging/list/{repositoryKey}/{taggingSeq}", params = {"json"})
+    public @ResponseBody Tagging retrieveTaggingDetail(ModelMap model, 
+    										@PathVariable String repositoryKey,
+    										@PathVariable int taggingSeq) {
+		Tagging tagging = taggingService.retrieveTagging(Tagging.Builder.getBuilder().repositoryKey(repositoryKey).taggingSeq(taggingSeq).build());
+    	return tagging;
+    }
     
     
     @ExceptionHandler(Exception.class)
