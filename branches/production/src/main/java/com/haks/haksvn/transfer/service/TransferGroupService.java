@@ -1,7 +1,9 @@
 package com.haks.haksvn.transfer.service;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -13,7 +15,11 @@ import com.haks.haksvn.common.code.util.CodeUtils;
 import com.haks.haksvn.common.exception.HaksvnException;
 import com.haks.haksvn.common.paging.model.Paging;
 import com.haks.haksvn.common.security.util.ContextHolder;
+import com.haks.haksvn.general.model.MailConfiguration;
+import com.haks.haksvn.general.model.MailMessage;
+import com.haks.haksvn.general.model.MailTemplate;
 import com.haks.haksvn.general.service.GeneralService;
+import com.haks.haksvn.general.util.MailTemplateUtils;
 import com.haks.haksvn.repository.model.Repository;
 import com.haks.haksvn.repository.service.RepositoryService;
 import com.haks.haksvn.repository.service.SVNRepositoryService;
@@ -23,6 +29,7 @@ import com.haks.haksvn.transfer.model.Transfer;
 import com.haks.haksvn.transfer.model.TransferGroup;
 import com.haks.haksvn.transfer.model.TransferSource;
 import com.haks.haksvn.transfer.util.TransferUtils;
+import com.haks.haksvn.user.model.User;
 import com.haks.haksvn.user.service.UserService;
 
 @Service
@@ -45,7 +52,7 @@ public class TransferGroupService {
 	private GeneralService generalService;
 	
 	public Paging<List<TransferGroup>> retrieveTransferGroupList(Paging<TransferGroup> paging){
-		repositoryService.checkRepositoryAccessRight(paging.getModel().getRepositorySeq());
+		repositoryService.checkRepositoryAccessRight(paging.getModel().getRepositoryKey());
 		return transferGroupDao.retrieveTransferGroupList(paging);
 	}
 	
@@ -58,7 +65,7 @@ public class TransferGroupService {
 		List<Transfer> exsitingTransferList = new ArrayList<Transfer>(0);
 		for( Transfer transfer : transferGroup.getTransferList() ){
 			transfer.setTransferGroup(transferGroup);
-			transfer.setRepositorySeq(transferGroup.getRepositorySeq());
+			transfer.setRepositoryKey(transferGroup.getRepositoryKey());
 			Transfer existingTransfer = checkStandbyableTransfer(transfer);
 			existingTransfer.setTransferGroup(transferGroup);
 			existingTransfer.setTransferStateCode(codeService.retrieveCode(CodeUtils.getTransferStandbyCodeId()));
@@ -70,14 +77,14 @@ public class TransferGroupService {
 	}
 	
 	public TransferGroup deleteTransferGroup(TransferGroup transferGroup){
-		repositoryService.checkRepositoryAccessRight(transferGroup.getRepositorySeq());
+		repositoryService.checkRepositoryAccessRight(transferGroup.getRepositoryKey());
 		TransferGroup currentTransferGroup = transferGroupDao.retrieveTransferGroupByTransferGroupSeq(transferGroup.getTransferGroupSeq());
 		transferGroupDao.releaseTransferTransferGroup(currentTransferGroup);
 		return transferGroupDao.deleteTransferGroup(currentTransferGroup);
 	}
 	
 	public TransferGroup transferTransferGroup(TransferGroup transferGroup){
-		Repository repository = repositoryService.checkRepositoryAccessRight(transferGroup.getRepositorySeq());
+		Repository repository = repositoryService.checkRepositoryAccessRight(transferGroup.getRepositoryKey());
 		TransferGroup currentTransferGroup = transferGroupDao.retrieveTransferGroupByTransferGroupSeq(transferGroup.getTransferGroupSeq());
 		TransferGroup.Builder.getBuilder(currentTransferGroup).transferGroupStateCode(codeService.retrieveCode(CodeUtils.getTransferGroupTransferedCodeId()))
 					.transferDate(System.currentTimeMillis()).transferUser(userService.retrieveUserByUserId(ContextHolder.getLoginUser().getUserId())).build();
@@ -92,18 +99,43 @@ public class TransferGroupService {
 				svnSourceTransferList.add(SVNSourceTransfer.Builder.getBuilder(new SVNSourceTransfer()).revision(transferSource.getRevision())
 						.isToAdd(isToAdd).isToDelete(isToDeleted).isToModify(isToModify).relativePath(relPath).build());
 			}
-			transfer.setRevision(svnRepositoryService.transfer(repository, svnSourceTransferList, TransferUtils.createTransferCommitLog(transfer, generalService.retrieveCommitLogTemplate(transfer.getRepositorySeq(), CodeUtils.getLogTemplateRequestCodeId()).getTemplate())));
+			transfer.setRevision(svnRepositoryService.transfer(repository, svnSourceTransferList, TransferUtils.createTransferCommitLog(transfer, generalService.retrieveCommitLogTemplate(transfer.getRepositoryKey(), CodeUtils.getLogTemplateRequestCodeId()).getTemplate())));
 			transfer.setTransferStateCode(codeService.retrieveCode(CodeUtils.getTransferTransferedCodeId()));
 		}
 		
 		// 최종 revision 을 가져 온 후 최종 update
 		transferGroupDao.saveTransferGroup(currentTransferGroup);
+		if( Boolean.valueOf(codeService.retrieveCode(CodeUtils.getMailNoticeTransferCompleteCodeId()).getCodeValue())){
+			sendTransferCompleteNotice(currentTransferGroup);
+		}
 		return currentTransferGroup;
+	}
+	
+	private void sendTransferCompleteNotice(TransferGroup transferGroup){
+		MailTemplate mailTemplate = generalService.retrieveMailTemplate(transferGroup.getRepositoryKey(), CodeUtils.getMailTemplateTransferCompleteCodeId());
+		MailConfiguration mailConfiguration = generalService.retrieveMailConfiguration();
+		MailMessage mailMessage = new MailMessage();
+		mailMessage.setFrom(mailConfiguration.getReplyto());
+		mailMessage.setSubject(MailTemplateUtils.createTransferCompleteSubject(transferGroup, mailTemplate.getSubject()));
+		mailMessage.setText(MailTemplateUtils.createTransferCompleteText(transferGroup, mailTemplate.getText()));
+		
+		List<User> noticeUserList = new ArrayList<User>(0);
+		noticeUserList.add(userService.retrieveUserByUserId(transferGroup.getTransferUser().getUserId()));
+		for( Transfer transfer : transferGroup.getTransferList()){
+			noticeUserList.add(userService.retrieveUserByUserId(transfer.getRequestUser().getUserId()));
+			noticeUserList.add(userService.retrieveUserByUserId(transfer.getApproveUser().getUserId()));
+		}
+		Set<String> userMailSet = new HashSet<String>(0); 
+		for( User noticeUser : noticeUserList ){
+			userMailSet.add(noticeUser.getEmail());
+		}
+		mailMessage.setTo(userMailSet.toArray(new String[userMailSet.size()]));
+		generalService.sendMail(mailConfiguration, mailMessage);
 	}
 	
 	
 	public TransferGroup retrieveTransferGroupDetail(TransferGroup transferGroup){
-		repositoryService.checkRepositoryAccessRight(transferGroup.getRepositorySeq());
+		repositoryService.checkRepositoryAccessRight(transferGroup.getRepositoryKey());
 		return transferGroupDao.retrieveTransferGroupByTransferGroupSeq(transferGroup.getTransferGroupSeq());
 	}
 	
