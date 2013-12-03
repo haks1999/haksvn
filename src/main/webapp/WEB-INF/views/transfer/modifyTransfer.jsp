@@ -195,11 +195,9 @@ form p span font a{text-decoration:underline;cursor:pointer;}
 	function listRepositorySource( searchPath ){
 		$("#div_sourceTree").dynatree({
 			onClick: function(node, event) {
-				if( node.getEventTargetType(event) == 'title'){
-					node.expand(true);
-				}
+				if(node.data.isFolder) node.expand();
 				retrieveSourceList(node.data.fileChildren);
-				node.activate();
+				return true;
 		      },
             clickFolderMode: 1,
             selectMode: 1,
@@ -686,7 +684,7 @@ form p span font a{text-decoration:underline;cursor:pointer;}
 				<p><span class="strong">Detail</span></p>
 				<p>
 					<form:label path="transferSeq" class="left">Transfer Seq</form:label>
-					<form:input class="text w_120 readOnly ${transfer.transferSeq < 1?'visible-hidden':''}" path="transferSeq" readonly="true"/>
+					<form:input class="text w_20 readOnly ${transfer.transferSeq < 1?'visible-hidden':''}" path="transferSeq" readonly="true"/>
 				</p>
 				<p>
 					<form:label path="repositoryKey" class="left">Repository</form:label>
@@ -713,66 +711,38 @@ form p span font a{text-decoration:underline;cursor:pointer;}
 					<form:hidden path="requestUser.userId" />
 					<form:hidden path="requestUser.userName" />
 					<label class="left">Request User</label>
-					<input type="text" class="text w_150 readOnly" readonly value="${transfer.requestUser.userName}(${transfer.requestUser.userId})"/>
+					<input type="text" class="text w_30 readOnly" readonly value="${transfer.requestUser.userName}(${transfer.requestUser.userId})"/>
 				</p>
 				<p>
 					<form:hidden path="requestDate" />
 					<label class="left">Request Date</label>
-					<input type="text" class="text w_150 readOnly requestDate" readonly/>
+					<input type="text" class="text w_30 readOnly requestDate" readonly/>
 				</p>
-				<c:if test="${!transferStateAuth.isEditable}">
-					<p>
-						<label class="left">Approve User</label>
-						<input type="text" class="text w_150 readOnly" readonly value="${transfer.approveUser.userName}(${transfer.approveUser.userId})"/>
-					</p>
-					<p>
-						<form:hidden path="approveDate" />
-						<label class="left">Approve Date</label>
-						<input type="text" class="text w_150 readOnly approveDate" readonly/>
-					</p>
-					<p>
-						<form:hidden path="transferGroup.transferGroupSeq" />
-						<label class="left">Transfer Group</label>
-						<c:if test="${not empty transfer.transferGroup && transfer.transferGroup.transferGroupSeq > 0}">
-							<font class="path open-window"><a href="<c:url value="/transfer/requestGroup/list/${repository.repositoryKey}/${transfer.transferGroup.transferGroupSeq}"/>"><c:out value="group-${transfer.transferGroup.transferGroupSeq}"/></a></font>
-						</c:if>
-						<input type="text" class="text visible-hidden"/>
-					</p>
-					<p>
-						<form:hidden path="revision" />
-						<label class="left">Commit revision</label>
-						<c:if test="${transfer.revision > 0 }">
-							<font class="path open-window"><a href="<c:url value="/source/changes/${repository.repositoryKey}?rev=${transfer.revision}"/>"><c:out value="r${transfer.revision}"/></a></font>
-						</c:if>
-						<input type="text" class="text visible-hidden"/>
-					</p>
-				</c:if>
-				<c:if test="${transferStateAuth.isRequestable && useMailNoticeRequest}">
-					<p>
-						<label class="left">Notice to</label>
-						<input name="noticeUserList" type="hidden" />
-						<select id="sel_noticeUserList" data-placeholder="Find Users" class="chosen-select" multiple></select>
-					</p>
-					<script type="text/javascript">
-						$(function() {
-							$("#sel_noticeUserList").val('').trigger("liszt:updated");
-							$("#frm_transfer .chzn-container li.search-choice").remove();
-							$.getJSON( "<c:url value="/common/users/find/${repositoryKey}"/>",
-									{searchString: ""}, 
-									function(data){
-										$("#frm_transfer .chosen-select option").remove();
-										for( var inx = 0 ; inx < data.length ; inx++ ){
-											$("#frm_transfer .chosen-select").append("<option value=\"" +  data[inx].userId + "\">" + data[inx].userName + "(" + data[inx].userId + ")" + "</option>");
-										}
-										$("#frm_transfer .chosen-select").chosen({width:'380px'})
-											.change(function(){
-												$("#frm_transfer input[name=noticeUserList]").val($("#frm_transfer .chosen-select").chosen().val());
-											});
-							    	}
-							);
-					   	});
-					</script>
-				</c:if>
+				<p>
+					<label class="left">Approve User</label>
+					<input type="text" class="text w_30 readOnly" readonly value="${transfer.approveUser.userName}(${transfer.approveUser.userId})"/>
+				</p>
+				<p>
+					<form:hidden path="approveDate" />
+					<label class="left">Approve Date</label>
+					<input type="text" class="text w_30 readOnly approveDate" readonly/>
+				</p>
+				<p>
+					<form:hidden path="transferGroup.transferGroupSeq" />
+					<label class="left">Transfer Group</label>
+					<c:if test="${not empty transfer.transferGroup && transfer.transferGroup.transferGroupSeq > 0}">
+						<font class="path open-window"><a href="<c:url value="/transfer/requestGroup/list/${repository.repositoryKey}/${transfer.transferGroup.transferGroupSeq}"/>"><c:out value="group-${transfer.transferGroup.transferGroupSeq}"/></a></font>
+					</c:if>
+					<input type="text" class="text visible-hidden"/>
+				</p>
+				<p>
+					<form:hidden path="revision" />
+					<label class="left">Commit revision</label>
+					<c:if test="${transfer.revision > 0 }">
+						<font class="path open-window"><a href="<c:url value="/source/changes/${repository.repositoryKey}?rev=${transfer.revision}"/>"><c:out value="r${transfer.revision}"/></a></font>
+					</c:if>
+					<input type="text" class="text visible-hidden"/>
+				</p>
 				<hr/>
 				<p>
 					<span class="strong">Sources</span>
@@ -1020,7 +990,7 @@ form p span font a{text-decoration:underline;cursor:pointer;}
 				<div class="desc">
 					<p>
 						<label>Path</label> 
-						<input id="txt_searchSource" class="text w_500" type="text" />
+						<input id="txt_searchSource" class="text w_40" type="text" />
 						<button id="btn_searchSource">Search</button>
 					</p>
 				</div>

@@ -1,9 +1,6 @@
 <%@ page contentType="text/html; charset=utf-8"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ taglib uri="http://tiles.apache.org/tags-tiles" prefix="tiles"%>
-<style type="text/css">
-#menu ul li a:hover{background-image:none;}
-</style>
 <script type="text/javascript">
 $(function() {
 	
@@ -30,7 +27,7 @@ $(function() {
 					<div id="left"></div>
 					<div id="right"></div>
 					<ul>
-						<li><a><span>Haksvn Login</span></a></li>
+						<li><a href="#"><span>Haksvn Login</span></a></li>
 					</ul>
 					<div class="clear"></div>
 				</div>
@@ -41,11 +38,11 @@ $(function() {
 							<p style="text-align:center;padding-bottom:10px;">Simple Subversion Repository Management</p>
 							<p>
 								<label class="left">User ID</label>
-								<input type="text" class="text w_230" name="userId"/>
+								<input type="text" class="text w_20" name="userId"/>
 							</p>
 							<p>
 								<label class="left">Password</label>
-								<input type="password" class="text w_230" name="userPasswd"/>
+								<input type="password" class="text w_20" name="userPasswd"/>
 							</p>
 							<p>
 								<label class="left"></label>

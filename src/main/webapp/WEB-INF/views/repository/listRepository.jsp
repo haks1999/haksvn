@@ -1,55 +1,37 @@
 <%@ include file="/WEB-INF/views/common/include/taglib.jspf"%>
 <script type="text/javascript">
-	
+	/*
 	$(function() {
-		$(".up,.down").click(function(){
-		    var row = $(this).parents("tr:first");
-		    if ($(this).is(".up")) {
-		        row.insertBefore(row.prev());
-		    }else{
-		        row.insertAfter(row.next());
-		    }
-		    var repositories = [];
-		    var order = 1;
-		    $("table tbody tr").each(function(){
-		    	repositories.push({repositoryKey:$(this).attr("class"),repositoryOrder:order++});
-		    });
-		    
-			$.post("<c:url value="/configuration/repositories/list/changeOrder"/>",
-				{repositoryList:haksvn.json.stringfy(repositories)},
-	            function(data){
-					haksvn.block.off();
-					$().Message({type:data.type,text:data.text});
-	        },"json");
+		$.getJSON( "<c:url value="/configuration/repositories/list"/>", function(data) {
+			for( var inx = 0 ; inx < data.length ; inx++ ){
+				var row = '<tr><td>' + data[inx].repositoryName + '</td>' +
+							'<td>' + data[inx].repositoryLocation + '</td>' +
+							'<td>' + data[inx].repositoryStatus + '</td></tr>';
+				$('#tbl_repositories').append(row);
+			}
 		});
-	});
-
+		
+   	});
+	*/
 </script>
-<div class="content-page">
+<div id="table" class="help">
 	<h1>Repositories</h1>
 	<div class="col w10 last">
 		<div class="content">
-			<table>
+			<table id="tbl_repositories">
 				<thead>
 					<tr>
-						<th width="80px">Order</th>
-						<th width="80px">Key</th>
 						<th>Name</th>
 						<th>Location</th>
-						<th width="80px">Sync User</th>
-						<th width="50px">Active</th>
+						<th>Sync User</th>
+						<th>Active</th>
 					</tr>
 				</thead>
 				<tbody>
 					<c:forEach items="${repositoryList}" var="repository">
-						<tr class="${repository.repositoryKey}">
+						<tr>
 							<td>
-								<font class="path"><a class="up">Up</a></font>
-           						<font class="path"><a class="down">Down</a></font>
-							</td>
-							<td><c:out value="${repository.repositoryKey}" /></td>
-							<td>
-								<font class="path"><a href="<c:url value="/configuration/repositories/list/${repository.repositoryKey}"/>"><c:out value="${repository.repositoryName}" /></a></font>
+								<font class="path"><a href="<c:url value="/configuration/repositories/list/${repository.repositorySeq}"/>"><c:out value="${repository.repositoryName}" /></a></font>
 							</td>
 							<td><c:out value="${repository.repositoryLocation}" /></td>
 							<td>

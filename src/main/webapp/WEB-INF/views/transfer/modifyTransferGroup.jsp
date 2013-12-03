@@ -10,7 +10,7 @@ form p span font a{text-decoration:underline;cursor:pointer;}
 <script type="text/javascript">
 	
 	$(function() {
-		$('#frm_transferGroup').attr('action', '<c:url value="/transfer/requestGroup/list/${repositoryKey}/save" />');
+		$('#frm_transferGroup').attr('action', '<c:url value="/transfer/requestGroup/list/${repositorySeq}/save" />');
 		transformDateField();
 		setFormValidation();
 		if( Number('<c:out value="${transferGroup.transferGroupSeq}"/>') > 0) retrieveAddedRequestList();
@@ -80,7 +80,7 @@ form p span font a{text-decoration:underline;cursor:pointer;}
 		$("#tbl_approvedRequestList tfoot span:not(.loader)").removeClass('display-none').addClass('display-none');
 		$("#tbl_approvedRequestList tfoot span.loader").removeClass('display-none');
 		_gApprovedRequestPaging.sCode = "<spring:eval expression="T(com.haks.haksvn.common.code.util.CodeUtils).getTransferApprovedCodeId()"/>";
-		$.post( "<c:url value="/transfer/request/list"/>" + "/" + '<c:out value="${repositoryKey}" />',
+		$.post( "<c:url value="/transfer/request/list"/>" + "/" + '<c:out value="${repositorySeq}" />',
 				_gApprovedRequestPaging,
 				function(data) {
 					var transferList = data.model;
@@ -90,11 +90,11 @@ form p span font a{text-decoration:underline;cursor:pointer;}
 						//$(row).attr('transferSeq',transferList[inx].transferSeq);
 						$(row).data('transfer',transferList[inx]);
 						$(row).find(".transferSeq font a").text('req-'+transferList[inx].transferSeq);
-						$(row).find(".transferSeq a").attr("href",'<c:url value="/transfer/request/list/"/>' + transferList[inx].repositoryKey + '/' +  transferList[inx].transferSeq);
+						$(row).find(".transferSeq a").attr("href",'<c:url value="/transfer/request/list"/>' + '/' + transferList[inx].repositorySeq + '/' +  transferList[inx].transferSeq);
 						$(row).children(".requestor").text(transferList[inx].requestUser.userName);
 						$(row).children(".approver").text(transferList[inx].approveUser.userName);
 						$(row).children(".description").text(transferList[inx].description);
-						$(row).attr('transferSeq',transferList[inx].transferSeq).attr('repositoryKey',transferList[inx].repositoryKey);
+						$(row).attr('transferSeq',transferList[inx].transferSeq).attr('repositorySeq',transferList[inx].repositorySeq);
 						$(row).removeClass("sample");
 						$('#tbl_approvedRequestList > tbody').append(row);
 					}
@@ -110,18 +110,16 @@ form p span font a{text-decoration:underline;cursor:pointer;}
 		},'json');
 	};
 	
-	var _gTransferGroupChanged = false;
 	function retrieveAddedRequestList(){
 		haksvn.block.on();
 		$.getJSON(
-				"<c:url value="/transfer/requestGroup/list/${repositoryKey}/${transferGroup.transferGroupSeq}/requests"/>",
+				"<c:url value="/transfer/requestGroup/list/${repositorySeq}/${transferGroup.transferGroupSeq}/requests"/>",
 				{},
 	            function(result){
 					for( var inx = 0 ; inx < result.length ; inx++){
 						addRequestToTransferListPanel(result[inx]);
 					}
 					haksvn.block.off();
-					_gTransferGroupChanged = false;
 				});
 	};
 	
@@ -153,16 +151,10 @@ form p span font a{text-decoration:underline;cursor:pointer;}
 			var requestDetail = $('#div_requestDetail').clone().removeClass('display-none').attr("id",elemId);
 			$(requestDetail).attr("transferSeq",transfer.transferSeq);
 			$(requestDetail).find(".transferSeq font a").text("req-"+transfer.transferSeq);
-			$(requestDetail).find(".transferSeq a").attr("href",'<c:url value="/transfer/request/list"/>' + '/' + transfer.repositoryKey + '/' +  transfer.transferSeq);
+			$(requestDetail).find(".transferSeq a").attr("href",'<c:url value="/transfer/request/list"/>' + '/' + transfer.repositorySeq + '/' +  transfer.transferSeq);
 			$(requestDetail).find(".requestor").text(transfer.requestUser.userName);
 			$(requestDetail).find(".approver").text(transfer.approveUser.userName);
 			$(requestDetail).find(".description").text(transfer.description);
-			if( transfer.revision && transfer.revision > 0 ){
-				$(requestDetail).find(".revision").removeClass("display-none");
-				$(requestDetail).find(".revision font a").text("r" + transfer.revision);
-				$(requestDetail).find(".revision a").attr("href",'<c:url value="/source/changes/"/>' + transfer.repositoryKey + '?rev=' +  transfer.revision);
-			}
-			
 			$("#spn_requestsToTran").append(requestDetail);
 			changeCurrentTransferListCount(1);
 			validTransferGroupForm.form();
@@ -221,13 +213,13 @@ form p span font a{text-decoration:underline;cursor:pointer;}
 	
 	function retrieveTransferSourceList(loadingElem, transferSeq){
 		$.getJSON(
-				"<c:url value="/transfer/request/list/${repositoryKey}/"/>" + transferSeq + "/sources",
+				"<c:url value="/transfer/request/list/${repositorySeq}/"/>" + transferSeq + "/sources",
 				{},
 	            function(result){
 					$(loadingElem).removeClass('loading').addClass('loaded');
 					for( var inx = 0 ; inx < result.length ; inx++){
 						var sourceElem = $(loadingElem).find(".sample").clone().removeClass("sample display-none");
-						$(sourceElem).find("a").attr("href", ("<c:url value="/source/browse/${repositoryKey}/" />" + result[inx].path + '?rev=' + result[inx].revision).replace("//", "/"));
+						$(sourceElem).find("a").attr("href", ("<c:url value="/source/browse/${repositorySeq}/" />" + result[inx].path + '?rev=' + result[inx].revision).replace("//", "/"));
 						$(sourceElem).find("font a").text(result[inx].path);
 						$(sourceElem).find(".type").text(result[inx].transferSourceTypeCode.codeName);
 						$(loadingElem).append(sourceElem);
@@ -244,7 +236,7 @@ form p span font a{text-decoration:underline;cursor:pointer;}
 	};
 	
 </script>
-<div class="content-page">
+<div id="table" class="help">
 	<h1>Transfer Group Information</h1>
 	<div class="col w10 last">
 		<div class="content">
@@ -257,41 +249,39 @@ form p span font a{text-decoration:underline;cursor:pointer;}
 					<form:input class="text w_20 readOnly ${isNewTransferGroup ?'visible-hidden':''}" path="transferGroupSeq" readonly="true"/>
 				</p>
 				<p>
-					<form:label path="repositoryKey" class="left">Repository</form:label>
-					<form:select path="repositoryKey" disabled="true" items="${repositoryList}" itemValue="repositoryKey" itemLabel="repositoryName"/>
+					<form:label path="repositorySeq" class="left">Repository</form:label>
+					<form:select path="repositorySeq" disabled="true" items="${repositoryList}" itemValue="repositorySeq" itemLabel="repositoryName"/>
 				</p>
 				<p>
 					<form:label path="transferGroupTypeCode.codeId" class="left">Type</form:label>
 					<form:select path="transferGroupTypeCode.codeId" disabled="${not transferGroupStateAuth.isEditable}" items="${requestScope['transfergroup.type.code']}" itemValue="codeId" itemLabel="codeName"/>
-					<span class="form-help"><spring:message htmlEscape="true" code="helper.transferGroup.type" /></span>
 				</p>
 				<p>
 					<form:label path="transferGroupStateCode.codeId" class="left">State</form:label>
 					<form:select path="transferGroupStateCode.codeId" disabled="true" items="${requestScope['transfergroup.state.code']}" itemValue="codeId" itemLabel="codeName"/>
-					<span class="form-help"><spring:message htmlEscape="true" code="helper.transferGroup.state" /></span>
 				</p>
 				<p>
 					<form:label path="title" class="left">Title</form:label>
-					<form:input class="text w_200" disabled="${not transferGroupStateAuth.isEditable}" path="title"/>
+					<form:input class="text w_30" disabled="${not transferGroupStateAuth.isEditable}" path="title"/>
 					<form:errors path="title" />
-					<span class="form-status"></span>
+					<span class="status"></span>
 				</p>
 				<p>
 					<form:label path="description" class="left">Description</form:label>
 					<form:textarea class="text" disabled="${not transferGroupStateAuth.isEditable}" cols="50" rows="5" path="description"/>
 					<form:errors path="description" />
-					<span class="form-status"></span>
+					<span class="status"></span>
 				</p>
 				<p>
 					<form:hidden path="transferUser.userId" />
 					<form:hidden path="transferUser.userName" />
 					<label class="left">Transfer User</label>
-					<input type="text" class="text w_150 readOnly" readonly value="${transferGroup.transferUser.userName}(${transferGroup.transferUser.userId})"/>
+					<input type="text" class="text w_30 readOnly" readonly value="${transferGroup.transferUser.userName}(${transferGroup.transferUser.userId})"/>
 				</p>
 				<p>
 					<form:hidden path="transferDate" />
 					<label class="left">Transfer Date</label>
-					<input type="text" class="text w_150 readOnly transferDate" readonly/>
+					<input type="text" class="text w_30 readOnly transferDate" readonly/>
 				</p>
 				<hr/>
 				<p>
@@ -305,7 +295,7 @@ form p span font a{text-decoration:underline;cursor:pointer;}
 					<span class="italic" style="margin-left:20px;"><font class="path"><a onclick="expandAllTransferDetail()">expand all</a></font></span>
 					<span class="italic"><font class="path"><a onclick="collapseAllTransferDetail()">collapse all</a></font></span>
 					<input type="text" name="transferListCount" readonly class="text readOnly w_10" style="text-align:right;" value="${fn:length(requestGroup.transferList)}"/> requests
-					<span class="form-status"></span>
+					<span class="status"></span>
 					<span id="spn_requestsToTran" style="display:block;margin-left:220px;">
 					</span>
 				</p>
@@ -321,13 +311,15 @@ form p span font a{text-decoration:underline;cursor:pointer;}
 									$('#frm_transferGroup').append("<input type=\"hidden\" name=\"transferList[" + (requestCnt++) + "].transferSeq\" value=\"" + $(this).attr("transferSeq") + "\" />");
 								});
 								
-								$('#frm_transferGroup').attr('action', '<c:url value="/transfer/requestGroup/list" />' + '<c:out value="/${repositoryKey}/save"/>');
+								$('#frm_transferGroup').attr('action', '<c:url value="/transfer/requestGroup/list" />' + '<c:out value="/${repositorySeq}/save"/>');
 								$('#frm_transferGroup').submit();
 							};
 						</script>
 						<c:if test="${!isNewTransferGroup}">
 							<a class="button green mt ml" onclick="transferTransferGroup()"><small class="icon check"></small><span>Transfer</span></a>
 							<script type="text/javascript" >
+							
+								var _gTransferGroupChanged = false;
 								$(function() {
 									$("#frm_transferGroup input[name='title']").change(function(){
 										_gTransferGroupChanged = true;
@@ -339,8 +331,8 @@ form p span font a{text-decoration:underline;cursor:pointer;}
 										_gTransferGroupChanged = true;
 									});
 								});
-								
 								function transferTransferGroup(){
+									
 									if( _gTransferGroupChanged ){
 										$("#div_changeOccurMessage").dialog({
 											title:'Changes occured',
@@ -361,29 +353,11 @@ form p span font a{text-decoration:underline;cursor:pointer;}
 									}else{
 										haksvn.block.on();
 										var queryString = $('#frm_transferGroup').serialize();
-										$.post('<c:url value="/transfer/requestGroup/list" />' + '<c:out value="/${repositoryKey}/transfer"/>',
+										$.post('<c:url value="/transfer/requestGroup/list" />' + '<c:out value="/${repositorySeq}/transfer"/>',
 											queryString,
 								            function(data){
-											haksvn.block.off();
-											if( data.type != 'success'){
+												haksvn.block.off();
 												$().Message({type:data.type,text:data.text});
-												return;
-											}
-											$("#div_transferSuccessMessage").dialog({
-												title:'Transfer finished',
-										      	resizable:false,
-										      	width:300,
-											    modal: true,
-											    buttons: {
-											    	"Yes": function(){
-											    		location.href = "<c:url value="/transfer/tagging/list/${repositoryKey}/add"/>";
-												    },
-											    	"No": function() {
-											    		var sCode = "<spring:eval expression="T(com.haks.haksvn.common.code.util.CodeUtils).getTransferTransferedCodeId()"/>";
-											    		location.href = "<c:url value="/transfer/requestGroup/list/${repositoryKey}"/>" + "?sCode=" + sCode;
-											        }
-											    }
-										    });
 								        },"json");
 									}
 								};
@@ -391,7 +365,7 @@ form p span font a{text-decoration:underline;cursor:pointer;}
 							<a class="button red mt ml" onclick="deleteTransferGroup()"><small class="icon cross"></small><span>Delete</span></a>
 							<script type="text/javascript" >
 								function deleteTransferGroup(){
-									$('#frm_transferGroup').attr('action', '<c:url value="/transfer/requestGroup/list" />' + '<c:out value="/${repositoryKey}/delete"/>');
+									$('#frm_transferGroup').attr('action', '<c:url value="/transfer/requestGroup/list" />' + '<c:out value="/${repositorySeq}/delete"/>');
 									$('#frm_transferGroup').submit();
 								};
 							</script>
@@ -412,7 +386,7 @@ form p span font a{text-decoration:underline;cursor:pointer;}
 			<table id="tbl_approvedRequestList" class="compact">
 				<thead>
 					<tr>
-						<th class="w_20"></th>
+						<th class="checkbox w_20"></th>
 						<th class="w_50">Seq</th>
 						<th class="w_80">Requestor</th>
 						<th class="w_80">Approver</th>
@@ -451,19 +425,14 @@ form p span font a{text-decoration:underline;cursor:pointer;}
 				<font class="path font12 open-window"><a></a></font>
 			</span>
 			<font class="default">requested by <b class="requestor"></b>, approved by <b class="approver"></b></font>
-			<c:if test="${transferGroupStateAuth.isEditable}">
-				<font class="path italic remove"><a>Remove</a></font>
-				<font class="path italic cancel display-none"><a>Cancel</a></font>
-			</c:if>
+			<font class="path italic remove"><a>Remove</a></font>
+			<font class="path italic cancel display-none"><a>Cancel</a></font>
 		</span>
 	</span>
 	
 	<div class="box display-none requestDetail">
 		<div class="head"><div></div></div>
 		<div class="desc">
-			<span class="revision display-none">
-				request transfer commit revision : <font class="path font12 open-window"><a></a></font>
-			</span>
 			<pre class="description"></pre>
 			<ul class="requestSourceList">
 				<li class="sample display-none"><span class="type"></span><font class="path open-window"><a></a></font></li>
@@ -487,15 +456,5 @@ form p span font a{text-decoration:underline;cursor:pointer;}
   	</p>
   	<p>
   		If transfer without saving, changes will be lost. Proceed?
-  	</p>
-</div>
-
-<div id="div_transferSuccessMessage" style="display:none;">
-	<p>
-    	<span class="ui-icon ui-icon-circle-check" style="float: left; margin: 0 7px 50px 0;"></span>
-    	<span>Transfer finished successfully.</span>
-  	</p>
-  	<p>
-  		Do you want to create tagging from current branch?
   	</p>
 </div>

@@ -58,18 +58,19 @@
 	function changeServerConnectType( connectType ){
 		if( connectType == 'server.connect.type.code.local' ){
 			$('#div_serverRemoteSettings').slideUp();
-			$("#frm_repository input[name=authzPath]").rules("remove");
-			$("#frm_repository input[name=passwdPath]").rules("remove");
+			$("#frm_user input[name=authzPath]").rules("remove");
+			$("#frm_user input[name=passwdPath]").rules("remove");
 		}else{
 			$('#div_serverRemoteSettings').slideDown();
-			$("#frm_repository input[name=authzPath]").rules("add", {required:true});
-			$("#frm_repository input[name=passwdPath]").rules("add", {required:true});
+			$("#frm_user input[name=authzPath]").rules("add", {required:true});
+			$("#frm_user input[name=passwdPath]").rules("add", {required:true});
 		}
 	};
 	
 	function openAuthzTemplateDialog(){
 		$('#txa_authzTemplate').val(frm_repository.authzTemplate.value);
 		$("#div_authzTemplate").dialog({
+			height: 500,
 		    width: 550,
 		    modal: true,
 		    buttons: {
@@ -133,94 +134,56 @@
 	};
 	
 </script>
-<div class="content-page">
+<div id="table" class="help">
 	<h1>Repository Information</h1>
 	<div class="col w10 last">
 		<div class="content">
+		
 			<form:form commandName="repository" class="w200" id="frm_repository" method="post">
+					<form:hidden path="repositorySeq" name="repositorySeq"/>
+					<c:if test="${repository.repositorySeq lt 1}" var="isNewRepository" />
 				<p><span class="strong">Repository Settings</span></p>
 				<p>
 					<form:label path="repositoryName" class="left">Repository Name</form:label>
-					<form:input class="text w_200" path="repositoryName"/>
+					<form:input class="text w_20" path="repositoryName"/>
 					<form:errors path="repositoryName" />
-					<span class="form-status"></span>
+					<span class="status"></span>
 				</p>
-				<p>
-					<c:if test="${empty repository.repositoryKey}" var="isNewRepository" />
-					<form:label path="repositoryKey" class="left">Repository Key</form:label>
-					<c:choose>
-						<c:when test="${isNewRepository}">
-							<form:input class="text w_10" path="repositoryKey"/>
-							<script type="text/javascript">
-								$(function() {
-									$("#frm_repository input[name=repositoryKey]").rules("add", {
-										required: true,
-										minlength: 5,
-										maxlength: 15,
-										capital: true,
-										remote:{
-						                      url: "<c:url value="/configuration/repositories/add/validateRepositoryKey/"/>",
-						                      data:{
-						                          repositoryKey: function(){
-						                              return $("#frm_repository input[name=repositoryKey]").val();
-						                          }
-						                      }
-						                    },
-										messages:{
-											remote: $.validator.format("<spring:message code="validation.duplicate" />")
-										}
-									});
-								});
-							</script>
-						</c:when>
-						<c:otherwise>
-							<form:input class="text w_10 readOnly" path="repositoryKey" readonly="true"/>
-						</c:otherwise>
-					</c:choose>
-					<form:errors path="repositoryKey" />
-					<span class="form-help"><spring:message code="helper.repository.repositoryKey" /></span>
-					<span class="form-status"></span>
-				</p>
-				
 				<p>
 					<form:label path="repositoryLocation" class="left">Repository Location</form:label>
-					<form:input class="text w_250" path="repositoryLocation" />
-					<form:errors path="repositoryLocation" />
-					<span class="form-help"><spring:message code="helper.repository.location" /></span>
-					<span class="form-status"></span>
+					<form:input class="text w_30" path="repositoryLocation" />
+					<form:errors path="repositoryLocation" cssClass="field_error"/>
+					<span class="status"></span>
 				</p>
 				<p>
 					<form:label path="authUserId" class="left">Repository User ID</form:label>
 					<form:input class="text w_10" path="authUserId"/>
 					<form:errors path="authUserId" />
-					<span class="form-status"></span>
+					<span class="status"></span>
 				</p>
 				<p>
 					<form:label path="authUserPasswd" class="left">Repository User Password</form:label>
 					<form:password class="text w_10" path="authUserPasswd"/>
 					<form:errors path="authUserPasswd" />
-					<span class="form-status"></span>
+					<span class="status"></span>
 				</p>
 				<p>
 					<form:label path="trunkPath" class="left">Trunk Path</form:label>
-					<form:input class="text w_150" path="trunkPath" value="${isNewRepository? '/trunk':repository.trunkPath}"/>
-					<span class="form-help"><spring:message code="helper.repository.trunkPath" /></span>
+					<form:input class="text w_20" path="trunkPath" value="${isNewRepository? '/trunk':repository.trunkPath}"/>
 					<form:errors path="trunkPath" />
-					<span class="form-status"></span>
+					<span class="status"></span>
 				</p>
 				<p>
 					<form:label path="tagsPath" class="left">Tags Path</form:label>
-					<form:input class="text w_150" path="tagsPath" value="${isNewRepository? '/tags':repository.tagsPath}"/>
-					<span class="form-help"><spring:message code="helper.repository.tagsPath" /></span>
+					<form:input class="text w_20" path="tagsPath" value="${isNewRepository? '/tags':repository.tagsPath}"/>
 					<form:errors path="tagsPath" />
-					<span class="form-status"></span>
+					<span class="status"></span>
 				</p>
 				<p>
 					<form:label path="branchesPath" class="left">Production Branch Path</form:label>
-					<form:input class="text w_150" path="branchesPath" value="${isNewRepository? '/branches/production':repository.branchesPath}"/>
-					<span class="form-help"><spring:message code="helper.repository.branchesPath" /></span>
+					<form:input class="text w_20" path="branchesPath" value="${isNewRepository? '/branches/production':repository.branchesPath}"/>
 					<form:errors path="branchesPath" />
-					<span class="form-status"></span>
+					<span class="status"></span>
 				</p>
 				<p>
 					<form:label path="active" class="left">Active</form:label>
@@ -230,8 +193,6 @@
 					<c:if test="${repository.syncUser eq 'common.boolean.yn.code.y'}" var="syncUserYn" />
 					<label for="ckb_syncUser" class="left">Synchronize User</label>
 					<input id="ckb_syncUser" type="checkbox" class="plaincheckbox" ${syncUserYn? "checked":""} onclick="selectSynchrozingUser(this.checked)"/>
-					<input type="text" disabled class="text visible-hidden" style="width:1px;"/>
-					<span class="form-help"><spring:message code="helper.repository.syncUser" /></span>
 					<form:hidden path="syncUser" />
 				</p>
 				<div id="div_serverSettings" style="${syncUserYn? '' : 'display:none;'}">
@@ -244,33 +205,31 @@
 					<div id="div_serverRemoteSettings" style="${ (repository.connectType eq 'server.connect.type.code.local')||(empty repository.connectType)? 'display:none;' : ''}">
 						<p>
 							<form:label path="serverIp" class="left">Server address</form:label>
-							<form:input path="serverIp" class="text w_150" />
+							<form:input path="serverIp" class="text w_20" />
 						</p>
 						<p>
 							<form:label path="serverUserId" class="left">Server User ID</form:label>
-							<form:input path="serverUserId" class="text w_120" />
+							<form:input path="serverUserId" class="text w_10" />
 						</p>
 						<p>
 							<form:label path="serverUserPasswd" class="left">Server User Password</form:label>
-							<form:input path="serverUserPasswd" class="text w_120" />
+							<form:input path="serverUserPasswd" class="text w_10" />
 						</p>
 					</div>
 					<p>
 						<form:label path="authzPath" class="left">authz file path</form:label>
-						<form:input path="authzPath" class="text w_200" />
-						<span class="form-status"></span>
+						<form:input path="authzPath" class="text w_30" />
+						<span class="status"></span>
 					</p>
 					<p>
 						<form:label path="authzTemplate" class="left">authz file template</form:label>
 						<form:hidden path="authzTemplate" />
 						<span class="underline italic link" onclick="openAuthzTemplateDialog()">Edit</span>
-						<input type="text" disabled class="text visible-hidden" style="width:1px;"/>
-						<span class="form-help"><spring:message htmlEscape="true" code="helper.repository.authzTemplate" /></span>
 					</p>
 					<p>
 						<form:label path="passwdPath" class="left">passwd file path</form:label>
-						<form:input path="passwdPath" class="text w_200" />
-						<span class="form-status"></span>
+						<form:input path="passwdPath" class="text w_30" />
+						<span class="status"></span>
 					</p>
 					<p>
 						<form:label path="passwdType" class="left">SVN password type</form:label>
@@ -291,14 +250,6 @@
 	<div class="clear"></div>
 </div>
 <div id="div_authzTemplate" title="Authz Template" style="display:none;">
-	<div class="info">
-		<div class="tl"></div>
-		<div class="tr"></div>
-		<div class="desc variable-help"><spring:message code="helper.repository.authzTemplateVariables" /></div>
-		<div class="bl"></div>
-		<div class="br"></div>
-	</div>
-						
 	<div class="content fullsize">
 		<textarea id="txa_authzTemplate"><c:out value="${repository.authzTemplate}"/></textarea>
 		<textarea id="txa_authzDefaultTemplate" style="display:none;"><c:out value="${authzTemplate}"/></textarea>

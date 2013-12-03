@@ -15,18 +15,14 @@
 	<link rel="stylesheet" href="<c:url value="/css/style.css"/>" type="text/css"	media="screen" />
 	<link rel="stylesheet" href="<c:url value="/css/haksvn.css"/>" type="text/css"	media="screen" />
 	<link rel="stylesheet" href="<c:url value="/css/jquery-ui-1.9.2.custom.css"/>" type="text/css"	media="screen" />
-	<link rel="stylesheet" href="<c:url value="/css/jquery.qtip.min.css"/>" type="text/css"	media="screen" />
 	<link rel="stylesheet" href="<c:url value="/css/ui.dynatree.css"/>" type="text/css"	media="screen" />
-	<link rel="stylesheet" href="<c:url value="/css/chosen.css"/>" type="text/css"	media="screen" />
 	<script src="<c:url value="/js/jquery-1.8.3.js"/>" type="text/javascript" charset="utf-8"></script>
 	<script src="<c:url value="/js/jquery.blockUI.js"/>" type="text/javascript" charset="utf-8"></script>
 	<script src="<c:url value="/js/jquery.form.js"/>" type="text/javascript" charset="utf-8"></script>
 	<script src="<c:url value="/js/jquery.cookie.js"/>" type="text/javascript" charset="utf-8"></script>
 	<script src="<c:url value="/js/jquery.validate.min.js"/>" type="text/javascript" charset="utf-8"></script>
 	<script src="<c:url value="/js/jquery-ui-1.9.2.custom.js"/>" type="text/javascript" charset="utf-8"></script>
-	<script src="<c:url value="/js/jquery.qtip.min.js"/>" type="text/javascript" charset="utf-8"></script>
 	<script src="<c:url value="/js/jquery.dynatree-1.2.4.js"/>" type="text/javascript" charset="utf-8"></script>
-	<script src="<c:url value="/js/chosen.jquery.min.js"/>" type="text/javascript" charset="utf-8"></script>
 	<script src="<c:url value="/js/global.js"/>" type="text/javascript" charset="utf-8"></script>
 	<script src="<c:url value="/js/modal.js"/>" type="text/javascript" charset="utf-8"></script>
 	<script src="<c:url value="/js/haksvn.js"/>" type="text/javascript" charset="utf-8"></script>
@@ -39,17 +35,17 @@
 				haksvn.block.off();
 		    },
 		    complete : function( jqXHR ,textStatus ){
-		    	//$.unblockUI();
-		    	//$('#loader-main').hide();
+		    	$.unblockUI();
+		    	$('#loader-main').hide();
 		    },
 		    beforeSend: function(){
-		    	//$('#loader-main').show();
+		    	$('#loader-main').show();
 		    }
 		});
 		
 		$.validator.setDefaults({
 			errorPlacement: function(error, element) {
-				error.appendTo( element.parent().find(".form-status") );
+				error.appendTo( element.parent().find(".status") );
 			},
 			errorClass: 'invalid'
 		});
@@ -61,14 +57,6 @@
 		$.validator.addMethod("minSelect", function(value, element, params) {
 		     return value >= Number(params);
 		}, "<spring:message code="validation.minSelect" />");
-		
-		$.validator.addMethod("alphabet", function(value, element, params) {
-		     return /^[a-zA-Z]+$/.test(value);
-		}, "<spring:message code="validation.alphabet" />");
-		
-		$.validator.addMethod("capital", function(value, element, params) {
-		     return /^[A-Z]+$/.test(value);
-		}, "<spring:message code="validation.capital" />");
 		
 		$.extend($.validator.messages, {
 		    date: "<spring:message code="validation.date" />",
@@ -93,26 +81,10 @@
 			});
 		};
 		
-		function _setFormHelper(){
-			$("form span.form-help").each(function(){
-				var messageBody = $(this).text();
-				$(this).empty();
-				$(this).append("<label class=\"help\"></label>");
-				$(this).parent().after("<div class=\"form-help info\"><div class=\"tl\"></div><div class=\"tr\"></div>"
-						+ "<div class=\"desc\"><p></p></div><div class=\"bl\"></div><div class=\"br\"></div></div>");
-				$(this).parent().next("div.form-help").find("p").html(messageBody);
-				$(this).find("label.help").click(function(){
-					$(this).parent().parent().next("div.form-help").toggle();
-				});
-				$(this).show();
-			});
-		};
-		
 		$(function() {
 			// IE -- http://stackoverflow.com/questions/7109120/add-blank-option-to-top-of-select-and-make-it-the-selected-option-in-ie
 			$('select.all').prepend("<option value=''>All</option>").val('');
 			_setLinkNewWindow();
-			_setFormHelper();
 		});
 	</script>
 </head>

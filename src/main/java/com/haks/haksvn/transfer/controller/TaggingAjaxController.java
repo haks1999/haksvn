@@ -6,7 +6,6 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -29,13 +28,13 @@ public class TaggingAjaxController {
     @Autowired
     private TaggingService taggingService;
     
-    @RequestMapping(value="/tagging/list/{repositoryKey}", method=RequestMethod.POST, headers = "Accept=application/json", produces="application/json")
+    @RequestMapping(value="/tagging/list/{repositorySeq}", method=RequestMethod.POST, headers = "Accept=application/json", produces="application/json")
     public @ResponseBody Paging<List<Tagging>> retrieveTaggingList(@ModelAttribute("paging") Paging<Tagging> paging,
 										    		@RequestParam(value = "tUser", required = false, defaultValue="") String taggingUserId,
 													@RequestParam(value = "tCode", required = false, defaultValue="") String taggingTypeCodeId,
-													@PathVariable String repositoryKey) throws HaksvnException {
+													@PathVariable int repositorySeq) throws HaksvnException {
     	
-    	Tagging tagging = Tagging.Builder.getBuilder().repositoryKey(repositoryKey)
+    	Tagging tagging = Tagging.Builder.getBuilder().repositorySeq(repositorySeq)
     			.taggingTypeCode(Code.Builder.getBuilder().codeId(taggingTypeCodeId).build())
     			.taggingUser(User.Builder.getBuilder().userId(taggingUserId).build()).build();
     	paging.setModel(tagging);
@@ -44,11 +43,11 @@ public class TaggingAjaxController {
     	return taggingListPaging;
     }
     
-    @RequestMapping(value="/tagging/list/{repositoryKey}/validate", method=RequestMethod.POST )
+    @RequestMapping(value="/tagging/list/{repositorySeq}/validate", method=RequestMethod.POST )
     public @ResponseBody Tagging validateTagging(	@RequestParam(value = "tagName", required = true) String tagName,
-													@PathVariable String repositoryKey) throws HaksvnException {
+													@PathVariable int repositorySeq) throws HaksvnException {
     	
-    	Tagging tagging = Tagging.Builder.getBuilder().repositoryKey(repositoryKey).tagName(tagName).build();
+    	Tagging tagging = Tagging.Builder.getBuilder().repositorySeq(repositorySeq).tagName(tagName).build();
     	
     	List<Tagging> taggingList = taggingService.retrieveTaggingListByTagName(tagging);
     	if( taggingList.size() > 0 ){
@@ -58,21 +57,14 @@ public class TaggingAjaxController {
     	}
     }
     
-    @RequestMapping(value="/tagging/list/{repositoryKey}/latest", method=RequestMethod.POST )
+    @RequestMapping(value="/tagging/list/{repositorySeq}/latest", method=RequestMethod.POST )
     public @ResponseBody Tagging retrieveLatestSyncTagging(	
-													@PathVariable String repositoryKey) throws HaksvnException {
+													@PathVariable int repositorySeq) throws HaksvnException {
     	
-    	Tagging tagging = Tagging.Builder.getBuilder().repositoryKey(repositoryKey).build();
+    	Tagging tagging = Tagging.Builder.getBuilder().repositorySeq(repositorySeq).build();
     	return taggingService.retrieveLatestSyncTagging(tagging);
     }
     
-    @RequestMapping(value="/tagging/list/{repositoryKey}/{taggingSeq}", params = {"json"})
-    public @ResponseBody Tagging retrieveTaggingDetail(ModelMap model, 
-    										@PathVariable String repositoryKey,
-    										@PathVariable int taggingSeq) {
-		Tagging tagging = taggingService.retrieveTagging(Tagging.Builder.getBuilder().repositoryKey(repositoryKey).taggingSeq(taggingSeq).build());
-    	return tagging;
-    }
     
     
     @ExceptionHandler(Exception.class)

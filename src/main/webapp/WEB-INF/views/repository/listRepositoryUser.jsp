@@ -1,18 +1,19 @@
 <%@ include file="/WEB-INF/views/common/include/taglib.jspf"%>
-<style type="text/css">
-.chzn-results {height: 100px;}
-</style>
+<style>
+  .ui-autocomplete-loading {
+    background: white url('/haksvn/resources/images/ui-anim_basic_16x16.gif') right center no-repeat;
+  }
+  </style>
 <script type="text/javascript">
 	$(function() {
 		retrieveRepositoryUserList();
 		$("#sel_repository").change(retrieveRepositoryUserList);
-		
 	});
 	    
 	function retrieveRepositoryUserList(){
-		var repositoryKey = $("#sel_repository > option:selected").val();
+		var repositorySeq = $("#sel_repository > option:selected").val();
 		$("#tbl_userList tbody tr:not(.sample)").remove();
-		$.getJSON( "<c:url value="/configuration/repositories/listUser"/>" + "/" + repositoryKey
+		$.getJSON( "<c:url value="/configuration/repositories/listUser"/>" + "/" + repositorySeq
 				,function(data) {
 					for( var inx = 0 ; inx < data.length ; inx++ ){
 						var row = $("#tbl_userList > tbody > .sample").clone();
@@ -30,8 +31,8 @@
 	
 	function delRepositoryUser(){
 		if($('#tbl_userList input[name="userId"]:checked').length < 1 ) return; 
-		var repositoryKey = $("#sel_repository > option:selected").val();
-		$.post("<c:url value="/configuration/repositories/listUser/delUser"/>" + "/" + repositoryKey,
+		var repositorySeq = $("#sel_repository > option:selected").val();
+		$.post("<c:url value="/configuration/repositories/listUser/delUser"/>" + "/" + repositorySeq,
 				$('#tbl_userList input[name="userId"]:checked').serialize(),
 	            function(data){
 					$().Message({type:data.type,text:data.text});
@@ -41,11 +42,10 @@
 	};
 	
 	function addRepositoryUser(){
-		var selectedUsers = $("#div_searchUser .chzn-select").chosen().val();
 		if(selectedUsers.length < 1) return;
-		var repositoryKey = $("#sel_repository > option:selected").val();
+		var repositorySeq = $("#sel_repository > option:selected").val();
 		var userIds = {userId: selectedUsers, overwrite: $('#ckb_overwrite').is(':checked')};
-		$.post("<c:url value="/configuration/repositories/listUser/addUser"/>" + "/" + repositoryKey,
+		$.post("<c:url value="/configuration/repositories/listUser/addUser"/>" + "/" + repositorySeq,
 				$.param(userIds,true),
 	            function(data){
 					$().Message({type:data.type,text:data.text});
@@ -54,33 +54,94 @@
 	        },"json");
 	};
 	
-	function openSearchUserDialog(){
-		
-		$("#div_searchUser .chzn-select").val('').trigger("liszt:updated");
-		$("#div_searchUser .chzn-container li.search-choice").remove();
-		$.getJSON( "<c:url value="/common/users/find/"/>",
-				{searchString: ""}, 
-				function(data){
-					$("#div_searchUser .chzn-select option").remove();
-					for( var inx = 0 ; inx < data.length ; inx++ ){
-						$("#div_searchUser .chzn-select").append("<option value=\"" +  data[inx].userId + "\">" + data[inx].userName + "(" + data[inx].userId + ")" + "</option>");
+	function autocompleteSplit( val ) {
+		return val.split( /,\s*/ );
+	};
+	    
+	function autocompleteExtractLast( term ) {
+		return autocompleteSplit( term ).pop();
+	};
+	
+	var selectedUsers = [];
+	function enableSearchUserAutocomplete(){
+		$( "#ipt_users" ).autocomplete({
+			source: function( request, response ) {
+						if( autocompleteExtractLast(request.term).trim().length < 2 ) return;
+		          		$.postJSON( "<c:url value="/common/users/find/"/>",
+		          					{searchString: autocompleteExtractLast(request.term)}, 
+		          					function(data){
+			            				if (!data.length || data.length < 1) {
+			            					data = [{ noresult: true, noresultmsg: "No Result!"}];
+			            				}
+			            				response(data);
+		        	  	});
+		          
+		        	},
+			minLength: 2,
+			focus: 	function( event, ui ) {
+						// prevent value inserted on focus
+						return false;
+		      		},
+			select: function( event, ui ) {
+						
+						var terms = autocompleteSplit( this.value );
+				        terms.pop();
+				        if (ui.item.noresult || selectedUsers.join( "," ).indexOf(ui.item.value) > -1){
+				        	 //terms.push( "" );
+						}else{
+							selectedUsers.push(ui.item.value);
+							terms.push( ui.item.value );
+						}
+				        terms.push( "" );
+				        this.value = terms.join( ", " );
+				        return false;
+					},
+			open: 	function() {
+						$( this ).removeClass( "ui-corner-all" ).addClass( "ui-corner-top" );
+					},
+			close: 	function() {
+						$( this ).removeClass( "ui-corner-top" ).addClass( "ui-corner-all" );
 					}
-					$("#div_searchUser .chzn-select").chosen({width:"100%"});
-		    	}
-		);
+		})
+		.data( "autocomplete" )._renderItem = function( ul, item ) {
+			if( item.noresult ){
+				return $( "<li>" )
+		        .append( "<a class=\"italic\">" + item.noresultmsg + "</a>" )
+		        .appendTo( ul ); 
+			}else{
+				return $( "<li>" )
+		        .append( "<a>" + item.label + "</a>" )
+		        .appendTo( ul );
+			}
+		     
+		};
+	};
+	
+	function disableSearchUserAutocomplete(){
+		selectedUsers = [];
+		//$("#ipt_users").autocomplete( "destroy" );
+		$('#ipt_users').data().autocomplete.term = null;
+		$('#ipt_users').val('');
+	};
+	
+	function openSearchUserDialog(){
+		//$('#AutocompleteElementID').data().autocomplete.term = null;
+		//selectedUsers = [];
 		
+		enableSearchUserAutocomplete();
 		$("#div_searchUser").dialog({
 			resizable: false,
-			height: 300,
-			width: 450,
+			height: 260,
 		    modal: true,
 		    buttons: {
 		          "Confirm": function() {
 		        	  addRepositoryUser();
-		              $( this ).dialog( "close" );
+		        	  disableSearchUserAutocomplete();
+		            $( this ).dialog( "close" );
 		          },
 		          Cancel: function() {
-		              $( this ).dialog( "close" );
+		        	  disableSearchUserAutocomplete();
+		            $( this ).dialog( "close" );
 		          }
 		        }
 	    });
@@ -89,7 +150,7 @@
 	
 	
 </script>
-<div class="content-page">
+<div id="table" class="help">
 	<h1></h1>
 	<div class="col w10">
 		<div class="content">
@@ -100,7 +161,7 @@
 						<label>Repository Name</label> 
 						<select id="sel_repository">
 							<c:forEach items="${repositoryList}" var="repository">
-								<option value="<c:out value="${repository.repositoryKey}"/>">
+								<option value="<c:out value="${repository.repositorySeq}"/>">
 									<c:out value="${repository.repositoryName}" />
 								</option>
 							</c:forEach>
@@ -145,10 +206,8 @@
 
 <div id="div_searchUser" title="Search User" style="display:none;">
 	<div class="module text">
-		
-		<select data-placeholder="Find Users" class="chzn-select" multiple>
-        </select>
-          
+  		<p>Enter user id or user name <br>(minimum 3 characters)</p>
+		<input id="ipt_users" class="text w_20">
 		<span class="italic"><input id="ckb_overwrite" type="checkbox"/>Overwrite if a user exists in passwd</span>
 	</div>
 </div>

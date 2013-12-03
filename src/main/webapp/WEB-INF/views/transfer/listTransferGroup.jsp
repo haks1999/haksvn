@@ -1,11 +1,11 @@
 <%@ include file="/WEB-INF/views/common/include/taglib.jspf"%>
 <script type="text/javascript">
 	$(function() {
-		$("#sel_repository option[value='<c:out value="${repositoryKey}" />']").attr('selected', 'selected');
+		$("#sel_repository option[value='<c:out value="${repositorySeq}" />']").attr('selected', 'selected');
 		$("#frm_transferGroup select[name='sCode'] option[value='<c:out value="${transferGroupStateCodeId}" />']").attr('selected', 'selected');
 		$("#frm_transferGroup select[name='tCode'] option[value='<c:out value="${transferGroupTypeCodeId}" />']").attr('selected', 'selected');
 		$("#ipt_title").val('<c:out value="${title}" />');
-		if( '<c:out value="${repositoryKey}" />'.length > 0 ) retrieveTransferGroupList();
+		if( '<c:out value="${repositorySeq}" />'.length > 0 ) retrieveTransferGroupList();
 		$("#sel_repository").change(changeRepository);
 	});
 	
@@ -20,7 +20,7 @@
 		_paging.sCode = $("#frm_transferGroup select[name='sCode'] option:selected").val();
 		_paging.tCode = $("#frm_transferGroup select[name='tCode'] option:selected").val();
 		_paging.title = $("#ipt_title").val();
-		$.post( "<c:url value="/transfer/requestGroup/list"/>" + "/" + '<c:out value="${repositoryKey}" />',
+		$.post( "<c:url value="/transfer/requestGroup/list"/>" + "/" + '<c:out value="${repositorySeq}" />',
 				_paging,
 				function(data) {
 					var transferGroupList = data.model;
@@ -28,13 +28,13 @@
 					for( var inx = 0 ; inx < transferGroupList.length ; inx++ ){
 						var row = $("#tbl_transferGroupList > tbody > .sample").clone();
 						$(row).find(".transferGroupSeq font a").text('group-'+transferGroupList[inx].transferGroupSeq);
-						$(row).find(".transferGroupSeq a").attr("href",'<c:url value="/transfer/requestGroup/list/${repositoryKey}/"/>' +  transferGroupList[inx].transferGroupSeq);
+						$(row).find(".transferGroupSeq a").attr("href",'<c:url value="/transfer/requestGroup/list/${repositorySeq}/"/>' +  transferGroupList[inx].transferGroupSeq);
 						$(row).children(".transferGroupType").text(transferGroupList[inx].transferGroupTypeCode.codeName);
 						$(row).children(".transferGroupState").text(transferGroupList[inx].transferGroupStateCode.codeName);
 						$(row).children(".title").text(transferGroupList[inx].title);
 						if(transferGroupList[inx].transferUser) $(row).children(".transferrer").text(transferGroupList[inx].transferUser.userName);
 						if(transferGroupList[inx].transferDate > 0) $(row).children(".transferDate").text(haksvn.date.convertToEasyFormat(new Date(transferGroupList[inx].transferDate)));
-						$(row).attr('transferGroupSeq',transferGroupList[inx].transferGroupSeq).attr('repositoryKey',transferGroupList[inx].repositoryKey);
+						$(row).attr('transferGroupSeq',transferGroupList[inx].transferGroupSeq).attr('repositorySeq',transferGroupList[inx].repositorySeq);
 						$(row).removeClass("sample");
 						$('#tbl_transferGroupList > tbody').append(row);
 					}
@@ -55,7 +55,7 @@
 </script>
 
 
-<div class="content-page">
+<div id="table" class="help">
 	<div class="col w10 last">
 		<div class="content">
 			<div class="box">
@@ -66,7 +66,7 @@
 							<label for="sel_repository" class="w_120">Repository Name</label> 
 							<select id="sel_repository">
 								<c:forEach items="${repositoryList}" var="repository">
-									<option value="<c:out value="${repository.repositoryKey}"/>">
+									<option value="<c:out value="${repository.repositorySeq}"/>">
 										<c:out value="${repository.repositoryName}" />
 									</option>
 								</c:forEach>
@@ -78,7 +78,7 @@
 						</p>
 						<p>
 							<label for="title" class="w_120">Group Title</label>
-							<input id="ipt_title" name="title" type="text" class="text w_500"/>
+							<input id="ipt_title" name="title" type="text" class="text w_30"/>
 							<a class="button right form_submit yellow"><small class="icon looking_glass"></small><span>Search</span></a>
 						</p>
 					</form>
@@ -89,12 +89,12 @@
 			<table id="tbl_transferGroupList">
 				<thead>
 					<tr>
-						<th>ID</th>
-						<th>Type</th>
-						<th>State</th>
-						<th>Title</th>
-						<th>Transferrer</th>
-						<th>Transfer Date</th>
+						<th>seq</th>
+						<th>type</th>
+						<th>state</th>
+						<th>title</th>
+						<th>transferrer</th>
+						<th>transfer date</th>
 					</tr>
 				</thead>
 				<tbody>
@@ -120,7 +120,7 @@
 		</div>
 	</div>
 	<haksvn:access admin="true" reviewer="true" commiter="false">
-		<c:set var="createTransferGroupPathLink" value="${pageContext.request.contextPath}/transfer/requestGroup/list/${repositoryKey}/add"/>
+		<c:set var="createTransferGroupPathLink" value="${pageContext.request.contextPath}/transfer/requestGroup/list/${repositorySeq}/add"/>
 		<a href="<c:out value="${createTransferGroupPathLink}"/>" class="button green right"><small class="icon plus"></small><span>Create</span></a>
 	</haksvn:access>
 	<div class="clear"></div>

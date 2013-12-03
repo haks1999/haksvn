@@ -17,8 +17,6 @@ import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.springframework.web.servlet.view.RedirectView;
 
-import com.haks.haksvn.common.code.service.CodeService;
-import com.haks.haksvn.common.code.util.CodeUtils;
 import com.haks.haksvn.common.security.util.ContextHolder;
 import com.haks.haksvn.repository.model.Repository;
 import com.haks.haksvn.repository.service.RepositoryService;
@@ -34,29 +32,27 @@ public class TransferController {
     private RepositoryService repositoryService;
 	@Autowired
 	private TransferService transferService;
-	@Autowired
-	private CodeService codeService;
     
 	@RequestMapping(value="/request/list", method=RequestMethod.GET)
     public ModelAndView forwardTransferListPage( ModelMap model, RedirectAttributes redirectAttributes ) {
         List<Repository> repositoryList = repositoryService.retrieveAccesibleActiveRepositoryList();
     	if( repositoryList.size() > 0 ){
-    		return new ModelAndView(new RedirectView("/transfer/request/list/" + repositoryList.get(0).getRepositoryKey() + "?rUser="+ContextHolder.getLoginUser().getUserId(), true));
+    		return new ModelAndView(new RedirectView("/transfer/request/list/" + repositoryList.get(0).getRepositorySeq() + "?rUser="+ContextHolder.getLoginUser().getUserId(), true));
     	}else{
     		return new ModelAndView("/transfer/listTransfer");
     	}
     }
 	
-	@RequestMapping(value={"/request/list/{repositoryKey}"}, method=RequestMethod.GET)
+	@RequestMapping(value={"/request/list/{repositorySeq}"}, method=RequestMethod.GET)
     public String forwardTransferListPage( ModelMap model,
     							@RequestParam(value = "rUser", required = false, defaultValue="") String requestUserId,
     							@RequestParam(value = "sCode", required = false, defaultValue="") String transferStateCodeId,
     							@RequestParam(value = "path", required = false, defaultValue="") String path,
     							RedirectAttributes redirectAttributes,
-    							@PathVariable String repositoryKey) {
+    							@PathVariable int repositorySeq) {
         List<Repository> repositoryList = repositoryService.retrieveAccesibleActiveRepositoryList();
         for( Repository repository : repositoryList ){
-        	if( repository.getRepositoryKey().equals(repositoryKey) ){
+        	if( repository.getRepositorySeq() == repositorySeq ){
         		model.addAttribute("userList", repository.getUserList());
         		break;
         	}
@@ -69,99 +65,107 @@ public class TransferController {
     }
 	
  
-	@RequestMapping(value="/request/list/{repositoryKey}/add")
+	@RequestMapping(value="/request/list/{repositorySeq}/add")
     public String forwardTransferAddPage(ModelMap model, 
     										@ModelAttribute("transfer") Transfer transfer,
-    										@PathVariable String repositoryKey) {
+    										@PathVariable int repositorySeq) {
 		List<Repository> repositoryList = repositoryService.retrieveAccesibleActiveRepositoryList();
 		model.addAttribute("repositoryList", repositoryList );
-		model.addAttribute("repository", repositoryService.retrieveRepositoryByRepositoryKey(repositoryKey));
-		transfer.setRepositoryKey(repositoryKey);
+		model.addAttribute("repository", repositoryService.retrieveRepositoryByRepositorySeq(repositorySeq));
+		transfer.setRepositorySeq(repositorySeq);
     	model.addAttribute("tranfer", transfer );
     	model.addAttribute("transferStateAuth", TransferStateAuth.Builder.getBuilder().transfer(transfer).build());
     	return "/transfer/modifyTransfer";
     }
 	
-	@RequestMapping(value="/request/list/{repositoryKey}/{transferSeq}")
+	@RequestMapping(value="/request/list/{repositorySeq}/{transferSeq}")
     public String forwardTransferDetailPage(ModelMap model, 
-    										@PathVariable String repositoryKey,
+    										@PathVariable int repositorySeq,
     										@PathVariable int transferSeq) {
-		Transfer transfer = transferService.retrieveTransferDetail(Transfer.Builder.getBuilder().repositoryKey(repositoryKey).transferSeq(transferSeq).build());
+		Transfer transfer = transferService.retrieveTransferDetail(Transfer.Builder.getBuilder().repositorySeq(repositorySeq).transferSeq(transferSeq).build());
 		model.addAttribute("repositoryList", repositoryService.retrieveAccesibleActiveRepositoryList() );
-		model.addAttribute("repository", repositoryService.retrieveRepositoryByRepositoryKey(repositoryKey));
+		model.addAttribute("repository", repositoryService.retrieveRepositoryByRepositorySeq(repositorySeq));
 		model.addAttribute("transfer", transfer);
 		model.addAttribute("transferStateAuth", TransferStateAuth.Builder.getBuilder().transfer(transfer).build());
-		model.addAttribute("useMailNoticeRequest", codeService.retrieveCode(CodeUtils.getMailNoticeTransferRequestCodeId()).getCodeValue());
 		transfer.setSourceList(null);	// lazy loading
     	return "/transfer/modifyTransfer";
     }
 	
-	@RequestMapping(value={"/request/list/{repositoryKey}/save"}, method=RequestMethod.POST)
+	@RequestMapping(value={"/request/list/{repositorySeq}/save"}, method=RequestMethod.POST)
     public ModelAndView saveTransfer(ModelMap model, 
     									@ModelAttribute("transfer") @Valid Transfer transfer, 
+    									//@RequestParam(value = "transferSourceList") String sourceListJson,
     									BindingResult result,
-    									@PathVariable String repositoryKey) throws Exception{
-		transfer.setRepositoryKey(repositoryKey);
+    									@PathVariable int repositorySeq) throws Exception{
+		transfer.setRepositorySeq(repositorySeq);
 		transfer.setTransferGroup(null);
     	if( result.hasErrors() ){
     		List<Repository> repositoryList = repositoryService.retrieveAccesibleActiveRepositoryList();
     		model.addAttribute("repositoryList", repositoryList );
-    		model.addAttribute("repository", repositoryService.retrieveRepositoryByRepositoryKey(repositoryKey));
+    		model.addAttribute("repository", repositoryService.retrieveRepositoryByRepositorySeq(repositorySeq));
         	model.addAttribute("tranfer", transfer );
         	model.addAttribute("transferStateAuth", TransferStateAuth.Builder.getBuilder().transfer(transfer).build());
-        	model.addAttribute("repositoryKey", repositoryKey );
+        	model.addAttribute("repositorySeq", repositorySeq );
     		return new ModelAndView("/transfer/modifyTransfer");
     	}else{
     		transfer = transferService.saveTransfer(transfer);
     		String param = "?rUser=" + ContextHolder.getLoginUser().getUserId() + "&sCode=" + transfer.getTransferStateCode().getCodeId();
-    		return new ModelAndView(new RedirectView("/transfer/request/list/" + transfer.getRepositoryKey() + param, true));
+    		return new ModelAndView(new RedirectView("/transfer/request/list/" + transfer.getRepositorySeq() + param, true));
     		
     	}
     }
 	
-	@RequestMapping(value={"/request/list/{repositoryKey}/delete"}, method=RequestMethod.POST)
+	@RequestMapping(value={"/request/list/{repositorySeq}/delete"}, method=RequestMethod.POST)
     public ModelAndView deleteTransfer(ModelMap model, 
     									@ModelAttribute("transfer") Transfer transfer, 
-    									@PathVariable String repositoryKey){
+    									@PathVariable int repositorySeq){
     	transfer = transferService.deleteTransfer(transfer);
     	String param = "?rUser=" + ContextHolder.getLoginUser().getUserId() + "&sCode=" + transfer.getTransferStateCode().getCodeId();
-    	return new ModelAndView(new RedirectView("/transfer/request/list/" + transfer.getRepositoryKey() + param, true));
+    	return new ModelAndView(new RedirectView("/transfer/request/list/" + transfer.getRepositorySeq() + param, true));
     }
 	
-	@RequestMapping(value={"/request/list/{repositoryKey}/request"}, method=RequestMethod.POST)
+	@RequestMapping(value={"/request/list/{repositorySeq}/request"}, method=RequestMethod.POST)
     public ModelAndView requestTransfer(ModelMap model, 
     									@ModelAttribute("transfer") Transfer transfer, 
-    									@PathVariable String repositoryKey,
-    									@RequestParam(value = "noticeUserList", required = false) String[] noticeUserIdList){
-    	transfer = transferService.requestTransfer(transfer, noticeUserIdList);
+    									@PathVariable int repositorySeq){
+    	transfer = transferService.requestTransfer(transfer);
     	String param = "?rUser=" + ContextHolder.getLoginUser().getUserId() + "&sCode=" + transfer.getTransferStateCode().getCodeId();
-    	return new ModelAndView(new RedirectView("/transfer/request/list/" + transfer.getRepositoryKey() + param, true));
+    	return new ModelAndView(new RedirectView("/transfer/request/list/" + transfer.getRepositorySeq() + param, true));
     }
 	
-	@RequestMapping(value={"/request/list/{repositoryKey}/requestCancel"}, method=RequestMethod.POST)
+	@RequestMapping(value={"/request/list/{repositorySeq}/requestCancel"}, method=RequestMethod.POST)
     public ModelAndView requestCancelTransfer(ModelMap model, 
     									@ModelAttribute("transfer") Transfer transfer, 
-    									@PathVariable String repositoryKey){
+    									@PathVariable int repositorySeq){
     	transfer = transferService.requestCancelTransfer(transfer);
     	String param = "?rUser=" + ContextHolder.getLoginUser().getUserId() + "&sCode=" + transfer.getTransferStateCode().getCodeId();
-    	return new ModelAndView(new RedirectView("/transfer/request/list/" + transfer.getRepositoryKey() + param, true));
+    	return new ModelAndView(new RedirectView("/transfer/request/list/" + transfer.getRepositorySeq() + param, true));
     }
 	
-	@RequestMapping(value={"/request/list/{repositoryKey}/approveCancel"}, method=RequestMethod.POST)
+	@RequestMapping(value={"/request/list/{repositorySeq}/approve"}, method=RequestMethod.POST)
+    public ModelAndView approveTransfer(ModelMap model, 
+    									@ModelAttribute("transfer") Transfer transfer, 
+    									@PathVariable int repositorySeq){
+    	transfer = transferService.approveTransfer(transfer);
+    	String param = "?rUser=" + ContextHolder.getLoginUser().getUserId() + "&sCode=" + transfer.getTransferStateCode().getCodeId();
+    	return new ModelAndView(new RedirectView("/transfer/request/list/" + transfer.getRepositorySeq() + param, true));
+    }
+	
+	@RequestMapping(value={"/request/list/{repositorySeq}/approveCancel"}, method=RequestMethod.POST)
     public ModelAndView approveCancelTransfer(ModelMap model, 
     									@ModelAttribute("transfer") Transfer transfer, 
-    									@PathVariable String repositoryKey){
+    									@PathVariable int repositorySeq){
     	transfer = transferService.approveCancelTransfer(transfer);
     	String param = "?rUser=" + ContextHolder.getLoginUser().getUserId() + "&sCode=" + transfer.getTransferStateCode().getCodeId();
-    	return new ModelAndView(new RedirectView("/transfer/request/list/" + transfer.getRepositoryKey() + param, true));
+    	return new ModelAndView(new RedirectView("/transfer/request/list/" + transfer.getRepositorySeq() + param, true));
     }
 	
-	@RequestMapping(value={"/request/list/{repositoryKey}/reject"}, method=RequestMethod.POST)
+	@RequestMapping(value={"/request/list/{repositorySeq}/reject"}, method=RequestMethod.POST)
     public ModelAndView rejectTransfer(ModelMap model, 
     									@ModelAttribute("transfer") Transfer transfer, 
-    									@PathVariable String repositoryKey){
+    									@PathVariable int repositorySeq){
     	transfer = transferService.rejectTransfer(transfer);
     	String param = "?rUser=" + ContextHolder.getLoginUser().getUserId() + "&sCode=" + transfer.getTransferStateCode().getCodeId();
-    	return new ModelAndView(new RedirectView("/transfer/request/list/" + transfer.getRepositoryKey() + param, true));
+    	return new ModelAndView(new RedirectView("/transfer/request/list/" + transfer.getRepositorySeq() + param, true));
     }
 }
