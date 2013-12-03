@@ -25,6 +25,9 @@ public class TransferSource {
 	@Column(name = "path", nullable = false, length=500)
 	private String path;
 	
+	@Column(name = "dest_path", nullable = true, length=500)
+	private String destPath;
+	
 	@Column(name = "revision", nullable = false)
 	private long revision;
 	
@@ -60,6 +63,14 @@ public class TransferSource {
 
 	public void setPath(String path) {
 		this.path = path;
+	}
+	
+	public String getDestPath(){
+		return destPath;
+	}
+	
+	public void setDestPath(String destPath){
+		this.destPath = destPath;
 	}
 
 	public long getRevision() {
@@ -129,6 +140,11 @@ public class TransferSource {
 		
 		public Builder path(String path){
 			transferSource.setPath(path);
+			return this;
+		}
+		
+		public Builder destPath(String destPath){
+			transferSource.setDestPath(destPath);
 			return this;
 		}
 		

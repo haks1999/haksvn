@@ -98,6 +98,7 @@ public class TransferGroupService {
 				String relPath = transferSource.getPath().replaceFirst(isToDeleted?repository.getBranchesPath():repository.getTrunkPath(), "");
 				svnSourceTransferList.add(SVNSourceTransfer.Builder.getBuilder(new SVNSourceTransfer()).revision(transferSource.getRevision())
 						.isToAdd(isToAdd).isToDelete(isToDeleted).isToModify(isToModify).relativePath(relPath).build());
+				transferSource.setDestPath((repository.getBranchesPath() + "/" + relPath).replaceAll("//", "/"));
 			}
 			transfer.setRevision(svnRepositoryService.transfer(repository, svnSourceTransferList, TransferUtils.createTransferCommitLog(transfer, generalService.retrieveCommitLogTemplate(transfer.getRepositoryKey(), CodeUtils.getLogTemplateRequestCodeId()).getTemplate())));
 			transfer.setTransferStateCode(codeService.retrieveCode(CodeUtils.getTransferTransferedCodeId()));
