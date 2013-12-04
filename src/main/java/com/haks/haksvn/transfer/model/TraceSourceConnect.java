@@ -10,11 +10,13 @@ public class TraceSourceConnect {
 	private int transferSeq;
 	private int transferGroupSeq;
 	private int taggingSeq;
+	private boolean isFlow = true; 
+	private boolean isLatest = false;
+	private boolean isInRange = true;
 	
 	public TraceSourceConnect(){
 		
 	}
-	
 	
 	public String getSrcId() {
 		return srcId;
@@ -65,6 +67,29 @@ public class TraceSourceConnect {
 		this.taggingSeq = taggingSeq;
 	}
 
+	public boolean getIsFlow(){
+		return isFlow;
+	}
+	
+	public void setIsFlow(boolean isFlow){
+		this.isFlow = isFlow;
+	}
+	
+	public boolean getIsLatest(){
+		return isLatest;
+	}
+	
+	public void setIsLatest(boolean isLatest){
+		this.isLatest = isLatest;
+	}
+	
+	public boolean getIsInRange(){
+		return isInRange;
+	}
+	
+	public void setIsInRange(boolean isInRange){
+		this.isInRange = isInRange;
+	}
 
 	public static class Builder{
 		
@@ -108,6 +133,21 @@ public class TraceSourceConnect {
 		
 		public Builder taggingSeq(int taggingSeq){
 			traceSourceConnect.setTaggingSeq(taggingSeq);
+			return this;
+		}
+		
+		public Builder isFlow(boolean isFlow){
+			traceSourceConnect.setIsFlow(isFlow);
+			return this;
+		}
+		
+		public Builder isLatest(boolean isLatest){
+			traceSourceConnect.setIsLatest(isLatest);
+			return this;
+		}
+		
+		public Builder isInRange(boolean isInRange){
+			traceSourceConnect.setIsInRange(isInRange);
 			return this;
 		}
 	} 

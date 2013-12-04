@@ -11,6 +11,7 @@ public class TraceSourceElement {
 	private boolean isTrunk = false;
 	private boolean isBranch = false;
 	private boolean isTag = false;
+	private boolean isLatest = false;
 	
 	public TraceSourceElement(){
 		
@@ -48,7 +49,7 @@ public class TraceSourceElement {
 		this.isTrunk = isTrunk;
 	}
 	
-	public boolean isBranch(){
+	public boolean getIsBranch(){
 		return isBranch;
 	}
 	
@@ -56,12 +57,20 @@ public class TraceSourceElement {
 		this.isBranch = isBranch;
 	}
 	
-	public boolean isTag(){
+	public boolean getIsTag(){
 		return isTag;
 	}
 	
 	public void setIsTag(boolean isTag){
 		this.isTag = isTag;
+	}
+	
+	public boolean getIsLatest(){
+		return isLatest;
+	}
+	
+	public void setIsLatest(boolean isLatest){
+		this.isLatest = isLatest;
 	}
 	
 	public static class Builder{
@@ -111,6 +120,11 @@ public class TraceSourceElement {
 		
 		public Builder isTag(boolean isTag){
 			traceSourceElement.setIsTag(isTag);
+			return this;
+		}
+		
+		public Builder isLatest(boolean isLatest){
+			traceSourceElement.setIsLatest(isLatest);
 			return this;
 		}
 	} 

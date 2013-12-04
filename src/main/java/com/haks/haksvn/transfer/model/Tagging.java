@@ -32,7 +32,7 @@ public class Tagging {
 	
 	@Column(name = "tag_name", nullable = false)
 	@NotEmpty
-	@Length(min=6, max=30)
+	@Length(min=6, max=40)
 	private String tagName = "";
 	
 	@Column(name = "description", nullable = false, length=500)

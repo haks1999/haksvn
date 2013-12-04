@@ -23,7 +23,7 @@ public class TraceSourceController {
     private RepositoryService repositoryService;
 	
 	@RequestMapping(value="/traceSource/list", method=RequestMethod.GET)
-    public ModelAndView forwardTaggingListPage( ModelMap model, RedirectAttributes redirectAttributes ) {
+    public ModelAndView forwardTraceSourceListPage( ModelMap model, RedirectAttributes redirectAttributes ) {
         List<Repository> repositoryList = repositoryService.retrieveAccesibleActiveRepositoryList();
     	if( repositoryList.size() > 0 ){
     		return new ModelAndView(new RedirectView("/transfer/traceSource/list/" + repositoryList.get(0).getRepositoryKey(), true));
@@ -33,7 +33,7 @@ public class TraceSourceController {
     }
 	
 	@RequestMapping(value={"/traceSource/list/{repositoryKey}"}, method=RequestMethod.GET)
-    public String forwardTaggingListPage( ModelMap model,
+    public String forwardTraceSourceListPage( ModelMap model,
     							@PathVariable String repositoryKey) {
         List<Repository> repositoryList = repositoryService.retrieveAccesibleActiveRepositoryList();
     	model.addAttribute("repositoryList", repositoryList );
