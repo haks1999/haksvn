@@ -11,6 +11,8 @@ public class TraceSourceForTransfer {
 	private long transferDate;
 	private long trunkRevision = -1;
 	private long branchesRevision = -1;
+	private String trunkPath;
+	private String branchesPath;
 	
 	public TraceSourceForTransfer(){
 		
@@ -64,6 +66,22 @@ public class TraceSourceForTransfer {
 		this.branchesRevision = branchesRevision;
 	}
 	
+	public String getTrunkPath(){
+		return trunkPath;
+	}
+	
+	public void setTrunkPath(String trunkPath){
+		this.trunkPath = trunkPath;
+	}
+	
+	public String getBranchesPath(){
+		return branchesPath;
+	}
+	
+	public void setBranchesPath(String branchesPath){
+		this.branchesPath = branchesPath;
+	}
+	
 	public static class Builder{
 		
 		private TraceSourceForTransfer traceSource;
@@ -111,6 +129,16 @@ public class TraceSourceForTransfer {
 		
 		public Builder branchesRevision(long branchesRevision){
 			traceSource.setBranchesRevision(branchesRevision);
+			return this;
+		}
+		
+		public Builder trunkPath(String trunkPath){
+			traceSource.setTrunkPath(trunkPath);
+			return this;
+		}
+		
+		public Builder branchesPath(String branchesPath){
+			traceSource.setBranchesPath(branchesPath);
 			return this;
 		}
 		

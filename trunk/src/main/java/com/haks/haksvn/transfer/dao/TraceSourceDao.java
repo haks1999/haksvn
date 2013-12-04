@@ -45,13 +45,14 @@ public class TraceSourceDao {
 	public List<TraceSourceForTransfer> retrieveTraceSourceListByPath(String repositoryKey, String path, int limit){
 		Session session = sessionFactory.getCurrentSession();
 		
-		Query query = session.createSQLQuery("SELECT tr.transfer_seq as \"transferSeq\", tg.transfer_group_seq as \"transferGroupSeq\", ts.transfer_source_seq as \"transferSourceSeq\", tg.transfer_date as \"transferDate\", ts.revision as \"trunkRevision\", tr.revision as \"branchesRevision\" " +
-						" from transfer_group tg " + 
-						" inner join transfer tr on (tg.transfer_group_seq = tr.transfer_group_seq) " + 
-						" inner join transfer_source ts on (tr.transfer_seq = ts.transfer_seq) " + 
-						" where transfer_group_state  = 'transfergroup.state.code.transfered' " +
-						" and ts.path like '%'||:path||'%' " + 
-						" order by tg.transfer_date desc" )
+		Query query = session.createSQLQuery(
+						"SELECT tr.transfer_seq as \"transferSeq\", tg.transfer_group_seq as \"transferGroupSeq\", ts.transfer_source_seq as \"transferSourceSeq\", tg.transfer_date as \"transferDate\", ts.revision as \"trunkRevision\", tr.revision as \"branchesRevision\" " +
+						" FROM transfer_group tg " + 
+						" INNER JOIN transfer tr on (tg.transfer_group_seq = tr.transfer_group_seq) " + 
+						" INNER JOIN transfer_source ts on (tr.transfer_seq = ts.transfer_seq) " + 
+						" WHERE transfer_group_state  = 'transfergroup.state.code.transfered' " +
+						" AND ts.path like '%'||:path||'%' " + 
+						" ORDER BY tg.transfer_date desc" )
 						.addScalar("transferSeq", StandardBasicTypes.INTEGER )
 						.addScalar("transferGroupSeq", StandardBasicTypes.INTEGER )
 						.addScalar("transferSourceSeq", StandardBasicTypes.INTEGER )

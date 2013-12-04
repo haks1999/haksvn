@@ -81,6 +81,7 @@ public class TraceSourceService {
 		basket.setTagElemList(new ArrayList<TraceSourceElement>(tagElemMap.values()));
 		basket.setOutBoundConnectList(connectList);
 		basket.sortElementsAndGenerateInBoundConnections();
+		basket.markTraceSource();
 		
 		return basket;
 	}

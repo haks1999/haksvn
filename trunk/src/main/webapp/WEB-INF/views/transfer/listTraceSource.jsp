@@ -2,7 +2,7 @@
 <script src="<c:url value="/js/jquery.jsPlumb-1.5.4.js"/>" type="text/javascript" charset="utf-8"></script>
 <script type="text/javascript">
 	$(function() {
-		$("#sel_repository option[value='<c:out value="${repositoryKey}" />']").attr('selected', 'selected');
+		$("#sel_repository option[value='<c:out value="${repository.repositoryKey}" />']").attr('selected', 'selected');
 		//if( '<c:out value="${repositoryKey}" />'.length > 0 ) retrieveTransferList();
 		
 		$("#sel_repository").change(changeRepository);
@@ -75,7 +75,7 @@
 		_gSearchPath = $('#txt_searchSource').val();
 		$("#tbl_traceSourceList tbody tr:not(.sample)").remove();
 		$.get( "<c:url value="/transfer/traceSource/list/trace"/>",
-				{repositoryKey: '<c:out value="${repositoryKey}" />',
+				{repositoryKey: '<c:out value="${repository.repositoryKey}" />',
 				path: $('#txt_searchSource').val(),
 				limit:100},
 				function(data) {
@@ -89,116 +89,119 @@
 					})();
 					for( var inx = 0 ; inx < maxSize ; inx++ ){
 						var row = $("#tbl_traceSourceList > tbody > .sample").clone();
-						if(trunkElemList[inx]) $(row).find(".trunk").text(trunkElemList[inx].revision).attr("id",trunkElemList[inx].id).removeClass("display-none").attr("revision",trunkElemList[inx].revision);
-						if(branchElemList[inx]) $(row).find(".branch").text(branchElemList[inx].revision).attr("id",branchElemList[inx].id).removeClass("display-none").attr("revision",branchElemList[inx].revision);
-						if(tagElemList[inx]) $(row).find(".tag").text(tagElemList[inx].name).attr("id",tagElemList[inx].id).removeClass("display-none").attr("name",tagElemList[inx].name);
+						if(trunkElemList[inx]) $(row).find(".trunk").text(trunkElemList[inx].revision).attr("id",trunkElemList[inx].id).removeClass("display-none").attr("revision",trunkElemList[inx].revision).addClass(trunkElemList[inx].isLatest?"latest":"");
+						if(branchElemList[inx]) $(row).find(".branch").text(branchElemList[inx].revision).attr("id",branchElemList[inx].id).removeClass("display-none").attr("revision",branchElemList[inx].revision).addClass(branchElemList[inx].isLatest?"latest":"");
+						if(tagElemList[inx]) $(row).find(".tag").text(tagElemList[inx].name).attr("id",tagElemList[inx].id).removeClass("display-none").attr("name",tagElemList[inx].name).addClass(tagElemList[inx].isLatest?"latest":"");
 						$(row).removeClass("sample");
 						$('#tbl_traceSourceList > tbody').append(row);
 					}
 					haksvn.block.off();
 					
 					var outBoundConnector = {				
-							paintStyle:{lineWidth:2,strokeStyle:"#056"},
 							hoverPaintStyle:{strokeStyle:"#D16954"},
 							endpoint:"Blank",
-							anchor:"Continuous"
+							anchor:"Straight"
 						};
 					var anchor = {
 						lmrm : ["RightMiddle", "LeftMiddle"],
 						rmlm : ["LeftMiddle", "RightMiddle"]
 					};
 					var outBoundConnectList = data.outBoundConnectList;
-					for( var inx=  0 ; inx < outBoundConnectList.length ; inx++ ){
+					for( var inx = 0 ; inx < outBoundConnectList.length ; inx++ ){
+						if(!outBoundConnectList[inx].isInRange) continue;
 						var anchorType = (outBoundConnectList[inx].srcId.indexOf("tag") < 0)? anchor.lmrm:anchor.rmlm; 
 						var isTransferRequest = (outBoundConnectList[inx].srcId.indexOf("trunk") > -1);
 						var labelSeq = (isTransferRequest)? outBoundConnectList[inx].transferSeq:outBoundConnectList[inx].taggingSeq;
 						var labelText = (isTransferRequest)? ("req-"+labelSeq):("tag-"+labelSeq);
 						var labelCssClass = "connLabel" + (labelText.length > 6?" long":"");
-						console.log( "srcid: " + outBoundConnectList[inx].srcId + ", destId: " + outBoundConnectList[inx].destId);
 						var conn = jsPlumb.connect({
 							source:outBoundConnectList[inx].srcId,
 							target:outBoundConnectList[inx].destId,
 							anchors:anchorType,
+							//connector:"Straight", 
+							paintStyle:{lineWidth:2,strokeStyle:outBoundConnectList[inx].isLatest?"#2D5770":"#B5B5B5"},
 							overlays:[
 								["Label", {													   					
 									cssClass:labelCssClass,
 									location:0.8,
 									label:labelText
 								}], 
-								["PlainArrow", {location:1, width:10, length:8} ]]
+								["PlainArrow", {location:1, width:8, length:8} ]]
 						}, outBoundConnector);
+						conn.srcRevision = outBoundConnectList[inx].srcRevision;
+						conn.destRevision = outBoundConnectList[inx].destRevision;
 						conn.traceId = labelSeq;
 						conn.isTransferRequest = isTransferRequest;
 					}
 					outBoundConnector.connector = "StateMachine";
-					var branchInBoundConnector = outBoundConnector;
-					var trunkInBoundConnector = {				
+					var flowInBoundConnector = outBoundConnector;
+					var notFlowInBoundConnector = {				
 							connector:"Flowchart",
-							paintStyle:{lineWidth:3,strokeStyle:"#D4D4C7",dashstyle:"2 2",},
 							hoverPaintStyle:{strokeStyle:"#dbe300"},
 							endpoint:"Blank",
 							anchor:"Continuous"
 						};
 					var inBoundConnectList = data.inBoundConnectList;
 					for( var inx=  0 ; inx < inBoundConnectList.length ; inx++ ){
-						var inboundConnector = inBoundConnectList[inx].srcId.indexOf('trunk') < 0 ? branchInBoundConnector:trunkInBoundConnector;
+						var inboundConnector = inBoundConnectList[inx].isFlow ? flowInBoundConnector:notFlowInBoundConnector;
+						var inboundPaintStyle = function(){
+							if( inBoundConnectList[inx].isLatest ) return {lineWidth:2,strokeStyle:"#2D5770"};
+							if( inBoundConnectList[inx].isFlow ) return {lineWidth:2,strokeStyle:"#B5B5B5"};
+							return {lineWidth:2,strokeStyle:"#D4D4C7",dashstyle:"2 2"};
+						}();
 						jsPlumb.connect({
 							source:inBoundConnectList[inx].srcId,
 							target:inBoundConnectList[inx].destId,
-							anchors:["BottomCenter", "TopCenter"]
+							anchors:["BottomCenter", "TopCenter"],
+							paintStyle:inboundPaintStyle
 						}, inboundConnector);
 					}
 					
 					jsPlumb.bind("click", retrieveAndViewConnectionDetail);
-					//$("#tbl_traceSourceList tbody td .trunk").click(".trunk")
-					retrieveAndViewElemDetail();
+					$("#tbl_traceSourceList tbody td .trunk").click(retrieveAndViewElemDetail);
+					$("#tbl_traceSourceList tbody td .branch").click(retrieveAndViewElemDetail);
 		});
 	};
 	
-	function retrieveAndViewElemDetail(){
-		$("#tbl_traceSourceList tbody td .trunk").click(function(event){
-			var tooltipData = {
-				url: "<c:url value="/source/changes/search"/>" + "?repositoryKey=<c:out value="${repositoryKey}"/>" + "&path=" + escape(_gSearchPath) + "&rev=" + $(this).attr("revision"),
-				title: "test"	
-			};
-			var	traceTooltip = $(this).qtip({
-				content: {
-					text: function(event, api) {
-			            $.ajax({ url: tooltipData.url })
-			                .done(function(json) {
-			                    api.set('content.text', generateTooltipContentForRevision(json));
-			                })
-			                .fail(function(xhr, status, error) {
-			                    api.set('content.text', status + ': ' + error);
-			                });
-
+	function retrieveAndViewElemDetail(event){
+		var tooltipData = generateTooltipDataForRevisionElem($(this).attr("revision"));
+		var	traceTooltip = $(this).qtip({
+			content: {
+				text: function(event, api) {
+		            $.ajax({ url: tooltipData.url })
+		                .done(function(json) {
+		                    api.set('content.text', generateTooltipContentForRevision(json));
+		                })
+		                .fail(function(xhr, status, error) {
+		                    api.set('content.text', status + ': ' + error);
+		                });
 			            return 'Loading...';
-			        },
-			        title: tooltipData.title,
-			        button: 'Close'
-				},
-		        position: {
-		        	my: 'bottom left',
-					at: 'top center',
-		            target: 'mouse',
-		            adjust: {
-						mouse: false,
-						scroll: false
-					}
 		        },
-		        show: false,
-		        hide: false,
-		        style: {
-		            classes: 'qtip-light qtip-shadow qtip-shadow qtip-rounded'
-		        }
-			}).qtip('api');
-	
-			traceTooltip.reposition(event).show(event);
-		});
+		        title: tooltipData.title,
+		        button: 'Close'
+			},
+	        position: {
+	        	my: 'bottom left',
+				at: 'top center',
+	            target: 'mouse',
+	            adjust: {
+					mouse: false,
+					scroll: false
+				}
+	        },
+	        show: false,
+	        hide: false,
+	        style: {
+	            classes: 'qtip-light qtip-shadow qtip-shadow qtip-rounded'
+	        }
+		}).qtip('api');
+
+		traceTooltip.reposition(event).show(event);
 	};
 	
 	
 	function retrieveAndViewConnectionDetail(connection, originalEvent){
+		if( !connection.traceId ) return;
 		var tooltipData = connection.isTransferRequest?generateTooltipDataForTransfer(connection):generateTooltipDataForTagging(connection);
 		var	traceTooltip = $(connection).qtip({
 				content: {
@@ -235,13 +238,23 @@
 		traceTooltip.reposition(originalEvent).show(originalEvent);
 	};
 	
+	function generateTooltipDataForRevisionElem(revision){
+		var titleElem = $("#div_tipTitle").clone();
+		titleElem.removeAttr("id").find("b").text("Revision Info: ");
+		titleElem.find("font a").text( "r" + revision);
+		titleElem.find("a").attr("href",'<c:url value="/source/changes/${repositoryKey}"/>' + "?rev=" + revision);
+		var title = titleElem.html();
+		return {url: "<c:url value="/source/changes/search"/>" + "?repositoryKey=<c:out value="${repository.repositoryKey}"/>" + "&path=" + escape("/") + "&rev=" + revision,
+				title:title};
+	};
+	
 	function generateTooltipDataForTransfer(connection){
 		var transferSeq = connection.traceId;
-		var url = "<c:url value="/transfer/request/list/${repositoryKey}/"/>" + transferSeq + "?json=1";
+		var url = "<c:url value="/transfer/request/list/${repository.repositoryKey}/"/>" + transferSeq + "?json=1";
 		var titleElem = $("#div_tipTitle").clone();
-		titleElem.removeAttr("id").find("b").text("Transfer Info: ");
+		titleElem.removeAttr("id").find("b").text($("#"+connection.sourceId).attr("revision") + "--> r" + $("#"+connection.targetId).attr("revision") + " ");
 		titleElem.find("font a").text( "req-" + transferSeq);
-		titleElem.find("a").attr("href","<c:url value="/transfer/request/list/${repositoryKey}/"/>" + transferSeq);
+		titleElem.find("a").attr("href","<c:url value="/transfer/request/list/${repository.repositoryKey}/"/>" + transferSeq);
 		var title = titleElem.html();
 		return {url:url, title:title};
 	};
@@ -258,11 +271,11 @@
 	
 	function generateTooltipDataForTagging(connection){
 		var taggingSeq = connection.traceId;
-		var url = "<c:url value="/transfer/tagging/list/${repositoryKey}/"/>" + taggingSeq + "?json=1";
+		var url = "<c:url value="/transfer/tagging/list/${repository.repositoryKey}/"/>" + taggingSeq + "?json=1";
 		var titleElem = $("#div_tipTitle").clone();
 		titleElem.removeAttr("id").find("b").text("Tagging Info: ");
 		titleElem.find("font a").text( "tagging-" + taggingSeq);
-		titleElem.find("a").attr("href","<c:url value="/transfer/tagging/list/${repositoryKey}/"/>" + taggingSeq);
+		titleElem.find("a").attr("href","<c:url value="/transfer/tagging/list/${repository.repositoryKey}/"/>" + taggingSeq);
 		var title = titleElem.html();
 		return {url:url, title:title};
 	};
@@ -296,6 +309,11 @@ vertical-align:middle;
 width: 100px;
 margin:5px;
 padding:8px;
+cursor:pointer;
+}
+td div.elem:hover{
+color:#483D8B;
+font-weight:bold;
 }
 th div.elem{
 text-align:center;
@@ -307,12 +325,27 @@ padding:0 8px 0 8px;
 td div.trunk{
 background-image:url(/haksvn/images/rounded_rec_blue_trace.png);
 }
+td div.trunk.latest{
+color:#227387;
+font-weight:bold;
+background-image:url(/haksvn/images/rounded_rec_blue_trace_border.png);
+}
 td div.branch{
 background-image:url(/haksvn/images/rounded_rec_blue_trace.png);
+}
+td div.branch.latest{
+color:#227387;
+font-weight:bold;
+background-image:url(/haksvn/images/rounded_rec_blue_trace_border.png);
 }
 td div.tag{
 width: 130px;
 background-image:url(/haksvn/images/rounded_rec_green_trace.png);
+}
+td div.tag.latest{
+color:#41805A;
+font-weight:bold;
+background-image:url(/haksvn/images/rounded_rec_green_trace_border.png);
 }
 .connLabel{
 text-align:center;
@@ -326,7 +359,10 @@ font-size:8pt;
 cursor:pointer;
 background-image:url(/haksvn/images/rounded_rec_white_conn.png);
 }
-
+.connLabel:hover{
+color:black;
+text-decoration:underline;
+}
 .connLabel.long{
 line-height:8px;
 }
