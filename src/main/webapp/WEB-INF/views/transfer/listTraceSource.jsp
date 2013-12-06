@@ -113,13 +113,13 @@
 						var isTransferRequest = (outBoundConnectList[inx].srcId.indexOf("trunk") > -1);
 						var labelSeq = (isTransferRequest)? outBoundConnectList[inx].transferSeq:outBoundConnectList[inx].taggingSeq;
 						var labelText = (isTransferRequest)? ("req-"+labelSeq):("tag-"+labelSeq);
-						var labelCssClass = "connLabel" + (labelText.length > 6?" long":"");
+						var labelCssClass = "connLabel" + (labelText.length > 6?" long":"") + (outBoundConnectList[inx].isLatest?" latest":"");
 						var conn = jsPlumb.connect({
 							source:outBoundConnectList[inx].srcId,
 							target:outBoundConnectList[inx].destId,
 							anchors:anchorType,
 							//connector:"Straight", 
-							paintStyle:{lineWidth:2,strokeStyle:outBoundConnectList[inx].isLatest?"#2D5770":"#B5B5B5"},
+							paintStyle:{lineWidth:2,strokeStyle:outBoundConnectList[inx].isLatest?"#2D5770":"#D4D4C7"},
 							overlays:[
 								["Label", {													   					
 									cssClass:labelCssClass,
@@ -137,7 +137,7 @@
 					var flowInBoundConnector = outBoundConnector;
 					var notFlowInBoundConnector = {				
 							connector:"Flowchart",
-							hoverPaintStyle:{strokeStyle:"#dbe300"},
+							hoverPaintStyle:{strokeStyle:"#dbe300",dashstyle:"2 2"},
 							endpoint:"Blank",
 							anchor:"Continuous"
 						};
@@ -252,8 +252,8 @@
 		var transferSeq = connection.traceId;
 		var url = "<c:url value="/transfer/request/list/${repository.repositoryKey}/"/>" + transferSeq + "?json=1";
 		var titleElem = $("#div_tipTitle").clone();
-		titleElem.removeAttr("id").find("b").text($("#"+connection.sourceId).attr("revision") + "--> r" + $("#"+connection.targetId).attr("revision") + " ");
-		titleElem.find("font a").text( "req-" + transferSeq);
+		//titleElem.removeAttr("id").find("b").text($("#"+connection.sourceId).attr("revision") + " r" + $("#"+connection.targetId).attr("revision") + " ");
+		titleElem.find("font a").text( "REQ-" + transferSeq);
 		titleElem.find("a").attr("href","<c:url value="/transfer/request/list/${repository.repositoryKey}/"/>" + transferSeq);
 		var title = titleElem.html();
 		return {url:url, title:title};
@@ -314,6 +314,7 @@ cursor:pointer;
 td div.elem:hover{
 color:#483D8B;
 font-weight:bold;
+text-decoration:underline;
 }
 th div.elem{
 text-align:center;
@@ -353,18 +354,24 @@ vertical-align:middle;
 background-repeat:no-repeat;
 background-position:center center;
 width: 42px;
-height:20px;
+height:25px;
+line-height:25px;
 font-style: italic;
 font-size:8pt;
 cursor:pointer;
-background-image:url(/haksvn/images/rounded_rec_white_conn.png);
+background-image:url(/haksvn/images/rounded_rec_gray_conn.png);
 }
 .connLabel:hover{
 color:black;
 text-decoration:underline;
 }
 .connLabel.long{
-line-height:8px;
+padding-top:2px;
+line-height:10px;
+}
+.connLabel.latest{
+color:#D4D4C7;
+background-image:url(/haksvn/images/rounded_rec_indigo_conn.png);
 }
 
 .tooltipContent p,.tooltipContent pre{
@@ -415,6 +422,14 @@ vertical-align: bottom;
 				<div class="bottom"><div></div></div>
 			</div>
 			
+			<div id="div_syncTaggingInfo" class="info">
+				<div class="tl"></div>
+				<div class="tr"></div>
+				<div class="desc variable-help">Latest Tag synchronized with production branch: <font class="path open-window"><a></a></font></div>
+				<div class="bl"></div>
+				<div class="br"></div>
+			</div>
+			
 			<table id="tbl_traceSourceList">
 				<thead>
 					<tr>
@@ -439,7 +454,7 @@ vertical-align: bottom;
 
 <div class="display-none">
 	<div id="div_tipTitle">
-		<b></b><font class="path open-window"><a href=""></a></font>
+		<b></b><font class="path open-window" style="font-weight:bold;"><a href=""></a></font>
 	</div>
 	<div id="div_tipTransferContent" class="tooltipContent">
 		<p><b>Type: </b><span class="type"></span></p>
