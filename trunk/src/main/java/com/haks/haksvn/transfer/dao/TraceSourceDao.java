@@ -15,6 +15,7 @@ import org.hibernate.type.StandardBasicTypes;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
+import com.haks.haksvn.common.code.util.CodeUtils;
 import com.haks.haksvn.transfer.model.TraceSourceForTransfer;
 import com.haks.haksvn.transfer.model.TransferSource;
 
@@ -46,11 +47,18 @@ public class TraceSourceDao {
 		Session session = sessionFactory.getCurrentSession();
 		
 		Query query = session.createSQLQuery(
-						"SELECT tr.transfer_seq as \"transferSeq\", tg.transfer_group_seq as \"transferGroupSeq\", ts.transfer_source_seq as \"transferSourceSeq\", tg.transfer_date as \"transferDate\", ts.revision as \"trunkRevision\", tr.revision as \"branchesRevision\" " +
+						"SELECT tr.transfer_seq as \"transferSeq\", "
+								+ " tg.transfer_group_seq as \"transferGroupSeq\", "
+								+ " ts.transfer_source_seq as \"transferSourceSeq\", "
+								+ " tg.transfer_date as \"transferDate\", "
+								+ " ts.revision as \"trunkRevision\", "
+								+ " tr.revision as \"branchesRevision\", "
+								+ " ts.path as \"trunkPath\", "
+								+ " ts.dest_path as \"branchesPath\" "  +
 						" FROM transfer_group tg " + 
 						" INNER JOIN transfer tr on (tg.transfer_group_seq = tr.transfer_group_seq) " + 
 						" INNER JOIN transfer_source ts on (tr.transfer_seq = ts.transfer_seq) " + 
-						" WHERE transfer_group_state  = 'transfergroup.state.code.transfered' " +
+						" WHERE transfer_group_state  = :transferGroupState " +
 						" AND ts.path like '%'||:path||'%' " + 
 						" ORDER BY tg.transfer_date desc" )
 						.addScalar("transferSeq", StandardBasicTypes.INTEGER )
@@ -59,8 +67,11 @@ public class TraceSourceDao {
 						.addScalar("transferDate", StandardBasicTypes.LONG )
 						.addScalar("trunkRevision", StandardBasicTypes.LONG )
 						.addScalar("branchesRevision", StandardBasicTypes.LONG )
+						.addScalar("trunkPath", StandardBasicTypes.STRING )
+						.addScalar("branchesPath", StandardBasicTypes.STRING )
 						.setMaxResults(limit)
 						.setResultTransformer(Transformers.aliasToBean(TraceSourceForTransfer.class));
+		query.setString("transferGroupState", CodeUtils.getTransferGroupTransferedCodeId());
 		query.setString("path", path);
 		@SuppressWarnings("unchecked")
 		List<TraceSourceForTransfer> result = (List<TraceSourceForTransfer>)query.list();

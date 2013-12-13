@@ -63,13 +63,28 @@ public class SourceAjaxController {
 		return sourceService.retrieveSVNSourceLogList(repositoryService.retrieveAccesibleActiveRepositoryByRepositoryKey(repositoryKey), paging);
     }
 	
-	@RequestMapping(value="/changes/_r_/diff", headers="Accept=application/json")
+	@RequestMapping(value="/changes/_r_/diff", params = {"repositoryKey","path","rev","json"})
     public @ResponseBody SVNSourceDiff diffWithPrevious(@RequestParam(value = "repositoryKey", required = true) String repositoryKey,
     										@RequestParam(value = "path", required = true) String path,
     										@RequestParam(value = "rev", required = true) long rev){
 		
 		SVNSource svnSource = SVNSource.Builder.getBuilder(new SVNSource()).path(path).revision(rev).build();
 		SVNSourceDiff svnSourceDiff = sourceService.retrieveDiffByPrevious(repositoryService.retrieveAccesibleActiveRepositoryByRepositoryKey(repositoryKey), svnSource);
+		svnSourceDiff.setDiffToHtml(SourceUtils.diffToHtml(svnSourceDiff.getDiff()));
+		svnSourceDiff.setDiff("");
+		return svnSourceDiff;
+    }
+	
+	@RequestMapping(value="/changes/_r_/diff", params = {"repositoryKey","srcPath","srcRev","trgPath","trgRev","json"})
+    public @ResponseBody SVNSourceDiff diffWithPathAndRevision(@RequestParam(value = "repositoryKey", required = true) String repositoryKey,
+    										@RequestParam(value = "srcPath", required = true) String srcPath,
+    										@RequestParam(value = "srcRev", required = true) long srcRev,
+    										@RequestParam(value = "trgPath", required = true) String trgPath,
+    										@RequestParam(value = "trgRev", required = true) long trgRev){
+		
+		SVNSource svnSourceSrc = SVNSource.Builder.getBuilder(new SVNSource()).path(srcPath).revision(srcRev).build();
+		SVNSource svnSourceTrg = SVNSource.Builder.getBuilder(new SVNSource()).path(trgPath).revision(trgRev).build();
+		SVNSourceDiff svnSourceDiff = sourceService.retrieveDiffByRevisions(repositoryService.retrieveAccesibleActiveRepositoryByRepositoryKey(repositoryKey), svnSourceSrc, svnSourceTrg);
 		svnSourceDiff.setDiffToHtml(SourceUtils.diffToHtml(svnSourceDiff.getDiff()));
 		svnSourceDiff.setDiff("");
 		return svnSourceDiff;

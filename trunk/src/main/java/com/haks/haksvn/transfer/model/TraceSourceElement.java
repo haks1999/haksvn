@@ -7,7 +7,7 @@ public class TraceSourceElement {
 	
 	private String id;
 	private long revision = -1;
-	private String name = "";
+	private String tagName = "";
 	private boolean isTrunk = false;
 	private boolean isBranch = false;
 	private boolean isTag = false;
@@ -33,12 +33,12 @@ public class TraceSourceElement {
 		this.revision = revision;
 	}
 	
-	public String getName(){
-		return name;
+	public String getTagName(){
+		return tagName;
 	}
 	
-	public void setName(String name){
-		this.name = name;
+	public void setTagName(String tagName){
+		this.tagName = tagName;
 	}
 	
 	public boolean getIsTrunk(){
@@ -103,8 +103,8 @@ public class TraceSourceElement {
 			return this;
 		}
 		
-		public Builder name(String name){
-			traceSourceElement.setName(name);
+		public Builder tagName(String tagName){
+			traceSourceElement.setTagName(tagName);
 			return this;
 		}
 		

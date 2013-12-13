@@ -21,6 +21,7 @@ import com.haks.haksvn.common.exception.HaksvnException;
 import com.haks.haksvn.common.message.model.ResultMessage;
 import com.haks.haksvn.common.paging.model.Paging;
 import com.haks.haksvn.transfer.model.Transfer;
+import com.haks.haksvn.transfer.model.TransferGroup;
 import com.haks.haksvn.transfer.model.TransferSource;
 import com.haks.haksvn.transfer.service.TransferService;
 import com.haks.haksvn.user.model.User;
@@ -92,8 +93,13 @@ public class TransferAjaxController {
     										@PathVariable String repositoryKey,
     										@PathVariable int transferSeq) {
 		Transfer transfer = transferService.retrieveTransferDetail(Transfer.Builder.getBuilder().repositoryKey(repositoryKey).transferSeq(transferSeq).build());
-		transfer.setSourceList(null);	// lazy loading
-		transfer.setTransferGroup(null);
+		TransferGroup transferGroup = transfer.getTransferGroup();
+		if( transferGroup != null ){
+			transferGroup.setTransferList(null);
+		}
+		for( TransferSource transferSource: transfer.getSourceList() ){
+			transferSource.setTransfer(null);
+		}
     	return transfer;
     }
     

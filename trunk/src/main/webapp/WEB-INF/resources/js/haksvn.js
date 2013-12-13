@@ -11,6 +11,16 @@ String.prototype.trim = function() {
  */
 jQuery.extend({postJSON: function(url, data, callback){$.post(url, data, callback, "json");}});
 
+jQuery.fn.toggleOption = function (show) {
+    $(this).toggle(show);
+    if (show) {
+        if ($(this).parent('span.toggleOption').length)
+            $(this).unwrap();
+    } else {
+        if ($(this).parent('span.toggleOption').length==0)
+            $(this).wrap('<span class="toggleOption" style="display: none;" />');
+    }
+};
 
 /*
  * functions

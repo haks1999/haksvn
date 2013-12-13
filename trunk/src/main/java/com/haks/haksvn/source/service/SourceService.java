@@ -54,7 +54,13 @@ public class SourceService {
 	public SVNSourceDiff retrieveDiffByPrevious(Repository repository, SVNSource svnSource){
 		svnSource = svnRepositoryService.checkIsCopiedOrDeletedAndChangeRevision(repository, svnSource);
 		SVNSourceDiff svnSourceDiff = svnRepositoryService.retrieveDiffByPrevious(repository, svnSource);
-		
+		return svnSourceDiff;
+	}
+	
+	public SVNSourceDiff retrieveDiffByRevisions(Repository repository, SVNSource svnSourceSrc, SVNSource svnSourceTrg){
+		svnSourceSrc = svnRepositoryService.checkIsCopiedOrDeletedAndChangeRevision(repository, svnSourceSrc);
+		svnSourceTrg = svnRepositoryService.checkIsCopiedOrDeletedAndChangeRevision(repository, svnSourceTrg);
+		SVNSourceDiff svnSourceDiff = svnRepositoryService.retrieveDiffByRevisions(repository, svnSourceSrc, svnSourceTrg);
 		return svnSourceDiff;
 	}
 	
