@@ -20,7 +20,8 @@
 		$.getJSON( "<c:url value="/source/changes/diff"/>",
 				{repositoryKey: '<c:out value="${repositoryKey}" />',
 				path: path,
-				rev: rev},
+				rev: rev,
+				json:true},
 				function(data) {
 					$(pmOpener).parent().next('pre').removeClass('loading').addClass('loaded');
 					$(pmOpener).parent().next('pre').html(data.diffToHtml);
@@ -194,7 +195,7 @@
 						
 					</div>
 					
-					<div id="div_syncTaggingInfo" class="info mt50">
+					<div class="info mt50">
 						<div class="tl"></div>
 						<div class="tr"></div>
 						<div class="desc variable-help">

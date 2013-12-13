@@ -5,6 +5,7 @@ import java.util.Comparator;
 import java.util.List;
 
 import org.hibernate.Criteria;
+import org.hibernate.Hibernate;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
@@ -19,7 +20,7 @@ import com.haks.haksvn.transfer.model.Transfer;
 import com.haks.haksvn.transfer.model.TransferSource;
 
 @Repository
-public class TransferDao {
+public class TransferDao{
 
 	@Autowired
 	private SessionFactory sessionFactory;
@@ -85,7 +86,11 @@ public class TransferDao {
 	
 	public Transfer retrieveTransferByTransferSeq( int transferSeq ){
 		Session session = sessionFactory.getCurrentSession();
-		return (Transfer)session.get(Transfer.class, transferSeq );
+		Transfer transfer = (Transfer)session.get(Transfer.class, transferSeq );
+		// eager load nested elements
+		Hibernate.initialize(transfer.getTransferGroup());
+		Hibernate.initialize(transfer.getSourceList());
+		return transfer;
 	}
 	
 	public List<Transfer> retrieveTransferListByTransferGroupSeq( int transferGroupSeq ){

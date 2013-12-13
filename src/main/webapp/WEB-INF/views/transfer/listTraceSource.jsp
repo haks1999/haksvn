@@ -70,15 +70,22 @@
 	
 	var _gSearchPath = '';
 	function retrieveTraceSourceList(){
+		$("#tbl_traceSourceList tfoot tr").addClass("display-none");
 		haksvn.block.on();
 		jsPlumb.reset();
 		_gSearchPath = $('#txt_searchSource').val();
 		$("#tbl_traceSourceList tbody tr:not(.sample)").remove();
+		resetDisplayAndIncasePaths();
 		$.get( "<c:url value="/transfer/traceSource/list/trace"/>",
 				{repositoryKey: '<c:out value="${repository.repositoryKey}" />',
 				path: $('#txt_searchSource').val(),
-				limit:100},
+				limit:50},
 				function(data) {
+					displayAndIncasePaths(data.trunkPathList, data.branchPathList );
+					resetDiffWithSelections({trunkPathList: data.trunkPathList, 
+												branchPathList: data.branchPathList,
+												trunkElemList: data.trunkElemList,
+												branchElemList: data.branchElemList});
 					var trunkElemList = data.trunkElemList;
 					var branchElemList = data.branchElemList;
 					var tagElemList = data.tagElemList;
@@ -87,11 +94,17 @@
 						elemArr.sort(function(a,b){return a-b;});
 						return elemArr[elemArr.length-1];
 					})();
+					
+					if( maxSize < 1 ){
+						$("#tbl_traceSourceList tfoot tr").removeClass("display-none");
+						haksvn.block.off();
+						return;
+					}
 					for( var inx = 0 ; inx < maxSize ; inx++ ){
 						var row = $("#tbl_traceSourceList > tbody > .sample").clone();
-						if(trunkElemList[inx]) $(row).find(".trunk").text(trunkElemList[inx].revision).attr("id",trunkElemList[inx].id).removeClass("display-none").attr("revision",trunkElemList[inx].revision).addClass(trunkElemList[inx].isLatest?"latest":"");
-						if(branchElemList[inx]) $(row).find(".branch").text(branchElemList[inx].revision).attr("id",branchElemList[inx].id).removeClass("display-none").attr("revision",branchElemList[inx].revision).addClass(branchElemList[inx].isLatest?"latest":"");
-						if(tagElemList[inx]) $(row).find(".tag").text(tagElemList[inx].name).attr("id",tagElemList[inx].id).removeClass("display-none").attr("name",tagElemList[inx].name).addClass(tagElemList[inx].isLatest?"latest":"");
+						if(trunkElemList[inx]) $(row).find(".trunk").text("r" + trunkElemList[inx].revision).attr("id",trunkElemList[inx].id).removeClass("display-none").attr("revision",trunkElemList[inx].revision).addClass(trunkElemList[inx].isLatest?"latest":"");
+						if(branchElemList[inx]) $(row).find(".branch").text("r" + branchElemList[inx].revision).attr("id",branchElemList[inx].id).removeClass("display-none").attr("revision",branchElemList[inx].revision).addClass(branchElemList[inx].isLatest?"latest":"");
+						if(tagElemList[inx]) $(row).find(".tag").text(tagElemList[inx].tagName).attr("id",tagElemList[inx].id).removeClass("display-none").attr("revision",tagElemList[inx].revision).attr("isTag",true).addClass(tagElemList[inx].isLatest?"latest":"");
 						$(row).removeClass("sample");
 						$('#tbl_traceSourceList > tbody').append(row);
 					}
@@ -131,6 +144,7 @@
 						conn.srcRevision = outBoundConnectList[inx].srcRevision;
 						conn.destRevision = outBoundConnectList[inx].destRevision;
 						conn.traceId = labelSeq;
+						conn.transferGroupSeq = outBoundConnectList[inx].transferGroupSeq;
 						conn.isTransferRequest = isTransferRequest;
 					}
 					outBoundConnector.connector = "StateMachine";
@@ -160,17 +174,81 @@
 					jsPlumb.bind("click", retrieveAndViewConnectionDetail);
 					$("#tbl_traceSourceList tbody td .trunk").click(retrieveAndViewElemDetail);
 					$("#tbl_traceSourceList tbody td .branch").click(retrieveAndViewElemDetail);
+					$("#tbl_traceSourceList tbody td .tag").click(retrieveAndViewElemDetail);
 		});
+	};
+	
+	var gTrunkPathSet = [],gBranchPathSet=[];
+	function resetDisplayAndIncasePaths(){
+		$("#div_trunkPathList .desc div").remove();	
+		gTrunkPathSet = [];
+		gBranchPathSet = [];
+	};
+	
+	function displayAndIncasePaths(trunkPathList, branchPathList){
+		var isLimit = false;
+		for( var inx = 0 ; inx < trunkPathList.length ; inx++ ){
+			if( inx > 9){
+				isLimit = true;
+				$("#div_trunkPathList .desc").append("<p>And " + (trunkPathList.length - 9) + " more sources</p>");
+			}
+			gTrunkPathSet[trunkPathList[inx]] = true;
+			if( isLimit ) continue;
+			var trunkPath = $("#div_trunkPathList .sample").clone();
+			$(trunkPath).find("font a").text(trunkPathList[inx]);
+			$(trunkPath).find("a").attr("href",'<c:url value="/source/browse/${repositoryKey}"/>' + trunkPathList[inx] + "?rev=-1");
+			$(trunkPath).removeClass("sample").removeClass("display-none");
+			$("#div_trunkPathList .desc").append(trunkPath);
+		}
+		for( var inx = 0 ; inx < branchPathList.length ; inx++ ){
+			gBranchPathSet[branchPathList[inx]] = true;
+		}
+	};
+	
+	function fullPathToAbbrPath(path){
+		var limit = 6;
+		var pathArr = path.split("/");
+		if( pathArr.length < limit ) return path; 
+		return ".../" + pathArr.slice(limit, pathArr.length).join("/");
+	}
+	
+	function resetDiffWithSelections( args ){
+		var trunkPathList = args.trunkPathList;
+		var branchPathList = args.branchPathList;
+		var trunkElemList = args.trunkElemList;
+		var branchElemList = args.branchElemList;
+		$("#sel_diffWithPath option").remove();
+		for( var inx = 0 ; inx < trunkPathList.length ; inx++ ){
+			$("#sel_diffWithPath").append("<option value=\"" + trunkPathList[inx] + "\" class=\"trunk\">" + fullPathToAbbrPath(trunkPathList[inx]) + "</option>");
+		}
+		for( var inx = 0 ; inx < branchPathList.length ; inx++ ){
+			$("#sel_diffWithPath").append("<option value=\"" + branchPathList[inx] + "\" class=\"branch display-none\">..." + fullPathToAbbrPath(branchPathList[inx]) + "</option>");
+		}
+		$("#sel_diffWithRevision option").remove();
+		for( var inx = 0 ; inx < trunkElemList.length ; inx++ ){
+			$("#sel_diffWithRevision").append("<option value=\"" + trunkElemList[inx].revision + "\" class=\"trunk\">r" + trunkElemList[inx].revision + "</option>");
+		}
+		for( var inx = 0 ; inx < branchElemList.length ; inx++ ){
+			$("#sel_diffWithRevision").append("<option value=\"" + branchElemList[inx].revision + "\" class=\"branch display-none\">r" + branchElemList[inx].revision + "</option>");
+		}
+		$("#sel_diffWithRoot").change(function(){
+			$("#sel_diffWithPath option." + $(this).val()).toggleOption(true);
+			$("#sel_diffWithPath option:not(." + $(this).val() + ")").toggleOption(false);
+			$("#sel_diffWithRevision option." + $(this).val()).toggleOption(true);
+			$("#sel_diffWithRevision option:not(." + $(this).val() + ")").toggleOption(false);
+		});
+		$("#sel_diffWithRoot").val("trunk").change();
 	};
 	
 	function retrieveAndViewElemDetail(event){
 		var tooltipData = generateTooltipDataForRevisionElem($(this).attr("revision"));
+		var isTagElem = $(this).attr("isTag");
 		var	traceTooltip = $(this).qtip({
 			content: {
 				text: function(event, api) {
 		            $.ajax({ url: tooltipData.url })
 		                .done(function(json) {
-		                    api.set('content.text', generateTooltipContentForRevision(json));
+		                    api.set('content.text', isTagElem?generateTooltipContentForTagRevision(json):generateTooltipContentForRevision(json));
 		                })
 		                .fail(function(xhr, status, error) {
 		                    api.set('content.text', status + ': ' + error);
@@ -244,17 +322,18 @@
 		titleElem.find("font a").text( "r" + revision);
 		titleElem.find("a").attr("href",'<c:url value="/source/changes/${repositoryKey}"/>' + "?rev=" + revision);
 		var title = titleElem.html();
-		return {url: "<c:url value="/source/changes/search"/>" + "?repositoryKey=<c:out value="${repository.repositoryKey}"/>" + "&path=" + escape("/") + "&rev=" + revision,
+		return {url: "<c:url value="/source/changes/search"/>" + "?repositoryKey=<c:out value="${repository.repositoryKey}"/>" + "&path=" + escape("") + "&rev=" + revision,
 				title:title};
 	};
 	
 	function generateTooltipDataForTransfer(connection){
 		var transferSeq = connection.traceId;
 		var url = "<c:url value="/transfer/request/list/${repository.repositoryKey}/"/>" + transferSeq + "?json=1";
-		var titleElem = $("#div_tipTitle").clone();
-		//titleElem.removeAttr("id").find("b").text($("#"+connection.sourceId).attr("revision") + " r" + $("#"+connection.targetId).attr("revision") + " ");
-		titleElem.find("font a").text( "REQ-" + transferSeq);
-		titleElem.find("a").attr("href","<c:url value="/transfer/request/list/${repository.repositoryKey}/"/>" + transferSeq);
+		var titleElem = $("#div_tipTransferTitle").clone();
+		titleElem.find(".req font a").text( "req-" + transferSeq);
+		titleElem.find(".req a").attr("href","<c:url value="/transfer/request/list/${repository.repositoryKey}/"/>" + transferSeq);
+		titleElem.find(".group font a").text( "group-" + connection.transferGroupSeq);
+		titleElem.find(".group a").attr("href","<c:url value="/transfer/requestGroup/list/${repository.repositoryKey}/"/>" + connection.transferGroupSeq);
 		var title = titleElem.html();
 		return {url:url, title:title};
 	};
@@ -266,6 +345,20 @@
 		contentElem.find("span.requested").text(result.requestUser.userName + "(" + result.requestUser.userId + "), " + haksvn.date.convertToEasyFormat(new Date(result.requestDate)));
 		contentElem.find("span.approved").text(result.approveUser.userName + "(" + result.approveUser.userId + "), " + haksvn.date.convertToEasyFormat(new Date(result.approveDate)));
 		contentElem.find("span.description").text(result.description);
+		for( var inx = 0 ; inx < result.sourceList.length;inx++ ){
+			var fullPath = result.sourceList[inx].path;
+			var sourcePathListElem = $("#div_sourcePathList li").clone();
+			var isIncasePath = gTrunkPathSet[fullPath];
+			if( !isIncasePath){
+				sourcePathListElem.find("img.diff").remove();
+			}else{
+				sourcePathListElem.find("img.diff").attr("onclick","openDiffWithDialog(\""+ result.sourceList[inx].path + "\",\""+result.sourceList[inx].revision +"\");");
+			}
+			sourcePathListElem.find("font a").text( fullPath.substr(fullPath.lastIndexOf("/")+1));
+			sourcePathListElem.find("a").attr("href",'<c:url value="/source/browse/${repositoryKey}"/>' + fullPath + "?rev=" + result.sourceList[inx].revision)
+				.addClass(gTrunkPathSet[fullPath]?"incase":"");
+			contentElem.find("ul").append(sourcePathListElem);
+		}
 		return $(contentElem).wrap('<div>').parent().html();
 	};
 	
@@ -293,15 +386,94 @@
 		contentElem.removeAttr("id").find("span.author").text(result.log.author);
 		contentElem.find("span.commited").text(result.log.author + ", " + haksvn.date.convertToEasyFormat(new Date(result.log.date)));
 		contentElem.find("pre.message").text(result.log.message);
+		
+		var sourceList = result.log.changedList;
+		for( var inx = 0 ; inx < sourceList.length;inx++ ){
+			if( sourceList[inx].nodeType != 'file' ) continue;
+			var fullPath = sourceList[inx].path;
+			var sourcePathListElem = $("#div_sourcePathList li").clone();
+			var isIncasePath = gTrunkPathSet[fullPath]||gBranchPathSet[fullPath];
+			if( !isIncasePath) sourcePathListElem.find("img.diff").remove();
+			sourcePathListElem.find("font a").text( fullPath.substr(fullPath.lastIndexOf("/")+1));
+			sourcePathListElem.find("a").attr("href",'<c:url value="/source/browse/${repositoryKey}"/>' + fullPath + "?rev=" + sourceList[inx].revision)
+				.addClass(isIncasePath?"incase":"");
+			contentElem.find("ul").append(sourcePathListElem);
+		}
+		
 		return $(contentElem).wrap('<div>').parent().html();
+	};
+	
+	function generateTooltipContentForTagRevision(result){
+		var contentElem = $("#div_tipRevisionContent").clone();
+		contentElem.removeAttr("id").find("span.author").text(result.log.author);
+		contentElem.find("span.commited").text(result.log.author + ", " + haksvn.date.convertToEasyFormat(new Date(result.log.date)));
+		contentElem.find("pre.message").text(result.log.message);
+		
+		var sourceList = result.log.changedList;
+		for( var inx = 0 ; inx < sourceList.length;inx++ ){
+			var fullPath = sourceList[inx].path;
+			var sourcePathListElem = $("#div_sourcePathList li").clone();
+			sourcePathListElem.find("img.diff").remove();
+			sourcePathListElem.find("font a").text( fullPath.substr(fullPath.lastIndexOf("/")+1));
+			sourcePathListElem.find("a").attr("href",'<c:url value="/source/browse/${repositoryKey}"/>' + fullPath)
+				.addClass("incase");
+			contentElem.find("ul").append(sourcePathListElem);
+		}
+		
+		return $(contentElem).wrap('<div>').parent().html();
+	};
+	
+	function openDiffWithDialog( path, revision ){
+		$("#pre_diffResult").html("<br/><br/>");
+		$("#div_diffWith").data({path:path, revision:revision});
+		$("#ipt_diffWith").click(function(){
+			retrieveDiffWithRevisions({
+				srcPath: $("#div_diffWith").data("path"),
+				srcRev: $("#div_diffWith").data("revision"),
+				trgPath: $("#sel_diffWithPath").val(),
+				trgRev: $("#sel_diffWithRevision").val()
+			});
+		});
+		$("#div_diffWith span.path").find("font a").text( path );
+		$("#div_diffWith span.path").find("a").attr("href",'<c:url value="/source/browse/${repositoryKey}"/>' + path + "?rev=" + revision);
+		$("#div_diffWith span.revision").find("font a").text( "r" + revision );
+		$("#div_diffWith span.revision").find("a").attr("href",'<c:url value="/source/changes/${repositoryKey}"/>' + "?rev=" + revision);
+		$("#div_diffWith").dialog({
+			resizable:false,
+			height: 470,
+		    width: 750,
+		    title: "Diff with",
+		    modal: true,
+		    buttons: {
+		    	"Close": function() {
+		            $( this ).dialog( "close" );
+		        }
+		    }
+	    });
+	};
+	
+	function retrieveDiffWithRevisions(args){
+		$("#pre_diffResult").html("<br/><br/>");
+		$("#pre_diffResult").addClass('loading');
+		$.getJSON( "<c:url value="/source/changes/diff"/>",
+				{repositoryKey: '<c:out value="${repositoryKey}" />',
+				srcPath: args.srcPath,
+				srcRev: args.srcRev,
+				trgPath: args.trgPath,
+				trgRev: args.trgRev,
+				json:true},
+				function(data) {
+					$("#pre_diffResult").removeClass('loading');
+					$("#pre_diffResult").html(data.diffToHtml);
+		});
 	};
 </script>
 
 <style type="text/css">
 path:hover{cursor:pointer;}
-table tr:hover td {background:none;}
-table td{border:none;}
-td div.elem{
+#tbl_traceSourceList tr:hover td {background:none;}
+#tbl_traceSourceList td{border:none;width:330px;}
+#tbl_traceSourceList td div.elem{
 background-repeat:no-repeat;
 background-position:center center;
 text-align:center;
@@ -311,42 +483,40 @@ margin:5px;
 padding:8px;
 cursor:pointer;
 }
-td div.elem:hover{
+#tbl_traceSourceList td div.elem:hover{
 color:#483D8B;
 font-weight:bold;
 text-decoration:underline;
 }
-th div.elem{
-text-align:center;
+#tbl_traceSourceList th div.elem{
 vertical-align:middle;
-width: 100px;
-margin:0 5px 0 5px;
+margin:0 5px 0 30px;
 padding:0 8px 0 8px;
 }
-td div.trunk{
-background-image:url(/haksvn/images/rounded_rec_blue_trace.png);
+#tbl_traceSourceList td div.trunk{
+background-image:url("<c:url value="/images/rounded_rec_blue_trace.png" />");
 }
-td div.trunk.latest{
+#tbl_traceSourceList td div.trunk.latest{
 color:#227387;
 font-weight:bold;
-background-image:url(/haksvn/images/rounded_rec_blue_trace_border.png);
+background-image:url("<c:url value="/images/rounded_rec_blue_trace_border.png" />");
 }
-td div.branch{
-background-image:url(/haksvn/images/rounded_rec_blue_trace.png);
+#tbl_traceSourceList td div.branch{
+background-image:url("<c:url value="/images/rounded_rec_blue_trace.png" />");
 }
-td div.branch.latest{
+#tbl_traceSourceList td div.branch.latest{
 color:#227387;
 font-weight:bold;
-background-image:url(/haksvn/images/rounded_rec_blue_trace_border.png);
+background-image:url("<c:url value="/images/rounded_rec_blue_trace_border.png" />");
 }
-td div.tag{
+#tbl_traceSourceList td div.tag{
 width: 130px;
-background-image:url(/haksvn/images/rounded_rec_green_trace.png);
+background-image:url("<c:url value="/images/rounded_rec_green_trace.png" />");
 }
-td div.tag.latest{
+#tbl_traceSourceList td div.tag.latest{
 color:#41805A;
 font-weight:bold;
-background-image:url(/haksvn/images/rounded_rec_green_trace_border.png);
+background-image:url("<c:url value="/images/rounded_rec_green_trace_border.png" />");
 }
 .connLabel{
 text-align:center;
@@ -359,7 +529,7 @@ line-height:25px;
 font-style: italic;
 font-size:8pt;
 cursor:pointer;
-background-image:url(/haksvn/images/rounded_rec_gray_conn.png);
+background-image:url("<c:url value="/images/rounded_rec_gray_conn.png" />");
 }
 .connLabel:hover{
 color:black;
@@ -371,19 +541,46 @@ line-height:10px;
 }
 .connLabel.latest{
 color:#D4D4C7;
-background-image:url(/haksvn/images/rounded_rec_indigo_conn.png);
+background-image:url("<c:url value="/images/rounded_rec_indigo_conn.png" />");
 }
 
 .tooltipContent p,.tooltipContent pre{
 font-size: 11px;
 margin:0px 0px 2px 0px;
 }
-
-form p label.options{
-font-style:italic;font-size:12px;line-height:20px;
+.tooltipContent div.sourcePathList{
+height:100px;
+overflow-y:scroll;
 }
-form p label.options input{
-vertical-align: bottom;
+.tooltipContent hr{
+border-top: 1px solid #ccc;
+}
+.tooltipContent ul{
+margin:0px 0px 0px 5px;
+list-style-type: none;
+}
+.tooltipContent li{
+margin:0px;
+}
+.tooltipContent li a{
+font-size: 11px;
+color:gray;
+}
+.tooltipContent li a.incase{
+font-size: 11px;
+font-weight:bold;
+color:#483d8b;
+}
+img.diff{
+height:10px;
+margin-left:2px; 
+cursor:pointer;
+}
+.ui-dialog{
+z-index:18000 !important ;
+}
+select option{
+width:auto;
 }
 </style>
 <div class="content-page">
@@ -403,39 +600,29 @@ vertical-align: bottom;
 								</c:forEach>
 							</select>
 							<label for="path" class="w_60">Path</label> 
-							<input id="txt_searchSource" class="text w_600" type="text" name="path"/>
+							<input id="txt_searchSource" class="text w_500" type="text" name="path"/>
 							<a id="btn_searchTrace" class="button right yellow"><small class="icon looking_glass"></small><span>Trace</span></a>
-						</p>
-						<p>
-							<label class="w_120">Options</label> 
-							<label for="trunkCommit" class="options">
-								<input id="ckb_trunkCommit" type="checkbox" name="trunkCommit"/>
-								Include Trunk Commits
-							</label> 
-							<label for="onlyComplete" class="options">
-								<input id="ckb_onlyComplete" type="checkbox" name="onlyComplete" checked="checked"/>
-								Only Completed Requets
-							</label> 
 						</p>
 					</form>
 				</div>
 				<div class="bottom"><div></div></div>
 			</div>
 			
-			<div id="div_syncTaggingInfo" class="info">
+			<div id="div_trunkPathList" class="info">
 				<div class="tl"></div>
 				<div class="tr"></div>
-				<div class="desc variable-help">Latest Tag synchronized with production branch: <font class="path open-window"><a></a></font></div>
+				<div class="desc"><p>Show only latest 50 traces by performance issue</p></div>
+				<div class="display-none sample"><font class="path open-window"><a></a></font></div>
 				<div class="bl"></div>
 				<div class="br"></div>
 			</div>
 			
-			<table id="tbl_traceSourceList">
+			<table id="tbl_traceSourceList" style="width:990px;">
 				<thead>
 					<tr>
-						<th><div class="elem">trunk</div></th>
-						<th><div class="elem">branch</div></th>
-						<th><div class="elem">tags</div></th>
+						<th style="border-top:none;"><div class="elem">Trunk</div></th>
+						<th style="border-top:none;"><div class="elem">Branch</div></th>
+						<th style="border-top:none;"><div class="elem">Tag</div></th>
 					</tr>
 				</thead>
 				<tbody>
@@ -445,6 +632,13 @@ vertical-align: bottom;
 						<td><div class="elem tag display-none"></div></td>
 					</tr>
 				</tbody>
+				<tfoot>
+					<tr>
+						<td colspan="3" style="text-align:center;">
+							<span class="nodata">no data</span>
+						</td>
+					</tr>
+				</tfoot>
 			</table>
 			
 		</div>
@@ -453,6 +647,9 @@ vertical-align: bottom;
 </div>
 
 <div class="display-none">
+	<div id="div_tipTransferTitle">
+		<b class="req"><font class="path open-window"><a href=""></a></font></b>&nbsp;&nbsp;in <b class="group"><font class="path open-window"><a href=""></a></font></b>
+	</div>
 	<div id="div_tipTitle">
 		<b></b><font class="path open-window" style="font-weight:bold;"><a href=""></a></font>
 	</div>
@@ -462,6 +659,8 @@ vertical-align: bottom;
 		<p><b>Requested: </b><span class="requested"></span></p>
 		<p><b>Appproved: </b><span class="approved"></span></p>
 		<p><b>description: </b><span class="description"></span></p>
+		<hr/>
+		<div class="sourcePathList"><ul></ul></div>
 	</div>
 	<div id="div_tipTaggingContent" class="tooltipContent">
 		<p><b>Type: </b><span class="type"></span></p>
@@ -472,5 +671,42 @@ vertical-align: bottom;
 		<p><b>Commited: </b><span class="commited"></span></p>
 		<p><b>Commit Message: </b></p>
 		<pre class="message"></pre>
+		<hr/>
+		<div class="sourcePathList"><ul></ul></div>
+	</div>
+	<div id="div_sourcePathList" class="tooltipContent">
+		<ul><li><font class="path open-window"><a href=""></a></font><img class="diff" src="<c:url value="/images/diff_with.png"/>" title="Diff with..." /></li></ul>
+	</div>
+	<div id="div_diffWith">
+		<div class="box">
+			<div class="head"><div></div></div>
+			<div class="desc search">
+				<p>
+					<span class="path"><font class="path open-window"><a href=""></a></font></span>
+					<span class="revision"><font class="path open-window"><a href=""></a></font></span>
+				</p>
+				<p>
+					<select id="sel_diffWithRoot">
+						<option value="trunk">trunk</option>
+						<option value="branch">branch</option>
+					</select>
+					<select id="sel_diffWithPath">
+					</select>
+					<select id="sel_diffWithRevision">
+					</select>
+					<input id="ipt_diffWith" type="button" value="diff" />
+				</p>
+			</div>
+			<div class="bottom"><div></div></div>
+		</div>
+			
+		
+		<div style="height:280px;border:1px solid gray;overflow-y:scroll;">
+			<pre id="pre_diffResult" class="diff">
+			</pre>
+		</div>
 	</div>
 </div>
+
+
+    

@@ -18,6 +18,8 @@ public class TraceSourceBasket {
 	private List<TraceSourceElement> tagElemList = new ArrayList<TraceSourceElement>(0);
 	private List<TraceSourceConnect> connectOutBoundList = new ArrayList<TraceSourceConnect>(0);
 	private List<TraceSourceConnect> connectInBoundList = new ArrayList<TraceSourceConnect>(0);
+	private List<String> trunkPathList = new ArrayList<String>(0);
+	private List<String> branchPathList = new ArrayList<String>(0);
 	
 	public List<TraceSourceElement> getTrunkElemList() {
 		return trunkElemList;
@@ -50,6 +52,22 @@ public class TraceSourceBasket {
 	}
 	public void setInBoundConnectList(List<TraceSourceConnect> connectInBoundList) {
 		this.connectInBoundList = connectInBoundList;
+	}
+	
+	public List<String> getTrunkPathList(){
+		return trunkPathList;
+	}
+	
+	public void setTrunkPathList(List<String> trunkPathList){
+		this.trunkPathList = trunkPathList;
+	}
+	
+	public List<String> getBranchPathList(){
+		return branchPathList;
+	}
+	
+	public void setBranchPathList(List<String> branchPathList){
+		this.branchPathList = branchPathList;
 	}
 	
 	public List<TraceSourceConnect> sortElementsAndGenerateInBoundConnections(){
