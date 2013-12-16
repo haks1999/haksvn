@@ -1,3 +1,5 @@
+=version 0.3.2
+
 =version 0.2.000
 ==Bug fixed
 *initial data import does not working properly when changing version fixed.
