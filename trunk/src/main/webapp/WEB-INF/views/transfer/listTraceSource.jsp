@@ -141,8 +141,6 @@
 								}], 
 								["PlainArrow", {location:1, width:8, length:8} ]]
 						}, outBoundConnector);
-						conn.srcRevision = outBoundConnectList[inx].srcRevision;
-						conn.destRevision = outBoundConnectList[inx].destRevision;
 						conn.traceId = labelSeq;
 						conn.transferGroupSeq = outBoundConnectList[inx].transferGroupSeq;
 						conn.isTransferRequest = isTransferRequest;
@@ -157,6 +155,7 @@
 						};
 					var inBoundConnectList = data.inBoundConnectList;
 					for( var inx=  0 ; inx < inBoundConnectList.length ; inx++ ){
+						if(inBoundConnectList[inx].isFlow) disableDiffWithSelectionOptions(inBoundConnectList[inx].destId);
 						var inboundConnector = inBoundConnectList[inx].isFlow ? flowInBoundConnector:notFlowInBoundConnector;
 						var inboundPaintStyle = function(){
 							if( inBoundConnectList[inx].isLatest ) return {lineWidth:2,strokeStyle:"#2D5770"};
@@ -238,6 +237,10 @@
 			$("#sel_diffWithRevision option:not(." + $(this).val() + ")").toggleOption(false);
 		});
 		$("#sel_diffWithRoot").val("trunk").change();
+	};
+	
+	function disableDiffWithSelectionOptions(revision){
+		$("#sel_diffWithRevision option[value=" + revision.replace("branch","") + "]").attr("disabled","disabled");
 	};
 	
 	function retrieveAndViewElemDetail(event){
@@ -393,9 +396,13 @@
 			var fullPath = sourceList[inx].path;
 			var sourcePathListElem = $("#div_sourcePathList li").clone();
 			var isIncasePath = gTrunkPathSet[fullPath]||gBranchPathSet[fullPath];
-			if( !isIncasePath) sourcePathListElem.find("img.diff").remove();
+			if( !isIncasePath){
+				sourcePathListElem.find("img.diff").remove();
+			}else{
+				sourcePathListElem.find("img.diff").attr("onclick","openDiffWithDialog(\""+ fullPath + "\",\""+ result.revision +"\");");
+			}
 			sourcePathListElem.find("font a").text( fullPath.substr(fullPath.lastIndexOf("/")+1));
-			sourcePathListElem.find("a").attr("href",'<c:url value="/source/browse/${repositoryKey}"/>' + fullPath + "?rev=" + sourceList[inx].revision)
+			sourcePathListElem.find("a").attr("href",'<c:url value="/source/browse/${repositoryKey}"/>' + fullPath + "?rev=" + result.revision)
 				.addClass(isIncasePath?"incase":"");
 			contentElem.find("ul").append(sourcePathListElem);
 		}
@@ -434,6 +441,14 @@
 				trgRev: $("#sel_diffWithRevision").val()
 			});
 		});
+		$("#ipt_diffWithSideBySide").click(function(){
+			openDiffWithSideBySidePage({
+				srcPath: $("#div_diffWith").data("path"),
+				srcRev: $("#div_diffWith").data("revision"),
+				trgPath: $("#sel_diffWithPath").val(),
+				trgRev: $("#sel_diffWithRevision").val()
+			});
+		});
 		$("#div_diffWith span.path").find("font a").text( path );
 		$("#div_diffWith span.path").find("a").attr("href",'<c:url value="/source/browse/${repositoryKey}"/>' + path + "?rev=" + revision);
 		$("#div_diffWith span.revision").find("font a").text( "r" + revision );
@@ -466,6 +481,15 @@
 					$("#pre_diffResult").removeClass('loading');
 					$("#pre_diffResult").html(data.diffToHtml);
 		});
+	};
+	
+	function openDiffWithSideBySidePage(args){
+		var param = '?repositoryKey=' + '<c:out value="${repository.repositoryKey}"/>'
+					+ '&path=' + args.srcPath
+					+ '&srcRev=' + args.srcRev
+					+ '&srcPath=' + args.trgPath
+					+ '&trgRev=' + args.trgRev;
+		window.open('<c:url value="/source/changes/diff" />' + param );
 	};
 </script>
 
@@ -678,13 +702,14 @@ width:auto;
 		<ul><li><font class="path open-window"><a href=""></a></font><img class="diff" src="<c:url value="/images/diff_with.png"/>" title="Diff with..." /></li></ul>
 	</div>
 	<div id="div_diffWith">
+		<p>
+			<b>Source: </b>
+			<span class="path"><font class="path open-window"><a href=""></a></font></span>
+			<span class="revision"><font class="path open-window"><a href=""></a></font></span>
+		</p>
 		<div class="box">
 			<div class="head"><div></div></div>
 			<div class="desc search">
-				<p>
-					<span class="path"><font class="path open-window"><a href=""></a></font></span>
-					<span class="revision"><font class="path open-window"><a href=""></a></font></span>
-				</p>
 				<p>
 					<select id="sel_diffWithRoot">
 						<option value="trunk">trunk</option>
@@ -695,13 +720,12 @@ width:auto;
 					<select id="sel_diffWithRevision">
 					</select>
 					<input id="ipt_diffWith" type="button" value="diff" />
+					<input id="ipt_diffWithSideBySide" type="button" value="Side by Side" />
 				</p>
 			</div>
 			<div class="bottom"><div></div></div>
 		</div>
-			
-		
-		<div style="height:280px;border:1px solid gray;overflow-y:scroll;">
+		<div style="height:240px;border:1px solid #ccc;overflow-y:scroll;">
 			<pre id="pre_diffResult" class="diff">
 			</pre>
 		</div>
