@@ -32,8 +32,16 @@ public class InitialDataImportListener implements ApplicationListener{
 		if (event instanceof ContextRefreshedEvent) {
 			
 			Property applicationVersionProp = propertyService.retrievePropertyByPropertyKey(PropertyUtils.getApplicationVersionKey());
+			String appVersion = System.getProperty("application.version");
+			String dbVersion = applicationVersionProp==null?"":applicationVersionProp.getPropertyValue();
 			
-			if( applicationVersionProp != null && applicationVersionProp.getPropertyValue().equals(System.getProperty("application.version"))) return;
+			if( dbVersion.equals(appVersion)) return;
+			
+			// 앞의 5개자리 버젼까지 같다면 db 변경 없이 버젼 업 
+			if( dbVersion.length() > 4 && appVersion.length() > 4 && dbVersion.substring(0, 4).equals(appVersion.substring(0, 4))){
+				propertyService.saveProperty(PropertyUtils.getApplicationVersionKey(), appVersion);
+				return;
+			}
 			try{
 				//TODO 단순 스크립트 실행이 아닌 업그레이드가 가능하도록 변경 필요
 				final ResourceDatabasePopulator rdp = new ResourceDatabasePopulator();
