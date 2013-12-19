@@ -2,9 +2,12 @@ package com.haks.haksvn.source.util;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
+
+import com.haks.haksvn.source.util.DiffMatchPatchUtils.Diff;
 
 public class SourceUtils {
 	
@@ -287,8 +290,9 @@ public class SourceUtils {
 					tr.append("<td>"+(srcContentIndex+1)+"</td><td class=\"source\">" + replaceHttpEntity(srcContentList[srcContentIndex++]) + "</td>");
 					tr.append("<td></td><td class=\"empty\"></td>");
 				}else{
-					tr.append("<td>"+(srcContentIndex+1)+"</td><td class=\"source\">" + replaceHttpEntity(srcContentList[srcContentIndex++]) + "</td>");
-					tr.append("<td>"+(trgContentIndex+1)+"</td><td class=\"target\">" + replaceHttpEntity(trgContentList[trgContentIndex++]) + "</td>");
+					String[] diffTextHtmlResult = diffTextToHtml(replaceHttpEntity(srcContentList[srcContentIndex++]), replaceHttpEntity(trgContentList[trgContentIndex++]) );
+					tr.append("<td>"+srcContentIndex+"</td><td class=\"source\">" + diffTextHtmlResult[0] + "</td>");
+					tr.append("<td>"+trgContentIndex+"</td><td class=\"target\">" + diffTextHtmlResult[1] + "</td>");
 				}
 			}else{
 				// 아래 if 조건문은 정상적인 경우에는 필요치 않으나, 한글 깨짐 등의 문제로 line 이 구분되지 않는 경우, 
@@ -365,5 +369,24 @@ public class SourceUtils {
 		    idx = idx - 8;
 		}
 		return sb.toString();
+	}
+	
+	private static String[] diffTextToHtml(String text1, String text2){
+		LinkedList<Diff> diffList = new DiffMatchPatchUtils().diff_main(text1, text2);
+		StringBuffer result1 = new StringBuffer("");
+		StringBuffer result2 = new StringBuffer("");
+		
+		for( Diff diff : diffList ){
+			String currentStr = diff.text;
+			if( diff.operation == DiffMatchPatchUtils.Operation.EQUAL ){
+				result1.append(currentStr);
+				result2.append(currentStr);
+			}else if( diff.operation == DiffMatchPatchUtils.Operation.DELETE ){
+				result1.append("<span class=\"diff\">" + currentStr + "</span>");
+			}else if( diff.operation == DiffMatchPatchUtils.Operation.INSERT ){
+				result2.append("<span class=\"diff\">" + currentStr + "</span>");
+			}
+		}
+		return new String[]{ result1.toString(), result2.toString()};
 	}
 }

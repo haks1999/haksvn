@@ -308,6 +308,9 @@ background: #ddf8cc;
 border: 1px solid #3a3;
 border-width: 0 1px 0 1px;
 }
+pre.diff table td.target span.diff{
+background: #9f9;
+}
 pre.diff table tr.isFirst td.source{
 border-top: 1px solid #a33;
 }
@@ -318,6 +321,9 @@ pre.diff table td.source{
 background: #ffd8d8;
 border: 1px solid #a33;
 border-width: 0 1px 0 1px;
+}
+pre.diff table td.source span.diff{
+background: #f88;
 }
 pre.diff table tr.isFirst td.empty{
 border-top: 1px solid #888;
