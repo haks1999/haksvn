@@ -88,8 +88,10 @@ public class TransferDao{
 		Session session = sessionFactory.getCurrentSession();
 		Transfer transfer = (Transfer)session.get(Transfer.class, transferSeq );
 		// eager load nested elements
-		Hibernate.initialize(transfer.getTransferGroup());
-		Hibernate.initialize(transfer.getSourceList());
+		if( transfer != null ){
+			Hibernate.initialize(transfer.getTransferGroup());
+			Hibernate.initialize(transfer.getSourceList());
+		}
 		return transfer;
 	}
 	
