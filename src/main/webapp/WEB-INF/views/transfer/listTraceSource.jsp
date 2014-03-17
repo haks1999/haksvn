@@ -187,7 +187,7 @@
 	function displayAndIncasePaths(trunkPathList, branchPathList){
 		var isLimit = false;
 		for( var inx = 0 ; inx < trunkPathList.length ; inx++ ){
-			if( inx > 9){
+			if( inx > 9 && !isLimit){
 				isLimit = true;
 				$("#div_trunkPathList .desc").append("<p>And " + (trunkPathList.length - 9) + " more sources</p>");
 			}
