@@ -90,7 +90,7 @@ public class CodeUtils {
 	}
 	
 	public static String getTransferRejectCodeId(){
-		return "transfer.state.code.reject";
+		return "transfer.state.code.rejected";
 	}
 	
 	public static String getTransferStandbyCodeId(){
