@@ -59,6 +59,7 @@ public class TraceSourceDao {
 						" INNER JOIN transfer tr on (tg.transfer_group_seq = tr.transfer_group_seq) " + 
 						" INNER JOIN transfer_source ts on (tr.transfer_seq = ts.transfer_seq) " + 
 						" WHERE transfer_group_state  = :transferGroupState " +
+						" AND tg.repository_key = :repositoryKey" +
 						" AND ts.path like '%'||:path||'%' " + 
 						" ORDER BY tg.transfer_date desc" )
 						.addScalar("transferSeq", StandardBasicTypes.INTEGER )
@@ -72,6 +73,7 @@ public class TraceSourceDao {
 						.setMaxResults(limit)
 						.setResultTransformer(Transformers.aliasToBean(TraceSourceForTransfer.class));
 		query.setString("transferGroupState", CodeUtils.getTransferGroupTransferedCodeId());
+		query.setString("repositoryKey", repositoryKey);
 		query.setString("path", path);
 		@SuppressWarnings("unchecked")
 		List<TraceSourceForTransfer> result = (List<TraceSourceForTransfer>)query.list();
