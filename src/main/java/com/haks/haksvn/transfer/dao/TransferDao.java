@@ -126,7 +126,7 @@ public class TransferDao{
 				.createAlias("transfer", "tr")
 				.createAlias("tr.transferStateCode", "trc")
 				//.add(Restrictions.ne("trc.codeId", CodeUtils.getTransferApprovedCodeId()))
-				//.add(Restrictions.ne("trc.codeId", CodeUtils.getTransferRejectCodeId()))
+				.add(Restrictions.ne("trc.codeId", CodeUtils.getTransferRejectCodeId()))
 				.add(Restrictions.ne("trc.codeId", CodeUtils.getTransferTransferedCodeId()))
 				.add(Restrictions.eq("tr.repositoryKey", repositoryKey))
 				.add(Restrictions.eq("path", path));
