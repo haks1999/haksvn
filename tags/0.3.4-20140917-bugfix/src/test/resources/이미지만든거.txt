@@ -1,0 +1,38 @@
+rounded_rec_red_trace_border
+
+radius 8
+width 90
+heigth 35
+border width 3
+fore FFD8D8
+border D65476
+
+rounded_rec_blue_trace_border
+
+radius 8
+width 90
+heigth 35
+border width 3
+fore A6D5F8
+border 227387
+
+rounded_rec_green_trace_border
+
+radius 8
+width 130
+heigth 35
+border width 3
+fore DDF8CC
+border 227387
+
+rounded_rec_gray_trace
+
+radius 6
+width 40
+heigth 25
+border width 2
+fore D4D4C7
+border 227387
+
+http://localhost:8080/haksvn/source/changes/HAKSVNG/trunk?rev=231
+diff test http://localhost:8080/haksvn/source/changes/diff?repositoryKey=HAKSVNG&trgRev=231&srcRev=-1&path=/trunk/src/main/webapp/WEB-INF/views/transfer/modifyTransfer.jsp
