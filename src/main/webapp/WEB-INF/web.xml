@@ -54,32 +54,7 @@
 	    <url-pattern>/console/*</url-pattern>
 	</servlet-mapping>
 	
-	<filter-mapping>
-		<filter-name>encodingFilter</filter-name>
-		<url-pattern>/*</url-pattern>
-	</filter-mapping>
-	
-	<filter-mapping>
-        <filter-name>UrlRewriteFilter</filter-name>
-        <url-pattern>/source/changes/*</url-pattern>
-        <dispatcher>REQUEST</dispatcher>
-    	<dispatcher>FORWARD</dispatcher>
-    </filter-mapping>
-    
-	<filter>
-        <filter-name>UrlRewriteFilter</filter-name>
-        <filter-class>org.tuckey.web.filters.urlrewrite.UrlRewriteFilter</filter-class>
-        <init-param>
-        	<param-name>confPath</param-name>
-        	<param-value>/WEB-INF/configuration/urlrewrite/urlrewrite.xml</param-value>
-    	</init-param>
-    	<init-param>
-	        <param-name>logLevel</param-name>
-	        <param-value>INFO</param-value>
-	    </init-param>
-    </filter>
-    
-    <filter> 
+	<filter> 
 		<filter-name>encodingFilter</filter-name> 
 		<filter-class>org.springframework.web.filter.CharacterEncodingFilter</filter-class> 
 		<init-param> 
@@ -91,9 +66,34 @@
 	        <param-value>true</param-value>
 	    </init-param>
 	</filter>
+	
+	<filter>
+        <filter-name>urlRewriteFilter</filter-name>
+        <filter-class>org.tuckey.web.filters.urlrewrite.UrlRewriteFilter</filter-class>
+        <init-param>
+        	<param-name>confPath</param-name>
+        	<param-value>/WEB-INF/configuration/urlrewrite/urlrewrite.xml</param-value>
+    	</init-param>
+    	<init-param>
+	        <param-name>logLevel</param-name>
+	        <param-value>INFO</param-value>
+	    </init-param>
+    </filter>
+    
+	<filter-mapping>
+		<filter-name>encodingFilter</filter-name>
+		<url-pattern>/*</url-pattern>
+	</filter-mapping>
+	
+	<filter-mapping>
+        <filter-name>urlRewriteFilter</filter-name>
+        <url-pattern>/source/changes/*</url-pattern>
+        <dispatcher>REQUEST</dispatcher>
+    	<dispatcher>FORWARD</dispatcher>
+    </filter-mapping>
     
     <filter-mapping>
-        <filter-name>UrlRewriteFilter</filter-name>
+        <filter-name>urlRewriteFilter</filter-name>
         <url-pattern>/source/browse/*</url-pattern>
         <dispatcher>REQUEST</dispatcher>
     	<dispatcher>FORWARD</dispatcher>
