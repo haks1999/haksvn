@@ -44,8 +44,10 @@ public class SourceUtils {
 				}
 				befHasType = false;
 				html.append("<tr><td>...</td><td></td><td></td><td></td></tr>");
-				srcStartLineNum = Integer.parseInt(line.substring(line.indexOf(MARK_SRC)+1, line.indexOf(",")));
-				targetStartLineNum = Integer.parseInt(line.substring(line.indexOf(MARK_TRG)+1, line.lastIndexOf(",")));
+				
+				String[] diffInfo = line.split(" ");
+				srcStartLineNum = Integer.parseInt(diffInfo[1].substring(diffInfo[1].indexOf(MARK_SRC)+1, diffInfo[1].contains(",")?diffInfo[1].indexOf(","):diffInfo[1].length()));
+				targetStartLineNum = Integer.parseInt(diffInfo[2].substring(diffInfo[2].indexOf(MARK_TRG)+1, diffInfo[2].contains(",")?diffInfo[2].indexOf(","):diffInfo[2].length()));
 				continue;
 			}
 		  
@@ -154,9 +156,10 @@ public class SourceUtils {
 		int srcChangedLastLineNum = -1,trgChangedLastLineNum = -1;
 		while (scanner.hasNextLine()) {
 			String line = scanner.nextLine();
-			if( line.startsWith("@@") ){
-				int changedSrcStartLineNum = Integer.parseInt(line.substring(line.indexOf(MARK_SRC)+1, line.indexOf(",")));
-				int changedTrgStartLineNum = Integer.parseInt(line.substring(line.indexOf(MARK_TRG)+1, line.lastIndexOf(",")));
+			if( line.startsWith("@@") ){ // @@ -0,0 +1,2 @@
+				String[] diffInfo = line.split(" ");
+				int changedSrcStartLineNum = Integer.parseInt(diffInfo[1].substring(diffInfo[1].indexOf(MARK_SRC)+1, diffInfo[1].contains(",")?diffInfo[1].indexOf(","):diffInfo[1].length()));
+				int changedTrgStartLineNum = Integer.parseInt(diffInfo[2].substring(diffInfo[2].indexOf(MARK_TRG)+1, diffInfo[2].contains(",")?diffInfo[2].indexOf(","):diffInfo[2].length()));
 				changedSrcStartLineNum += srcEmptyLineCnt;
 				changedTrgStartLineNum += trgEmptyLineCnt;
 				

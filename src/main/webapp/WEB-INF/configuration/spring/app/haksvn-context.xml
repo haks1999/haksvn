@@ -9,7 +9,7 @@
 		<beans:property name="targetMethod" value="putAll" />
 		<beans:property name="arguments">
 			<beans:props>
-				<beans:prop key="application.version">0.3.4-build#20140917</beans:prop>
+				<beans:prop key="application.version">0.3.5-build#20141113</beans:prop>
 			</beans:props>
 		</beans:property>
 	</beans:bean>
