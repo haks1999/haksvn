@@ -1,0 +1,3 @@
+개발자들에게 공유한 HakSVN 사용가이드 임돠
+
+https://docs.google.com/presentation/d/1rpNewKn1SlxmDRfZ6GDXl7xqVdYrztpEzFHRQtmkZzg/edit?usp=sharing
