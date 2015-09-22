@@ -466,7 +466,7 @@ form p span font a{text-decoration:underline;cursor:pointer;}
 	};
 	
 	function transformPathToId( oPath ){
-		return oPath.split('_').join('-').split('/').join('_').split('.').join('__');
+		return oPath.split('_').join('-').split('/').join('_').split('.').join('__').split('(').join('_').split(')').join('_');
 	};
 	
 	function initTransferSourceDetailButtons( oElem ){
