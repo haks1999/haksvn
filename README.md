@@ -30,26 +30,21 @@ Automatically exported from code.google.com/p/haksvn
   * Trunk for Development, Branches for Production
   * Approval process for transferring
 
-> ![http://haksvn.googlecode.com/svn/wiki/images/TransferRequest.png](http://haksvn.googlecode.com/svn/wiki/images/TransferRequest.png)
+> ![https://github.com/haks1999/haksvn/blob/wiki/TransferRequest.png](https://github.com/haks1999/haksvn/blob/wiki/TransferRequest.png)
 
 
 ## Source Browsing ##
   * browsing source code by web browser
 
-> ![http://haksvn.googlecode.com/svn/wiki/images/SourceBrowse.png](http://haksvn.googlecode.com/svn/wiki/images/SourceBrowse.png)
+> ![https://github.com/haks1999/haksvn/blob/wiki/SourceBrowse.png](https://github.com/haks1999/haksvn/blob/wiki/SourceBrowse.png)
 
-> ![http://haksvn.googlecode.com/svn/wiki/images/SourceBrowseDetail.png](http://haksvn.googlecode.com/svn/wiki/images/SourceBrowseDetail.png)
+> ![https://github.com/haks1999/haksvn/blob/wiki/SourceBrowseDetail.png](https://github.com/haks1999/haksvn/blob/wiki/SourceBrowseDetail.png)
 
 ## Code Review ##
   * check diff with revisions
   * give scores and leave comment
 
-> ![http://haksvn.googlecode.com/svn/wiki/images/SourceChangesReview.png](http://haksvn.googlecode.com/svn/wiki/images/SourceChangesReview.png)
-
-## Trace Transfer History ##
-  * trace source transfer history by flow chart
-
-> ![http://haksvn.googlecode.com/svn/wiki/images/TraceSource.png](http://haksvn.googlecode.com/svn/wiki/images/TraceSource.png)
+> ![https://github.com/haks1999/haksvn/blob/wiki/SourceChangesReview.png](https://github.com/haks1999/haksvn/blob/wiki/SourceChangesReview.png)
 
 
 # Getting Started #
