@@ -15,15 +15,12 @@ Automatically exported from code.google.com/p/haksvn
   * in haksvn application, it can be done by 'request > approve > transfer' process.
 
 > ![https://github.com/haks1999/haksvn/blob/wiki/%ED%94%84%EB%A1%9C%EC%84%B8%EC%8A%A4%20%EC%A0%95%EB%A6%AC.png](https://github.com/haks1999/haksvn/blob/wiki/%ED%94%84%EB%A1%9C%EC%84%B8%EC%8A%A4%20%EC%A0%95%EB%A6%AC.png)
-
 > ![https://github.com/haks1999/haksvn/blob/wiki/%ED%94%84%EB%A1%9C%EC%84%B8%EC%8A%A4%20%EC%A0%95%EB%A6%AC%20(1).png
 ](https://github.com/haks1999/haksvn/blob/wiki/%ED%94%84%EB%A1%9C%EC%84%B8%EC%8A%A4%20%EC%A0%95%EB%A6%AC%20(1).png
 )
-
-> !https://github.com/haks1999/haksvn/blob/wiki/%ED%94%84%EB%A1%9C%EC%84%B8%EC%8A%A4%20%EC%A0%95%EB%A6%AC%20(2).png
+> ![https://github.com/haks1999/haksvn/blob/wiki/%ED%94%84%EB%A1%9C%EC%84%B8%EC%8A%A4%20%EC%A0%95%EB%A6%AC%20(2).png
 ](https://github.com/haks1999/haksvn/blob/wiki/%ED%94%84%EB%A1%9C%EC%84%B8%EC%8A%A4%20%EC%A0%95%EB%A6%AC%20(2).png
 )
-
 > ![https://github.com/haks1999/haksvn/blob/wiki/%ED%94%84%EB%A1%9C%EC%84%B8%EC%8A%A4%20%EC%A0%95%EB%A6%AC%20(3).png
 ](https://github.com/haks1999/haksvn/blob/wiki/%ED%94%84%EB%A1%9C%EC%84%B8%EC%8A%A4%20%EC%A0%95%EB%A6%AC%20(3).png
 )
